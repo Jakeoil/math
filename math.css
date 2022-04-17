@@ -1,0 +1,18 @@
+body 
+{
+  margin-left:10px;
+  margin-right:10px;
+  line-height: 1.5;
+  FONT-FAMILY: Arial, Helvetica, sans-serif; 
+  font-size: 0.8em;
+}
+.codeblock 
+{
+  margin: 0 30px 0px 30px;
+  font-size:12px;
+  font-family:Monaco,Courier,"Courier New";
+}
+canvas.apple-ii
+{
+  background:#000000;
+}

@@ -1,0 +1,374 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>Math Projects</title>
+<style>
+body 
+{
+  margin-left:10px;
+  margin-right:10px;
+  line-height: 1.5;
+  FONT-FAMILY: Arial, Helvetica, sans-serif; 
+  font-size: 0.8em;
+}
+.codeblock 
+{
+  margin: 0 30px 0px 30px;
+  font-size:12px;
+  font-family:Monaco,Courier,"Courier New";
+}
+canvas.apple-ii
+{
+  background:#000000;
+}
+
+</style>
+<!--
+  ** Allow ascii math 
+ -->
+<script type="text/javascript"
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=AM_HTMLorMML">
+</script>
+
+<script>
+
+var canvas, bubble;
+
+function makeBubble(n)
+{
+  var range = rangebounds(n);
+  var pixels = [];
+  for (var i = -n; i <= n; i++)
+  {
+    i2 = i*i;
+    for (var j = -n; j <= n; j++)
+    {
+      mag = j * j + i2;
+      if (mag >= range[0] && mag <= range[1])
+        pixels.push({"x":j , "y":i});
+    }
+  }
+
+  for (var i = 0; i < pixels.length; i++)
+    bubble.fillRect(
+      pixels[i].x * 2 + 160, 
+      pixels[i].y * 2 + 100, 
+      2, 2);
+}
+
+function rangebounds(n)
+{
+  return ([n * n - n + 1, n * n + n]);
+}
+
+function summedSquares(n)
+{
+  // The highest possible value in the matrix
+  var max = n * n + n * n;
+  var max_range = rangebounds(n);
+  var max_length = (" " + max_range[1]).length;
+  var max_val = max_range[1];
+  var blanks = "                     ";
+  var row = "";
+  for (var i = -n; i <= n; i++)
+  {
+    i2 = i * i;
+    for (var j = -n; j <= n; j++)
+    {
+      var mag = " " + (i2 + j * j);
+      mag = (mag > max_val)?blanks.substring(0,max_length):(blanks.substring(0,max_length-mag.length) + mag);
+      row = row + mag;
+    }
+    row = row + "\n";
+  }
+  return row;
+}
+//******************************
+function inRange(range, x, y)
+{
+  var mag = x*x + y*y;
+  return (mag >= range[0] && mag <= range[1]);
+}
+
+function coyleanSquare()
+{
+  var canvas = document.getElementById("coylean-square");
+  var square = canvas.getContext("2d");
+  var downs = [];
+  var rights = [];
+  var pri = function(n)
+  {
+    p = 0;
+    if (n == 0)
+      return 100;
+    
+    while (n % 2 == 0)
+    {
+      p++;
+      n = Math.floor(n/2);
+    }
+    return p;
+  }
+  square.lineWidth = 1;
+
+  var SIZE = 65;
+  var SCALE = 8;
+  for(var i = 0; i < SIZE; i++)
+  {
+    downs.push(false);
+    rights.push(false);
+  }
+  downs[0] = true;
+  for(var j = 0; j < SIZE; j++) // Y (rights)
+  {
+    var y = j * SCALE; yp = y + SCALE;
+    for(var i = 0; i < SIZE; i++)  // X (downs)
+    {
+      var x = i * SCALE; xp = x + SCALE;
+      if (downs[i])
+      {
+        if (rights[j])
+        {
+          // _|
+          square.beginPath();
+          square.moveTo( xp, y);
+          square.lineTo( xp, yp);
+          square.lineTo( x,  yp);
+          square.stroke();
+            
+          if (pri(i) >= pri(j))
+          {
+            // _|
+            //  |
+            downs[i] = true;
+            rights[j] = false;
+          }
+          else
+          {
+            //  _|_
+            //
+            downs[i] = false;
+            rights[j] = true;
+          }
+        }
+        else
+        {
+          //   |_
+          //   |
+          square.beginPath();
+          square.moveTo( xp, y);
+          square.lineTo( xp, yp);
+          square.stroke();
+
+          if (pri(i) >= pri(j))
+          {
+            //   |_
+            //   |
+            downs[i] = true;
+            rights[j] = true;
+          }
+          else
+          {
+            //   |
+            //   |
+            downs[i] = true;
+            rights[j] =false;
+          }
+        }
+      }
+      else
+      {
+        if (rights[j])
+        {
+          //   __
+          square.beginPath();
+          square.moveTo( xp, yp);
+          square.lineTo( x,  yp);
+          square.stroke();
+          
+          if(pri(i) >= pri(j))
+          {
+            downs[i] = false;
+            rights[j] = true;
+          }
+          else
+          {
+            // ___
+            //  |
+            downs[i] =  true;
+            rights[j] = true;
+          }
+        }
+        else
+        {
+          downs[i] = false;
+          rights[j] = false;
+        }
+      }
+    }
+  }
+  /*
+  */
+}
+
+function here()
+{
+  console.log("Loading page");
+  colors = ["#fff","#055","#550","#f0f","#000","#ff0","#5a0","#0ff",
+            "#005","#ff5","#00a","#a0f","#500","#5fa","#0a0","#f00",];
+  canvas = document.getElementById("bubble");
+  bubble = canvas.getContext("2d");
+  var text1 = summedSquares(9);
+  var ele = document.getElementById("summed-squares");
+  ele.innerHTML = text1;
+  
+  // This is for the bubbles
+  for (var i = 0; i < 40; i += 1)
+  {
+    bubble.fillStyle = colors[i % 16];
+    makeBubble(i);
+  }
+
+  coyleanSquare();
+}
+</script>
+</head>
+<body onload="here()">
+<h1>
+It's Full of Numbers
+</h1>
+<p>Is this stuff created or discovered?  Some of mathematical properties
+seem to exist outside of the universe.  Simple rules create elaborate constructs
+out of nothing.  But more so than say religion or philosophy.  In any case,
+there is an appeal in this for some people.</p>
+
+<p>Here are things that will be covered</p>
+
+<h3> Numbers </h3>
+<p> It starts with 1, or does it start with zero?  In any case `bbb(N)` are the positive integers<p>
+<p> If we need subtraction, we end up with `bbb(Z)`, all the integers.</p>
+<p> If we need division, we end up with `bbb(Q)`, the rational numbers. </p>
+<p> And for square roots and <i>&#960;</i> and the like, we need `bbb(R)`, the rationals</p>
+<p> Of course, for all those quadratic equations we need `bbb(C)`, the complex numbers</p>
+<p> And just for fun, Hamilton invented tha quaternions `bbb(H)` </p>
+<p> The last 'nice' real numbers are the octonions: `bbb(O)` </p>
+
+<blockquote cite="https://math.ucr.edu/home/baez/octonions/node1.html">
+  The real numbers are the dependable breadwinner of the family, the complete ordered field we all rely on. The complex
+numbers are a slightly flashier but still respectable younger brother: not ordered, but algebraically complete. The
+quaternions, being noncommutative, are the eccentric cousin who is shunned at important family gatherings. But the
+octonions are the crazy old uncle nobody lets out of the attic: they are nonassociative.</blockquote>
+<h3>The Coylean map. </h3>
+<p>An infinite tiling of rectangles on a plane created with simple rules.</p>
+<canvas id="coylean-square" width="524" height="524">
+ Not supported
+</canvas>
+
+<h3>Penrose Tiling</h3>
+<p>Martin Gardner popularized the Kites and Darts form (P2) of Roger Penroses discovery</p>
+<p>The original pentagonal Penrose tiling (P1) and the Rhombic version are more interesting</p>
+<p>A wonderful approximation of the Penrose tiling can be represented on square graph paper</p>
+<a href="penrose.html">Penrose tiling</a>
+
+<h3>Complex Numbers</h3>
+<div>The Gausseans: Analogs of the integers and rational numbers in C</div>
+<p>A discussion of The star trek bubbles created by summing squares</p>
+<p>Gaussean Prime numbers and Dominoes</p>
+
+<p>Continued fractions, soddy circles</p> 
+
+<p>Rubiks cube and Polyhedrons</p>
+
+<p>Astronomy and Calendars</p>
+
+<h2>Gaussean Integers</h2>
+These are Complex Integers.  They are of the form:
+<i>a</i> + <i> bi </i> where <i>a</i> and <i>b</i> are integers 
+
+<h3>
+Star trek.
+</h3>
+<p>There is a nice pattern by classifying the magnitude of these Gausseans.
+I discovered while trying to program ever increasing circles for a 'through-space' program.
+I was restricted to integer arithmetic and used the relation x<sup>2</sup> + y<sup>2</sup> to establish the relative
+distance of the points from the origin.
+</p>
+<div class="codeblock"><pre>
+ 00  01  04  09  16  25  36  49  64  81 100
+
+ 01  02  05  10  17  26  37  50  65  82 101
+
+ 04  05  08  13  20  29  40  53  68  85 104
+
+ 09  10  13  18  25  34  45  58  73  90 109
+
+ 16  17  20  25  32  41  52  65  80  97  
+
+ 25  26  29  34  41  50  61  74  86 106 
+
+ 36  37  40  45  52  61  72  85 100  
+
+ 49  50  53  58  65  74  85  98
+
+ 64  65  68  73  80  89 100
+
+ 81  82  85  90  97 106
+
+100 101 104 109 
+</pre></div>
+<p>Enough of this 'by hand' stuff.  Do it in javascript<p>
+
+<div ></div>
+<div class="codeblock">
+  <pre id = "summed-squares">
+  </pre>
+</div>
+
+<p>
+Interestingly enough, showing pixels only in a specified range made 'perfect' 'connected' circles.
+The results looked more like bubbles.
+</p>
+
+<p>I still have to figure out the algorithm by hand each time.</p>
+<div class="codeblock"><pre>
+                    0&times0
+                    1&times1    2
+               3    2&times2    5  6
+            7  8    3&times3   10 11 12 
+        13 14 15    4&times4   17 18 19 20
+     21 22 23 24    5&times5   26 27 28 29 30
+31 32      .. 35    6&times6   37 38 39 .. 42
+n&timesn+1-n .. n&timesn-1    n&timesn   n&timesn+1 .. n&timesn+n
+
+</pre></div>
+
+<canvas id="bubble" class="apple-ii" width="320" height="200">
+ Not supported
+</canvas>
+<h2>
+The Dominoes
+</h2>
+
+<p>These are a subset of the gausseans.</p>
+<p>The conjugate is folded in and the ...</p>
+
+<h2>
+Continued fractions.
+</h2>
+<div>
+`sqrt(2) = 1 + 1/(2+1/(2+1/(2+1/(2 + ...)`
+</div>
+<h2>
+Counting the rational numbers.
+</h2>
+<h2>
+Continued complex fraction (apollonian circles)
+</h2>
+<h2>
+Euler's Identity
+</h2>
+<p>
+<big><i>e</i><sup><i>i</i><i>&#952;</i></sup> = cos <i>&#952;</i> + <i>i</i>sin <i>&#952;</i><big>
+</p>
+<link rel="import" href="components/paper-elements/paper-elements.html">
+</body>
