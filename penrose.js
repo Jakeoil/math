@@ -37,6 +37,12 @@ P.prototype =
   }
 };
 
+class Point {
+  constructor(x, y) {
+    this.x = x || 0;
+    this.y = y || 0;
+  }
+}
 // API here.
 //var penrose = {};
 
@@ -45,9 +51,9 @@ var penrose = (function()
 {
 
   var id;  
-  var scale;
+  //var scale;
   var offset = {};
-  var g;
+  //var g;
 
   var penta_up = [ [2,0],[3,0],
              [1,1],[2,1],[3,1],[4,1],
@@ -175,7 +181,7 @@ var penrose = (function()
   
 
   // future-----------------------------------
-
+  /*
   function figure(fill, offset, shape)
   {
     g.fillStyle   = fill;//penrose.ORANGE;
@@ -187,6 +193,7 @@ var penrose = (function()
       g.strokeRect(offset.x * scale + point.x * scale, offset.y * scale + point.y * scale, scale, scale);
     }
   }
+  */
   function p2Color(n,m)
   {
     if ((n - m + 5) % 5 == 2 || (n - m + 5) % 5 == 3)
@@ -254,18 +261,19 @@ var penrose = (function()
     }
   }
 
+  // This is the core penrose object.
   return {
     ORANGE : "#e46c0a",
     BLUE   : "#0000ff",
     YELLOW : "#ffff00",
     OUTLINE :"#4a7eba",
-    init : function(in_scale, in_id)
-    {
-      scale     = in_scale;
-      id        = in_id;
-      g         = document.getElementById(in_id).getContext("2d");
-    },
-    g : g,
+    //init : function(in_scale, in_id)
+    //{
+    //  scale     = in_scale;
+    //  id        = in_id;
+    //  g         = document.getElementById(in_id).getContext("2d");
+    //},
+    //g : g,
     p : [ P0, P1, P2, P3, P4, P5, P6, P7, P8, P9],
     s : [ S0, S1, S2, S3, S4, S5, S6, S7, S8, S9],
     t : [ T0, T1, T2, T3, T4, T5, T6, T7, T8, T9],
