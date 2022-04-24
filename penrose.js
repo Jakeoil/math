@@ -157,7 +157,7 @@ var penrose = (function()
   // p2-p5-p4-p7-p6-p9-p8-p1-p0-p4
   // p8-p5-p6-p3-p4-p1-p2-p9-p0-p7
   var st = P2.tr(P5).tr(P4).tr(P7).tr(P6).tr(P9).tr(P8).tr(P1);
-  console.log("st= " + st.x + "," + st.y);
+  console.log("st= " + st.x + "," + st.y + "--yes?");
   var st = P2.tr(P5).tr(P4).tr(P7).tr(P6).tr(P9).tr(P8).tr(P1).tr(P0).tr(P3);
   console.log("st= " + st.x + "," + st.y);
   console.log("p4: " + P4.x + "," + P4.y);
@@ -203,6 +203,12 @@ var penrose = (function()
       return penrose.ORANGE;
   }
 
+  /**
+   * These draw the symmetric pentagon.
+   * 
+   * @param {*} offset 
+   * @param {*} scale 
+   */
   function pUp(offset, scale)
   {
     figure(penrose.BLUE,   offset, scale, penrose.penta[penrose.down[0]]);

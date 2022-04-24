@@ -3,8 +3,25 @@ function onLoad()
   var canvas = document.getElementById("pentagons");
   penrose = Penrose(canvas.getContext("2d"));
 }
+
+// Graphics globals
 var g;
 
+Array.prototype.offset = (x, y) => x.map((item, i)=>item + y[i]);
+Array.prototype.offset2 = delta => [this[0] + delta[0], this[1] + delta[1]];
+
+const offset = (a, b) => {
+  const addOp = (aEle, idx) => {
+    let cEle = aEle + b[idx];
+    return cEle;
+  }
+  let c = a.map(addOp);
+  return c;
+}
+
+const offset2 = (a, b) => [a[0] + b[0], a[1] + b[1]]
+
+// Todo, use global for scale.
 function figure(fill, offset, scale, shape)
 {
   g.fillStyle   = fill;//e.g penrose.ORANGE;
@@ -23,6 +40,13 @@ function pushShape(fill, offset, shape)
   return({color:fill, shape:shape, offset:offset});
 }
 
+/**
+ * Low level 
+ * This one doesn't scale
+ * @param {*} n  
+ * @param {*} m 
+ * @returns 
+ */
 function p2Color(n,m)
 {
   if ((n - m + 5) % 5 == 2 || (n - m + 5) % 5 == 3)
@@ -31,6 +55,12 @@ function p2Color(n,m)
     return penrose.YELLOW;
 }
 
+/**
+ * 
+ * @param {*} n 
+ * @param {*} m 
+ * @returns 
+ */
 function p4Color(n,m)
 {
   if ((n - m + 5) % 5 == 0)
@@ -210,14 +240,14 @@ function draw()
   var scale = 10;
 
   penrose.scale = 10;
-  penrose.id =    "test-2"
+  //penrose.id =    "test-2"
 
-  penrose.init(10, "test-2");
+  //penrose.init(10, "test-2");
   
   var y = 15;
   
   pUp(      [10,  y], scale);
-  pDown(    [30,  y], scale);
+  pDown(    [50,  y], scale);
 
   y += 20;
   p2Up(  0, [10,  y], scale);
@@ -279,7 +309,92 @@ function draw()
   boatDown(3, [85, y], scale);
   boatDown(4, [105, y], scale);
   
-  /*
-  */
+  drawTest2("test-2");
 }
 
+/**
+ * The second draw test is the expansion of the first draw test.
+ * It draws the second expansion of each of the tiles.
+ * 
+ */
+function drawTest2(id) {
+  const canvas = document.getElementById(id);
+  // g is global
+  g = canvas.getContext("2d");
+  g.fillStyle = penrose.ORANGE;
+  g.strokeStyle = penrose.OUTLINE;
+  g.lineWidth = 1;
+  const scale = 10;
+  penrose.scale = 10;
+  pentaUp([75, 20], scale);
+  pentaDown([25, 20], scale); // 
+  // 1 - 4 ()
+  penta2Up(0, [25, 70], scale);
+  // one thru four
+  penta2Down(0, [25, 120], scale);
+  // one t
+}
+
+/**
+ * 
+ * @param {Here is the up and } base 
+ */
+function pentaDown(base, scale) {
+  pUp(base, scale) ;
+
+  p2Down(0, offset(base, [0, 14]),scale);
+  p2Down(1, offset(base, [-13, 4]), scale);
+  p2Down(2, offset(base, [-8, -12]), scale);
+  p2Down(3, offset(base, [8, -12]), scale);
+  p2Down(4, offset(base, [13, 4]), scale);
+}
+
+function pentaUp(base, scale) {
+  pDown(base, scale);
+  p2Up(0, offset(base, [0, -14]), scale);
+  p2Up(1, offset(base, [13, -4]), scale);
+  p2Up(2, offset(base, [8, 12]), scale);
+  p2Up(3, offset(base, [-8, 12]), scale);
+  p2Up(4, offset(base, [-13, -4]), scale);
+}
+/**
+ *  Here are the penta 2's
+ * 
+ * These are white, white, orange, orange, white. 
+ * They have an angle as input.
+ * outline:
+ * function penta2(n, loc, scale)
+ **/
+function penta2Up(angle, base, scale) {
+  pUp(base, scale);
+
+  switch (angle) {
+    case 0:
+      p2Down(0, offset(base, [0, 14]), scale);
+      p2Down(1, offset(base, [-13, 4]), scale);
+      p4Down(2 - 1, offset(base, [-8, -12]), scale);
+      p4Down(3 + 1, offset(base, [8, -12]), scale);
+      p2Down(4, offset(base, [13, 4]), scale);
+      diamondUp(0, offset(base, [0, -15]), scale)
+      break;
+    default:
+
+  }
+}
+function penta2Down(angle, base, scale) {
+
+  pDown(base, scale);
+
+  switch (angle) {
+    case 0:
+      p2Up(0, offset(base, [0, -14]), scale);
+      p2Up(1, offset(base, [13, -4]), scale);
+      p4Up(1, offset(base, [8, 12]), scale);
+      p4Up(4, offset(base, [-8, 12]), scale);
+      p2Up(4, offset(base, [-13, -4]), scale);
+      diamondDown(0, offset(base, [0, 15]), scale)
+    break;
+      default:
+  }
+
+}
