@@ -8,6 +8,7 @@ function draw() {
   drawSecondExpansion('expansion-2');
 }
 const offset = (a, b) => [a[0] + b[0], a[1] + b[1]]
+const norm = (n) => (n % 5 + 5) % 5
 
 /**
  * Sets the globals g and scale
@@ -114,9 +115,16 @@ function drawSecondExpansion(canvalId) {
   pentaDown([75, 25]); // 
   // 1 - 4 ()
   penta2Up(0, [25, 75]);
+  penta2Up(1, [75, 75]);
+  penta2Up(2, [125, 75]);
+  penta2Up(3, [175, 75]);
+  penta2Up(4, [225, 75]);
   // one t
   penta2Down(0, [25, 130]);
-  penta2Down(1, [90, 130]);
+  penta2Down(1, [75, 130]);
+  penta2Down(2, [125, 130]);
+  penta2Down(3, [175, 130]);
+  penta2Down(4, [225, 130]);
   // one thru four
 }
 
@@ -140,15 +148,13 @@ function figure(fill, offset, shape) {
   }
 }
 
-/*future*/
-//function pushShape(fill, offset, shape)
-//{
-//  return({color:fill, shape:shape, offset:offset});
-//}
+/**
+ * FIRST EXPANSION METHODS
+ */
 
 /**
- * Low level 
- * This one doesn't scale
+ * These are the twisty methods for the tiles with
+ * Orange pentagons.
  * @param {*} n  
  * @param {*} m 
  * @returns 
@@ -161,12 +167,6 @@ function p2Color(n,m)
     return penrose.YELLOW;
 }
 
-/***
- * 
- * @param {*} n 
- * @param {*} m 
- * @returns 
- */
 function p4Color(n,m)
 {
   if ((n - m + 5) % 5 == 0)
@@ -175,6 +175,10 @@ function p4Color(n,m)
     return penrose.ORANGE;
 }
 
+/**
+ * Pentagons, Stars, Diamonds(S4), and Boats (S2).
+ * @param {*} loc 
+ */
 function pUp(loc)
 {
   var offset = new P(loc[0],loc[1]);
@@ -336,19 +340,6 @@ function point(x,y)
 }
 
 
-/**
- * 
- * @param {Here is the up and } base 
- */
-function pentaDown(base) {
-  pUp(base) ;
-
-  p2Down(0, offset(base, [0, 14]));
-  p2Down(1, offset(base, [-13, 4]));
-  p2Down(2, offset(base, [-8, -12]));
-  p2Down(3, offset(base, [8, -12]));
-  p2Down(4, offset(base, [13, 4]));
-}                
 /***  
  * Discussion of the second expansions penta points.
  * These are the x and y offset from a center rectangle to an inverted rectangle.
@@ -386,18 +377,33 @@ function pentaDown(base) {
  * 
  * 
  * */                
-PENTA_POINTS = [[0,-14],[8,-12],[13,-4],[13,4],[8,12],[0,14],[-8,12],[-13,4],[-13,-4],[-8,-12]]
+const pWheel = new Wheel([0, -14], [8, -12], [13, -4]);
+
+const sWheel = new Wheel([0, -15], [8,-11], [13, -5])
+
+pWheel.up.forEach(it => console.log(it));
+pWheel.down.forEach(it => console.log(it));
 function pentaUp(base) {
 
-  const wheel = new Wheel([0, -14],[8,-12],[13,-4]);
-  wheel.up.forEach( it => console.log(it));
   pDown(base);
-  p2Up(0, offset(base, [0, -14]));
-  p2Up(1, offset(base, [13, -4]));
-  p2Up(2, offset(base, [8, 12]));
-  p2Up(3, offset(base, [-8, 12]));
-  p2Up(4, offset(base, [-13, -4]));
+  p2Up(0, offset(base, pWheel.up[0]));
+  p2Up(1, offset(base, pWheel.up[1]));
+  p2Up(2, offset(base, pWheel.up[2]));
+  p2Up(3, offset(base, pWheel.up[3]));
+  p2Up(4, offset(base, pWheel.up[4]));
 }
+
+function pentaDown(base) {
+  pUp(base);
+
+  p2Down(0, offset(base, pWheel.down[0]));
+  p2Down(1, offset(base, pWheel.down[1]));
+  p2Down(2, offset(base, pWheel.down[2]));
+  p2Down(3, offset(base, pWheel.down[3]));
+  p2Down(4, offset(base, pWheel.down[4]));
+}                
+
+
 /**
  *  Here are the penta 2's
  * 
@@ -420,25 +426,15 @@ function penta2Up(angle, base) {
       diamondDown(0, offset(base, [0, 15]))
       break;
     default:
-  }
-}
-
-
-
-function px2Up(n, loc) {
-  var offset = new P(loc[0], loc[1]);
-  figure(penrose.BLUE, offset, penrose.penta[penrose.down[0]]);
-
-
-  for (var i = 0; i < 5; i++) {
-
-    figure(p2Color(n, i), offset.tr(penrose.p[penrose.up[i]]), penrose.penta[penrose.up[i]]);
-
-    pDown()
     
+      p2Up(norm(0 + angle), offset(base, pWheel.up[norm(0 + angle)]));
+      p2Up(norm(1 + angle), offset(base, pWheel.up[norm(1 + angle)]));
+      p4Up(norm(2 + angle - 1), offset(base, pWheel.up[norm(2 + angle)]));
+      p4Up(norm(3 + angle + 1), offset(base, pWheel.up[norm(3 + angle)]));
+      p2Up(norm(4 + angle), offset(base, pWheel.up[norm(4 + angle)]));
 
-    if (i == n)
-      figure(penrose.BLUE, offset.tr(penrose.s[penrose.down[i]]), penrose.diamond[penrose.up[i]]);
+      diamondDown(angle, offset(base, sWheel.down[angle]));
+
   }
 }
 
@@ -452,17 +448,26 @@ function penta2Down(angle, base) {
       p4Down(2 - 1, offset(base, [-8, -12]));
       p4Down(3 + 1, offset(base, [8, -12]));
       p2Down(4, offset(base, [13, 4]));
+
       diamondUp(0, offset(base, [0, -15]));
       break;
     case 1:
-      p2Down(0, offset(base, [0, 14]));
       p2Down(1, offset(base, [-13, 4]));
       p2Down(2, offset(base, [-8, -12]));
       p4Down(3 - 1, offset(base, [8, -12]));
       p4Down(4 + 1, offset(base, [13, 4]));
+      p2Down(0, offset(base, [0, 14]));      
+      
       diamondUp(1, offset(base, [13, -5]));
       break;
     default:
+      p2Down(norm(0 + angle), offset(base, pWheel.down[norm(0 + angle)]));
+      p2Down(norm(1 + angle), offset(base, pWheel.down[norm(1 + angle)]));
+      p4Down(norm(2 + angle - 1), offset(base, pWheel.down[norm(2 + angle)]));
+      p4Down(norm(3 + angle + 1), offset(base, pWheel.down[norm(3 + angle)]));
+      p2Down(norm(4 + angle),    offset(base, pWheel.down[norm(4 + angle)]));
+
+      diamondUp(angle, offset(base, sWheel.up[angle]));
 
   }
 }
