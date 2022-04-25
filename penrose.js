@@ -37,10 +37,27 @@ P.prototype =
   }
 };
 
-class Point {
-  constructor(x, y) {
-    this.x = x || 0;
-    this.y = y || 0;
+class Wheel {
+  constructor(p0, p1, p2) {
+    this.list = [
+      [p0[0], p0[1]],  // 0
+      [p1[0], p1[1]],  // 1
+      [p2[0], p2[1]],  // 2
+      [p2[0], -p2[1]], // 2.y 3
+      [p1[0], -p1[1]], // 1.y 4
+      [p0[0], -p0[1]], // 0.y 5
+      [-p1[0], -p1[1]], // 1.xy 6
+      [-p2[0], -p2[1]], // 2.xy 7
+      [-p2[0], p2[1]], //2.x
+      [-p1[0], p1[1]],  // 1.x
+    ];
+  }
+   
+  get up() {
+    return [this.list[0], this.list[2], this.list[4], this.list[6], this.list[8],];
+  }
+  get down() {
+    return [this.list[5], this.list[7], this.list[9], this.list[1], this.list[3],];
   }
 }
 // API here.
@@ -194,6 +211,7 @@ var penrose = (function()
     }
   }
   */
+ /*
   function p2Color(n,m)
   {
     if ((n - m + 5) % 5 == 2 || (n - m + 5) % 5 == 3)
@@ -209,7 +227,7 @@ var penrose = (function()
     else
       return penrose.ORANGE;
   }
-
+*/
   /**
    * These draw the symmetric pentagon.
    * 
@@ -278,7 +296,7 @@ var penrose = (function()
     s : [ S0, S1, S2, S3, S4, S5, S6, S7, S8, S9],
     t : [ T0, T1, T2, T3, T4, T5, T6, T7, T8, T9],
 
-    up   : [0,2,4,6,8],
+    up   : [0,2,4,6,8],  //
     down : [5,7,9,1,3],
     penta : 
       [
