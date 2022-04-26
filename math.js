@@ -4,12 +4,27 @@ let g;
 let scale;
 
 function draw() {
+  console.log('make canvas')
+  makeCanvas('p5');
   drawFirstExpansion('pentagons');
   drawSecondExpansion('expansion-2');
 }
 const offset = (a, b) => [a[0] + b[0], a[1] + b[1]]
 const norm = (n) => (n % 5 + 5) % 5
 
+function makeCanvas(canvasId) {
+  var canvas = document.getElementById(canvasId);
+  g = canvas.getContext("2d");
+  g.fillStyle = penrose.ORANGE;
+  g.strokeStyle = penrose.OUTLINE;
+  g.lineWidth = 1;
+  scale = 10;
+  penrose.scale = scale;
+  canvas.width = 10;
+  canvas.heith = 10;
+  figure(penrose.BLUE, offset, penrose.penta[penrose.down[0]]);
+
+}
 /**
  * Sets the globals g and scale
  */
@@ -156,12 +171,32 @@ function drawSecondExpansion(canvalId) {
  * Prerequisites: Globals g and scale
  */
 function figure(fill, offset, shape) {
-  g.fillStyle   = fill;//e.g penrose.ORANGE;
+  g.fillStyle   = fill;  //e.g penrose.ORANGE;
   g.strokeStyle = penrose.OUTLINE;
+  const minPoint = new P(offset.x, offset.y);
+  const maxPoint = new P(offset.x, offset.y);
+  const bounds = { minPoint, maxPoint };
   for (const point of shape) {
-    //point = shape[i];
     g.fillRect(  offset.x * scale + point.x * scale, offset.y * scale + point.y * scale, scale, scale);
     g.strokeRect(offset.x * scale + point.x * scale, offset.y * scale + point.y * scale, scale, scale);
+    
+    calculateBounds(bounds, offset, point);
+  }
+
+  return bounds;
+}
+
+function calculateBounds(bounds, offset, point) {
+  const logicalPoint = (new P(offset.x + point.x, offset.y + point.y));
+  if (logicalPoint.x < bounds.minPoint.x) {
+    bounds.minPoint.x = logicalPoint.y;
+  } else if (logicalPoint.x > bounds.maxPoint.x) {
+    bounds.maxPoint.x = logicalPoint.x;
+  }
+  if (logicalPoint.y < bounds.minPoint.y) {
+    bounds.minPoint.y = logicalPoint.y;
+  } else if (logicalPoint.y > bounds.maxPoint.y) {
+    bounds.maxPoint.y = logicalPoint.y;
   }
 }
 

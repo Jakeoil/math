@@ -1,42 +1,84 @@
 
-
-// A Point object
-function P(x,y)
-{
-  this.x = x || 0;
-  this.y = y || 0;
-};
-
-
-P.prototype =
-{
-  x:  null,
-  y:  null,
-  // create a new object distance v
-  tr: function(v)
-  {
-    return new P(this.x + v.x, this.y + v.y);
-  },
-
-  // make an upside down copy
-  vr: function()
-  {
-    return new P(this.x, -this.y);
-  },
-
-  // make a mirror image copy
-  hr: function()
-  {
-    return new P(-this.x, this.y);
-  },
-  
-  // Make a shrunken copy?  d must be special
-  div: function(d)
-  {
-    return new P(this.x / d, this.y / d);
+/**
+ * To do: Elaborate this
+ */
+class P {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
   }
-};
+  // translate
+  tr = v => new P(this.x + v.x, this.y + v.y)
+  // Vertical and Horizontal reflection
+  vr = () => new P(this.x, -this.y)
+  hr = () => new P(-this.x, this.y)
+  div = (d) => new P(this.x / d, this.y / d)
+  copy = new P(this.x, this.y);
+}
 
+/**
+ * Mutablee class
+ */
+class Bounds {
+  constructor() {
+    this.maxPoint = null;
+    this.minPoint = null;
+  }
+
+  /**
+   * Called from figure
+   * @param {*} offset 
+   * @param {*} point 
+   */
+  addPoint(offset, point) {
+    const logicalPoint = (new P(offset.x + point.x, offset.y + point.y));
+    if (!this.maxPoint || !this.minPoint) {
+      this.minPoint = new P(p.x, p.y); // private copies, not references
+      this.maxPoint = new P(p.x, p.y);
+      return;
+    }
+
+    if(logicalPoint.x < this.minPoint.x) {
+      this.minPoint.x = logicalPoint.x;
+    } else if(logicalPoint.x > bounds.maxPoint.x) {
+      this.maxPoint.x = logicalPoint.x;
+    }
+    if (logicalPoint.y < this.minPoint.y) {
+      this.minPoint.y = logicalPoint.y;
+    } else if (logicalPoint.y > this.maxPoint.y) {
+      this.maxPoint.y = logicalPoint.y;
+    }
+  }
+
+  expand(bounds) {
+    if (!bounds) {
+      return;
+    }
+
+    if (!this.maxPoint || !this.minPoint) {
+      this.minPoint = bounds.minPoint;
+      this.maxPoint = bounds.maxPoint;
+      return;
+    }
+
+    if (bounds.minPoint.x < this.minPoint.x) {
+      this.minPoint.x = bounds.minPoint.x;
+    }
+    if (bounds.minPoint.y < this.minPoint.y) {
+      this.minPoint.y = bounds.minPoint.y;
+    }
+    if (bounds.maxPoint.x > this.maxPoint.x) {
+      this.maxPoint.x = bounds.maxPoint.x;
+    }
+    if (bounds.maxPoint.y > this.maxPoint.y) {
+      this.maxPoint.y = bounds.maxPoint.y;
+    }
+  }
+}
+
+/**
+ * To do: convert to points
+ */
 class Wheel {
   constructor(p0, p1, p2) {
     this.list = [
@@ -58,6 +100,23 @@ class Wheel {
   }
   get down() {
     return [this.list[5], this.list[7], this.list[9], this.list[1], this.list[3],];
+  }
+}
+
+class Wheel2 {
+  constructor(p0, p1, p2) {
+    this.list = [
+      p0.copy(), 
+      p1.copy(),
+      p2.copy(),
+      p2.vr(),
+      p1.vr(),
+      p0.vr(),
+      p1.vr().hr(),
+      p2.vr().hr(),
+      p2.hr(),
+      p1.hr(),
+    ]
   }
 }
 // API here.
@@ -170,6 +229,7 @@ var penrose = (function()
   var T9 = T1.hr();
 
   //----------------------------trash
+  /*
   var D_UP    = [P(0, -3), P( 3, -1), P( 2,  3), P(-2,  3), P(-3, -1)];
   var D_DN    = [P(0,  3), P(-3,  1), P(-2, -3), P( 2, -3), P( 3,  1)];
   
@@ -195,7 +255,7 @@ var penrose = (function()
   // P6' = p5-p6-p7 or p7-p6-p5
   // P8' = p7-p8-p9 or p9-p8-p7
   //----------------------------trash
-  
+  */
 
   // future-----------------------------------
   /*
