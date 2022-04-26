@@ -13,7 +13,7 @@ class P {
   vr = () => new P(this.x, -this.y)
   hr = () => new P(-this.x, this.y)
   div = (d) => new P(this.x / d, this.y / d)
-  copy = new P(this.x, this.y);
+  copy = (d) => new P(this.x, this.y)
 }
 
 /**
@@ -117,6 +117,12 @@ class Wheel2 {
       p2.hr(),
       p1.hr(),
     ]
+  }
+  get up() {
+    return [this.list[0], this.list[2], this.list[4], this.list[6], this.list[8],];
+  }
+  get down() {
+    return [this.list[5], this.list[7], this.list[9], this.list[1], this.list[3],];
   }
 }
 // API here.
@@ -228,66 +234,6 @@ var penrose = (function()
   var T8 = T2.hr();
   var T9 = T1.hr();
 
-  //----------------------------trash
-  /*
-  var D_UP    = [P(0, -3), P( 3, -1), P( 2,  3), P(-2,  3), P(-3, -1)];
-  var D_DN    = [P(0,  3), P(-3,  1), P(-2, -3), P( 2, -3), P( 3,  1)];
-  
-  var UP      = [P(0, -8), P( 8, -2), P( 5,  8), P(-5,  8), P(-8, -2)];
-  var DN      = [P(0,  8), P(-8,  2), P(-5, -8), P( 5, -8), P( 8,  2)];
-
-  // Path around a star
-  // p2-p5-p4-p7-p6-p9-p8-p1-p0-p4
-  // p8-p5-p6-p3-p4-p1-p2-p9-p0-p7
-  var st = P2.tr(P5).tr(P4).tr(P7).tr(P6).tr(P9).tr(P8).tr(P1);
-  console.log("st= " + st.x + "," + st.y + "--yes?");
-  var st = P2.tr(P5).tr(P4).tr(P7).tr(P6).tr(P9).tr(P8).tr(P1).tr(P0).tr(P3);
-  console.log("st= " + st.x + "," + st.y);
-  console.log("p4: " + P4.x + "," + P4.y);
-  var newp = P4.tr(P7).tr(P6).tr(P9).tr(P8).tr(P1).div(5);
-  console.log("----: " + newp.x + "," + newp.y);
-  var newp = P6.tr(P9).tr(P8).tr(P1).tr(P0).tr(P4).div(5);
-  console.log("----: " + newp.x + "," + newp.y);
-  //console.log(st.x + "," st.y);
-  // P0' = p9-p0-p1 or p1-p0-p9
-  // P2' = p1-p2-p3 or p3-p2-p1
-  // P4' = p3-p4-p5 or p5-p4-p3
-  // P6' = p5-p6-p7 or p7-p6-p5
-  // P8' = p7-p8-p9 or p9-p8-p7
-  //----------------------------trash
-  */
-
-  // future-----------------------------------
-  /*
-  function figure(fill, offset, shape)
-  {
-    g.fillStyle   = fill;//penrose.ORANGE;
-    g.strokeStyle = penrose.OUTLINE;
-    for (var i = 0; i < shape.length; i++)
-    {
-      var point = shape[i];
-      g.fillRect(  offset.x * scale + point.x * scale, offset.y * scale + point.y * scale, scale, scale);
-      g.strokeRect(offset.x * scale + point.x * scale, offset.y * scale + point.y * scale, scale, scale);
-    }
-  }
-  */
- /*
-  function p2Color(n,m)
-  {
-    if ((n - m + 5) % 5 == 2 || (n - m + 5) % 5 == 3)
-      return penrose.ORANGE;
-    else
-      return penrose.YELLOW;
-  }
-
-  function p4Color(n,m)
-  {
-    if ((n - m + 5) % 5 == 0)
-      return penrose.YELLOW;
-    else
-      return penrose.ORANGE;
-  }
-*/
   /**
    * These draw the symmetric pentagon.
    * 
@@ -358,61 +304,62 @@ var penrose = (function()
 
     up   : [0,2,4,6,8],  //
     down : [5,7,9,1,3],
+    // okay, 10 of each
     penta : 
       [
-        penta_up.map(function(item){ return new P( item.x - 3,   item.y - 3); }),
-        penta_up.map(function(item){ return new P(-item.x + 2,  -item.y + 2); }),
-        penta_up.map(function(item){ return new P( item.x - 3,   item.y - 3); }),
-        penta_up.map(function(item){ return new P(-item.x + 2,  -item.y + 2); }),
-        penta_up.map(function(item){ return new P( item.x - 3,   item.y - 3); }),
-        penta_up.map(function(item){ return new P(-item.x + 2,  -item.y + 2); }),
-        penta_up.map(function(item){ return new P( item.x - 3,   item.y - 3); }),
-        penta_up.map(function(item){ return new P(-item.x + 2,  -item.y + 2); }),
-        penta_up.map(function(item){ return new P( item.x - 3,   item.y - 3); }),
-        penta_up.map(function(item){ return new P(-item.x + 2,  -item.y + 2); })
+        penta_up.map((item) => new P( item.x - 3,   item.y - 3)),
+        penta_up.map((item) => new P(-item.x + 2,  -item.y + 2)),
+        penta_up.map((item) => new P( item.x - 3,   item.y - 3)),
+        penta_up.map((item) => new P(-item.x + 2,  -item.y + 2)),
+        penta_up.map((item) => new P( item.x - 3,   item.y - 3)),
+        penta_up.map((item) => new P(-item.x + 2,  -item.y + 2)),
+        penta_up.map((item) => new P( item.x - 3,   item.y - 3)),
+        penta_up.map((item) => new P(-item.x + 2,  -item.y + 2)),
+        penta_up.map((item) => new P( item.x - 3,   item.y - 3)),
+        penta_up.map((item) => new P(-item.x + 2,  -item.y + 2)),
       ],
     //
     diamond :
       [
-        diamond_up.map( function(item){ return new P( item.x - 1,  item.y - 0); }),
-        diamond_for.map(function(item){ return new P( item.x - 3, -item.y + 3); }),
-        diamond_too.map(function(item){ return new P( item.x - 4,  item.y - 0); }),
-        diamond_too.map(function(item){ return new P( item.x - 4, -item.y - 1); }),
-        diamond_for.map(function(item){ return new P( item.x - 3,  item.y - 4); }),
-        diamond_up.map( function(item){ return new P( item.x - 1,  item.y - 4); }),
-        diamond_for.map(function(item){ return new P(-item.x + 2,  item.y - 4); }),
-        diamond_too.map(function(item){ return new P(-item.x + 3, -item.y - 1); }),
-        diamond_too.map(function(item){ return new P(-item.x + 3,  item.y + 0); }),
-        diamond_for.map(function(item){ return new P(-item.x + 2, -item.y + 3); })
+        diamond_up.map( (item) => new P( item.x - 1,  item.y - 0)),
+        diamond_for.map((item) => new P( item.x - 3, -item.y + 3)),
+        diamond_too.map((item) => new P( item.x - 4,  item.y - 0)),
+        diamond_too.map((item) => new P( item.x - 4, -item.y - 1)),
+        diamond_for.map((item) => new P( item.x - 3,  item.y - 4)),
+        diamond_up.map((item) => new P( item.x - 1,  item.y - 4)),
+        diamond_for.map((item) => new P(-item.x + 2,  item.y - 4)),
+        diamond_too.map((item) => new P(-item.x + 3, -item.y - 1)),
+        diamond_too.map((item) => new P(-item.x + 3,  item.y + 0)),
+        diamond_for.map((item) => new P(-item.x + 2, -item.y + 3)),
       ],
     //
     boat :
       [
-        boat_up.map( function(item){ return new P( item.x - 4,  item.y - 4); }),
-        boat_for.map(function(item){ return new P( item.x - 3, -item.y + 1); }),
-        boat_too.map(function(item){ return new P( item.x - 1,  item.y - 4); }),
-        boat_too.map(function(item){ return new P( item.x - 1, -item.y + 3); }),
-        boat_for.map(function(item){ return new P( item.x - 3,  item.y - 2); }),
-        boat_up.map( function(item){ return new P( item.x - 4, -item.y + 3); }),
-        boat_for.map(function(item){ return new P(-item.x + 2,  item.y - 2); }),
-        boat_too.map(function(item){ return new P(-item.x + 0, -item.y + 3); }),
-        boat_too.map(function(item){ return new P(-item.x + 0,  item.y - 4); }),
-        boat_for.map(function(item){ return new P(-item.x + 2, -item.y + 1); })
+        boat_up.map( (item) => new P( item.x - 4,  item.y - 4)),
+        boat_for.map((item) => new P( item.x - 3, -item.y + 1)),
+        boat_too.map((item) => new P( item.x - 1,  item.y - 4)),
+        boat_too.map((item) => new P( item.x - 1, -item.y + 3)),
+        boat_for.map((item) => new P( item.x - 3,  item.y - 2)),
+        boat_up.map((item) => new P( item.x - 4, -item.y + 3)),
+        boat_for.map((item) => new P(-item.x + 2,  item.y - 2)),
+        boat_too.map((item) => new P(-item.x + 0, -item.y + 3)),
+        boat_too.map((item) => new P(-item.x + 0,  item.y - 4)),
+        boat_for.map((item) => new P(-item.x + 2, -item.y + 1)),
       ],
       
     //--
     star : 
       [
-        star_up.map(function(item){ return new P( item.x - 4,  item.y - 4); }),
-        star_up.map(function(item){ return new P(-item.x + 3, -item.y + 3); }),
-        star_up.map(function(item){ return new P( item.x - 4,  item.y - 4); }),
-        star_up.map(function(item){ return new P(-item.x + 3, -item.y + 3); }),
-        star_up.map(function(item){ return new P( item.x - 4,  item.y - 4); }),
-        star_up.map(function(item){ return new P(-item.x + 3, -item.y + 3); }),
-        star_up.map(function(item){ return new P( item.x - 4,  item.y - 4); }),
-        star_up.map(function(item){ return new P(-item.x + 3, -item.y + 3); }),
-        star_up.map(function(item){ return new P( item.x - 4,  item.y - 4); }),
-        star_up.map(function(item){ return new P(-item.x + 3, -item.y + 3); })
+        star_up.map((item) => new P( item.x - 4,  item.y - 4)),
+        star_up.map((item) => new P(-item.x + 3, -item.y + 3)),
+        star_up.map((item) => new P( item.x - 4,  item.y - 4)),
+        star_up.map((item) => new P(-item.x + 3, -item.y + 3)),
+        star_up.map((item) => new P( item.x - 4,  item.y - 4)),
+        star_up.map((item) => new P(-item.x + 3, -item.y + 3)),
+        star_up.map((item) => new P( item.x - 4,  item.y - 4)),
+        star_up.map((item) => new P(-item.x + 3, -item.y + 3)),
+        star_up.map((item) => new P( item.x - 4,  item.y - 4)),
+        star_up.map((item) => new P(-item.x + 3, -item.y + 3)),
       ]
   }
  
