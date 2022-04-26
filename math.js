@@ -20,9 +20,10 @@ function makeCanvas(canvasId) {
   g.lineWidth = 1;
   scale = 10;
   penrose.scale = scale;
-  canvas.width = 10;
-  canvas.heith = 10;
-  figure(penrose.BLUE, offset, penrose.penta[penrose.down[0]]);
+  canvas.width = 10 * scale;
+  canvas.heith = 10 * scale;
+  console.log(`figure(${penrose.BLUE},${JSON.stringify(new P(5,5))})`)
+  figure(penrose.BLUE, new P(5,5), penrose.penta[penrose.down[0]]);
 
 }
 /**
@@ -39,70 +40,71 @@ function drawFirstExpansion(canvasId) {
   scale = 10;
   penrose.scale = scale;
 
-  let y = 15;
 
-  pUp([10, y]);
-  pDown([50, y]);
+  y = 25;
 
-  y += 20;
-  p2Up(0, [10, y]);
-  p2Up(1, [30, y]);
-  p2Up(2, [50, y]);
-  p2Up(3, [70, y]);
-  p2Up(4, [90, y]);
+  pUp(toP([10, y]));
+  pDown(toP([50, y]));
 
   y += 20;
-  p2Down(0, [10, y]);
-  p2Down(1, [30, y]);
-  p2Down(2, [50, y]);
-  p2Down(3, [70, y]);
-  p2Down(4, [90, y]);
+  p2Up(0, toP([10, y]));
+  p2Up(1, toP([30, y]));
+  p2Up(2, toP([50, y]));
+  p2Up(3, toP([70, y]));
+  p2Up(4, toP([90, y]));
 
   y += 20;
-  p4Up(0, [10, y]);
-  p4Up(1, [30, y]);
-  p4Up(2, [50, y]);
-  p4Up(3, [70, y]);
-  p4Up(4, [90, y]);
+  p2Down(0, toP([10, y]));
+  p2Down(1, toP([30, y]));
+  p2Down(2, toP([50, y]));
+  p2Down(3, toP([70, y]));
+  p2Down(4, toP([90, y]));
 
   y += 20;
-  p4Down(0, [10, y]);
-  p4Down(1, [30, y]);
-  p4Down(2, [50, y]);
-  p4Down(3, [70, y]);
-  p4Down(4, [90, y]);
+  p4Up(0, toP([10, y]));
+  p4Up(1, toP([30, y]));
+  p4Up(2, toP([50, y]));
+  p4Up(3, toP([70, y]));
+  p4Up(4, toP([90, y]));
+
+  y += 20;
+  p4Down(0, toP([10, y]));
+  p4Down(1, toP([30, y]));
+  p4Down(2, toP([50, y]));
+  p4Down(3, toP([70, y]));
+  p4Down(4, toP([90, y]));
   y += 25;
 
-  starUp([15, y]);
-  starDown([55, y]);
+  starUp(toP([15, y]));
+  starDown(toP([55, y]));
 
   y += 25;
-  diamondUp(0, [10, y]);
-  diamondUp(1, [35, y]);
-  diamondUp(2, [55, y]);
-  diamondUp(3, [75, y]);
-  diamondUp(4, [100, y]);
+  diamondUp(0, toP([10, y]));
+  diamondUp(1, toP([35, y]));
+  diamondUp(2, toP([55, y]));
+  diamondUp(3, toP([75, y]));
+  diamondUp(4, toP([100, y]));
 
   y += 25;
-  diamondDown(0, [10, y]);
-  diamondDown(1, [35, y]);
-  diamondDown(2, [55, y]);
-  diamondDown(3, [75, y]);
-  diamondDown(4, [100, y]);
+  diamondDown(0, toP([10, y]));
+  diamondDown(1, toP([35, y]));
+  diamondDown(2, toP([55, y]));
+  diamondDown(3, toP([75, y]));
+  diamondDown(4, toP([100, y]));
 
   y += 25;
-  boatUp(0, [15, y]);
-  boatUp(1, [40, y]);
-  boatUp(2, [60, y]);
-  boatUp(3, [85, y]);
-  boatUp(4, [105, y]);
+  boatUp(0, toP([15, y]));
+  boatUp(1, toP([40, y]));
+  boatUp(2, toP([60, y]));
+  boatUp(3, toP([85, y]));
+  boatUp(4, toP([105, y]));
 
   y += 25;
-  boatDown(0, [15, y]);
-  boatDown(1, [40, y]);
-  boatDown(2, [60, y]);
-  boatDown(3, [85, y]);
-  boatDown(4, [105, y]);
+  boatDown(0, toP([15, y]));
+  boatDown(1, toP([40, y]));
+  boatDown(2, toP([60, y]));
+  boatDown(3, toP([85, y]));
+  boatDown(4, toP([105, y]));
 
   //drawTest2("test-2");
 }
@@ -122,42 +124,42 @@ function drawSecondExpansion(canvalId) {
   scale = 5;
   penrose.scale = scale; // Maybe does not use it.
   let y = 25;
-  pentaUp([25, y]);
-  pentaDown([75, y]); // 
+  pentaUp(toP([25, y]));
+  pentaDown(toP([75, y])); // 
   // 1 - 4 ()
   y += 50;
-  penta2Up(0, [25, y]);
-  penta2Up(1, [75, y]);
-  penta2Up(2, [125, y]);
-  penta2Up(3, [175, y]);
-  penta2Up(4, [225, y]);
+  penta2Up(0, toP([25, y]));
+  penta2Up(1, toP([75, y]));
+  penta2Up(2, toP([125, y]));
+  penta2Up(3, toP([175, y]));
+  penta2Up(4, toP([225, y]));
   y += 55;
-  penta2Down(0, [25, y]);
-  penta2Down(1, [75, y]);
-  penta2Down(2, [125, y]);
-  penta2Down(3, [175, y]);
-  penta2Down(4, [225, y]);
+  penta2Down(0, toP([25, y]));
+  penta2Down(1, toP([75, y]));
+  penta2Down(2, toP([125, y]));
+  penta2Down(3, toP([175, y]));
+  penta2Down(4, toP([225, y]));
   y += 50;
-  penta4Up(0, [25, y]);
-  penta4Up(1, [75, y]);
-  penta4Up(2, [125, y]);
-  penta4Up(3, [175, y]);
-  penta4Up(4, [225, y]);
+  penta4Up(0, toP([25, y]));
+  penta4Up(1, toP([75, y]));
+  penta4Up(2, toP([125, y]));
+  penta4Up(3, toP([175, y]));
+  penta4Up(4, toP([225, y]));
   y += 55;
-  penta4Down(0, [25, y]);
-  penta4Down(1, [75, y]);
-  penta4Down(2, [125, y]);
-  penta4Down(3, [175, y]);
-  penta4Down(4, [225, y]);
+  penta4Down(0, toP([25, y]));
+  penta4Down(1, toP([75, y]));
+  penta4Down(2, toP([125, y]));
+  penta4Down(3, toP([175, y]));
+  penta4Down(4, toP([225, y]));
   y += 60  // one thru four
-  star0Up([35,y]);
-  star0Down([90,y]);
+  star0Up(toP([35,y]));
+  star0Down(toP([90,y]));
   y += 60  // one thru four
-  boat2Up(1,[35, y]);
-  boat2Down(3,[90, y]);
+  boat2Up(1, toP([35, y]));
+  boat2Down(3, toP([90, y]));
   y += 60  // one thru four
-  diamond4Up(2, [35, y]);
-  diamond4Down(5, [90, y]);
+  diamond4Up(2, toP([35, y]));
+  diamond4Down(5, toP([90, y]));
 }
 
 /***
@@ -166,13 +168,18 @@ function drawSecondExpansion(canvalId) {
 /**
  * This is the routine that ultimately renders the 'tile'
  * @param {*} fill One of the colors
- * @param {*} offset Location to drow
- * @param {*} shape Array of 'pixels'
+ * @param {*} offset Location in P format
+ * @param {*} shape centered array of 'pixels' centered.
  * Prerequisites: Globals g and scale
  */
 function figure(fill, offset, shape) {
   g.fillStyle   = fill;  //e.g penrose.ORANGE;
-  g.strokeStyle = penrose.OUTLINE;
+  if (scale < 5) {
+    g.strokeStyle = penrose.OUTLINE;
+  } else {
+    g.stokeStyle = null;
+  }
+
   const minPoint = new P(offset.x, offset.y);
   const maxPoint = new P(offset.x, offset.y);
   const bounds = { minPoint, maxPoint };
@@ -229,29 +236,26 @@ function p4Color(n,m)
 
 /**
  * Pentagons, Stars, Diamonds(S4), and Boats (S2).
- * @param {*} loc 
+ * @param {*} offset 
  */
-function pUp(loc)
+function pUp(offset)
 {
-  var offset = new P(loc[0],loc[1]);
   figure(penrose.BLUE,   offset, penrose.penta[penrose.down[0]]);
   
   for (var i = 0; i<5; i++)
     figure(penrose.YELLOW, offset.tr(penrose.p[penrose.up[i]]), penrose.penta[penrose.up[i]]);
 }
 
-function pDown(loc)
+function pDown(offset)
 {
-  var offset = new P(loc[0],loc[1]);
   figure(penrose.BLUE,   offset, penrose.penta[penrose.up[0]]);
 
   for (var i = 0; i<5; i++)
     figure(penrose.YELLOW, offset.tr(penrose.p[penrose.down[i]]), penrose.penta[penrose.down[i]]); // correct
 }
 
-function p2Up(n, loc)
+function p2Up(n, offset)
 {
-  var offset = new P(loc[0],loc[1]);
   figure(penrose.BLUE, offset, penrose.penta[penrose.down[0]]);
 
 
@@ -263,9 +267,8 @@ function p2Up(n, loc)
   }
 }
 
-function p2Down(n, loc)
+function p2Down(n, offset)
 {
-  var offset = new P(loc[0],loc[1]);
   figure(penrose.BLUE,   offset, penrose.penta[penrose.up[0]]);
   
   for (var i = 0; i<5; i++)
@@ -276,9 +279,8 @@ function p2Down(n, loc)
   }
 }
 
-function p4Up(n, loc)
+function p4Up(n, offset)
 {
-  var offset = new P(loc[0],loc[1]);
   figure(penrose.BLUE,   offset, penrose.penta[penrose.down[0]]);
 
   for (var i = 0; i<5; i++)
@@ -293,9 +295,8 @@ function p4Up(n, loc)
   }
 }
 
-function p4Down(n, loc)
+function p4Down(n, offset)
 {
-  var offset = new P(loc[0],loc[1]);
   figure(penrose.BLUE, offset, penrose.penta[penrose.up[0]]);
   var prev = (n + 4) % 5;
   var next = (n + 1) % 5;
@@ -310,9 +311,8 @@ function p4Down(n, loc)
   }
 }
 
-function starUp(loc)
+function starUp(offset)
 {
-  var offset = new P(loc[0],loc[1]);
   figure(penrose.BLUE,   offset, penrose.star[penrose.down[0]]);
   
   for (var i = 0; i<5; i++)
@@ -322,9 +322,8 @@ function starUp(loc)
   }
 }
 
-function starDown(loc)
+function starDown(offset)
 {
-  var offset = new P(loc[0],loc[1]);
   figure(penrose.BLUE,   offset, penrose.star[penrose.up[0]]);
   for (var i = 0; i<5; i++)
   {  
@@ -333,27 +332,24 @@ function starDown(loc)
   }
 }
 
-function diamondUp(n, loc)
+function diamondUp(n, offset)
 {
-  var offset = new P(loc[0],loc[1]);
   figure(penrose.BLUE,   offset, penrose.star[penrose.down[0]]);
   
   figure(penrose.ORANGE, offset.tr(penrose.s[penrose.up[n]]), penrose.penta[penrose.down[n]]);
   figure(penrose.BLUE,   offset.tr(penrose.t[penrose.up[n]]), penrose.boat[penrose.up[n]]);
 }
 
-function diamondDown(n, loc)
+function diamondDown(n, offset)
 {
-  var offset = new P(loc[0],loc[1]);
   figure(penrose.BLUE,   offset, penrose.star[penrose.up[0]]);
 
   figure(penrose.ORANGE, offset.tr(penrose.s[penrose.down[n]]), penrose.penta[penrose.up[n]]);
   figure(penrose.BLUE,   offset.tr(penrose.t[penrose.down[n]]), penrose.boat[penrose.down[n]]);
 }
 
-function boatUp(n, loc)
+function boatUp(n, offset)
 {
-  var offset = new P(loc[0],loc[1]);
   figure(penrose.BLUE,   offset, penrose.star[penrose.down[0]]);
   
   var prev = (n + 4) % 5;
@@ -368,9 +364,8 @@ function boatUp(n, loc)
   }  
 }
 
-function boatDown(n, loc)
+function boatDown(n, offset)
 {
-  var offset = new P(loc[0],loc[1]);
   figure(penrose.BLUE,   offset, penrose.star[penrose.up[0]]);
 
   var prev = (n + 4) % 5;
@@ -385,7 +380,7 @@ function boatDown(n, loc)
   }
 }
 
-// N = 1 to 5
+// N = 1 to 5 (garbage?)
 function point(x,y)
 {
   return new P(x,y);
@@ -430,34 +425,34 @@ function point(x,y)
  * 
  * */                
 
-const pWheel0 = new Wheel([0, -6], [3, -4], [5, -2]);
-const sWheel0 = new Wheel([0, -5], [3, -5], [5, -1]);
-const tWheel0 = new Wheel([0, -8], [5, -8], [8, -2]);
+const pWheel0 = new Wheel(toP([0, -6]), toP([3, -4]), toP([5, -2]));
+const sWheel0 = new Wheel(toP([0, -5]), toP([3, -5]), toP([5, -1]));
+const tWheel0 = new Wheel(toP([0, -8]), toP([5, -8]), toP([8, -2]));
 
-const pWheel = new Wheel([0, -14], [8, -12], [13, -4]);
-const sWheel = new Wheel([0, -15], [8, -11], [13, -5]);
-const tWheel = new Wheel([0, -24], [13, -18], [21, -8]);
+const pWheel = new Wheel(toP([0, -14]), toP([8, -12]), toP([13, -4]));
+const sWheel = new Wheel(toP([0, -15]), toP([8, -11]), toP([13, -5]));
+const tWheel = new Wheel(toP([0, -24]), toP([13, -18]), toP([21, -8]));
 
 pWheel.up.forEach(it => console.log(it));
 pWheel.down.forEach(it => console.log(it));
 function pentaUp(base) {
 
   pDown(base);
-  p2Up(0, offset(base, pWheel.up[0]));
-  p2Up(1, offset(base, pWheel.up[1]));
-  p2Up(2, offset(base, pWheel.up[2]));
-  p2Up(3, offset(base, pWheel.up[3]));
-  p2Up(4, offset(base, pWheel.up[4]));
+  p2Up(0, base.tr(pWheel.up[0]));
+  p2Up(1, base.tr(pWheel.up[1]));
+  p2Up(2, base.tr(pWheel.up[2]));
+  p2Up(3, base.tr(pWheel.up[3]));
+  p2Up(4, base.tr(pWheel.up[4]));
 }
 
 function pentaDown(base) {
   pUp(base);
 
-  p2Down(0, offset(base, pWheel.down[0]));
-  p2Down(1, offset(base, pWheel.down[1]));
-  p2Down(2, offset(base, pWheel.down[2]));
-  p2Down(3, offset(base, pWheel.down[3]));
-  p2Down(4, offset(base, pWheel.down[4]));
+  p2Down(0, base.tr(pWheel.down[0]));
+  p2Down(1, base.tr(pWheel.down[1]));
+  p2Down(2, base.tr(pWheel.down[2]));
+  p2Down(3, base.tr(pWheel.down[3]));
+  p2Down(4, base.tr(pWheel.down[4]));
 }                
 
 
@@ -475,22 +470,22 @@ function penta2Up(angle, base) {
 
   switch (angle) {
     case 0:
-      p2Up(0, offset(base, [0, -14]));
-      p2Up(1, offset(base, [13, -4]));
-      p4Up(1, offset(base, [8, 12]));
-      p4Up(4, offset(base, [-8, 12]));
-      p2Up(4, offset(base, [-13, -4]));
-      diamondDown(0, offset(base, [0, 15]))
+      p2Up(0, base.tr(toP([0, -14])));
+      p2Up(1, base.tr(toP([13, -4])));
+      p4Up(1, base.tr(toP([8, 12])));
+      p4Up(4, base.tr(toP([-8, 12])));
+      p2Up(4, base.tr(toP([-13, -4])));
+      diamondDown(0, base.tr(toP([0, 15])))
       break;
     default:
     
-      p2Up(norm(0 + angle), offset(base, pWheel.up[norm(0 + angle)]));
-      p2Up(norm(1 + angle), offset(base, pWheel.up[norm(1 + angle)]));
-      p4Up(norm(2 + angle - 1), offset(base, pWheel.up[norm(2 + angle)]));
-      p4Up(norm(3 + angle + 1), offset(base, pWheel.up[norm(3 + angle)]));
-      p2Up(norm(4 + angle), offset(base, pWheel.up[norm(4 + angle)]));
+      p2Up(norm(0 + angle), base.tr(pWheel.up[norm(0 + angle)]));
+      p2Up(norm(1 + angle), base.tr(pWheel.up[norm(1 + angle)]));
+      p4Up(norm(2 + angle - 1), base.tr(pWheel.up[norm(2 + angle)]));
+      p4Up(norm(3 + angle + 1), base.tr(pWheel.up[norm(3 + angle)]));
+      p2Up(norm(4 + angle), base.tr(pWheel.up[norm(4 + angle)]));
 
-      diamondDown(angle, offset(base, sWheel.down[angle]));
+      diamondDown(angle, base.tr(sWheel.down[angle]));
 
   }
 }
@@ -500,31 +495,31 @@ function penta2Down(angle, base) {
 
   switch (angle) {
     case 0:
-      p2Down(0, offset(base, [0, 14])); 
-      p2Down(1, offset(base, [-13, 4]));
-      p4Down(2 - 1, offset(base, [-8, -12]));
-      p4Down(3 + 1, offset(base, [8, -12]));
-      p2Down(4, offset(base, [13, 4]));
+      p2Down(0, base.tr(toP([0, 14]))); 
+      p2Down(1, base.tr(toP([-13, 4])));
+      p4Down(2 - 1, base.tr(toP([-8, -12])));
+      p4Down(3 + 1, base.tr(toP([8, -12])));
+      p2Down(4, base.tr(toP([13, 4])));
 
-      diamondUp(0, offset(base, [0, -15]));
+      diamondUp(0, base.tr(toP([0, -15])));
       break;
     case 1:
-      p2Down(1, offset(base, [-13, 4]));
-      p2Down(2, offset(base, [-8, -12]));
-      p4Down(3 - 1, offset(base, [8, -12]));
-      p4Down(4 + 1, offset(base, [13, 4]));
-      p2Down(0, offset(base, [0, 14]));      
+      p2Down(1, base.tr(toP([-13, 4])));
+      p2Down(2, base.tr(toP([-8, -12])));
+      p4Down(3 - 1, base.tr(toP([8, -12])));
+      p4Down(4 + 1, base.tr(toP([13, 4])));
+      p2Down(0, base.tr(toP([0, 14])));      
       
-      diamondUp(1, offset(base, [13, -5]));
+      diamondUp(1, base.tr(toP([13, -5])));
       break;
     default:
-      p2Down(norm(0 + angle), offset(base, pWheel.down[norm(0 + angle)]));
-      p2Down(norm(1 + angle), offset(base, pWheel.down[norm(1 + angle)]));
-      p4Down(norm(2 + angle - 1), offset(base, pWheel.down[norm(2 + angle)]));
-      p4Down(norm(3 + angle + 1), offset(base, pWheel.down[norm(3 + angle)]));
-      p2Down(norm(4 + angle),    offset(base, pWheel.down[norm(4 + angle)]));
+      p2Down(norm(0 + angle), base.tr(pWheel.down[norm(0 + angle)]));
+      p2Down(norm(1 + angle), base.tr(pWheel.down[norm(1 + angle)]));
+      p4Down(norm(2 + angle - 1), base.tr(pWheel.down[norm(2 + angle)]));
+      p4Down(norm(3 + angle + 1), base.tr(pWheel.down[norm(3 + angle)]));
+      p2Down(norm(4 + angle),    base.tr(pWheel.down[norm(4 + angle)]));
 
-      diamondUp(angle, offset(base, sWheel.up[angle]));
+      diamondUp(angle, base.tr(sWheel.up[angle]));
 
   }
 }
@@ -540,56 +535,56 @@ function penta4Up(angle, base) {
 
   pDown(base);
 
-  p2Up(norm(0 + angle), offset(base, pWheel.up[norm(0 + angle)]));
-  p4Up(norm(1 + angle -1), offset(base, pWheel.up[norm(1 + angle)]));
-  p4Up(norm(2 + angle + 1), offset(base, pWheel.up[norm(2 + angle)]));
-  p4Up(norm(3 + angle - 1), offset(base, pWheel.up[norm(3 + angle)]));
-  p4Up(norm(4 + angle +1), offset(base, pWheel.up[norm(4 + angle)]));
+  p2Up(norm(0 + angle), base.tr(pWheel.up[norm(0 + angle)]));
+  p4Up(norm(1 + angle -1), base.tr(pWheel.up[norm(1 + angle)]));
+  p4Up(norm(2 + angle + 1), base.tr(pWheel.up[norm(2 + angle)]));
+  p4Up(norm(3 + angle - 1), base.tr(pWheel.up[norm(3 + angle)]));
+  p4Up(norm(4 + angle +1), base.tr(pWheel.up[norm(4 + angle)]));
 
-  diamondDown(norm(angle + 1), offset(base, sWheel.down[norm(angle + 1)]));
-  diamondDown(norm(angle - 1), offset(base, sWheel.down[norm(angle - 1)]));
+  diamondDown(norm(angle + 1), base.tr(sWheel.down[norm(angle + 1)]));
+  diamondDown(norm(angle - 1), base.tr(sWheel.down[norm(angle - 1)]));
 }
 
 function penta4Down(angle, base) {
   pUp(base);
 
-  p2Down(norm(0 + angle), offset(base, pWheel.down[norm(0 + angle)]));
-  p4Down(norm(1 + angle - 1), offset(base, pWheel.down[norm(1 + angle)]));
-  p4Down(norm(2 + angle + 1), offset(base, pWheel.down[norm(2 + angle)]));
-  p4Down(norm(3 + angle - 1), offset(base, pWheel.down[norm(3 + angle)]));
-  p4Down(norm(4 + angle + 1), offset(base, pWheel.down[norm(4 + angle)]));
+  p2Down(norm(0 + angle), base.tr(pWheel.down[norm(0 + angle)]));
+  p4Down(norm(1 + angle - 1), base.tr(pWheel.down[norm(1 + angle)]));
+  p4Down(norm(2 + angle + 1), base.tr(pWheel.down[norm(2 + angle)]));
+  p4Down(norm(3 + angle - 1), base.tr(pWheel.down[norm(3 + angle)]));
+  p4Down(norm(4 + angle + 1), base.tr(pWheel.down[norm(4 + angle)]));
 
-  diamondUp(norm(angle + 1), offset(base, sWheel.up[norm(angle + 1)]));
-  diamondUp(norm(angle - 1), offset(base, sWheel.up[norm(angle - 1)]));
+  diamondUp(norm(angle + 1), base.tr(sWheel.up[norm(angle + 1)]));
+  diamondUp(norm(angle - 1), base.tr(sWheel.up[norm(angle - 1)]));
 }
 
 function star0Up(base) {
   starDown(base);
 
-  p4Down(0, offset(base, sWheel.up[0]));
-  p4Down(1, offset(base, sWheel.up[1]));
-  p4Down(2, offset(base, sWheel.up[2]));
-  p4Down(3, offset(base, sWheel.up[3]));
-  p4Down(4, offset(base, sWheel.up[4]));
-  boatUp(0, offset(base, tWheel.up[0]));
-  boatUp(1, offset(base, tWheel.up[1]));
-  boatUp(2, offset(base, tWheel.up[2]));
-  boatUp(3, offset(base, tWheel.up[3]));
-  boatUp(4, offset(base, tWheel.up[4]));
+  p4Down(0, base.tr(sWheel.up[0]));
+  p4Down(1, base.tr(sWheel.up[1]));
+  p4Down(2, base.tr(sWheel.up[2]));
+  p4Down(3, base.tr(sWheel.up[3]));
+  p4Down(4, base.tr(sWheel.up[4]));
+  boatUp(0, base.tr(tWheel.up[0]));
+  boatUp(1, base.tr(tWheel.up[1]));
+  boatUp(2, base.tr(tWheel.up[2]));
+  boatUp(3, base.tr(tWheel.up[3]));
+  boatUp(4, base.tr(tWheel.up[4]));
 }
 function star0Down(base) {
   starUp(base);
 
-  p4Up(0, offset(base, sWheel.down[0]));
-  p4Up(1, offset(base, sWheel.down[1]));
-  p4Up(2, offset(base, sWheel.down[2]));
-  p4Up(3, offset(base, sWheel.down[3]));
-  p4Up(4, offset(base, sWheel.down[4]));
-  boatDown(0, offset(base, tWheel.down[0]));
-  boatDown(1, offset(base, tWheel.down[1]));
-  boatDown(2, offset(base, tWheel.down[2]));
-  boatDown(3, offset(base, tWheel.down[3]));
-  boatDown(4, offset(base, tWheel.down[4]));
+  p4Up(0, base.tr(sWheel.down[0]));
+  p4Up(1, base.tr(sWheel.down[1]));
+  p4Up(2, base.tr(sWheel.down[2]));
+  p4Up(3, base.tr(sWheel.down[3]));
+  p4Up(4, base.tr(sWheel.down[4]));
+  boatDown(0, base.tr(tWheel.down[0]));
+  boatDown(1, base.tr(tWheel.down[1]));
+  boatDown(2, base.tr(tWheel.down[2]));
+  boatDown(3, base.tr(tWheel.down[3]));
+  boatDown(4, base.tr(tWheel.down[4]));
 }
 
 
@@ -597,34 +592,34 @@ function star0Down(base) {
 function boat2Down(angle, base) {
   starUp(base);
 
-  p4Up(norm(0 + angle), offset(base, sWheel.down[norm(0 + angle)]));
-  p4Up(norm(1 + angle), offset(base, sWheel.down[norm(1 + angle)]));
-  p4Up(norm(4 + angle), offset(base, sWheel.down[norm(4 + angle)]));
+  p4Up(norm(0 + angle), base.tr(sWheel.down[norm(0 + angle)]));
+  p4Up(norm(1 + angle), base.tr(sWheel.down[norm(1 + angle)]));
+  p4Up(norm(4 + angle), base.tr(sWheel.down[norm(4 + angle)]));
 
-  boatDown(norm(0 + angle), offset(base, tWheel.down[norm(0 + angle)]));
-  boatDown(norm(1 + angle), offset(base, tWheel.down[norm(1 + angle)]));
-  boatDown(norm(4 + angle), offset(base, tWheel.down[norm(4 + angle)]));
+  boatDown(norm(0 + angle), base.tr(tWheel.down[norm(0 + angle)]));
+  boatDown(norm(1 + angle), base.tr(tWheel.down[norm(1 + angle)]));
+  boatDown(norm(4 + angle), base.tr(tWheel.down[norm(4 + angle)]));
 
 }
 function boat2Up(angle, base) {
   starDown(base);
 
-  p4Down(norm(0 + angle), offset(base, sWheel.up[norm(0 + angle)]));
-  p4Down(norm(1 + angle), offset(base, sWheel.up[norm(1 + angle)]));
-  p4Down(norm(4 + angle), offset(base, sWheel.up[norm(4 + angle)]));
+  p4Down(norm(0 + angle), base.tr(sWheel.up[norm(0 + angle)]));
+  p4Down(norm(1 + angle), base.tr(sWheel.up[norm(1 + angle)]));
+  p4Down(norm(4 + angle), base.tr(sWheel.up[norm(4 + angle)]));
 
-  boatUp(norm(0 + angle), offset(base, tWheel.up[norm(0 + angle)]));
-  boatUp(norm(1 + angle), offset(base, tWheel.up[norm(1 + angle)]));
-  boatUp(norm(4 + angle), offset(base, tWheel.up[norm(4 + angle)]));
+  boatUp(norm(0 + angle), base.tr(tWheel.up[norm(0 + angle)]));
+  boatUp(norm(1 + angle), base.tr(tWheel.up[norm(1 + angle)]));
+  boatUp(norm(4 + angle), base.tr(tWheel.up[norm(4 + angle)]));
 }
 function diamond4Down(angle, base) {
   starUp(base);
-  p4Up(norm(0 + angle), offset(base, sWheel.down[norm(0 + angle)]));
+  p4Up(norm(0 + angle), base.tr(sWheel.down[norm(0 + angle)]));
 
-  boatDown(norm(0 + angle), offset(base, tWheel.down[norm(0 + angle)]));
+  boatDown(norm(0 + angle), base.tr(tWheel.down[norm(0 + angle)]));
 }
 function diamond4Up(angle, base) {
   starDown(base);
-  p4Down(norm(0 + angle), offset(base, sWheel.up[norm(0 + angle)]));
-  boatUp(norm(0 + angle), offset(base, tWheel.up[norm(0 + angle)]));
+  p4Down(norm(0 + angle), base.tr(sWheel.up[norm(0 + angle)]));
+  boatUp(norm(0 + angle), base.tr(tWheel.up[norm(0 + angle)]));
 }

@@ -14,8 +14,9 @@ class P {
   hr = () => new P(-this.x, this.y)
   div = (d) => new P(this.x / d, this.y / d)
   copy = (d) => new P(this.x, this.y)
+  toLoc = () => [this.x, this.y]
 }
-
+const toP = (loc) => new P(loc[0], loc[1])
 /**
  * Mutablee class
  */
@@ -79,6 +80,7 @@ class Bounds {
 /**
  * To do: convert to points
  */
+/*
 class Wheel {
   constructor(p0, p1, p2) {
     this.list = [
@@ -102,8 +104,8 @@ class Wheel {
     return [this.list[5], this.list[7], this.list[9], this.list[1], this.list[3],];
   }
 }
-
-class Wheel2 {
+*/
+class Wheel {
   constructor(p0, p1, p2) {
     this.list = [
       p0.copy(), 
