@@ -16,9 +16,12 @@ class P {
   copy = (d) => new P(this.x, this.y)
   toLoc = () => [this.x, this.y]
 }
-const toP = (loc) => new P(loc[0], loc[1])
+
+const toP = (loc) => new P(loc[0], loc[1]);
+const p = (x, y) => new P(x, y);
+
 /**
- * Mutablee class
+ * Mutable class
  */
 class Bounds {
   constructor() {
@@ -34,14 +37,14 @@ class Bounds {
   addPoint(offset, point) {
     const logicalPoint = (new P(offset.x + point.x, offset.y + point.y));
     if (!this.maxPoint || !this.minPoint) {
-      this.minPoint = new P(p.x, p.y); // private copies, not references
-      this.maxPoint = new P(p.x, p.y);
+      this.minPoint = logicalPoint.copy(); // private copies, not references
+      this.maxPoint = logicalPoint.copy();
       return;
     }
 
     if(logicalPoint.x < this.minPoint.x) {
       this.minPoint.x = logicalPoint.x;
-    } else if(logicalPoint.x > bounds.maxPoint.x) {
+    } else if(logicalPoint.x > this.maxPoint.x) {
       this.maxPoint.x = logicalPoint.x;
     }
     if (logicalPoint.y < this.minPoint.y) {
@@ -77,34 +80,6 @@ class Bounds {
   }
 }
 
-/**
- * To do: convert to points
- */
-/*
-class Wheel {
-  constructor(p0, p1, p2) {
-    this.list = [
-      [p0[0], p0[1]],  // 0
-      [p1[0], p1[1]],  // 1
-      [p2[0], p2[1]],  // 2
-      [p2[0], -p2[1]], // 2.y 3
-      [p1[0], -p1[1]], // 1.y 4
-      [p0[0], -p0[1]], // 0.y 5
-      [-p1[0], -p1[1]], // 1.xy 6
-      [-p2[0], -p2[1]], // 2.xy 7
-      [-p2[0], p2[1]], //2.x
-      [-p1[0], p1[1]],  // 1.x
-    ];
-  }
-   
-  get up() {
-    return [this.list[0], this.list[2], this.list[4], this.list[6], this.list[8],];
-  }
-  get down() {
-    return [this.list[5], this.list[7], this.list[9], this.list[1], this.list[3],];
-  }
-}
-*/
 class Wheel {
   constructor(p0, p1, p2) {
     this.list = [
@@ -127,17 +102,13 @@ class Wheel {
     return [this.list[5], this.list[7], this.list[9], this.list[1], this.list[3],];
   }
 }
-// API here.
-//var penrose = {};
 
 // Build the api
 var penrose = (function()
 {
 
   var id;  
-  //var scale;
   var offset = {};
-  //var g;
 
   var penta_up = [ [2,0],[3,0],
              [1,1],[2,1],[3,1],[4,1],
@@ -200,6 +171,7 @@ var penrose = (function()
       [0,5],                        [5,5]]
   .map(function(item){return new P(item[0],item[1])});
 
+  // This is replaced by Wheel
   // Pentagon center to pentagon center
   var P0 = new P(0,-6);
   var P1 = new P(3,-4);

@@ -2,6 +2,7 @@
 // Graphics globals
 let g;
 let scale;
+let stroke; // New
 
 function draw() {
   console.log('make canvas')
@@ -9,8 +10,9 @@ function draw() {
   drawFirstExpansion('pentagons');
   drawSecondExpansion('expansion-2');
 }
-const offset = (a, b) => [a[0] + b[0], a[1] + b[1]]
+//const offset = (a, b) => [a[0] + b[0], a[1] + b[1]]
 const norm = (n) => (n % 5 + 5) % 5
+
 
 function makeCanvas(canvasId) {
   var canvas = document.getElementById(canvasId);
@@ -23,7 +25,8 @@ function makeCanvas(canvasId) {
   canvas.width = 10 * scale;
   canvas.heith = 10 * scale;
   console.log(`figure(${penrose.BLUE},${JSON.stringify(new P(5,5))})`)
-  figure(penrose.BLUE, new P(5,5), penrose.penta[penrose.down[0]]);
+  const fBounds = figure(penrose.BLUE, new P(5,5), penrose.penta[penrose.down[0]]);
+  console.log(`bounds: ${JSON.stringify(fBounds)}`);
 
 }
 /**
@@ -40,73 +43,58 @@ function drawFirstExpansion(canvasId) {
   scale = 10;
   penrose.scale = scale;
 
+  x = 8;
+  y = 9;
 
-  y = 25;
+  pUp(p(x, y));
+  pDown(p(25, y));
 
-  pUp(toP([10, y]));
-  pDown(toP([50, y]));
-
-  y += 20;
-  p2Up(0, toP([10, y]));
-  p2Up(1, toP([30, y]));
-  p2Up(2, toP([50, y]));
-  p2Up(3, toP([70, y]));
-  p2Up(4, toP([90, y]));
-
-  y += 20;
-  p2Down(0, toP([10, y]));
-  p2Down(1, toP([30, y]));
-  p2Down(2, toP([50, y]));
-  p2Down(3, toP([70, y]));
-  p2Down(4, toP([90, y]));
+  y += 18;
+  
+  for (let i = 0; i < 5; i++) {
+    p2Up(i, p(x + i * 20, y));
+  }
 
   y += 20;
-  p4Up(0, toP([10, y]));
-  p4Up(1, toP([30, y]));
-  p4Up(2, toP([50, y]));
-  p4Up(3, toP([70, y]));
-  p4Up(4, toP([90, y]));
+  for (let i = 0; i < 5; i++) {
+    p2Up(i, p(x + i * 20, y));
+  }
 
   y += 20;
-  p4Down(0, toP([10, y]));
-  p4Down(1, toP([30, y]));
-  p4Down(2, toP([50, y]));
-  p4Down(3, toP([70, y]));
-  p4Down(4, toP([90, y]));
+  for (let i = 0; i < 5; i++) {
+    p4Up(i, p(x + i * 20, y));
+  }
+  
+  y += 20;
+  for (let i = 0; i < 5; i++) {
+    p4Down(i, p(x + i * 20, y));
+  }
   y += 25;
 
-  starUp(toP([15, y]));
-  starDown(toP([55, y]));
+  starUp(p(15, y));
+  starDown(p(55, y));
+
+  x = 10;
+  y += 25;
+  for (let i = 0; i < 5; i++) {
+    diamondUp(i, p(x + i * 20, y));
+  }
+ 
+  y += 25;
+  for (let i = 0; i < 5; i++) {
+    diamondDown(i, p(x + i * 20, y));
+  }
+
+  x=15;
+  y += 25;
+  for (let i = 0; i < 5; i++) {
+    boatUp(i, p(x + i * 20, y));
+  }
 
   y += 25;
-  diamondUp(0, toP([10, y]));
-  diamondUp(1, toP([35, y]));
-  diamondUp(2, toP([55, y]));
-  diamondUp(3, toP([75, y]));
-  diamondUp(4, toP([100, y]));
-
-  y += 25;
-  diamondDown(0, toP([10, y]));
-  diamondDown(1, toP([35, y]));
-  diamondDown(2, toP([55, y]));
-  diamondDown(3, toP([75, y]));
-  diamondDown(4, toP([100, y]));
-
-  y += 25;
-  boatUp(0, toP([15, y]));
-  boatUp(1, toP([40, y]));
-  boatUp(2, toP([60, y]));
-  boatUp(3, toP([85, y]));
-  boatUp(4, toP([105, y]));
-
-  y += 25;
-  boatDown(0, toP([15, y]));
-  boatDown(1, toP([40, y]));
-  boatDown(2, toP([60, y]));
-  boatDown(3, toP([85, y]));
-  boatDown(4, toP([105, y]));
-
-  //drawTest2("test-2");
+  for (let i = 0; i < 5; i++) {
+    boatDown(i, p(x + i * 20, y));
+  }
 }
 
 /**
@@ -121,7 +109,7 @@ function drawSecondExpansion(canvalId) {
   g.fillStyle = penrose.ORANGE;
   g.strokeStyle = penrose.OUTLINE;
   g.lineWidth = 1;
-  scale = 5;
+  scale = 4;
   penrose.scale = scale; // Maybe does not use it.
   let y = 25;
   pentaUp(toP([25, y]));
@@ -174,39 +162,29 @@ function drawSecondExpansion(canvalId) {
  */
 function figure(fill, offset, shape) {
   g.fillStyle   = fill;  //e.g penrose.ORANGE;
-  if (scale < 5) {
-    g.strokeStyle = penrose.OUTLINE;
-  } else {
-    g.stokeStyle = null;
-  }
+  g.strokeStyle = penrose.OUTLINE;
 
-  const minPoint = new P(offset.x, offset.y);
-  const maxPoint = new P(offset.x, offset.y);
-  const bounds = { minPoint, maxPoint };
+  const bounds = new Bounds();
   for (const point of shape) {
     g.fillRect(  offset.x * scale + point.x * scale, offset.y * scale + point.y * scale, scale, scale);
-    g.strokeRect(offset.x * scale + point.x * scale, offset.y * scale + point.y * scale, scale, scale);
-    
-    calculateBounds(bounds, offset, point);
+    if (scale >= 5) {
+      g.strokeRect(offset.x * scale + point.x * scale, offset.y * scale + point.y * scale, scale, scale);
+    }
+    bounds.addPoint(offset, point);
   }
-
   return bounds;
 }
 
-function calculateBounds(bounds, offset, point) {
-  const logicalPoint = (new P(offset.x + point.x, offset.y + point.y));
-  if (logicalPoint.x < bounds.minPoint.x) {
-    bounds.minPoint.x = logicalPoint.y;
-  } else if (logicalPoint.x > bounds.maxPoint.x) {
-    bounds.maxPoint.x = logicalPoint.x;
+function measure(offset, shape) {
+  const bounds = new Bounds();
+  for (const point of shape) {
+    bounds.addPoint(offset, point);
   }
-  if (logicalPoint.y < bounds.minPoint.y) {
-    bounds.minPoint.y = logicalPoint.y;
-  } else if (logicalPoint.y > bounds.maxPoint.y) {
-    bounds.maxPoint.y = logicalPoint.y;
-  }
+  return bounds;
 }
+function lineFigure(fill, offset, shape) {
 
+}
 /**
  * FIRST EXPANSION METHODS
  */
@@ -240,10 +218,15 @@ function p4Color(n,m)
  */
 function pUp(offset)
 {
-  figure(penrose.BLUE,   offset, penrose.penta[penrose.down[0]]);
-  
-  for (var i = 0; i<5; i++)
-    figure(penrose.YELLOW, offset.tr(penrose.p[penrose.up[i]]), penrose.penta[penrose.up[i]]);
+  const bounds = new Bounds();
+  let fBounds = figure(penrose.BLUE,   offset, penrose.penta[penrose.down[0]]);
+  bounds.expand(fBounds);
+  for (var i = 0; i<5; i++) {
+    bounds.expand(
+      figure(penrose.YELLOW, offset.tr(penrose.p[penrose.up[i]]), penrose.penta[penrose.up[i]])
+    );
+  }
+  return bounds;
 }
 
 function pDown(offset)
@@ -425,13 +408,22 @@ function point(x,y)
  * 
  * */                
 
-const pWheel0 = new Wheel(toP([0, -6]), toP([3, -4]), toP([5, -2]));
-const sWheel0 = new Wheel(toP([0, -5]), toP([3, -5]), toP([5, -1]));
-const tWheel0 = new Wheel(toP([0, -8]), toP([5, -8]), toP([8, -2]));
+const pWheel1 = new Wheel(p(0, -6), p(3, -4), p(5, -2));
+const sWheel1 = new Wheel(p(0, -5), p(3, -5), p(5, -1));
+const tWheel1 = new Wheel(p(0, -8), p(5, -8), p(8, -2));
 
-const pWheel = new Wheel(toP([0, -14]), toP([8, -12]), toP([13, -4]));
-const sWheel = new Wheel(toP([0, -15]), toP([8, -11]), toP([13, -5]));
-const tWheel = new Wheel(toP([0, -24]), toP([13, -18]), toP([21, -8]));
+const pWheel = new Wheel(p(0, -14), p(8, -12), p(13, -4));
+const sWheel = new Wheel(p(0, -15), p(8, -11), p(13, -5));
+const tWheel = new Wheel(p(0, -24), p(13, -18), p(21, -8));
+
+// These must be adjusted.  They must switch to an algorithm too.
+const pWheel3 = new Wheel(p(0, -28), p(16, -24), p(26, -8));
+const sWheel3 = new Wheel(p(0, -30), p(16, -22), p(26, -10));
+const tWheel3 = new Wheel(p(0, -48), p(26, -36), p(42, -16));
+
+const pWheels = [null, pWheel1, pWheel, pWheel3];
+const sWheels = [null, sWheel1, sWheel, sWheel3];
+const tWheels = [null, tWheel1, tWheel, tWheel3];
 
 pWheel.up.forEach(it => console.log(it));
 pWheel.down.forEach(it => console.log(it));
