@@ -47,7 +47,8 @@ function drawFirstExpansion(canvasId) {
   y = 9;
 
   pUp(p(x, y));
-  pDown(p(25, y));
+  let bounds = pDown(p(25, y));
+  console.log(`penta5(1) ${p(25,y)} bounds: ${bounds}`)
 
   y += 18;
   
@@ -231,109 +232,144 @@ function pUp(offset)
 
 function pDown(offset)
 {
-  figure(penrose.BLUE,   offset, penrose.penta[penrose.up[0]]);
+  const bounds = new Bounds();
+  bounds.expand(
+    figure(penrose.BLUE, offset, penrose.penta[penrose.up[0]])
+  );
 
-  for (var i = 0; i<5; i++)
-    figure(penrose.YELLOW, offset.tr(penrose.p[penrose.down[i]]), penrose.penta[penrose.down[i]]); // correct
+  for (var i = 0; i<5; i++) {
+    bounds.expand(figure(penrose.YELLOW, offset.tr(penrose.p[penrose.down[i]]), penrose.penta[penrose.down[i]]));
+  }
+    
+  return bounds;
 }
 
 function p2Up(n, offset)
 {
-  figure(penrose.BLUE, offset, penrose.penta[penrose.down[0]]);
+  const bounds = new Bounds();
+  bounds.expand(
+    figure(penrose.BLUE, offset, penrose.penta[penrose.down[0]]));
 
-
-  for (var i = 0; i<5; i++)
-  {
-    figure(p2Color(n,i), offset.tr(penrose.p[penrose.up[i]]), penrose.penta[penrose.up[i]]);
-    if (i == n)
-      figure(penrose.BLUE, offset.tr(penrose.s[penrose.down[i]]), penrose.diamond[penrose.up[i]]);
+  for (var i = 0; i<5; i++) {
+    bounds.expand(figure(p2Color(n,i), offset.tr(penrose.p[penrose.up[i]]), penrose.penta[penrose.up[i]]));
+    if (i == n) {
+      bounds.expand(figure(penrose.BLUE, offset.tr(penrose.s[penrose.down[i]]), penrose.diamond[penrose.up[i]]));
+    }
   }
+  return bounds;
 }
 
 function p2Down(n, offset)
 {
-  figure(penrose.BLUE,   offset, penrose.penta[penrose.up[0]]);
+  const bounds = new Bounds();
+  bounds.expand(
+    figure(penrose.BLUE,   offset, penrose.penta[penrose.up[0]]));
   
-  for (var i = 0; i<5; i++)
-  {
-    figure(p2Color(n,i), offset.tr(penrose.p[penrose.down[i]]), penrose.penta[penrose.down[i]]);
-    if (i == n)
-      figure(penrose.BLUE, offset.tr(penrose.s[penrose.up[i]]), penrose.diamond[penrose.down[i]]);
+  for (var i = 0; i<5; i++) {
+  
+    bounds.expand(figure(p2Color(n,i), offset.tr(penrose.p[penrose.down[i]]), penrose.penta[penrose.down[i]]));
+    if (i == n) {
+      bounds.expand(figure(penrose.BLUE, offset.tr(penrose.s[penrose.up[i]]), penrose.diamond[penrose.down[i]]));
+    }
   }
+  return bounds;
 }
 
 function p4Up(n, offset)
 {
-  figure(penrose.BLUE,   offset, penrose.penta[penrose.down[0]]);
+  const bounds = new Bounds();
+  bounds.expand(
+    figure(penrose.BLUE,   offset, penrose.penta[penrose.down[0]]));
 
   for (var i = 0; i<5; i++)
   {
-    figure(p4Color(n,i), offset.tr(penrose.p[penrose.up[i]]), penrose.penta[penrose.up[i]]);
+    bounds.expand(figure(p4Color(n,i), offset.tr(penrose.p[penrose.up[i]]), penrose.penta[penrose.up[i]]));
     var prev = (n + 4) % 5;
     var next = (n + 1) % 5;
-    if ((prev == i ) || (next == i))
-    {
-      figure(penrose.BLUE, offset.tr(penrose.s[penrose.down[i]]), penrose.diamond[penrose.up[i]]);
+    if ((prev == i ) || (next == i)) {
+      bounds.expand(figure(penrose.BLUE, offset.tr(penrose.s[penrose.down[i]]), penrose.diamond[penrose.up[i]]));
     }
   }
+  return bounds;
 }
 
 function p4Down(n, offset)
 {
-  figure(penrose.BLUE, offset, penrose.penta[penrose.up[0]]);
+  const bounds = new Bounds();
+  bounds.expand(
+    figure(penrose.BLUE, offset, penrose.penta[penrose.up[0]]));
   var prev = (n + 4) % 5;
   var next = (n + 1) % 5;
   
   for (var i = 0; i<5; i++)
   {
-    figure(p4Color(n,i), offset.tr(penrose.p[penrose.down[i]]), penrose.penta[penrose.down[i]]);
+    bounds.expand(
+      figure(p4Color(n,i), offset.tr(penrose.p[penrose.down[i]]), penrose.penta[penrose.down[i]]));
     if ((prev == i ) || (next == i))
     {
-      figure(penrose.BLUE, offset.tr(penrose.s[penrose.up[i]]), penrose.diamond[penrose.down[i]]);
+      bounds.expand(
+        figure(penrose.BLUE, offset.tr(penrose.s[penrose.up[i]]), penrose.diamond[penrose.down[i]]));
     }
   }
+  return bounds;
 }
 
 function starUp(offset)
 {
-  figure(penrose.BLUE,   offset, penrose.star[penrose.down[0]]);
+  const bounds = new Bounds();
+  bounds.expand(
+    figure(penrose.BLUE,   offset, penrose.star[penrose.down[0]]));
   
   for (var i = 0; i<5; i++)
   {  
-    figure(penrose.ORANGE, offset.tr(penrose.s[penrose.up[i]]), penrose.penta[penrose.down[i]]);
-    figure(penrose.BLUE,   offset.tr(penrose.t[penrose.up[i]]), penrose.boat[penrose.up[i]]);
+    bounds.expand(
+      figure(penrose.ORANGE, offset.tr(penrose.s[penrose.up[i]]), penrose.penta[penrose.down[i]]));
+    bounds.expand(
+      figure(penrose.BLUE,   offset.tr(penrose.t[penrose.up[i]]), penrose.boat[penrose.up[i]]));
   }
+  return bounds;
 }
 
 function starDown(offset)
 {
-  figure(penrose.BLUE,   offset, penrose.star[penrose.up[0]]);
+  const bounds = new Bounds();
+  bounds.expand(figure(penrose.BLUE,   offset, penrose.star[penrose.up[0]]));
   for (var i = 0; i<5; i++)
   {  
-    figure(penrose.ORANGE, offset.tr(penrose.s[penrose.down[i]]), penrose.penta[penrose.up[i]]);
-    figure(penrose.BLUE,   offset.tr(penrose.t[penrose.down[i]]), penrose.boat[penrose.down[i]]);
+    bounds.expand(figure(penrose.ORANGE, offset.tr(penrose.s[penrose.down[i]]), penrose.penta[penrose.up[i]]));
+    bounds.expand(figure(penrose.BLUE,   offset.tr(penrose.t[penrose.down[i]]), penrose.boat[penrose.down[i]]));
   }
+  return bounds;
 }
 
 function diamondUp(n, offset)
 {
-  figure(penrose.BLUE,   offset, penrose.star[penrose.down[0]]);
+  const bounds = new Bounds();
+  bounds.expand(figure(penrose.BLUE,   offset, penrose.star[penrose.down[0]]));
   
-  figure(penrose.ORANGE, offset.tr(penrose.s[penrose.up[n]]), penrose.penta[penrose.down[n]]);
-  figure(penrose.BLUE,   offset.tr(penrose.t[penrose.up[n]]), penrose.boat[penrose.up[n]]);
+  bounds.expand(figure(penrose.ORANGE, offset.tr(penrose.s[penrose.up[n]]), penrose.penta[penrose.down[n]]));
+  bounds.expand(figure(penrose.BLUE,   offset.tr(penrose.t[penrose.up[n]]), penrose.boat[penrose.up[n]]));
+  return bounds;
 }
 
 function diamondDown(n, offset)
 {
-  figure(penrose.BLUE,   offset, penrose.star[penrose.up[0]]);
+  const bounds = new Bounds();
+  bounds.expand(
+    figure(penrose.BLUE,   offset, penrose.star[penrose.up[0]]));
 
-  figure(penrose.ORANGE, offset.tr(penrose.s[penrose.down[n]]), penrose.penta[penrose.up[n]]);
-  figure(penrose.BLUE,   offset.tr(penrose.t[penrose.down[n]]), penrose.boat[penrose.down[n]]);
+  bounds.expand(
+    figure(penrose.ORANGE, offset.tr(penrose.s[penrose.down[n]]), penrose.penta[penrose.up[n]]));
+  bounds.expand(
+    figure(penrose.BLUE,   offset.tr(penrose.t[penrose.down[n]]), penrose.boat[penrose.down[n]]));
+  return bounds;
 }
 
 function boatUp(n, offset)
 {
-  figure(penrose.BLUE,   offset, penrose.star[penrose.down[0]]);
+  const bounds = new Bounds();
+  bounds.expand(
+  figure(penrose.BLUE,   offset, penrose.star[penrose.down[0]]));
   
   var prev = (n + 4) % 5;
   var next = (n + 1) % 5;
@@ -341,15 +377,20 @@ function boatUp(n, offset)
   {  
     if (prev == i || n == i || next == i)
     {
-      figure(penrose.ORANGE, offset.tr(penrose.s[penrose.up[i]]), penrose.penta[penrose.down[i]]);
-      figure(penrose.BLUE,   offset.tr(penrose.t[penrose.up[i]]), penrose.boat[penrose.up[i]]);
+      bounds.expand(
+        figure(penrose.ORANGE, offset.tr(penrose.s[penrose.up[i]]), penrose.penta[penrose.down[i]]));
+      bounds.expand(
+        figure(penrose.BLUE,   offset.tr(penrose.t[penrose.up[i]]), penrose.boat[penrose.up[i]]));
     }
   }  
+  return bounds;
 }
 
 function boatDown(n, offset)
 {
-  figure(penrose.BLUE,   offset, penrose.star[penrose.up[0]]);
+  const bounds = new Bounds();
+  bounds.expand(
+    figure(penrose.BLUE,   offset, penrose.star[penrose.up[0]]));
 
   var prev = (n + 4) % 5;
   var next = (n + 1) % 5;
@@ -357,10 +398,11 @@ function boatDown(n, offset)
   {  
     if (prev == i || n == i || next == i)
     {
-      figure(penrose.ORANGE, offset.tr(penrose.s[penrose.down[i]]), penrose.penta[penrose.up[i]]);
-      figure(penrose.BLUE,   offset.tr(penrose.t[penrose.down[i]]), penrose.boat[penrose.down[i]]);
+      bounds.expand(figure(penrose.ORANGE, offset.tr(penrose.s[penrose.down[i]]), penrose.penta[penrose.up[i]]));
+      bounds.expand(figure(penrose.BLUE,   offset.tr(penrose.t[penrose.down[i]]), penrose.boat[penrose.down[i]]));
     }
   }
+  return bounds;
 }
 
 // N = 1 to 5 (garbage?)

@@ -15,6 +15,9 @@ class P {
   div = (d) => new P(this.x / d, this.y / d)
   copy = (d) => new P(this.x, this.y)
   toLoc = () => [this.x, this.y]
+  toString() {
+    return JSON.stringify(this);
+  }
 }
 
 const toP = (loc) => new P(loc[0], loc[1]);
