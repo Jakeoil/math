@@ -104,6 +104,9 @@ class Wheel {
   get down() {
     return [this.list[5], this.list[7], this.list[9], this.list[1], this.list[3],];
   }
+  get w() {
+    return this.list;
+  }
 }
 
 // Build the api
