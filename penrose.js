@@ -21,9 +21,16 @@ class P {
 
 }
 
+/**
+ * Convience functions
+ *  
+ */
 const toP = (loc) => new P(loc[0], loc[1]);
 const p = (x, y) => new P(x, y);
-
+const norm = (n) => (n % 5 + 5) % 5
+function tenths(fifths, isDown) {
+  return norm(fifths * 2 + (isDown ? 5 : 0));
+}
 /**
  * Mutable class
  */
@@ -111,7 +118,7 @@ class Wheel {
   get string(){
     return JSON.stringify(
       this.w.map(
-        it => [ it.x, it.w]))
+        it => [ it.x, it.y]))
   }
 }
 

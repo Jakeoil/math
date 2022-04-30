@@ -1,7 +1,7 @@
 
 addEventListener("load", eventWindowLoaded, false);
 function eventWindowLoaded() {
-  draw();
+  penroseApp();
 }
 
 // Graphics globals
@@ -9,19 +9,26 @@ let g;
 let scale;
 let stroke; // New
 
-const norm = (n) => (n % 5 + 5) % 5
-
-
-function draw() {
+function penroseApp() {
 
   makeCanvas('p5');
   drawFirstExpansion('pentagons');
   drawSecondExpansion('expansion-2');
   drawThirdExpansion('expansion-3'); // This is where I refactor _everything_
 
+  function redraw(fBounds, canvas, drawFunction) {
+    const computedWidth = fBounds.maxPoint.x * scale + scale;
+    const computedHeight = fBounds.maxPoint.y * scale + scale;
+    if (canvas.width != computedWidth || canvas.height != computedHeight) {
+      canvas.width = computedWidth; canvas.height = computedHeight;
+      setTimeout(drawFunction());
+    }
+  }
+
   function makeCanvas(canvasId) {
     var canvas = document.getElementById(canvasId);
     g = canvas.getContext("2d");
+
 
     const drawScreen = function() {
       g.fillStyle = "#ffffff";
@@ -30,40 +37,30 @@ function draw() {
       g.strokeStyle = penrose.OUTLINE;
       g.lineWidth = 1;
       scale = 10;
-      penrose.scale = scale;
       // this is a p0 down.  
       console.log(`figure(${penrose.BLUE},${JSON.stringify(new P(5, 5))})`)
       const fBounds = figure(penrose.BLUE, new P(5, 5), penrose.penta[penrose.down[0]]);
       console.log(`fBounds: ${JSON.stringify(fBounds)}`);
-
-      let computedWidth = fBounds.maxPoint.x * scale + scale;
-      let computedHeight = fBounds.maxPoint.y * scale + scale;
-      if (canvas.width != computedWidth || canvas.height != computedHeight) {
-        canvas.width = computedWidth;
-        canvas.height = computedHeight
-        setTimeout(drawScreen(), 0);
-      }
+      redraw(fBounds, canvas, drawScreen)
     }
 
     drawScreen();
 
   }
 
-  function initCanvas(canvas) {
-    g = canvas.getContext("2d");
-    g.fillStyle = "#ffffff";
-    g.fillRect(0, 0, canvas.width, canvas.height);
-    return g;
-  }
   /**
    * Sets the globals g and scale
    */
   function drawFirstExpansion(canvasId) {
     console.log("draw")
     var canvas = document.getElementById(canvasId);
+    if (!canvas) {
+      console.log("canvasId is null!");
+      return;
+    }
     g = canvas.getContext("2d");
-    drawScreen();
-    function drawScreen() {
+
+    const drawScreen = function() {
       g.fillStyle = "#ffffff";
       g.fillRect(0, 0, canvas.width, canvas.height);
       g.fillStyle = penrose.ORANGE;
@@ -73,12 +70,14 @@ function draw() {
       scale = 10;
       penrose.scale = scale;
 
+      
+
       x = 8;
       y = 9;
 
-      pUp(p(x, y));
-      let bounds = pDown(p(25, y));
-      console.log(`penta5(1) ${p(25, y)} bounds: ${bounds}`)
+      const bounds = pUp(p(x, y));
+      
+      pDown(p(25, y));
 
       y += 18;
 
@@ -124,9 +123,11 @@ function draw() {
 
       y += 25;
       for (let i = 0; i < 5; i++) {
-        boatDown(i, p(x + i * 25, y));
+        bounds.expand(boatDown(i, p(x + i * 25, y)));
       }
 
+      redraw(bounds, canvas, drawScreen);
+      /*
       computedHeight = y * scale + 50;
       computedWidth = 15 + 5 * 25 * 10;
 
@@ -135,7 +136,9 @@ function draw() {
         canvas.height = computedHeight
         setTimeout(drawScreen(), 0);
       }
+      */
     }
+    drawScreen();
   }
   /**
    * The second draw test is the expansion of the first draw test.
@@ -145,54 +148,92 @@ function draw() {
   function drawSecondExpansion(canvalId) {
     const canvas = document.getElementById(canvalId);
     // g is global
-    g = initCanvas(canvas);
-    g.fillStyle = penrose.ORANGE;
-    g.strokeStyle = penrose.OUTLINE;
-    g.lineWidth = 1;
-    scale = 5;
-    penrose.scale = scale; // Maybe does not use it.
+    g = canvas.getContext("2d");
+    //drawScreen();
+    drawBig();
+    
+    function drawBig() {
+      g.fillStyle = "#ffffff";
+      g.fillRect(0, 0, canvas.width, canvas.height);
 
-    let x = 25;
-    let y = 25;
-    pentaUp(p(x, y));
-    pentaDown(p(x + 50, y)); // 
-    y += 50;
-    x = 25;
-    for (let i = 0; i < 5; i++) {
-      penta2Up(i, p(x + i * 50, y));
-    }
-    y += 55;
-    for (let i = 0; i < 5; i++) {
-      penta2Down(i, p(x + i * 50, y));
-    }
-    y += 50;
-    for (let i = 0; i < 5; i++) {
-      penta4Up(i, p(x + i * 50, y));
-    }
-    y += 55;
-    for (let i = 0; i < 5; i++) {
-      penta4Down(i, p(x + i * 50, y));
-    }
-    y += 60  // one thru four
-    star0Up(p(35, y));
-    star0Down(p(100, y));
-    y += 74  // one thru four
-    x = 35;
-    for (let i = 0; i < 5; i++) {
-      boat2Up(i, p(x + i * 67, y));
-    }
-    y += 70  // one thru four
-    for (let i = 0; i < 5; i++) {
-      boat2Down(i, p(x + i * 67, y));
-    }
-    y += 75  // one thru four
-    for (let i = 0; i < 5; i++) {
-      diamond4Up(i, p(x + i * 50, y));
+      g.fillStyle = penrose.ORANGE;
+      g.strokeStyle = penrose.OUTLINE;
+      g.lineWidth = 1;
+      scale = 10;
+      penrose.scale = scale; // Maybe does not use it.
+      let y = canvas.width / scale / 2;
+      let y2 = 3 * y
+      penta4Up(0, p(canvas.width / scale / 2, y));
+      boat2Up(0, p(canvas.width / scale / 2, 3 * y));
+
+      y = 25;
+      shapes = [penrose.penta, penrose.diamond, penrose.star, penrose.boat]
+      for (const shape of shapes) {
+        for (let i = 0; i < 10; i++) {
+          let offset = p((i + 1) * 20, y);
+          figure(penrose.YELLOW, offset, shape[i]);
+          grid(p((i + 1) * 20, y));
+
+        }
+        y += 25;
+      }
 
     }
-    y += 60  // one thru four
-    for (let i = 0; i < 5; i++) {
-      diamond4Up(i, p(x + i * 50, y));
+    
+
+    function drawScreen() {
+      g.fillStyle = "#ffffff";
+      g.fillRect(0, 0, canvas.width, canvas.height);
+
+      g.fillStyle = penrose.ORANGE;
+      g.strokeStyle = penrose.OUTLINE;
+      g.lineWidth = 1;
+      scale = 5;
+      penrose.scale = scale; // Maybe does not use it.
+
+      let x = 25;
+      let y = 25;
+      pentaUp(p(x, y));
+      pentaDown(p(x + 50, y)); // 
+      y += 50;
+      x = 25;
+      for (let i = 0; i < 5; i++) {
+        penta2Up(i, p(x + i * 50, y));
+      }
+      y += 55;
+      for (let i = 0; i < 5; i++) {
+        penta2Down(i, p(x + i * 50, y));
+      }
+      y += 50;
+      for (let i = 0; i < 5; i++) {
+        penta4Up(i, p(x + i * 50, y));
+      }
+      y += 55;
+      for (let i = 0; i < 5; i++) {
+        penta4Down(i, p(x + i * 50, y));
+      }
+      y += 60  // one thru four
+      star0Up(p(35, y));
+      star0Down(p(100, y));
+      y += 74  // one thru four
+      x = 35;
+      for (let i = 0; i < 5; i++) {
+        boat2Up(i, p(x + i * 67, y));
+      }
+      y += 70  // one thru four
+      for (let i = 0; i < 5; i++) {
+        boat2Down(i, p(x + i * 67, y));
+      }
+      y += 75  // one thru four
+      for (let i = 0; i < 5; i++) {
+        diamond4Up(i, p(x + i * 50, y));
+
+      }
+      y += 60  // one thru four
+      for (let i = 0; i < 5; i++) {
+        diamond4Up(i, p(x + i * 50, y));
+      }
+
     }
   }
 
@@ -209,13 +250,19 @@ function draw() {
   function drawThirdExpansion(canvasId) {
     const canvas = document.getElementById(canvasId);
     // g is global
-    g = initCanvas(canvas);
+    g = canvas.getContext("2d");
+    g.fillStyle = "#ffffff";
+    g.fillRect(0, 0, canvas.width, canvas.height);
     g.fillStyle = penrose.ORANGE;
     g.strokeStyle = penrose.OUTLINE;
     g.lineWidth = 1;
-    scale = 4;
+    scale = 10;
     penrose.scale = scale; // Maybe does not use it.
 
+    drawScreen = function() {
+      center = p(100, 100);
+      penta(5, P4, UP, center, 0);
+    }
   }
 
 
@@ -256,6 +303,15 @@ function figure(fill, offset, shape) {
     bounds.addPoint(offset, point);
   }
   return bounds;
+}
+
+function grid(offset) {
+  g.strokeStyle = penrose.OUTLINE;
+  for (let y = -5; y < 5; y++) {
+    for (let x = -5; x < 5; x++){
+      g.strokeRect(offset.x * scale + x * scale, offset.y * scale + y * scale, scale, scale);
+    }
+  }
 }
 
 function measure(offset, shape) {
@@ -567,6 +623,9 @@ const tWheels = [null];
 const pWheel1 = new Wheel(p(0, -6), p(3, -4), p(5, -2));
 const sWheel1 = new Wheel(p(0, -5), p(3, -5), p(5, -1));
 const tWheel1 = new Wheel(p(0, -8), p(5, -8), p(8, -2));
+console.log(`real P1: ${pWheel1.string}`);
+console.log(`real S1: ${sWheel1.string}`);
+console.log(`real T1: ${tWheel1.string}`);
 
 pWheels.push(pWheel1);
 sWheels.push(sWheel1);
@@ -585,15 +644,24 @@ console.log(`We have the wheel 1 and 2 pushed`)
 pWheel2Guess = pWheelNext(1);
 sWheel2Guess = sWheelNext(1);
 tWheel2Guess = tWheelNext(1);
-console.log('calculated wheel 2 comparison');
-console.log(`real P: ${pWheel2.string}`);
-console.log(`calc P: ${pWheel2Guess.string}`);
+console.log('calculate wheels 2 comparison');
+console.log(`real P2: ${pWheel2.string}`);
+console.log(`calc P2: ${pWheel2Guess.string}`);
 
-console.log(`real S: ${pWheel2.string}`);
-console.log(`calc S: ${sWheel2Guess.string}`);
+console.log(`real S2: ${pWheel2.string}`);
+console.log(`calc S2: ${sWheel2Guess.string}`);
 
-console.log(`real T: ${pWheel2.string}`);
-console.log(`calc T: ${sWheel2Guess.string}`);
+console.log(`real T2: ${pWheel2.string}`);
+console.log(`calc T2: ${sWheel2Guess.string}`);
+
+// Create xWheels[3]
+pWheels.push(pWheelNext(2));
+sWheels.push(sWheelNext(2));
+tWheels.push(sWheelNext(2));
+console.log(`real P3: ${pWheels[3].string}`);
+console.log(`real S3: ${sWheels[3].string}`);
+console.log(`real T3: ${tWheels[3].string}`);
+
 
 // now calulate wheel 3
 
@@ -828,4 +896,136 @@ function diamond4Up(angle, base) {
   starDown(base);
   p4Down(norm(0 + angle), base.tr(sWheel2.up[norm(0 + angle)]));
   boatUp(norm(0 + angle), base.tr(tWheel2.up[norm(0 + angle)]));
+}
+
+/* Generic expansion methods */
+const P0 = {
+  color: [
+    penrose.YELLOW,
+    penrose.YELLOW,
+    penrose.YELLOW,
+    penrose.YELLOW,
+    penrose.YELLOW,  
+  ], 
+  twist: [ 0,0,0,0,0 ],
+  shape: penrose.penta,
+  diamond:[],
+}
+const P2 = {
+  color: [
+    penrose.YELLOW,
+    penrose.YELLOW,
+    penrose.ORANGE,
+    penrose.ORANGE,
+    penrose.YELLOW,
+  ],
+  twist: [0, 0, -1, 1, 0],
+  shape: penrose.penta,
+  diamond:[0],
+
+}
+const P4 = {
+  color: [
+    penrose.YELLOW,
+    penrose.ORANGE,
+    penrose.ORANGE,
+    penrose.ORANGE,
+    penrose.ORANGE,
+  ],
+  twist: [0, -1, 1, -1, 1],
+  shape: penrose.penta,
+  diamond:[1,4],
+}
+// for stars, the color indicates existence.
+const S5 = {
+  color: [
+    penrose.BLUE,
+    penrose.BLUE,
+    penrose.BLUE,
+    penrose.BLUE,
+    penrose.BLUE,
+  ],
+  shape: penrose.star,
+}
+const S3 = {
+  color: [
+    penrose.BLUE,
+    penrose.BLUE,
+    null,
+    null,
+    penrose.BLUE,
+  ],
+  shape: penrose.boat,
+}
+const S1 = {
+  color: [
+    penrose.BLUE,
+    null,
+    null,
+    null,
+    null,
+  ],
+  shape: penrose.diamond,
+}
+const DOWN = true;
+const UP = false;
+
+function penta(fifths, type, isDown, loc, exp) {
+  fifths = norm(fifths);
+  console.log(JSON.stringify({fifths,type,isDown,loc,exp}));
+  if (exp = 0) {
+    figure(
+      type.color[fifths],
+      loc,
+      type.shape[tenths[fifths]]);
+    return; // call figure
+  }
+  penta(0, P0, !isDown, loc, exp-1);
+
+  for (let i = 0; i < 5; i++) {
+    const basic = norm(fifths + i);
+    const tenths = tenths(basic, isDown);
+    penta(
+      basic + type.twist, 
+      P2, 
+      down, 
+      base.tr(pWheels[exp][tenths]), 
+      exp -1);
+    
+    if (type.diamond.includes(basic)) {
+      star(basic, log.tr(sWheels[tenths(basic, !isDown)]));
+    }
+  }
+}
+
+/**
+ * @param {*} fifths 
+ * @param {*} type 
+ * @param {*} isDown 
+ * @param {*} loc 
+ * @param {*} exp 
+ * @returns 
+ */
+function star(fifths, type, isDown, loc, exp) {
+  fifths = norm(fifths);
+  console.log(JSON.stringify({ fifths, type, isDown, loc, exp }));
+  if (exp = 0) {
+    // Draw the figure.  Finished
+    return figure(
+      type.color[fifths], 
+      loc,
+      type.shape[tenth(fifths)] 
+    )
+  }
+
+  star(0, S5, !isDown, loc, exp - 1);
+
+  for (let i = 0; i < 5; i ++) {
+    const basic = norm(fifths + i);
+    const tenths = tenths(basic, !isDown);
+    if (type.color[basic] |= null) {
+      penta(basic, P4, isDown, loc.tr(sWheels[tenths]), exp - 1);
+      star(basic, S3, !down, loc.tr(tWheels[tenths]), exp-1);
+    }
+  }
 }
