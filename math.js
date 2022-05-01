@@ -281,6 +281,7 @@ function penroseApp() {
       // second line
       y += 20;
       x = 20;
+      /*
       penta(0, P2, UP, p(x, y), 1);
       x += 20;
       penta(1, P2, UP, p(x, y), 1);
@@ -288,9 +289,18 @@ function penroseApp() {
       penta(2, P2, UP, p(x, y), 1);
       x += 20;
       penta(3, P2, UP, p(x, y), 1);
+      x += 20; */
+      console.log('--Boat up 0');
+      star(0, S3, UP, p(x, y), 0);
       x += 20;
-      star(0, S3, UP, p(x,y), 1);
+      star(0, S3, UP, p(x, y), 1);
 
+      y += 20;
+      x = 20;
+      console.log('--Boat up 1');
+      star(1, S3, UP, p(x, y), 0);
+      x += 20;
+      star(1, S3, UP, p(x, y), 1);
 
     }
 
@@ -300,17 +310,15 @@ function penroseApp() {
 
 }
 
-/**
- * For the third expansion we want to use a different scheme.
+/*************************************************************************
  * 
- * expansion
- * star or pentagon
- * "wwwww","wwoow","woooo"
- * p5, p3, p1
- **/
- 
-
-
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ */
 /***
  * penrose is a global constant (does it have to be a var?)
  * This is called only from expansion 1
@@ -1113,24 +1121,32 @@ function star(fifths, type, isDown, loc, exp) {
     loc, 
     exp - 1);
 
+  for (let i = 0; i < 5; i++) {
+    const shift = norm(fifths + i);
+    const angleUp = tenths(shift, UP);
+    const angleDown = tenths(shift, DOWN);
+    const draw = type.color[shift] != null;
+    console.log(JSON.stringify({ shift, angleUp, angleDown, draw }));
+  }
+  
   for (let i = 0; i < 5; i ++) {
-    const basic = norm(fifths + i);
-    const angle = tenths(basic, !isDown);
+    const shift = norm(fifths + i);
+    const angle = tenths(shift, isDown);
     //const pWheel = pWheels[exp].w;
     const sWheel = sWheels[exp].w;
     const tWheel = tWheels[exp].w;
-    if (type.color[basic] |= null) {
+    if (type.color[i] != null) {
       penta(
-        basic, 
+        norm(shift), 
         P4, 
-        isDown, 
+        !isDown, 
         loc.tr(sWheel[angle]), 
         exp - 1);
       
       star(
-        basic, 
+        shift, 
         S3, 
-        !isDown, 
+        isDown, 
         loc.tr(tWheel[angle]), 
         exp - 1);
     }
