@@ -52,6 +52,7 @@ function penroseApp() {
    * Sets the globals g and scale
    */
   function drawFirstExpansion(canvasId) {
+    return;
     console.log("draw")
     var canvas = document.getElementById(canvasId);
     if (!canvas) {
@@ -146,6 +147,7 @@ function penroseApp() {
    * 
    */
   function drawSecondExpansion(canvalId) {
+    return;
     const canvas = document.getElementById(canvalId);
     // g is global
     g = canvas.getContext("2d");
@@ -253,16 +255,46 @@ function penroseApp() {
     g = canvas.getContext("2d");
     g.fillStyle = "#ffffff";
     g.fillRect(0, 0, canvas.width, canvas.height);
-    g.fillStyle = penrose.ORANGE;
+    //g.fillStyle = penrose.ORANGE;
     g.strokeStyle = penrose.OUTLINE;
     g.lineWidth = 1;
     scale = 10;
     penrose.scale = scale; // Maybe does not use it.
 
     drawScreen = function() {
-      center = p(100, 100);
-      penta(5, P4, UP, center, 0);
+      let x = 10;
+      let y = 10;
+
+      //penta(5, P4, UP, p(x,y), 0);
+      x += 10;
+      //penta(4, P2, UP, p(x,y), 0);
+      x += 10;
+      //penta(3, P0, DOWN, p(x, y), 0);
+      x += 10;
+      //penta(5, P2, UP, p(x, y), 0);
+      x += 10;
+      //star(0, S5, UP, p(x, y), 0);
+      x += 10;
+      //star(1, S3, DOWN, p(x, y), 0);
+      x += 10;
+      //star(2, S1, UP, p(x, y), 0);
+      // second line
+      y += 20;
+      x = 20;
+      penta(0, P2, UP, p(x, y), 1);
+      x += 20;
+      penta(1, P2, UP, p(x, y), 1);
+      x += 20;
+      penta(2, P2, UP, p(x, y), 1);
+      x += 20;
+      penta(3, P2, UP, p(x, y), 1);
+      x += 20;
+      star(0, S3, UP, p(x,y), 1);
+
+
     }
+
+    drawScreen();
   }
 
 
@@ -900,6 +932,7 @@ function diamond4Up(angle, base) {
 
 /* Generic expansion methods */
 const P0 = {
+  name: 'P0',
   color: [
     penrose.YELLOW,
     penrose.YELLOW,
@@ -909,9 +942,11 @@ const P0 = {
   ], 
   twist: [ 0,0,0,0,0 ],
   shape: penrose.penta,
+  typeColor: penrose.BLUE,
   diamond:[],
 }
 const P2 = {
+  name: 'P2',
   color: [
     penrose.YELLOW,
     penrose.YELLOW,
@@ -921,10 +956,12 @@ const P2 = {
   ],
   twist: [0, 0, -1, 1, 0],
   shape: penrose.penta,
+  typeColor: penrose.YELLOW,
   diamond:[0],
 
 }
 const P4 = {
+  name: 'P4',
   color: [
     penrose.YELLOW,
     penrose.ORANGE,
@@ -934,10 +971,12 @@ const P4 = {
   ],
   twist: [0, -1, 1, -1, 1],
   shape: penrose.penta,
+  typeColor: penrose.ORANGE,
   diamond:[1,4],
 }
 // for stars, the color indicates existence.
 const S5 = {
+  name: 'S5: star',
   color: [
     penrose.BLUE,
     penrose.BLUE,
@@ -946,8 +985,10 @@ const S5 = {
     penrose.BLUE,
   ],
   shape: penrose.star,
+  typeColor: penrose.BLUE,
 }
 const S3 = {
+  name: 'S3: boat',
   color: [
     penrose.BLUE,
     penrose.BLUE,
@@ -956,8 +997,10 @@ const S3 = {
     penrose.BLUE,
   ],
   shape: penrose.boat,
+  typeColor: penrose.BLUE,
 }
 const S1 = {
+  name: 'S1: diamond',
   color: [
     penrose.BLUE,
     null,
@@ -966,39 +1009,14 @@ const S1 = {
     null,
   ],
   shape: penrose.diamond,
+  typeColor: penrose.BLUE,
 }
 const DOWN = true;
 const UP = false;
 
-function penta(fifths, type, isDown, loc, exp) {
-  fifths = norm(fifths);
-  console.log(JSON.stringify({fifths,type,isDown,loc,exp}));
-  if (exp = 0) {
-    figure(
-      type.color[fifths],
-      loc,
-      type.shape[tenths[fifths]]);
-    return; // call figure
-  }
-  penta(0, P0, !isDown, loc, exp-1);
-
-  for (let i = 0; i < 5; i++) {
-    const basic = norm(fifths + i);
-    const tenths = tenths(basic, isDown);
-    penta(
-      basic + type.twist, 
-      P2, 
-      down, 
-      base.tr(pWheels[exp][tenths]), 
-      exp -1);
-    
-    if (type.diamond.includes(basic)) {
-      star(basic, log.tr(sWheels[tenths(basic, !isDown)]));
-    }
-  }
-}
-
 /**
+ * Recursive routine to draw pentagon type objects.
+ * P5, P3 and P1
  * @param {*} fifths 
  * @param {*} type 
  * @param {*} isDown 
@@ -1006,26 +1024,115 @@ function penta(fifths, type, isDown, loc, exp) {
  * @param {*} exp 
  * @returns 
  */
-function star(fifths, type, isDown, loc, exp) {
+function penta(fifths, type, isDown, loc, exp) {
   fifths = norm(fifths);
-  console.log(JSON.stringify({ fifths, type, isDown, loc, exp }));
-  if (exp = 0) {
-    // Draw the figure.  Finished
-    return figure(
-      type.color[fifths], 
+  console.log(`${type.name}: ${fifths}, exp: ${exp} ${loc}`)
+  if (exp == 0) {
+    console.log(`figure: ${type.name} color: ${type.typeColor}, loc: ${loc.toString()}`)
+    figure(
+      type.typeColor,
       loc,
-      type.shape[tenth(fifths)] 
-    )
+      type.shape[tenths(fifths, isDown)]);
+    return; // call figure
   }
 
-  star(0, S5, !isDown, loc, exp - 1);
+  const pWheel = pWheels[exp].w;
+  const sWheel = sWheels[exp].w;
+
+  // Draw the center
+  penta(
+    0, 
+    P0, 
+    !isDown, 
+    loc, 
+    exp-1);
+
+  for (let i = 0; i < 5; i++) {
+    const shift = norm(fifths + i);
+    const angleUp = tenths(shift, UP);
+    const angleDown = tenths(shift, DOWN);
+    const twist = type.twist[shift] != 0;
+    console.log(JSON.stringify({ shift, angleUp, angleDown, twist }));
+  }
+  
+  for (let i = 0; i < 5; i++) {
+    const shift = norm(fifths + i);
+
+    penta(
+      norm(shift + type.twist[i]), 
+      (type.twist[i] == 0 ? P2 : P4), 
+      isDown, 
+      loc.tr(pWheel[tenths(shift, isDown)]), 
+      exp - 1);
+    console.log(`fifths: ${fifths}, i: ${i} penta(${
+      norm(shift + type.twist[i])}, ${
+      (type.twist[shift] == 0 ? P2 : P4).name},${
+        isDown },${
+      pWheel[tenths(shift, isDown)]},${
+          exp - 1})`);
+
+    if (type.diamond.includes(i)) {
+      star(
+        shift,
+        S1,
+        isDown, 
+        loc.tr(sWheel[tenths(shift, !isDown)]), 
+        exp - 1);
+    }
+  }
+}
+
+
+
+/**
+ * @param {*} fifths 
+ * @param {*} type 
+ * @param {*} loc 
+ * @param {*} exp 
+ * @returns 
+ */
+function star(fifths, type, isDown, loc, exp) {
+  const name = type.name;
+  fifths = norm(fifths);
+  console.log(`${type.name}: ${fifths}, exp: ${exp} ${loc}`)
+
+  if (exp == 0) {
+    // Draw the figure.  Finished
+    console.log(`typeColor: ${type.typeColor}`);
+    figure(
+      type.typeColor,
+      loc,
+      type.shape[tenths(fifths, isDown)]);
+    return;
+  }
+
+  star(
+    0, 
+    S5, 
+    !isDown, 
+    loc, 
+    exp - 1);
 
   for (let i = 0; i < 5; i ++) {
     const basic = norm(fifths + i);
-    const tenths = tenths(basic, !isDown);
+    const angle = tenths(basic, !isDown);
+    //const pWheel = pWheels[exp].w;
+    const sWheel = sWheels[exp].w;
+    const tWheel = tWheels[exp].w;
     if (type.color[basic] |= null) {
-      penta(basic, P4, isDown, loc.tr(sWheels[tenths]), exp - 1);
-      star(basic, S3, !down, loc.tr(tWheels[tenths]), exp-1);
+      penta(
+        basic, 
+        P4, 
+        isDown, 
+        loc.tr(sWheel[angle]), 
+        exp - 1);
+      
+      star(
+        basic, 
+        S3, 
+        !isDown, 
+        loc.tr(tWheel[angle]), 
+        exp - 1);
     }
   }
 }

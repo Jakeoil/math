@@ -29,7 +29,7 @@ const toP = (loc) => new P(loc[0], loc[1]);
 const p = (x, y) => new P(x, y);
 const norm = (n) => (n % 5 + 5) % 5
 function tenths(fifths, isDown) {
-  return norm(fifths * 2 + (isDown ? 5 : 0));
+  return (fifths * 2 + (isDown ? 5 : 0)) % 10;
 }
 /**
  * Mutable class
