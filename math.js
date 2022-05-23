@@ -3,7 +3,11 @@ addEventListener("load", eventWindowLoaded, false);
 function eventWindowLoaded() {
   penroseApp();
 }
+//addEventListener("click")
 
+// diplay globals
+let fifths = 0;
+//let type = 
 // Graphics globals
 let g;
 let scale;
@@ -16,6 +20,14 @@ function penroseApp() {
   drawSecondExpansion('expansion-2');
   drawThirdExpansion('expansion-3'); // This is where I refactor _everything_
 
+  /**
+   * Called at end of draw cycle.  Redraws under the following conditions
+   *   The size of the canvas is greater than the fbounds
+   *   (future) add a max bounds.
+   * @param {*} fBounds 
+   * @param {*} canvas 
+   * @param {*} drawFunction 
+   */
   function redraw(fBounds, canvas, drawFunction) {
     const computedWidth = fBounds.maxPoint.x * scale + scale;
     const computedHeight = fBounds.maxPoint.y * scale + scale;
@@ -29,7 +41,7 @@ function penroseApp() {
     var canvas = document.getElementById(canvasId);
     g = canvas.getContext("2d");
 
-
+    // for makeCanvas only
     const drawScreen = function() {
       g.fillStyle = "#ffffff";
       g.fillRect(0, 0, canvas.width, canvas.height);
@@ -262,46 +274,51 @@ function penroseApp() {
     penrose.scale = scale; // Maybe does not use it.
 
     drawScreen = function() {
-      let x = 10;
-      let y = 10;
+      console.log('--Pent 2 up 4')
+      let x = 13; let y = 55/2;
+      penta(4, P2, UP, p(x,y), 0);
+      x += 21;
+      penta(4, P2, UP, p(x, y), 1);
+      x += 34;
+      penta(4, P2, UP, p(x, y), 2);
+      
+      console.log('--Diamond up 4');
+      x = 13; y += 55;
+      star(4, S1, DOWN, p(x, y), 0);
+      x += 21;
+      star(4, S1, DOWN, p(x, y), 1);
+      x += 34;
+      star(4, S1, DOWN, p(x, y), 2);
 
-      //penta(5, P4, UP, p(x,y), 0);
-      x += 10;
-      //penta(4, P2, UP, p(x,y), 0);
-      x += 10;
-      //penta(3, P0, DOWN, p(x, y), 0);
-      x += 10;
-      //penta(5, P2, UP, p(x, y), 0);
-      x += 10;
-      //star(0, S5, UP, p(x, y), 0);
-      x += 10;
-      //star(1, S3, DOWN, p(x, y), 0);
-      x += 10;
-      //star(2, S1, UP, p(x, y), 0);
-      // second line
-      y += 20;
-      x = 20;
-      /*
+      console.log('--Penta 2  up 0');
+      y += 55;
+      x = 13;
+      penta(0, P2, UP, p(x, y), 0);
+      x += 21;
       penta(0, P2, UP, p(x, y), 1);
-      x += 20;
-      penta(1, P2, UP, p(x, y), 1);
-      x += 20;
-      penta(2, P2, UP, p(x, y), 1);
-      x += 20;
-      penta(3, P2, UP, p(x, y), 1);
-      x += 20; */
+      x += 34;
+      penta(0, P2, UP, p(x, y), 2);
+
+      console.log('--Diamond down 0');
+      x = 13; y += 55;
+      star(0, S1, DOWN, p(x, y), 0);
+      x += 21;
+      star(0, S1, DOWN, p(x, y), 1);
+      x += 34;
+      star(0, S1, DOWN, p(x, y), 2);
+
       console.log('--Boat up 0');
-      star(0, S3, UP, p(x, y), 0);
-      x += 20;
+      x = 13; y += 55 + 34;
+       star(0, S3, UP, p(x, y), 0);
+      x += 21;
       star(0, S3, UP, p(x, y), 1);
-
-      y += 20;
-      x = 20;
+      x += 34;
+      star(0, S3, UP, p(x, y), 2);
+      x = 13; y += 55;
       console.log('--Boat up 1');
-      star(1, S3, UP, p(x, y), 0);
-      x += 20;
-      star(1, S3, UP, p(x, y), 1);
-
+       star(1, S3, UP, p(x, y), 0);
+      x += 34;
+       star(1, S3, UP, p(x, y), 1);
     }
 
     drawScreen();
@@ -629,6 +646,7 @@ function point(x,y)
  * 
  * */                
 
+// P is the offset of blue -> blue, blue -> yellow or blue -> orange
 function pWheelNext(exp) {
   const p = pWheels[exp].w;
   return new Wheel(
@@ -637,6 +655,7 @@ function pWheelNext(exp) {
     p[3].tr(p[2]).tr(p[1]));
 }
 
+// S is the offset
 function sWheelNext(exp) {
   const p = pWheels[exp].w;
   const s = sWheels[exp].w;
@@ -1024,12 +1043,33 @@ const UP = false;
 
 /**
  * Recursive routine to draw pentagon type objects.
- * P5, P3 and P1
+ * P5, P3 and P1  Up versions shown
+ * 
+ *    p5  === blue === P0
+ * 
+ *     o
+ *  o     o
+ *   o   o
+ * 
+ *    p3  === yellow === P2
+ * 
+ *     o         o         *         *         o
+ *  o     o   *     o   *     o   o     *   o     *
+ *   *   *     *   o     o   o     o   o     o   *
+ *
+ *    p1 === orange === P4
+ * 
+ *     o         *         *         *         *
+ *  *     *   *     o   *     *   *     *   o     *
+ *   *   *     *   *     *   o     o   *     *   *
+ * 
+ * 
  * @param {*} fifths 
  * @param {*} type 
+ *   This object contains the tables necessary for construction.
  * @param {*} isDown 
- * @param {*} loc 
- * @param {*} exp 
+ * @param {*} loc target of the center of the object on the canvas
+ * @param {*} exp Recursive expansion. 0 the primitive.
  * @returns 
  */
 function penta(fifths, type, isDown, loc, exp) {
@@ -1047,14 +1087,16 @@ function penta(fifths, type, isDown, loc, exp) {
   const pWheel = pWheels[exp].w;
   const sWheel = sWheels[exp].w;
 
-  // Draw the center
+  // Draw the center. Always the BLUE p5
   penta(
     0, 
     P0, 
     !isDown, 
     loc, 
-    exp-1);
-
+    exp-1
+  );
+  
+  // Logging dry run
   for (let i = 0; i < 5; i++) {
     const shift = norm(fifths + i);
     const angleUp = tenths(shift, UP);
@@ -1073,11 +1115,15 @@ function penta(fifths, type, isDown, loc, exp) {
       loc.tr(pWheel[tenths(shift, isDown)]), 
       exp - 1);
     console.log(`fifths: ${fifths}, i: ${i} penta(${
-      norm(shift + type.twist[i])}, ${
-      (type.twist[shift] == 0 ? P2 : P4).name},${
+      norm(shift + type.twist[i])
+    }, ${
+      (type.twist[shift] == 0 ? P2 : P4).name
+    },${
         isDown },${
-      pWheel[tenths(shift, isDown)]},${
-          exp - 1})`);
+      pWheel[tenths(shift, isDown)]
+    },${
+      exp - 1
+    })`);
 
     if (type.diamond.includes(i)) {
       star(
@@ -1093,8 +1139,28 @@ function penta(fifths, type, isDown, loc, exp) {
 
 
 /**
- * @param {*} fifths 
- * @param {*} type 
+ * S5, S3 and S1  Up versions shown
+ *    s5   star
+ * 
+ *     *
+ *  *  .  *
+ *   *   *
+ * 
+ *    s3   boat
+ * 
+ *     *         *                             *
+ *  *  .  *      .  *      .  *   *  .      *  .  
+ *                 *     *   *     *   *     *   
+ * 
+ *    s5   diamond
+ * 
+ *     *                                        
+ *     .         .  *      .         .      *  .  
+ *                           *     *             
+ * 
+ * @param {*} fifths 0 to 5
+ * @param {*} type  S5 S3 S1
+ * @param {*} isDown
  * @param {*} loc 
  * @param {*} exp 
  * @returns 
