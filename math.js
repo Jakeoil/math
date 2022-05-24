@@ -7,15 +7,51 @@ function eventWindowLoaded() {
 
 // diplay globals
 let fifths = 0;
-//let type = 
+let type = 0;
+let isDown = false; 
 // Graphics globals
 let g;
 let scale;
 let stroke; // New
 
-function penroseApp() {
 
+
+
+function penroseApp() {
+  const eleFifths = document.getElementById("fifths");
+  const eleType = document.getElementById("type");
+  const eleIsDown = document.getElementById("isDown");
+  const typeList = [P0, P2, P4, S5, S3, S1];
+  eleFifths.innerHTML = `fifths: ${fifths}`;
+  eleType.innerHTML = typeList[type].name;
+  eleIsDown.innerHTML = isDown ? "Down" : "up";
+
+  const clickFifths = function () {
+    fifths = norm(fifths + 1);
+    eleFifths.innerHTML = `fifths: ${fifths}`;
+    //alert ('fifths: ' + fifths);
+  };
+  eleFifths.addEventListener(
+    "click", 
+    clickFifths, 
+    false);
+  const clickType = function() {
+    type = (type + 1) % typeList.length;
+    eleType.innerHTML = typeList[type].name;
+  }
+  eleType.addEventListener("click", clickType, false);
+  const clickIsDown = function() {
+    isDown = ! isDown;
+    eleIsDown.innerHTML = isDown ? "Down" : "up";
+  }
+  eleIsDown.addEventListener('click', clickIsDown, false);
+  
   makeCanvas('p5');
+  makeCanvas('p3');
+  makeCanvas('p1');
+  makeCanvas('s5');
+  makeCanvas('s3');
+  makeCanvas('s1');
   drawFirstExpansion('pentagons');
   drawSecondExpansion('expansion-2');
   drawThirdExpansion('expansion-3'); // This is where I refactor _everything_
@@ -49,11 +85,34 @@ function penroseApp() {
       g.strokeStyle = penrose.OUTLINE;
       g.lineWidth = 1;
       scale = 10;
-      // this is a p0 down.  
-      console.log(`figure(${penrose.BLUE},${JSON.stringify(new P(5, 5))})`)
-      const fBounds = figure(penrose.BLUE, new P(5, 5), penrose.penta[penrose.down[0]]);
-      console.log(`fBounds: ${JSON.stringify(fBounds)}`);
+      // this is a p0 down.
+      let fbounds;
+      switch (canvasId) {
+        case 'p5':
+          fBounds = figure(penrose.BLUE, new P(5, 5), penrose.penta[penrose.down[0]]);
+          break;
+        case 'p3':
+          fBounds = figure(penrose.YELLOW, new P(5, 5), penrose.penta[penrose.up[0]]);
+          break;
+        case 'p1':
+          fBounds = figure(penrose.ORANGE, new P(5, 5), penrose.penta[penrose.up[0]]);
+          break;
+        case 's5':
+          fBounds = figure(penrose.BLUE, new P(5, 5), penrose.star[penrose.up[0]]);
+          break;
+        case 's3':
+          fBounds = figure(penrose.BLUE, new P(5, 5), penrose.boat[penrose.up[0]]);
+          break;
+        case 's1':
+          fBounds = figure(penrose.BLUE, new P(5, 5), penrose.diamond[penrose.up[0]]);
+          break;
+      }
       redraw(fBounds, canvas, drawScreen)
+
+      // console.log(`figure(${penrose.BLUE},${JSON.stringify(new P(5, 5))})`)
+      //const fBounds = figure(penrose.BLUE, new P(5, 5), penrose.penta[penrose.down[0]]);
+      //console.log(`fBounds: ${JSON.stringify(fBounds)}`);
+      //redraw(fBounds, canvas, drawScreen)
     }
 
     drawScreen();
