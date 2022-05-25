@@ -14,9 +14,6 @@ let g;
 let scale;
 let stroke; // New
 
-
-
-
 function penroseApp() {
   const eleFifths = document.getElementById("fifths");
   const eleType = document.getElementById("type");
@@ -29,7 +26,7 @@ function penroseApp() {
   const clickFifths = function () {
     fifths = norm(fifths + 1);
     eleFifths.innerHTML = `fifths: ${fifths}`;
-    //alert ('fifths: ' + fifths);
+    drawThirdExpansion('expansion-3'); 
   };
   eleFifths.addEventListener(
     "click", 
@@ -38,11 +35,15 @@ function penroseApp() {
   const clickType = function() {
     type = (type + 1) % typeList.length;
     eleType.innerHTML = typeList[type].name;
+    drawThirdExpansion('expansion-3'); 
   }
   eleType.addEventListener("click", clickType, false);
+  
+  
   const clickIsDown = function() {
     isDown = ! isDown;
     eleIsDown.innerHTML = isDown ? "Down" : "up";
+    drawThirdExpansion('expansion-3'); 
   }
   eleIsDown.addEventListener('click', clickIsDown, false);
   
@@ -54,8 +55,9 @@ function penroseApp() {
   makeCanvas('s1');
   drawFirstExpansion('pentagons');
   drawSecondExpansion('expansion-2');
-  drawThirdExpansion('expansion-3'); // This is where I refactor _everything_
-
+  // This is where I refactor _everything_
+  drawThirdExpansion('expansion-3'); 
+  
   /**
    * Called at end of draw cycle.  Redraws under the following conditions
    *   The size of the canvas is greater than the fbounds
@@ -332,22 +334,47 @@ function penroseApp() {
     scale = 10;
     penrose.scale = scale; // Maybe does not use it.
 
-    drawScreen = function() {
+    function starType(type) {
+      switch (typeList[type]) {
+        case P2: return S3;
+        case P4: return S1;
+        case P0: return S5;
+        default: return typeList[type];
+      }
+    }
+    function pentaType(type) {
+
+      switch (typeList[type]) {
+        case S1: return P4;
+        case S3: return P2;
+        case S5: return P0;
+        default: return typeList[type];
+      }
+    }
+
+    const drawScreen = function() {
+      // penta(fifths, pentaType(type), isDown, p(x,y), 0);
       console.log('--Pent 2 up 4')
       let x = 13; let y = 55/2;
-      penta(4, P2, UP, p(x,y), 0);
+      //penta(4, P2, UP, p(x,y), 0);
+      penta(fifths, pentaType(type), isDown, p(x,y), 0);
       x += 21;
-      penta(4, P2, UP, p(x, y), 1);
+      //penta(4, P2, UP, p(x, y), 1);
+      penta(fifths, pentaType(type), isDown, p(x,y), 1);
       x += 34;
-      penta(4, P2, UP, p(x, y), 2);
+      //penta(4, P2, UP, p(x, y), 2);
+      penta(fifths, pentaType(type), isDown, p(x,y), 2);
       
       console.log('--Diamond up 4');
       x = 13; y += 55;
-      star(4, S1, DOWN, p(x, y), 0);
+      //star(4, S1, DOWN, p(x, y), 0);
+      star(fifths, starType(type), isDown, p(x,y), 0);
       x += 21;
-      star(4, S1, DOWN, p(x, y), 1);
+      star(fifths, starType(type), isDown, p(x,y), 1);
+      //star(4, S1, DOWN, p(x, y), 1);
       x += 34;
-      star(4, S1, DOWN, p(x, y), 2);
+      star(fifths, starType(type), isDown, p(x,y), 2);
+      //star(4, S1, DOWN, p(x, y), 2);
 
       console.log('--Penta 2  up 0');
       y += 55;
