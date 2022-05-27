@@ -1,20 +1,24 @@
 
+// The load listener is on the outside of the app of course
 addEventListener("load", eventWindowLoaded, false);
 function eventWindowLoaded() {
   penroseApp();
 }
 //addEventListener("click")
 
-// diplay globals
+// penrose globals referred to in parameterrs penta and star methods
 let fifths = 0;
 let type = 0;
 let isDown = false; 
-// Graphics globals
+
+// Graphics globals for whole canvas
 let g;
 let scale;
 let stroke; // New
 
 function penroseApp() {
+
+  // Can this be made into a function?
   const eleFifths = document.getElementById("fifths");
   const eleType = document.getElementById("type");
   const eleIsDown = document.getElementById("isDown");
@@ -47,6 +51,7 @@ function penroseApp() {
   }
   eleIsDown.addEventListener('click', clickIsDown, false);
   
+  // load the little canvases.
   makeCanvas('p5');
   makeCanvas('p3');
   makeCanvas('p1');
@@ -91,22 +96,22 @@ function penroseApp() {
       let fbounds;
       switch (canvasId) {
         case 'p5':
-          fBounds = figure(penrose.BLUE, new P(5, 5), penrose.penta[penrose.down[0]]);
+          fBounds = figure(penrose.BLUE, new P(3, 3), penrose.penta[penrose.down[0]]);
           break;
         case 'p3':
-          fBounds = figure(penrose.YELLOW, new P(5, 5), penrose.penta[penrose.up[0]]);
+          fBounds = figure(penrose.YELLOW, new P(3, 3), penrose.penta[penrose.up[0]]);
           break;
         case 'p1':
-          fBounds = figure(penrose.ORANGE, new P(5, 5), penrose.penta[penrose.up[0]]);
+          fBounds = figure(penrose.ORANGE, new P(3, 3), penrose.penta[penrose.up[0]]);
           break;
         case 's5':
-          fBounds = figure(penrose.BLUE, new P(5, 5), penrose.star[penrose.up[0]]);
+          fBounds = figure(penrose.BLUE, new P(4, 4), penrose.star[penrose.up[0]]);
           break;
         case 's3':
-          fBounds = figure(penrose.BLUE, new P(5, 5), penrose.boat[penrose.up[0]]);
+          fBounds = figure(penrose.BLUE, new P(4, 4), penrose.boat[penrose.up[0]]);
           break;
         case 's1':
-          fBounds = figure(penrose.BLUE, new P(5, 5), penrose.diamond[penrose.up[0]]);
+          fBounds = figure(penrose.BLUE, new P(1, 0), penrose.diamond[penrose.up[0]]);
           break;
       }
       redraw(fBounds, canvas, drawScreen)
@@ -1190,7 +1195,7 @@ function penta(fifths, type, isDown, loc, exp) {
     const twist = type.twist[shift] != 0;
     console.log(JSON.stringify({ shift, angleUp, angleDown, twist }));
   }
-  
+
   for (let i = 0; i < 5; i++) {
     const shift = norm(fifths + i);
 
@@ -1211,6 +1216,22 @@ function penta(fifths, type, isDown, loc, exp) {
       exp - 1
     })`);
 
+    // This is where the error is.
+    // First what does this
+    if (type.diamond.includes(i)) {
+      star(
+        shift,
+        S1,
+        isDown, 
+        loc.tr(sWheel[tenths(shift, !isDown)]), 
+        exp - 1);
+    }
+  }
+
+  for (let i = 0; i < 5; i++) {
+    const shift = norm(fifths + i);
+    // This is where the error is.
+    // First what does this
     if (type.diamond.includes(i)) {
       star(
         shift,
