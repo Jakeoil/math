@@ -61,7 +61,8 @@ function penroseApp() {
   drawFirstExpansion('pentagons');
   drawSecondExpansion('expansion-2');
   // This is where I refactor _everything_
-  drawThirdExpansion('expansion-3'); 
+  drawThirdExpansion('expansion-3');
+  drawGridWork('grid-work');
   
   /**
    * Called at end of draw cycle.  Redraws under the following conditions
@@ -205,43 +206,11 @@ function penroseApp() {
    * It draws the second expansion of each of the tiles.
    * 
    */
-  function drawSecondExpansion(canvalId) {
-    const canvas = document.getElementById(canvalId);
+  function drawSecondExpansion(canvasId) {
+    const canvas = document.getElementById(canvasId);
     // g is global
     g = canvas.getContext("2d");
-    //drawScreen();
-    drawBig();
-    
-    /**
-     * Draws all of the penrose rotations
-     */
-    function drawBig() {
-      g.fillStyle = "#ffffff";
-      g.fillRect(0, 0, canvas.width, canvas.height);
-
-      g.fillStyle = penrose.ORANGE;
-      g.strokeStyle = penrose.OUTLINE;
-      g.lineWidth = 1;
-      scale = 10;
-      penrose.scale = scale; // Maybe does not use it.
-      let y = canvas.width / scale / 2;
-      let y2 = 3 * y
-      penta4Up(0, p(canvas.width / scale / 2, y));
-      boat2Up(0, p(canvas.width / scale / 2, 3 * y));
-
-      y = 5;
-      shapes = [penrose.penta, penrose.diamond_correct, penrose.star, penrose.boat];
-      const spacing = 12;
-      for (const shape of shapes) {
-        for (let i = 0; i < 10; i++) {
-          let offset = p((i + 1) * spacing, y);
-          figure(penrose.ORANGE, offset, shape[i]);
-          grid(p((i + 1) * spacing, y));
-        }
-        y += spacing;
-      }
-    }
-    
+    drawScreen();
     /**
      * 
      */
@@ -301,6 +270,46 @@ function penroseApp() {
     }
   }
 
+  function drawGridWork(canvasId) {
+    const canvas = document.getElementById(canvasId);
+    g = canvas.getContext("2d");
+    //drawScreen();
+    drawBig();
+    
+    /**
+     * Draws all of the penrose rotations
+     */
+    function drawBig() {
+      g.fillStyle = "#ffffff";
+      g.fillRect(0, 0, canvas.width, canvas.height);
+
+      g.fillStyle = penrose.ORANGE;
+      g.strokeStyle = penrose.OUTLINE;
+      g.lineWidth = 1;
+      scale = 10;
+      penrose.scale = scale; // Maybe does not use it.
+
+      y = 5;
+      shapes = [penrose.penta, penrose.diamond_correct, penrose.star, penrose.boat];
+      const spacing = 12;
+      for (const shape of shapes) {
+        for (let i = 0; i < 10; i++) {
+          let offset = p((i + 1) * spacing, y);
+          figure(penrose.ORANGE, offset, shape[i]);
+          grid(p((i + 1) * spacing, y));
+        }
+        y += spacing;
+      }
+
+      y += 20;
+      penta4Up(0, p(canvas.width / scale / 2, y));
+      y += 65;
+      boat2Up(0, p(canvas.width / scale / 2, y));
+
+
+    }
+
+  }
   /**
    * For the third expansion we want to use a different scheme.
    * 
@@ -342,58 +351,21 @@ function penroseApp() {
     }
 
     const drawScreen = function() {
-      // penta(fifths, pentaType(type), isDown, p(x,y), 0);
-      console.log('--Pent 2 up 4')
+      console.log('--Pentagon')
       let x = 13; let y = 26;
-      //penta(4, P2, UP, p(x,y), 0);
       penta(fifths, pentaType(type), isDown, p(x,y), 0);
       x += 21;
-      //penta(4, P2, UP, p(x, y), 1);
       penta(fifths, pentaType(type), isDown, p(x,y), 1);
       x += 34;
-      //penta(4, P2, UP, p(x, y), 2);
       penta(fifths, pentaType(type), isDown, p(x,y), 2);
       
       console.log('--Diamond up 4');
       x = 13; y += 55;
-      //star(4, S1, DOWN, p(x, y), 0);
       star(fifths, starType(type), isDown, p(x,y), 0);
       x += 21;
       star(fifths, starType(type), isDown, p(x,y), 1);
-      //star(4, S1, DOWN, p(x, y), 1);
-      x += 34;
+      x += 54;
       star(fifths, starType(type), isDown, p(x,y), 2);
-      //star(4, S1, DOWN, p(x, y), 2);
-
-      console.log('--Penta 2  up 0');
-      y += 55;
-      x = 13;
-      penta(0, P2, UP, p(x, y), 0);
-      x += 21;
-      penta(0, P2, UP, p(x, y), 1);
-      x += 34;
-      penta(0, P2, UP, p(x, y), 2);
-
-      console.log('--Diamond down 0');
-      x = 13; y += 55;
-      star(0, S1, DOWN, p(x, y), 0);
-      x += 21;
-      star(0, S1, DOWN, p(x, y), 1);
-      x += 34;
-      star(0, S1, DOWN, p(x, y), 2);
-
-      console.log('--Boat up 0');
-      x = 13; y += 55 + 34;
-       star(0, S3, UP, p(x, y), 0);
-      x += 21;
-      star(0, S3, UP, p(x, y), 1);
-      x += 34;
-      star(0, S3, UP, p(x, y), 2);
-      x = 13; y += 55;
-      console.log('--Boat up 1');
-       star(1, S3, UP, p(x, y), 0);
-      x += 34;
-       star(1, S3, UP, p(x, y), 1);
     }
 
     drawScreen();
@@ -457,7 +429,7 @@ function lineFigure(fill, offset, shape) {
 
 }
 /**
- * FIRST EXPANSION METHODS
+ * FIRST EXPANSION METHODS (These are now deprecated)
  */
 
 /**
@@ -782,15 +754,6 @@ console.log(`We have the wheel 1 and 2 pushed`)
 pWheel2Guess = pWheelNext(1);
 sWheel2Guess = sWheelNext(1);
 tWheel2Guess = tWheelNext(1);
-//console.log('calculate wheels 2 comparison');
-//console.log(`real P2: ${pWheel2.string}`);
-//console.log(`calc P2: ${pWheel2Guess.string}`);
-
-//console.log(`real S2: ${pWheel2.string}`);
-//console.log(`calc S2: ${sWheel2Guess.string}`);
-
-//console.log(`real T2: ${pWheel2.string}`);
-//console.log(`calc T2: ${sWheel2Guess.string}`);
 
 // Create xWheels[3]
 pWheels.push(pWheelNext(2));
@@ -1005,8 +968,13 @@ function diamond4Up(angle, base) {
   p4Down(norm(0 + angle), base.tr(sWheel2.up[norm(0 + angle)]));
   boatUp(norm(0 + angle), base.tr(tWheel2.up[norm(0 + angle)]));
 }
-
-/* Generic expansion methods */
+/**************************************************************************************************************
+ * Generic expansion methods
+ * 
+ * 
+ * 
+ * 
+ ***********************************************************/
 const P0 = {
   name: 'P0',
   color: [
@@ -1145,15 +1113,6 @@ function penta(fifths, type, isDown, loc, exp) {
     exp-1
   );
   
-  // Logging dry run
-  for (let i = 0; i < 5; i++) {
-    const shift = norm(fifths + i);
-    const angleUp = tenths(shift, UP);
-    const angleDown = tenths(shift, DOWN);
-    const twist = type.twist[shift] != 0;
-    //console.log(JSON.stringify({ shift, angleUp, angleDown, twist }));
-  }
-
   for (let i = 0; i < 5; i++) {
     const shift = norm(fifths + i);
 
@@ -1162,45 +1121,17 @@ function penta(fifths, type, isDown, loc, exp) {
       (type.twist[i] == 0 ? P2 : P4), 
       isDown, 
       loc.tr(pWheel[tenths(shift, isDown)]), 
-      exp - 1);
-    //console.log(`fifths: ${fifths}, i: ${i} penta(${
-    //  norm(shift + type.twist[i])
-    //}, ${
-    //  (type.twist[shift] == 0 ? P2 : P4).name
-    //},${
-    //    isDown },${
-    //  pWheel[tenths(shift, isDown)]
-    //},${
-    //  exp - 1
-    //})`);
+      exp - 1
+    );
 
-    // This is where the error is.
-    // First what does this
-    //if (type.diamond.includes(i)) {
-    //  star(
-    //    shift,
-    //    S1,
-    //    isDown, 
-    //    loc.tr(sWheel[tenths(shift, !isDown)]), 
-    //    exp - 1);
-    //}
-  }
-
-  for (let i = 0; i < 5; i++) {
-    const shift = norm(fifths + i);
-    // This is where the error is.
-    // First what does this
     if (type.diamond.includes(i)) {
-      if (exp == 2) {
-        console.log('Drawing a diamond');
-        console.log(`sWheel: ${sWheel.toString()}`);
-      }
       star(
         shift,
         S1,
         !isDown, 
         loc.tr(sWheel[tenths(shift, !isDown)]), 
-        exp - 1);
+        exp - 1
+      );
     }
   }
 }
