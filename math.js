@@ -1,21 +1,77 @@
 
+// The load listener is on the outside of the app of course
 addEventListener("load", eventWindowLoaded, false);
 function eventWindowLoaded() {
   penroseApp();
 }
+//addEventListener("click")
 
-// Graphics globals
+// penrose globals referred to in parameterrs penta and star methods
+let fifths = 0;
+let type = 0;
+let isDown = false; 
+
+// Graphics globals for whole canvas
 let g;
 let scale;
 let stroke; // New
 
 function penroseApp() {
 
+  // Can this be made into a function?
+  const eleFifths = document.getElementById("fifths");
+  const eleType = document.getElementById("type");
+  const eleIsDown = document.getElementById("isDown");
+  const typeList = [P0, P2, P4, S5, S3, S1];
+  eleFifths.innerHTML = `fifths: ${fifths}`;
+  eleType.innerHTML = typeList[type].name;
+  eleIsDown.innerHTML = isDown ? "Down" : "up";
+
+  const clickFifths = function () {
+    fifths = norm(fifths + 1);
+    eleFifths.innerHTML = `fifths: ${fifths}`;
+    drawThirdExpansion('expansion-3'); 
+  };
+  eleFifths.addEventListener(
+    "click", 
+    clickFifths, 
+    false);
+  const clickType = function() {
+    type = (type + 1) % typeList.length;
+    eleType.innerHTML = typeList[type].name;
+    drawThirdExpansion('expansion-3'); 
+  }
+  eleType.addEventListener("click", clickType, false);
+  
+  
+  const clickIsDown = function() {
+    isDown = ! isDown;
+    eleIsDown.innerHTML = isDown ? "Down" : "up";
+    drawThirdExpansion('expansion-3'); 
+  }
+  eleIsDown.addEventListener('click', clickIsDown, false);
+  
+  // load the little canvases.
   makeCanvas('p5');
+  makeCanvas('p3');
+  makeCanvas('p1');
+  makeCanvas('s5');
+  makeCanvas('s3');
+  makeCanvas('s1');
   drawFirstExpansion('pentagons');
   drawSecondExpansion('expansion-2');
-  drawThirdExpansion('expansion-3'); // This is where I refactor _everything_
-
+  // This is where I refactor _everything_
+  drawThirdExpansion('expansion-3');
+  drawGridWork('grid-work');
+  
+  /**
+   * Called at end of draw cycle.  Redraws under the following conditions
+   *   The size of the canvas is greater than the fbounds
+   *   (future) add a max bounds.
+   * @param {*} fBounds 
+   * @param {*} canvas 
+   * @param {*} drawFunction 
+   */
   function redraw(fBounds, canvas, drawFunction) {
     const computedWidth = fBounds.maxPoint.x * scale + scale;
     const computedHeight = fBounds.maxPoint.y * scale + scale;
@@ -25,22 +81,47 @@ function penroseApp() {
     }
   }
 
+  /*************************************************************************************
+   * Draws a little canvas with a shape.
+   * Shape depends on passed in ID.
+   */
   function makeCanvas(canvasId) {
     var canvas = document.getElementById(canvasId);
     g = canvas.getContext("2d");
 
-
+    // for makeCanvas only
     const drawScreen = function() {
+      // Initialize screen.
       g.fillStyle = "#ffffff";
       g.fillRect(0, 0, canvas.width, canvas.height);
-      g.fillStyle = penrose.ORANGE;
+      g.fillStyle = penrose.ORANGE;  // This not needed
       g.strokeStyle = penrose.OUTLINE;
       g.lineWidth = 1;
       scale = 10;
-      // this is a p0 down.  
-      console.log(`figure(${penrose.BLUE},${JSON.stringify(new P(5, 5))})`)
-      const fBounds = figure(penrose.BLUE, new P(5, 5), penrose.penta[penrose.down[0]]);
-      console.log(`fBounds: ${JSON.stringify(fBounds)}`);
+      // this is a p0 down.
+      let fbounds;
+      switch (canvasId) {
+        case 'p5':
+          fBounds = figure(penrose.BLUE, new P(3, 3), penrose.penta[penrose.down[0]]);
+          break;
+        case 'p3':
+          fBounds = figure(penrose.YELLOW, new P(3, 3), penrose.penta[penrose.up[0]]);
+          break;
+        case 'p1':
+          fBounds = figure(penrose.ORANGE, new P(3, 3), penrose.penta[penrose.up[0]]);
+          break;
+        case 's5':
+          fBounds = figure(penrose.BLUE, new P(4, 4), penrose.star[penrose.up[0]]);
+          break;
+        case 's3':
+          fBounds = figure(penrose.BLUE, new P(4, 4), penrose.boat[penrose.up[0]]);
+          break;
+        case 's1':
+          fBounds = figure(penrose.BLUE, new P(1, 0), penrose.diamond[penrose.up[0]]);
+          break;
+      }
+      
+      // Make adjustments based on the bounds of the drawing.
       redraw(fBounds, canvas, drawScreen)
     }
 
@@ -48,12 +129,12 @@ function penroseApp() {
 
   }
 
-  /**
+  /***************************************************************************************
+   * The first expansion draws penta(1) and star(1) varients
    * Sets the globals g and scale
    */
   function drawFirstExpansion(canvasId) {
-    return;
-    console.log("draw")
+    //console.log("draw")
     var canvas = document.getElementById(canvasId);
     if (!canvas) {
       console.log("canvasId is null!");
@@ -71,40 +152,29 @@ function penroseApp() {
       scale = 10;
       penrose.scale = scale;
 
-      
-
       x = 8;
       y = 9;
-
       const bounds = pUp(p(x, y));
-      
       pDown(p(25, y));
-
       y += 18;
-
       for (let i = 0; i < 5; i++) {
         p2Up(i, p(x + i * 20, y));
       }
-
       y += 20;
       for (let i = 0; i < 5; i++) {
         p2Up(i, p(x + i * 20, y));
       }
-
       y += 20;
       for (let i = 0; i < 5; i++) {
         p4Up(i, p(x + i * 20, y));
       }
-
       y += 20;
       for (let i = 0; i < 5; i++) {
         p4Down(i, p(x + i * 20, y));
       }
       y += 25;
-
       starUp(p(15, y));
       starDown(p(45, y));
-
       x = 10;
       y += 30;
       for (let i = 0; i < 5; i++) {
@@ -128,61 +198,22 @@ function penroseApp() {
       }
 
       redraw(bounds, canvas, drawScreen);
-      /*
-      computedHeight = y * scale + 50;
-      computedWidth = 15 + 5 * 25 * 10;
-
-      if (canvas.width != computedWidth || canvas.height != computedHeight) {
-        canvas.width = computedWidth;
-        canvas.height = computedHeight
-        setTimeout(drawScreen(), 0);
-      }
-      */
     }
     drawScreen();
   }
-  /**
+  /*************************************************************************************
    * The second draw test is the expansion of the first draw test.
    * It draws the second expansion of each of the tiles.
    * 
    */
-  function drawSecondExpansion(canvalId) {
-    return;
-    const canvas = document.getElementById(canvalId);
+  function drawSecondExpansion(canvasId) {
+    const canvas = document.getElementById(canvasId);
     // g is global
     g = canvas.getContext("2d");
-    //drawScreen();
-    drawBig();
-    
-    function drawBig() {
-      g.fillStyle = "#ffffff";
-      g.fillRect(0, 0, canvas.width, canvas.height);
-
-      g.fillStyle = penrose.ORANGE;
-      g.strokeStyle = penrose.OUTLINE;
-      g.lineWidth = 1;
-      scale = 10;
-      penrose.scale = scale; // Maybe does not use it.
-      let y = canvas.width / scale / 2;
-      let y2 = 3 * y
-      penta4Up(0, p(canvas.width / scale / 2, y));
-      boat2Up(0, p(canvas.width / scale / 2, 3 * y));
-
-      y = 25;
-      shapes = [penrose.penta, penrose.diamond, penrose.star, penrose.boat]
-      for (const shape of shapes) {
-        for (let i = 0; i < 10; i++) {
-          let offset = p((i + 1) * 20, y);
-          figure(penrose.YELLOW, offset, shape[i]);
-          grid(p((i + 1) * 20, y));
-
-        }
-        y += 25;
-      }
-
-    }
-    
-
+    drawScreen();
+    /**
+     * 
+     */
     function drawScreen() {
       g.fillStyle = "#ffffff";
       g.fillRect(0, 0, canvas.width, canvas.height);
@@ -239,6 +270,46 @@ function penroseApp() {
     }
   }
 
+  function drawGridWork(canvasId) {
+    const canvas = document.getElementById(canvasId);
+    g = canvas.getContext("2d");
+    //drawScreen();
+    drawBig();
+    
+    /**
+     * Draws all of the penrose rotations
+     */
+    function drawBig() {
+      g.fillStyle = "#ffffff";
+      g.fillRect(0, 0, canvas.width, canvas.height);
+
+      g.fillStyle = penrose.ORANGE;
+      g.strokeStyle = penrose.OUTLINE;
+      g.lineWidth = 1;
+      scale = 10;
+      penrose.scale = scale; // Maybe does not use it.
+
+      y = 5;
+      shapes = [penrose.penta, penrose.diamond_correct, penrose.star, penrose.boat];
+      const spacing = 12;
+      for (const shape of shapes) {
+        for (let i = 0; i < 10; i++) {
+          let offset = p((i + 1) * spacing, y);
+          figure(penrose.ORANGE, offset, shape[i]);
+          grid(p((i + 1) * spacing, y));
+        }
+        y += spacing;
+      }
+
+      y += 20;
+      penta4Up(0, p(canvas.width / scale / 2, y));
+      y += 65;
+      boat2Up(0, p(canvas.width / scale / 2, y));
+
+
+    }
+
+  }
   /**
    * For the third expansion we want to use a different scheme.
    * 
@@ -261,47 +332,40 @@ function penroseApp() {
     scale = 10;
     penrose.scale = scale; // Maybe does not use it.
 
-    drawScreen = function() {
-      let x = 10;
-      let y = 10;
+    function starType(type) {
+      switch (typeList[type]) {
+        case P2: return S3;
+        case P4: return S1;
+        case P0: return S5;
+        default: return typeList[type];
+      }
+    }
+    function pentaType(type) {
 
-      //penta(5, P4, UP, p(x,y), 0);
-      x += 10;
-      //penta(4, P2, UP, p(x,y), 0);
-      x += 10;
-      //penta(3, P0, DOWN, p(x, y), 0);
-      x += 10;
-      //penta(5, P2, UP, p(x, y), 0);
-      x += 10;
-      //star(0, S5, UP, p(x, y), 0);
-      x += 10;
-      //star(1, S3, DOWN, p(x, y), 0);
-      x += 10;
-      //star(2, S1, UP, p(x, y), 0);
-      // second line
-      y += 20;
-      x = 20;
-      /*
-      penta(0, P2, UP, p(x, y), 1);
-      x += 20;
-      penta(1, P2, UP, p(x, y), 1);
-      x += 20;
-      penta(2, P2, UP, p(x, y), 1);
-      x += 20;
-      penta(3, P2, UP, p(x, y), 1);
-      x += 20; */
-      console.log('--Boat up 0');
-      star(0, S3, UP, p(x, y), 0);
-      x += 20;
-      star(0, S3, UP, p(x, y), 1);
+      switch (typeList[type]) {
+        case S1: return P4;
+        case S3: return P2;
+        case S5: return P0;
+        default: return typeList[type];
+      }
+    }
 
-      y += 20;
-      x = 20;
-      console.log('--Boat up 1');
-      star(1, S3, UP, p(x, y), 0);
-      x += 20;
-      star(1, S3, UP, p(x, y), 1);
-
+    const drawScreen = function() {
+      console.log('--Pentagon')
+      let x = 13; let y = 26;
+      penta(fifths, pentaType(type), isDown, p(x,y), 0);
+      x += 21;
+      penta(fifths, pentaType(type), isDown, p(x,y), 1);
+      x += 34;
+      penta(fifths, pentaType(type), isDown, p(x,y), 2);
+      
+      console.log('--Diamond up 4');
+      x = 13; y += 55;
+      star(fifths, starType(type), isDown, p(x,y), 0);
+      x += 21;
+      star(fifths, starType(type), isDown, p(x,y), 1);
+      x += 54;
+      star(fifths, starType(type), isDown, p(x,y), 2);
     }
 
     drawScreen();
@@ -365,7 +429,7 @@ function lineFigure(fill, offset, shape) {
 
 }
 /**
- * FIRST EXPANSION METHODS
+ * FIRST EXPANSION METHODS (These are now deprecated)
  */
 
 /**
@@ -629,6 +693,7 @@ function point(x,y)
  * 
  * */                
 
+// P is the offset of blue -> blue, blue -> yellow or blue -> orange
 function pWheelNext(exp) {
   const p = pWheels[exp].w;
   return new Wheel(
@@ -637,6 +702,7 @@ function pWheelNext(exp) {
     p[3].tr(p[2]).tr(p[1]));
 }
 
+// S is the offset
 function sWheelNext(exp) {
   const p = pWheels[exp].w;
   const s = sWheels[exp].w;
@@ -663,9 +729,9 @@ const tWheels = [null];
 const pWheel1 = new Wheel(p(0, -6), p(3, -4), p(5, -2));
 const sWheel1 = new Wheel(p(0, -5), p(3, -5), p(5, -1));
 const tWheel1 = new Wheel(p(0, -8), p(5, -8), p(8, -2));
-console.log(`real P1: ${pWheel1.string}`);
-console.log(`real S1: ${sWheel1.string}`);
-console.log(`real T1: ${tWheel1.string}`);
+console.log(`real P1[1]: ${pWheel1.string}`);
+console.log(`real S1[1]: ${sWheel1.string}`);
+console.log(`real T1[1]: ${tWheel1.string}`);
 
 pWheels.push(pWheel1);
 sWheels.push(sWheel1);
@@ -674,6 +740,10 @@ tWheels.push(tWheel1);
 const pWheel2 = new Wheel(p(0, -14), p(8, -12), p(13, -4));
 const sWheel2 = new Wheel(p(0, -15), p(8, -11), p(13, -5));
 const tWheel2 = new Wheel(p(0, -24), p(13, -18), p(21, -8));
+
+console.log(`real P1[2]: ${pWheel2.string}`);
+console.log(`real S1[2]: ${sWheel2.string}`);
+console.log(`real T1[2]: ${tWheel2.string}`);
 
 pWheels.push(pWheel2);
 sWheels.push(sWheel2);
@@ -684,23 +754,14 @@ console.log(`We have the wheel 1 and 2 pushed`)
 pWheel2Guess = pWheelNext(1);
 sWheel2Guess = sWheelNext(1);
 tWheel2Guess = tWheelNext(1);
-console.log('calculate wheels 2 comparison');
-console.log(`real P2: ${pWheel2.string}`);
-console.log(`calc P2: ${pWheel2Guess.string}`);
-
-console.log(`real S2: ${pWheel2.string}`);
-console.log(`calc S2: ${sWheel2Guess.string}`);
-
-console.log(`real T2: ${pWheel2.string}`);
-console.log(`calc T2: ${sWheel2Guess.string}`);
 
 // Create xWheels[3]
 pWheels.push(pWheelNext(2));
 sWheels.push(sWheelNext(2));
 tWheels.push(sWheelNext(2));
-console.log(`real P3: ${pWheels[3].string}`);
-console.log(`real S3: ${sWheels[3].string}`);
-console.log(`real T3: ${tWheels[3].string}`);
+console.log(`real P1[3]: ${pWheels[3].string}`);
+console.log(`real S1[3]: ${sWheels[3].string}`);
+console.log(`real T1[3]: ${tWheels[3].string}`);
 
 
 // now calulate wheel 3
@@ -714,37 +775,7 @@ console.log(`real T3: ${tWheels[3].string}`);
  * T: {"list":[{"x":0,"y":-24},{"x":13,"y":-18},{"x":21,"y":-8},{"x":21,"y":8},{"x":13,"y":18},{"x":0,"y":24},{"x":-13,"y":18},{"x":-21,"y":8},{"x":-21,"y":-8},{"x":-13,"y":-18}]}
  * 
  */
-/*
-function dumpWheels() {
-  console.log('dump wheels');
-  for (let i = 1; i < 3; i++) {
-    console.log(`wheel ${i}`);
-    console.log(`P: ${JSON.stringify(pWheels[i].w.map(it => [it.x, it.y]))}`);
-    console.log(`S: ${JSON.stringify(sWheels[i].w.map(it => [it.x, it.y]))}`);
-    console.log(`T: ${JSON.stringify(tWheels[i].w.map(it => [it.x, it.y]))}`);
-    let pw = pWheels[i].w;
-    let sw = sWheels[i].w;
-    
-    for (let j = 0; j < 3; j++) {
-      let p1 = pw[(1 + j) % 10];
-      let p0 = pw[ j % 10];
-      let p9 = pw[(j + 9) % 10];
-      let s9 = sw[(j + 9) % 10];
-      console.log(`p1: ${JSON.stringify(p1)} p0: ${JSON.stringify(p0)} p9: ${ JSON.stringify(p9) }`);
-      console.log(`s9: ${JSON.stringify(s9)}`);
-      console.log(`p1 + p0 + p9 = ${JSON.stringify(
-        p1.tr(p0).tr(p9)
-        )}`);
-      console.log(`p1 + p0 + s9 = ${JSON.stringify(
-        p1.tr(p0).tr(s9)
-        )}`
-      );
-      
-    }
-  }
-}
-dumpWheels();
-*/
+
 function pentaUp(base) {
 
   pDown(base);
@@ -937,8 +968,13 @@ function diamond4Up(angle, base) {
   p4Down(norm(0 + angle), base.tr(sWheel2.up[norm(0 + angle)]));
   boatUp(norm(0 + angle), base.tr(tWheel2.up[norm(0 + angle)]));
 }
-
-/* Generic expansion methods */
+/**************************************************************************************************************
+ * Generic expansion methods
+ * 
+ * 
+ * 
+ * 
+ ***********************************************************/
 const P0 = {
   name: 'P0',
   color: [
@@ -1016,7 +1052,7 @@ const S1 = {
     null,
     null,
   ],
-  shape: penrose.diamond,
+  shape: penrose.diamond_correct,
   typeColor: penrose.BLUE,
 }
 const DOWN = true;
@@ -1024,19 +1060,40 @@ const UP = false;
 
 /**
  * Recursive routine to draw pentagon type objects.
- * P5, P3 and P1
+ * P5, P3 and P1  Up versions shown
+ * 
+ *    p5  === blue === P0
+ * 
+ *     o
+ *  o     o
+ *   o   o
+ * 
+ *    p3  === yellow === P2
+ * 
+ *     o         o         *         *         o
+ *  o     o   *     o   *     o   o     *   o     *
+ *   *   *     *   o     o   o     o   o     o   *
+ *
+ *    p1 === orange === P4
+ * 
+ *     o         *         *         *         *
+ *  *     *   *     o   *     *   *     *   o     *
+ *   *   *     *   *     *   o     o   *     *   *
+ * 
+ * 
  * @param {*} fifths 
  * @param {*} type 
+ *   This object contains the tables necessary for construction.
  * @param {*} isDown 
- * @param {*} loc 
- * @param {*} exp 
+ * @param {*} loc target of the center of the object on the canvas
+ * @param {*} exp Recursive expansion. 0 the primitive.
  * @returns 
  */
 function penta(fifths, type, isDown, loc, exp) {
   fifths = norm(fifths);
-  console.log(`${type.name}: ${fifths}, exp: ${exp} ${loc}`)
+  //console.log(`${type.name}: ${fifths}, exp: ${exp} ${loc}`)
   if (exp == 0) {
-    console.log(`figure: ${type.name} color: ${type.typeColor}, loc: ${loc.toString()}`)
+    //console.log(`figure: ${type.name} color: ${type.typeColor}, loc: ${loc.toString()}`)
     figure(
       type.typeColor,
       loc,
@@ -1047,21 +1104,14 @@ function penta(fifths, type, isDown, loc, exp) {
   const pWheel = pWheels[exp].w;
   const sWheel = sWheels[exp].w;
 
-  // Draw the center
+  // Draw the center. Always the BLUE p5
   penta(
     0, 
     P0, 
     !isDown, 
     loc, 
-    exp-1);
-
-  for (let i = 0; i < 5; i++) {
-    const shift = norm(fifths + i);
-    const angleUp = tenths(shift, UP);
-    const angleDown = tenths(shift, DOWN);
-    const twist = type.twist[shift] != 0;
-    console.log(JSON.stringify({ shift, angleUp, angleDown, twist }));
-  }
+    exp-1
+  );
   
   for (let i = 0; i < 5; i++) {
     const shift = norm(fifths + i);
@@ -1071,21 +1121,17 @@ function penta(fifths, type, isDown, loc, exp) {
       (type.twist[i] == 0 ? P2 : P4), 
       isDown, 
       loc.tr(pWheel[tenths(shift, isDown)]), 
-      exp - 1);
-    console.log(`fifths: ${fifths}, i: ${i} penta(${
-      norm(shift + type.twist[i])}, ${
-      (type.twist[shift] == 0 ? P2 : P4).name},${
-        isDown },${
-      pWheel[tenths(shift, isDown)]},${
-          exp - 1})`);
+      exp - 1
+    );
 
     if (type.diamond.includes(i)) {
       star(
         shift,
         S1,
-        isDown, 
+        !isDown, 
         loc.tr(sWheel[tenths(shift, !isDown)]), 
-        exp - 1);
+        exp - 1
+      );
     }
   }
 }
@@ -1093,8 +1139,28 @@ function penta(fifths, type, isDown, loc, exp) {
 
 
 /**
- * @param {*} fifths 
- * @param {*} type 
+ * S5, S3 and S1  Up versions shown
+ *    s5   star
+ * 
+ *     *
+ *  *  .  *
+ *   *   *
+ * 
+ *    s3   boat
+ * 
+ *     *         *                             *
+ *  *  .  *      .  *      .  *   *  .      *  .  
+ *                 *     *   *     *   *     *   
+ * 
+ *    s5   diamond
+ * 
+ *     *
+ *     .         .  *      .         .      *  .
+ *                           *     *
+ * 
+ * @param {*} fifths 0 to 5
+ * @param {*} type  S5 S3 S1
+ * @param {*} isDown
  * @param {*} loc 
  * @param {*} exp 
  * @returns 
@@ -1102,11 +1168,11 @@ function penta(fifths, type, isDown, loc, exp) {
 function star(fifths, type, isDown, loc, exp) {
   const name = type.name;
   fifths = norm(fifths);
-  console.log(`${type.name}: ${fifths}, exp: ${exp} ${loc}`)
+  //console.log(`${type.name}: ${fifths}, exp: ${exp} ${loc}`)
 
   if (exp == 0) {
     // Draw the figure.  Finished
-    console.log(`typeColor: ${type.typeColor}`);
+    //console.log(`typeColor: ${type.typeColor}`);
     figure(
       type.typeColor,
       loc,
@@ -1126,7 +1192,7 @@ function star(fifths, type, isDown, loc, exp) {
     const angleUp = tenths(shift, UP);
     const angleDown = tenths(shift, DOWN);
     const draw = type.color[shift] != null;
-    console.log(JSON.stringify({ shift, angleUp, angleDown, draw }));
+    //console.log(JSON.stringify({ shift, angleUp, angleDown, draw }));
   }
   
   for (let i = 0; i < 5; i ++) {
