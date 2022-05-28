@@ -1084,7 +1084,7 @@ const S1 = {
     null,
     null,
   ],
-  shape: penrose.diamond,
+  shape: penrose.diamond_correct,
   typeColor: penrose.BLUE,
 }
 const DOWN = true;
@@ -1198,7 +1198,7 @@ function penta(fifths, type, isDown, loc, exp) {
       star(
         shift,
         S1,
-        isDown, 
+        !isDown, 
         loc.tr(sWheel[tenths(shift, !isDown)]), 
         exp - 1);
     }
