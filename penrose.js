@@ -325,6 +325,19 @@ var penrose = (function()
         diamond_too.map((item) => new P(-item.x + 3,  item.y + 0)),
         diamond_for.map((item) => new P(-item.x + 2, -item.y + 3)),
       ],
+      diamond_correct :
+      [
+        diamond_up.map((item) => new P( item.x - 1,  item.y - 4)),
+        diamond_for.map((item) => new P(-item.x + 2,  item.y - 4)),
+        diamond_too.map((item) => new P(-item.x + 3, -item.y - 1)),
+        diamond_too.map((item) => new P(-item.x + 3,  item.y + 0)),
+        diamond_for.map((item) => new P(-item.x + 2, -item.y + 3)),
+        diamond_up.map( (item) => new P( item.x - 1,  item.y - 0)),
+        diamond_for.map((item) => new P( item.x - 3, -item.y + 3)),
+        diamond_too.map((item) => new P( item.x - 4,  item.y - 0)),
+        diamond_too.map((item) => new P( item.x - 4, -item.y - 1)),
+        diamond_for.map((item) => new P( item.x - 3,  item.y - 4)),
+      ],
     //
     boat :
       [

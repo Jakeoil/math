@@ -80,15 +80,20 @@ function penroseApp() {
     }
   }
 
+  /*************************************************************************************
+   * Draws a little canvas with a shape.
+   * Shape depends on passed in ID.
+   */
   function makeCanvas(canvasId) {
     var canvas = document.getElementById(canvasId);
     g = canvas.getContext("2d");
 
     // for makeCanvas only
     const drawScreen = function() {
+      // Initialize screen.
       g.fillStyle = "#ffffff";
       g.fillRect(0, 0, canvas.width, canvas.height);
-      g.fillStyle = penrose.ORANGE;
+      g.fillStyle = penrose.ORANGE;  // This not needed
       g.strokeStyle = penrose.OUTLINE;
       g.lineWidth = 1;
       scale = 10;
@@ -114,24 +119,21 @@ function penroseApp() {
           fBounds = figure(penrose.BLUE, new P(1, 0), penrose.diamond[penrose.up[0]]);
           break;
       }
+      
+      // Make adjustments based on the bounds of the drawing.
       redraw(fBounds, canvas, drawScreen)
-
-      // console.log(`figure(${penrose.BLUE},${JSON.stringify(new P(5, 5))})`)
-      //const fBounds = figure(penrose.BLUE, new P(5, 5), penrose.penta[penrose.down[0]]);
-      //console.log(`fBounds: ${JSON.stringify(fBounds)}`);
-      //redraw(fBounds, canvas, drawScreen)
     }
 
     drawScreen();
 
   }
 
-  /**
+  /***************************************************************************************
+   * The first expansion draws penta(1) and star(1) varients
    * Sets the globals g and scale
    */
   function drawFirstExpansion(canvasId) {
-    return;
-    console.log("draw")
+    //console.log("draw")
     var canvas = document.getElementById(canvasId);
     if (!canvas) {
       console.log("canvasId is null!");
@@ -149,40 +151,29 @@ function penroseApp() {
       scale = 10;
       penrose.scale = scale;
 
-      
-
       x = 8;
       y = 9;
-
       const bounds = pUp(p(x, y));
-      
       pDown(p(25, y));
-
       y += 18;
-
       for (let i = 0; i < 5; i++) {
         p2Up(i, p(x + i * 20, y));
       }
-
       y += 20;
       for (let i = 0; i < 5; i++) {
         p2Up(i, p(x + i * 20, y));
       }
-
       y += 20;
       for (let i = 0; i < 5; i++) {
         p4Up(i, p(x + i * 20, y));
       }
-
       y += 20;
       for (let i = 0; i < 5; i++) {
         p4Down(i, p(x + i * 20, y));
       }
       y += 25;
-
       starUp(p(15, y));
       starDown(p(45, y));
-
       x = 10;
       y += 30;
       for (let i = 0; i < 5; i++) {
@@ -206,32 +197,24 @@ function penroseApp() {
       }
 
       redraw(bounds, canvas, drawScreen);
-      /*
-      computedHeight = y * scale + 50;
-      computedWidth = 15 + 5 * 25 * 10;
-
-      if (canvas.width != computedWidth || canvas.height != computedHeight) {
-        canvas.width = computedWidth;
-        canvas.height = computedHeight
-        setTimeout(drawScreen(), 0);
-      }
-      */
     }
     drawScreen();
   }
-  /**
+  /*************************************************************************************
    * The second draw test is the expansion of the first draw test.
    * It draws the second expansion of each of the tiles.
    * 
    */
   function drawSecondExpansion(canvalId) {
-    return;
     const canvas = document.getElementById(canvalId);
     // g is global
     g = canvas.getContext("2d");
     //drawScreen();
     drawBig();
     
+    /**
+     * Draws all of the penrose rotations
+     */
     function drawBig() {
       g.fillStyle = "#ffffff";
       g.fillRect(0, 0, canvas.width, canvas.height);
@@ -246,21 +229,22 @@ function penroseApp() {
       penta4Up(0, p(canvas.width / scale / 2, y));
       boat2Up(0, p(canvas.width / scale / 2, 3 * y));
 
-      y = 25;
-      shapes = [penrose.penta, penrose.diamond, penrose.star, penrose.boat]
+      y = 5;
+      shapes = [penrose.penta, penrose.diamond_correct, penrose.star, penrose.boat];
+      const spacing = 12;
       for (const shape of shapes) {
         for (let i = 0; i < 10; i++) {
-          let offset = p((i + 1) * 20, y);
-          figure(penrose.YELLOW, offset, shape[i]);
-          grid(p((i + 1) * 20, y));
-
+          let offset = p((i + 1) * spacing, y);
+          figure(penrose.ORANGE, offset, shape[i]);
+          grid(p((i + 1) * spacing, y));
         }
-        y += 25;
+        y += spacing;
       }
-
     }
     
-
+    /**
+     * 
+     */
     function drawScreen() {
       g.fillStyle = "#ffffff";
       g.fillRect(0, 0, canvas.width, canvas.height);
@@ -360,7 +344,7 @@ function penroseApp() {
     const drawScreen = function() {
       // penta(fifths, pentaType(type), isDown, p(x,y), 0);
       console.log('--Pent 2 up 4')
-      let x = 13; let y = 55/2;
+      let x = 13; let y = 26;
       //penta(4, P2, UP, p(x,y), 0);
       penta(fifths, pentaType(type), isDown, p(x,y), 0);
       x += 21;
@@ -773,9 +757,9 @@ const tWheels = [null];
 const pWheel1 = new Wheel(p(0, -6), p(3, -4), p(5, -2));
 const sWheel1 = new Wheel(p(0, -5), p(3, -5), p(5, -1));
 const tWheel1 = new Wheel(p(0, -8), p(5, -8), p(8, -2));
-console.log(`real P1: ${pWheel1.string}`);
-console.log(`real S1: ${sWheel1.string}`);
-console.log(`real T1: ${tWheel1.string}`);
+console.log(`real P1[1]: ${pWheel1.string}`);
+console.log(`real S1[1]: ${sWheel1.string}`);
+console.log(`real T1[1]: ${tWheel1.string}`);
 
 pWheels.push(pWheel1);
 sWheels.push(sWheel1);
@@ -784,6 +768,10 @@ tWheels.push(tWheel1);
 const pWheel2 = new Wheel(p(0, -14), p(8, -12), p(13, -4));
 const sWheel2 = new Wheel(p(0, -15), p(8, -11), p(13, -5));
 const tWheel2 = new Wheel(p(0, -24), p(13, -18), p(21, -8));
+
+console.log(`real P1[2]: ${pWheel2.string}`);
+console.log(`real S1[2]: ${sWheel2.string}`);
+console.log(`real T1[2]: ${tWheel2.string}`);
 
 pWheels.push(pWheel2);
 sWheels.push(sWheel2);
@@ -794,23 +782,23 @@ console.log(`We have the wheel 1 and 2 pushed`)
 pWheel2Guess = pWheelNext(1);
 sWheel2Guess = sWheelNext(1);
 tWheel2Guess = tWheelNext(1);
-console.log('calculate wheels 2 comparison');
-console.log(`real P2: ${pWheel2.string}`);
-console.log(`calc P2: ${pWheel2Guess.string}`);
+//console.log('calculate wheels 2 comparison');
+//console.log(`real P2: ${pWheel2.string}`);
+//console.log(`calc P2: ${pWheel2Guess.string}`);
 
-console.log(`real S2: ${pWheel2.string}`);
-console.log(`calc S2: ${sWheel2Guess.string}`);
+//console.log(`real S2: ${pWheel2.string}`);
+//console.log(`calc S2: ${sWheel2Guess.string}`);
 
-console.log(`real T2: ${pWheel2.string}`);
-console.log(`calc T2: ${sWheel2Guess.string}`);
+//console.log(`real T2: ${pWheel2.string}`);
+//console.log(`calc T2: ${sWheel2Guess.string}`);
 
 // Create xWheels[3]
 pWheels.push(pWheelNext(2));
 sWheels.push(sWheelNext(2));
 tWheels.push(sWheelNext(2));
-console.log(`real P3: ${pWheels[3].string}`);
-console.log(`real S3: ${sWheels[3].string}`);
-console.log(`real T3: ${tWheels[3].string}`);
+console.log(`real P1[3]: ${pWheels[3].string}`);
+console.log(`real S1[3]: ${sWheels[3].string}`);
+console.log(`real T1[3]: ${tWheels[3].string}`);
 
 
 // now calulate wheel 3
@@ -824,37 +812,7 @@ console.log(`real T3: ${tWheels[3].string}`);
  * T: {"list":[{"x":0,"y":-24},{"x":13,"y":-18},{"x":21,"y":-8},{"x":21,"y":8},{"x":13,"y":18},{"x":0,"y":24},{"x":-13,"y":18},{"x":-21,"y":8},{"x":-21,"y":-8},{"x":-13,"y":-18}]}
  * 
  */
-/*
-function dumpWheels() {
-  console.log('dump wheels');
-  for (let i = 1; i < 3; i++) {
-    console.log(`wheel ${i}`);
-    console.log(`P: ${JSON.stringify(pWheels[i].w.map(it => [it.x, it.y]))}`);
-    console.log(`S: ${JSON.stringify(sWheels[i].w.map(it => [it.x, it.y]))}`);
-    console.log(`T: ${JSON.stringify(tWheels[i].w.map(it => [it.x, it.y]))}`);
-    let pw = pWheels[i].w;
-    let sw = sWheels[i].w;
-    
-    for (let j = 0; j < 3; j++) {
-      let p1 = pw[(1 + j) % 10];
-      let p0 = pw[ j % 10];
-      let p9 = pw[(j + 9) % 10];
-      let s9 = sw[(j + 9) % 10];
-      console.log(`p1: ${JSON.stringify(p1)} p0: ${JSON.stringify(p0)} p9: ${ JSON.stringify(p9) }`);
-      console.log(`s9: ${JSON.stringify(s9)}`);
-      console.log(`p1 + p0 + p9 = ${JSON.stringify(
-        p1.tr(p0).tr(p9)
-        )}`);
-      console.log(`p1 + p0 + s9 = ${JSON.stringify(
-        p1.tr(p0).tr(s9)
-        )}`
-      );
-      
-    }
-  }
-}
-dumpWheels();
-*/
+
 function pentaUp(base) {
 
   pDown(base);
@@ -1165,9 +1123,9 @@ const UP = false;
  */
 function penta(fifths, type, isDown, loc, exp) {
   fifths = norm(fifths);
-  console.log(`${type.name}: ${fifths}, exp: ${exp} ${loc}`)
+  //console.log(`${type.name}: ${fifths}, exp: ${exp} ${loc}`)
   if (exp == 0) {
-    console.log(`figure: ${type.name} color: ${type.typeColor}, loc: ${loc.toString()}`)
+    //console.log(`figure: ${type.name} color: ${type.typeColor}, loc: ${loc.toString()}`)
     figure(
       type.typeColor,
       loc,
@@ -1193,7 +1151,7 @@ function penta(fifths, type, isDown, loc, exp) {
     const angleUp = tenths(shift, UP);
     const angleDown = tenths(shift, DOWN);
     const twist = type.twist[shift] != 0;
-    console.log(JSON.stringify({ shift, angleUp, angleDown, twist }));
+    //console.log(JSON.stringify({ shift, angleUp, angleDown, twist }));
   }
 
   for (let i = 0; i < 5; i++) {
@@ -1205,27 +1163,27 @@ function penta(fifths, type, isDown, loc, exp) {
       isDown, 
       loc.tr(pWheel[tenths(shift, isDown)]), 
       exp - 1);
-    console.log(`fifths: ${fifths}, i: ${i} penta(${
-      norm(shift + type.twist[i])
-    }, ${
-      (type.twist[shift] == 0 ? P2 : P4).name
-    },${
-        isDown },${
-      pWheel[tenths(shift, isDown)]
-    },${
-      exp - 1
-    })`);
+    //console.log(`fifths: ${fifths}, i: ${i} penta(${
+    //  norm(shift + type.twist[i])
+    //}, ${
+    //  (type.twist[shift] == 0 ? P2 : P4).name
+    //},${
+    //    isDown },${
+    //  pWheel[tenths(shift, isDown)]
+    //},${
+    //  exp - 1
+    //})`);
 
     // This is where the error is.
     // First what does this
-    if (type.diamond.includes(i)) {
-      star(
-        shift,
-        S1,
-        isDown, 
-        loc.tr(sWheel[tenths(shift, !isDown)]), 
-        exp - 1);
-    }
+    //if (type.diamond.includes(i)) {
+    //  star(
+    //    shift,
+    //    S1,
+    //    isDown, 
+    //    loc.tr(sWheel[tenths(shift, !isDown)]), 
+    //    exp - 1);
+    //}
   }
 
   for (let i = 0; i < 5; i++) {
@@ -1233,6 +1191,10 @@ function penta(fifths, type, isDown, loc, exp) {
     // This is where the error is.
     // First what does this
     if (type.diamond.includes(i)) {
+      if (exp == 2) {
+        console.log('Drawing a diamond');
+        console.log(`sWheel: ${sWheel.toString()}`);
+      }
       star(
         shift,
         S1,
@@ -1261,9 +1223,9 @@ function penta(fifths, type, isDown, loc, exp) {
  * 
  *    s5   diamond
  * 
- *     *                                        
- *     .         .  *      .         .      *  .  
- *                           *     *             
+ *     *
+ *     .         .  *      .         .      *  .
+ *                           *     *
  * 
  * @param {*} fifths 0 to 5
  * @param {*} type  S5 S3 S1
@@ -1275,11 +1237,11 @@ function penta(fifths, type, isDown, loc, exp) {
 function star(fifths, type, isDown, loc, exp) {
   const name = type.name;
   fifths = norm(fifths);
-  console.log(`${type.name}: ${fifths}, exp: ${exp} ${loc}`)
+  //console.log(`${type.name}: ${fifths}, exp: ${exp} ${loc}`)
 
   if (exp == 0) {
     // Draw the figure.  Finished
-    console.log(`typeColor: ${type.typeColor}`);
+    //console.log(`typeColor: ${type.typeColor}`);
     figure(
       type.typeColor,
       loc,
@@ -1299,7 +1261,7 @@ function star(fifths, type, isDown, loc, exp) {
     const angleUp = tenths(shift, UP);
     const angleDown = tenths(shift, DOWN);
     const draw = type.color[shift] != null;
-    console.log(JSON.stringify({ shift, angleUp, angleDown, draw }));
+    //console.log(JSON.stringify({ shift, angleUp, angleDown, draw }));
   }
   
   for (let i = 0; i < 5; i ++) {
