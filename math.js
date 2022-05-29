@@ -4,12 +4,12 @@ addEventListener("load", eventWindowLoaded, false);
 function eventWindowLoaded() {
   penroseApp();
 }
-//addEventListener("click")
-
 // penrose globals referred to in parameterrs penta and star methods
-let fifths = 0;
-let type = 0;
-let isDown = false; 
+
+//et fifths = 0;
+//let type = 0;
+//let isDown = false;
+const controls = new Controls(0, 0, false);
 
 // Graphics globals for whole canvas
 let g;
@@ -22,33 +22,32 @@ function penroseApp() {
   const eleFifths = document.getElementById("fifths");
   const eleType = document.getElementById("type");
   const eleIsDown = document.getElementById("isDown");
-  const typeList = [P0, P2, P4, S5, S3, S1];
-  eleFifths.innerHTML = `fifths: ${fifths}`;
-  eleType.innerHTML = typeList[type].name;
-  eleIsDown.innerHTML = isDown ? "Down" : "up";
+  
+  eleFifths.innerHTML = `fifths: ${controls.fifths}`;
+  eleType.innerHTML = controls.typeName;
+  eleIsDown.innerHTML = controls.direction;
 
   const clickFifths = function () {
-    fifths = norm(fifths + 1);
-    eleFifths.innerHTML = `fifths: ${fifths}`;
-    drawThirdExpansion('expansion-3'); 
+    controls.bumpFifths();
+    eleFifths.innerHTML = `fifths: ${controls.fifths}`;
+    drawThirdExpansion('expansion-3');
+    drawFourthExpansion('expansion-4');
   };
-  eleFifths.addEventListener(
-    "click", 
-    clickFifths, 
-    false);
   const clickType = function() {
-    type = (type + 1) % typeList.length;
-    eleType.innerHTML = typeList[type].name;
+    controls.bumpType();
+    eleType.innerHTML = controls.typeName;
     drawThirdExpansion('expansion-3'); 
+    drawFourthExpansion('expansion-4');
   }
-  eleType.addEventListener("click", clickType, false);
-  
-  
   const clickIsDown = function() {
-    isDown = ! isDown;
-    eleIsDown.innerHTML = isDown ? "Down" : "up";
+    controls.toggleDirection();
+    eleIsDown.innerHTML = controls.direction;
     drawThirdExpansion('expansion-3'); 
+    drawFourthExpansion('expansion-4');
   }
+
+  eleFifths.addEventListener("click", clickFifths, false);
+  eleType.addEventListener("click", clickType, false);
   eleIsDown.addEventListener('click', clickIsDown, false);
   
   // load the little canvases.
@@ -62,6 +61,7 @@ function penroseApp() {
   drawSecondExpansion('expansion-2');
   // This is where I refactor _everything_
   drawThirdExpansion('expansion-3');
+  drawFourthExpansion('expansion-4');
   drawGridWork('grid-work');
   
   /**
@@ -333,44 +333,54 @@ function penroseApp() {
     penrose.scale = scale; // Maybe does not use it.
 
     function starType(type) {
-      switch (typeList[type]) {
-        case P2: return S3;
-        case P4: return S1;
-        case P0: return S5;
-        default: return typeList[type];
+      switch (controls.typeList[type]) {
+        case penrose.Pe1: return penrose.St1;
+        case penrose.Pe3: return penrose.St3;
+        case penrose.Pe5: return penrose.St5;
+        default: return controls.typeList[type];
       }
     }
     function pentaType(type) {
 
-      switch (typeList[type]) {
-        case S1: return P4;
-        case S3: return P2;
-        case S5: return P0;
-        default: return typeList[type];
+      switch (controls.typeList[type]) {
+        case penrose.St1: return penrose.Pe1;
+        case penrose.St3: return penrose.Pe3;
+        case penrose.St5: return penrose.Pe5;
+        default: return controls.typeList[type];
       }
     }
 
     const drawScreen = function() {
       console.log('--Pentagon')
       let x = 13; let y = 26;
-      penta(fifths, pentaType(type), isDown, p(x,y), 0);
+      penta(controls.fifths, pentaType(controls.type), controls.isDown, p(x,y), 0);
       x += 21;
-      penta(fifths, pentaType(type), isDown, p(x,y), 1);
+      penta(controls.fifths, pentaType(controls.type), controls.isDown, p(x,y), 1);
       x += 34;
-      penta(fifths, pentaType(type), isDown, p(x,y), 2);
+      penta(controls.fifths, pentaType(controls.type), controls.isDown, p(x,y), 2);
       
       console.log('--Diamond up 4');
       x = 13; y += 55;
-      star(fifths, starType(type), isDown, p(x,y), 0);
+      star(controls.fifths, starType(controls.type), controls.isDown, p(x,y), 0);
       x += 21;
-      star(fifths, starType(type), isDown, p(x,y), 1);
+      star(controls.fifths, starType(controls.type), controls.isDown, p(x,y), 1);
       x += 54;
-      star(fifths, starType(type), isDown, p(x,y), 2);
+      star(controls.fifths, starType(controls.type), controls.isDown, p(x,y), 2);
     }
 
     drawScreen();
   }
 
+  function drawFourthExpansion(canvasId) {
+    const canvas = document.getElementById(canvasId);
+    // g is global
+    g = canvas.getContext("2d");
+    g.fillStyle = "#ffffff";
+    g.fillRect(0, 0, canvas.width, canvas.height);
+    g.strokeStyle = penrose.OUTLINE;
+    g.lineWidth = 1;
+    scale = 5;
+  }
 
 }
 

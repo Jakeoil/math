@@ -122,6 +122,31 @@ class Wheel {
   }
 }
 
+class Controls {
+  constructor(fifths, type, isDown) {
+    this.fifths = fifths;
+    this.type = type;
+    this.isDown = isDown;
+  }
+  bumpFifths() {
+    this.fifths = norm(this.fifths + 1);
+  }
+  
+  get typeName() {
+    return this.typeList[this.type].name;
+  }
+  bumpType() {
+    this.type = (this.type + 1) % this.typeList.length;
+  }
+  get direction() {
+    return this.isDown ? "Down" : "Up";
+  }
+  toggleDirection() {
+    this.isDown = ! this.isDown;
+  }
+  
+  typeList = [penrose.Pe1, penrose.Pe3, penrose.Pe5, penrose.St1, penrose.St3, penrose.St5]
+}
 // Build the api
 var penrose = (function()
 {
@@ -227,6 +252,10 @@ var penrose = (function()
   var T8 = T2.hr();
   var T9 = T1.hr();
 
+  ORANGE = "#e46c0a";
+  BLUE   = "#0000ff";
+  YELLOW = "#ffff00";
+
   /**
    * These draw the symmetric pentagon.
    * 
@@ -277,27 +306,7 @@ var penrose = (function()
               ];
     }
   }
-
-  // This is the core penrose object.
-  return {
-    ORANGE : "#e46c0a",
-    BLUE   : "#0000ff",
-    YELLOW : "#ffff00",
-    OUTLINE :"#4a7eba",
-    //init : function(in_scale, in_id)
-    //{
-    //  scale     = in_scale;
-    //  id        = in_id;
-    //  g         = document.getElementById(in_id).getContext("2d");
-    //},
-    //g : g,
-    p : [ P0, P1, P2, P3, P4, P5, P6, P7, P8, P9],
-    s : [ S0, S1, S2, S3, S4, S5, S6, S7, S8, S9],
-    t : [ T0, T1, T2, T3, T4, T5, T6, T7, T8, T9],
-
-    up   : [0,2,4,6,8],  //
-    down : [5,7,9,1,3],
-    // okay, 10 of each
+  const shapes = {
     penta : 
       [
         penta_up.map((item) => new P( item.x - 3,   item.y - 3)),
@@ -366,7 +375,116 @@ var penrose = (function()
         star_up.map((item) => new P(-item.x + 3, -item.y + 3)),
         star_up.map((item) => new P( item.x - 4,  item.y - 4)),
         star_up.map((item) => new P(-item.x + 3, -item.y + 3)),
-      ]
+      ],
+  };
+  // This is the core penrose object.
+  return {
+    ORANGE : "#e46c0a",
+    BLUE   : "#0000ff",
+    YELLOW : "#ffff00",
+    OUTLINE :"#4a7eba",
+    //init : function(in_scale, in_id)
+    //{
+    //  scale     = in_scale;
+    //  id        = in_id;
+    //  g         = document.getElementById(in_id).getContext("2d");
+    //},
+    //g : g,
+    p : [ P0, P1, P2, P3, P4, P5, P6, P7, P8, P9],
+    s : [ S0, S1, S2, S3, S4, S5, S6, S7, S8, S9],
+    t : [ T0, T1, T2, T3, T4, T5, T6, T7, T8, T9],
+
+    up   : [0,2,4,6,8],  //
+    down : [5,7,9,1,3],
+    // okay, 10 of each
+    penta : shapes.penta,
+    diamond : shapes.diamond,
+    diamond_correct : shapes.diamond_correct,
+    boat :shapes.boat,
+    
+    //--
+    star : shapes.star,
+    
+      Pe5: {
+        name: 'Pe5',
+        color: [
+          YELLOW,
+          YELLOW,
+          YELLOW,
+          YELLOW,
+          YELLOW,  
+        ], 
+        twist: [ 0,0,0,0,0 ],
+        shape: shapes.penta,
+        typeColor: BLUE,
+        diamond:[],
+      },
+      Pe3: {
+        name: 'Pe3',
+        color: [
+          YELLOW,
+          YELLOW,
+          ORANGE,
+          ORANGE,
+          YELLOW,
+        ],
+        twist: [0, 0, -1, 1, 0],
+        shape: shapes.penta,
+        typeColor: YELLOW,
+        diamond:[0],
+      
+      },
+      Pe1: {
+        name: 'Pe1',
+        color: [
+          YELLOW,
+          ORANGE,
+          ORANGE,
+          ORANGE,
+          ORANGE,
+        ],
+        twist: [0, -1, 1, -1, 1],
+        shape: shapes.penta,
+        typeColor: ORANGE,
+        diamond:[1,4],
+      },
+      // for stars, the color indicates existence.
+      St5: {
+        name: 'St5: star',
+        color: [
+          BLUE,
+          BLUE,
+          BLUE,
+          BLUE,
+          BLUE,
+        ],
+        shape: shapes.star,
+        typeColor: BLUE,
+      },
+      St3: {
+        name: 'St3: boat',
+        color: [
+          BLUE,
+          BLUE,
+          null,
+          null,
+          BLUE,
+        ],
+        shape: shapes.boat,
+        typeColor: BLUE,
+      },
+      St1: {
+        name: 'St1: diamond',
+        color: [
+          BLUE,
+          null,
+          null,
+          null,
+          null,
+        ],
+        shape: shapes.diamond_correct,
+        typeColor: BLUE,
+      },
   }
  
 })()
