@@ -30,20 +30,20 @@ function penroseApp() {
   const clickFifths = function () {
     controls.bumpFifths();
     eleFifths.innerHTML = `fifths: ${controls.fifths}`;
-    drawThirdExpansion('expansion-3');
-    drawFourthExpansion('expansion-4');
+    drawGeneric123('generic-012');
+    drawGeneric3('generic-expansion-3');
   };
   const clickType = function() {
     controls.bumpType();
     eleType.innerHTML = controls.typeName;
-    drawThirdExpansion('expansion-3'); 
-    drawFourthExpansion('expansion-4');
+    drawGeneric123('generic-012'); 
+    drawGeneric3('generic-expansion-3');
   }
   const clickIsDown = function() {
     controls.toggleDirection();
     eleIsDown.innerHTML = controls.direction;
-    drawThirdExpansion('expansion-3'); 
-    drawFourthExpansion('expansion-4');
+    drawGeneric123('generic-012'); 
+    drawGeneric3('generic-expansion-3');
   }
 
   eleFifths.addEventListener("click", clickFifths, false);
@@ -57,12 +57,12 @@ function penroseApp() {
   makeCanvas('s5');
   makeCanvas('s3');
   makeCanvas('s1');
-  drawFirstExpansion('pentagons');
-  drawSecondExpansion('expansion-2');
-  // This is where I refactor _everything_
-  drawThirdExpansion('expansion-3');
-  drawFourthExpansion('expansion-4');
+  drawFirstInflation('inflation-1');
+  drawSecondInflation('inflation-2');
   drawGridWork('grid-work');
+  // This is where I refactor _everything_
+  drawGeneric123('generic-012');
+  drawGeneric3('generic-expansion-3');
   
   /**
    * Called at end of draw cycle.  Redraws under the following conditions
@@ -133,7 +133,7 @@ function penroseApp() {
    * The first expansion draws penta(1) and star(1) varients
    * Sets the globals g and scale
    */
-  function drawFirstExpansion(canvasId) {
+  function drawFirstInflation(canvasId) {
     //console.log("draw")
     var canvas = document.getElementById(canvasId);
     if (!canvas) {
@@ -206,7 +206,7 @@ function penroseApp() {
    * It draws the second expansion of each of the tiles.
    * 
    */
-  function drawSecondExpansion(canvasId) {
+  function drawSecondInflation(canvasId) {
     const canvas = document.getElementById(canvasId);
     // g is global
     g = canvas.getContext("2d");
@@ -320,7 +320,7 @@ function penroseApp() {
    * 
    * @param {} canvasId 
    */
-  function drawThirdExpansion(canvasId) {
+  function drawGeneric123(canvasId) {
     const canvas = document.getElementById(canvasId);
     // g is global
     g = canvas.getContext("2d");
@@ -353,7 +353,7 @@ function penroseApp() {
     const drawScreen = function() {
       console.log('--Pentagon')
       let x = 13; let y = 26;
-      penta(controls.fifths, pentaType(controls.type), controls.isDown, p(x,y), 0);
+      const bounds = penta(controls.fifths, pentaType(controls.type), controls.isDown, p(x,y), 0);
       x += 21;
       penta(controls.fifths, pentaType(controls.type), controls.isDown, p(x,y), 1);
       x += 34;
@@ -371,7 +371,8 @@ function penroseApp() {
     drawScreen();
   }
 
-  function drawFourthExpansion(canvasId) {
+  function drawGeneric3(canvasId) {
+    console.log(`drawGeneric3`)
     const canvas = document.getElementById(canvasId);
     // g is global
     g = canvas.getContext("2d");
@@ -380,7 +381,33 @@ function penroseApp() {
     g.strokeStyle = penrose.OUTLINE;
     g.lineWidth = 1;
     scale = 5;
+
+    let x = 100;
+    let y = 100;
+    drawScreen = function() {
+      
+      console.log(`drawScreen ${controls.type}`);
+      const type = controls.typeList[controls.type];
+      switch (type) {
+        case penrose.Pe1:
+        case penrose.Pe3:
+        case penrose.Pe5:
+          console.log("draw penta")
+          penta(controls.fifths, type, controls.isDown, p(x,y), 3);
+
+          break;
+        case penrose.St1:
+        case penrose.St3:
+        case penrose.St5:
+          console.log("draw star")
+          star(controls.fifths, type, controls.isDown, p(x,y), 3);
+          break;
+          
+      }
+    }
+    drawScreen();
   }
+
 
 }
 
@@ -978,95 +1005,6 @@ function diamond4Up(angle, base) {
   p4Down(norm(0 + angle), base.tr(sWheel2.up[norm(0 + angle)]));
   boatUp(norm(0 + angle), base.tr(tWheel2.up[norm(0 + angle)]));
 }
-/**************************************************************************************************************
- * Generic expansion methods
- * 
- * 
- * 
- * 
- ***********************************************************/
-const P0 = {
-  name: 'P0',
-  color: [
-    penrose.YELLOW,
-    penrose.YELLOW,
-    penrose.YELLOW,
-    penrose.YELLOW,
-    penrose.YELLOW,  
-  ], 
-  twist: [ 0,0,0,0,0 ],
-  shape: penrose.penta,
-  typeColor: penrose.BLUE,
-  diamond:[],
-}
-const P2 = {
-  name: 'P2',
-  color: [
-    penrose.YELLOW,
-    penrose.YELLOW,
-    penrose.ORANGE,
-    penrose.ORANGE,
-    penrose.YELLOW,
-  ],
-  twist: [0, 0, -1, 1, 0],
-  shape: penrose.penta,
-  typeColor: penrose.YELLOW,
-  diamond:[0],
-
-}
-const P4 = {
-  name: 'P4',
-  color: [
-    penrose.YELLOW,
-    penrose.ORANGE,
-    penrose.ORANGE,
-    penrose.ORANGE,
-    penrose.ORANGE,
-  ],
-  twist: [0, -1, 1, -1, 1],
-  shape: penrose.penta,
-  typeColor: penrose.ORANGE,
-  diamond:[1,4],
-}
-// for stars, the color indicates existence.
-const S5 = {
-  name: 'S5: star',
-  color: [
-    penrose.BLUE,
-    penrose.BLUE,
-    penrose.BLUE,
-    penrose.BLUE,
-    penrose.BLUE,
-  ],
-  shape: penrose.star,
-  typeColor: penrose.BLUE,
-}
-const S3 = {
-  name: 'S3: boat',
-  color: [
-    penrose.BLUE,
-    penrose.BLUE,
-    null,
-    null,
-    penrose.BLUE,
-  ],
-  shape: penrose.boat,
-  typeColor: penrose.BLUE,
-}
-const S1 = {
-  name: 'S1: diamond',
-  color: [
-    penrose.BLUE,
-    null,
-    null,
-    null,
-    null,
-  ],
-  shape: penrose.diamond_correct,
-  typeColor: penrose.BLUE,
-}
-const DOWN = true;
-const UP = false;
 
 /**
  * Recursive routine to draw pentagon type objects.
@@ -1117,7 +1055,7 @@ function penta(fifths, type, isDown, loc, exp) {
   // Draw the center. Always the BLUE p5
   penta(
     0, 
-    P0, 
+    penrose.Pe5, 
     !isDown, 
     loc, 
     exp-1
@@ -1128,7 +1066,7 @@ function penta(fifths, type, isDown, loc, exp) {
 
     penta(
       norm(shift + type.twist[i]), 
-      (type.twist[i] == 0 ? P2 : P4), 
+      (type.twist[i] == 0 ? penrose.Pe3 : penrose.Pe1), 
       isDown, 
       loc.tr(pWheel[tenths(shift, isDown)]), 
       exp - 1
@@ -1137,7 +1075,7 @@ function penta(fifths, type, isDown, loc, exp) {
     if (type.diamond.includes(i)) {
       star(
         shift,
-        S1,
+        penrose.St1,
         !isDown, 
         loc.tr(sWheel[tenths(shift, !isDown)]), 
         exp - 1
@@ -1168,7 +1106,7 @@ function penta(fifths, type, isDown, loc, exp) {
  *     .         .  *      .         .      *  .
  *                           *     *
  * 
- * @param {*} fifths 0 to 5
+ * @param {*} fifths 0 to 5. Angle from direction.
  * @param {*} type  S5 S3 S1
  * @param {*} isDown
  * @param {*} loc 
@@ -1192,18 +1130,10 @@ function star(fifths, type, isDown, loc, exp) {
 
   star(
     0, 
-    S5, 
+    penrose.St5, 
     !isDown, 
     loc, 
     exp - 1);
-
-  for (let i = 0; i < 5; i++) {
-    const shift = norm(fifths + i);
-    const angleUp = tenths(shift, UP);
-    const angleDown = tenths(shift, DOWN);
-    const draw = type.color[shift] != null;
-    //console.log(JSON.stringify({ shift, angleUp, angleDown, draw }));
-  }
   
   for (let i = 0; i < 5; i ++) {
     const shift = norm(fifths + i);
@@ -1214,14 +1144,14 @@ function star(fifths, type, isDown, loc, exp) {
     if (type.color[i] != null) {
       penta(
         norm(shift), 
-        P4, 
+        penrose.Pe1, 
         !isDown, 
         loc.tr(sWheel[angle]), 
         exp - 1);
       
       star(
         shift, 
-        S3, 
+        penrose.St3, 
         isDown, 
         loc.tr(tWheel[angle]), 
         exp - 1);
