@@ -1,14 +1,20 @@
+/**
+ * Penrose Mozaic Webapp version 1.
+ * Jeff Coyles Penrose type one pattern made out of square tiles of three colors.
+ * Requires penrose.js
+ */
 
-// The load listener is on the outside of the app of course
+/**
+ * Globals
+ */
+
+// The load listener is globally connected.
 addEventListener("load", eventWindowLoaded, false);
 function eventWindowLoaded() {
   penroseApp();
 }
-// penrose globals referred to in parameterrs penta and star methods
 
-//et fifths = 0;
-//let type = 0;
-//let isDown = false;
+// penrose globals referred to in parameterrs penta and star methods
 const controls = new Controls(0, 0, false);
 
 // Graphics globals for whole canvas
@@ -16,6 +22,11 @@ let g;
 let scale;
 let stroke; // New
 
+/**
+ * Called when the page loads.
+ * Creates all canvases.
+ * Creates listeners for control buttons
+ */
 function penroseApp() {
 
   // Can this be made into a function?
@@ -46,9 +57,9 @@ function penroseApp() {
     drawGeneric3('generic-expansion-3');
   }
 
-  eleFifths.addEventListener("click", clickFifths, false);
-  eleType.addEventListener("click", clickType, false);
-  eleIsDown.addEventListener('click', clickIsDown, false);
+  eleFifths.addEventListener("click", clickFifths);
+  eleType.addEventListener("click", clickType);
+  eleIsDown.addEventListener('click', clickIsDown);
   
   // load the little canvases.
   makeCanvas('p5');
@@ -66,15 +77,15 @@ function penroseApp() {
   
   /**
    * Called at end of draw cycle.  Redraws under the following conditions
-   *   The size of the canvas is greater than the fbounds
+   *   The size of the canvas is greater than the bounds
    *   (future) add a max bounds.
-   * @param {*} fBounds 
+   * @param {*} bounds 
    * @param {*} canvas 
    * @param {*} drawFunction 
    */
-  function redraw(fBounds, canvas, drawFunction) {
-    const computedWidth = fBounds.maxPoint.x * scale + scale;
-    const computedHeight = fBounds.maxPoint.y * scale + scale;
+  function redraw(bounds, canvas, drawFunction) {
+    const computedWidth = bounds.maxPoint.x * scale + scale;
+    const computedHeight = bounds.maxPoint.y * scale + scale;
     if (canvas.width != computedWidth || canvas.height != computedHeight) {
       canvas.width = computedWidth; canvas.height = computedHeight;
       setTimeout(drawFunction());
@@ -99,30 +110,30 @@ function penroseApp() {
       g.lineWidth = 1;
       scale = 10;
       // this is a p0 down.
-      let fbounds;
+      const bounds = new Bounds;
       switch (canvasId) {
         case 'p5':
-          fBounds = figure(penrose.BLUE, new P(3, 3), penrose.penta[penrose.down[0]]);
+          bounds.expand(penta(0, penrose.Pe5, true, new P(3,3),0));
           break;
         case 'p3':
-          fBounds = figure(penrose.YELLOW, new P(3, 3), penrose.penta[penrose.up[0]]);
+          bounds.expand(penta(0, penrose.Pe3, false, new P(3,3),0));
           break;
         case 'p1':
-          fBounds = figure(penrose.ORANGE, new P(3, 3), penrose.penta[penrose.up[0]]);
+          bounds.expand(penta(0, penrose.Pe1, false, new P(3,3),0));
           break;
         case 's5':
-          fBounds = figure(penrose.BLUE, new P(4, 4), penrose.star[penrose.up[0]]);
+          bounds.expand(star(0, penrose.St5, false, new P(4,4),0));
           break;
         case 's3':
-          fBounds = figure(penrose.BLUE, new P(4, 4), penrose.boat[penrose.up[0]]);
+          bounds.expand(star(0, penrose.St3, false, new P(4,4),0));
           break;
         case 's1':
-          fBounds = figure(penrose.BLUE, new P(1, 0), penrose.diamond[penrose.up[0]]);
+          bounds.expand(star(0, penrose.St1, false, new P(1,0),0));
           break;
       }
       
       // Make adjustments based on the bounds of the drawing.
-      redraw(fBounds, canvas, drawScreen)
+      redraw(bounds, canvas, drawScreen)
     }
 
     drawScreen();
@@ -134,7 +145,6 @@ function penroseApp() {
    * Sets the globals g and scale
    */
   function drawFirstInflation(canvasId) {
-    //console.log("draw")
     var canvas = document.getElementById(canvasId);
     if (!canvas) {
       console.log("canvasId is null!");
@@ -154,49 +164,53 @@ function penroseApp() {
 
       x = 8;
       y = 9;
-      const bounds = pUp(p(x, y));
-      pDown(p(25, y));
+      const UP = false;
+      const DOWN = true;
+      const bounds = new Bounds();
+      bounds.expand(
+        penta(0, penrose.Pe5, UP, p(x,y),1));
+      penta(0, penrose.Pe5, DOWN, p(25,y),1);
       y += 18;
       for (let i = 0; i < 5; i++) {
-        p2Up(i, p(x + i * 20, y));
+        penta(i, penrose.Pe3, UP, p(x + i * 20, y),1)
       }
       y += 20;
       for (let i = 0; i < 5; i++) {
-        p2Up(i, p(x + i * 20, y));
+        penta(i, penrose.Pe3, DOWN, p(x + i * 20, y),1)
       }
       y += 20;
       for (let i = 0; i < 5; i++) {
-        p4Up(i, p(x + i * 20, y));
+        penta(i, penrose.Pe1, UP, p(x + i * 20, y),1)
       }
       y += 20;
       for (let i = 0; i < 5; i++) {
-        p4Down(i, p(x + i * 20, y));
+        penta(i, penrose.Pe1, DOWN, p(x + i * 20,y),1)
       }
       y += 25;
-      starUp(p(15, y));
-      starDown(p(45, y));
+      star(0, penrose.St5, UP, p(15, y), 1);
+      star(0, penrose.St5, DOWN, p(45, y), 1);
       x = 10;
       y += 30;
       for (let i = 0; i < 5; i++) {
-        diamondUp(i, p(x + i * 20, y));
+        star(i, penrose.St1, UP, p(x + i * 20, y), 1);
       }
-
       y += 25;
       for (let i = 0; i < 5; i++) {
-        diamondDown(i, p(x + i * 20, y));
+        star(i, penrose.St1, DOWN, p(x + i * 20, y), 1);
       }
 
       x = 15;
       y += 25;
       for (let i = 0; i < 5; i++) {
-        boatUp(i, p(x + i * 25, y));
+        star(i, penrose.St3, UP, p(x + i * 25, y), 1);
       }
 
       y += 25;
       for (let i = 0; i < 5; i++) {
-        bounds.expand(boatDown(i, p(x + i * 25, y)));
+        bounds.expand(
+          star(i, penrose.St3, DOWN, p(x + i * 25, y), 1));
       }
-
+      // conditional redraw
       redraw(bounds, canvas, drawScreen);
     }
     drawScreen();
@@ -215,6 +229,8 @@ function penroseApp() {
      * 
      */
     function drawScreen() {
+      const UP = false;
+      const DOWN = true;
       g.fillStyle = "#ffffff";
       g.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -222,51 +238,48 @@ function penroseApp() {
       g.strokeStyle = penrose.OUTLINE;
       g.lineWidth = 1;
       scale = 5;
-      penrose.scale = scale; // Maybe does not use it.
 
       let x = 25;
       let y = 25;
-      pentaUp(p(x, y));
-      pentaDown(p(x + 50, y)); // 
+      penta(0, penrose.Pe5, UP, p(x, y), 2);
+      penta(0, penrose.Pe5, DOWN, p(x + 50, y), 2); // 
       y += 50;
       x = 25;
       for (let i = 0; i < 5; i++) {
-        penta2Up(i, p(x + i * 50, y));
+        penta(i, penrose.Pe3, UP,p(x + i * 50, y), 2);
       }
       y += 55;
       for (let i = 0; i < 5; i++) {
-        penta2Down(i, p(x + i * 50, y));
+        penta(i, penrose.Pe3, DOWN,p(x + i * 50, y), 2);
       }
       y += 50;
       for (let i = 0; i < 5; i++) {
-        penta4Up(i, p(x + i * 50, y));
+        penta(i, penrose.Pe1, UP,p(x + i * 50, y), 2);
       }
       y += 55;
       for (let i = 0; i < 5; i++) {
-        penta4Down(i, p(x + i * 50, y));
+        penta(i, penrose.Pe1, DOWN, p(x + i * 50, y), 2);
       }
       y += 60  // one thru four
-      star0Up(p(35, y));
-      star0Down(p(100, y));
+      star(0, penrose.St5, UP, p(35, y), 2);
+      star(0, penrose.St5, DOWN, p(100, y), 2);
       y += 74  // one thru four
       x = 35;
       for (let i = 0; i < 5; i++) {
-        boat2Up(i, p(x + i * 67, y));
+        star(i, penrose.St3, UP, p(x + i * 67, y), 2);
       }
       y += 70  // one thru four
       for (let i = 0; i < 5; i++) {
-        boat2Down(i, p(x + i * 67, y));
+        star(i, penrose.St3, DOWN, p(x + i * 67, y), 2);
       }
       y += 75  // one thru four
       for (let i = 0; i < 5; i++) {
-        diamond4Up(i, p(x + i * 50, y));
-
+        star(i, penrose.St1, UP, p(x + i * 50, y), 2);
       }
       y += 60  // one thru four
       for (let i = 0; i < 5; i++) {
-        diamond4Up(i, p(x + i * 50, y));
+        star(i, penrose.St1, DOWN, p(x + i * 50, y), 2);
       }
-
     }
   }
 
@@ -302,11 +315,9 @@ function penroseApp() {
       }
 
       y += 20;
-      penta4Up(0, p(canvas.width / scale / 2, y));
+      penta(0, penrose.Pe1, false, p(canvas.width / scale / 2, y), 2);
       y += 65;
-      boat2Up(0, p(canvas.width / scale / 2, y));
-
-
+      star(0, penrose.St3, false, p(canvas.width / scale / 2, y), 2);
     }
 
   }
