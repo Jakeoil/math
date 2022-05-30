@@ -284,6 +284,9 @@ function penroseApp() {
   }
 
   function drawGridWork(canvasId) {
+    const UP = false;
+    const DOWN = true;
+
     const canvas = document.getElementById(canvasId);
     g = canvas.getContext("2d");
     //drawScreen();
@@ -309,15 +312,22 @@ function penroseApp() {
         for (let i = 0; i < 10; i++) {
           let offset = p((i + 1) * spacing, y);
           figure(penrose.ORANGE, offset, shape[i]);
-          grid(p((i + 1) * spacing, y));
+          grid(p((i + 1) * spacing, y), 5);
         }
         y += spacing;
       }
 
-      y += 20;
-      penta(0, penrose.Pe1, false, p(canvas.width / scale / 2, y), 2);
-      y += 65;
-      star(0, penrose.St3, false, p(canvas.width / scale / 2, y), 2);
+      y += 30;
+      x = 25;
+      base = p(45, 65);
+
+      grid(base, 18);
+      star(3, penrose.St1, DOWN, base.tr(p(-13, -4)), 1)
+      star(2, penrose.St1, DOWN, base.tr(p(13, -4)), 1);
+      penta(0, penrose.Pe3, DOWN, base.tr(p(0, -9)),1);
+      penta(2, penrose.Pe1, UP, base.tr(p(-8, 3)), 1);
+      penta(3, penrose.Pe1, UP, base.tr(p(8, 3)), 1);
+      star(0, penrose.St3, UP, base.tr(p(0, 14)), 1);
     }
 
   }
@@ -448,10 +458,10 @@ function figure(fill, offset, shape) {
   return bounds;
 }
 
-function grid(offset) {
+function grid(offset, size) {
   g.strokeStyle = penrose.OUTLINE;
-  for (let y = -5; y < 5; y++) {
-    for (let x = -5; x < 5; x++){
+  for (let y = -size; y < size; y++) {
+    for (let x = -size; x < size; x++){
       g.strokeRect(offset.x * scale + x * scale, offset.y * scale + y * scale, scale, scale);
     }
   }
