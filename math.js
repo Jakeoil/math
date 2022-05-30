@@ -1062,50 +1062,50 @@ function diamond4Up(angle, base) {
  * @returns 
  */
 function penta(fifths, type, isDown, loc, exp) {
+  const bounds = new Bounds();
   fifths = norm(fifths);
-  //console.log(`${type.name}: ${fifths}, exp: ${exp} ${loc}`)
   if (exp == 0) {
-    //console.log(`figure: ${type.name} color: ${type.typeColor}, loc: ${loc.toString()}`)
-    figure(
+    bounds.expand(figure(
       type.typeColor,
       loc,
-      type.shape[tenths(fifths, isDown)]);
-    return; // call figure
+      type.shape[tenths(fifths, isDown)]));
+    return bounds; // call figure
   }
 
   const pWheel = pWheels[exp].w;
   const sWheel = sWheels[exp].w;
 
   // Draw the center. Always the BLUE p5
-  penta(
+  bounds.expand(penta(
     0, 
     penrose.Pe5, 
     !isDown, 
     loc, 
     exp-1
-  );
+  ));
   
   for (let i = 0; i < 5; i++) {
     const shift = norm(fifths + i);
 
-    penta(
+    bounds.expand(penta(
       norm(shift + type.twist[i]), 
       (type.twist[i] == 0 ? penrose.Pe3 : penrose.Pe1), 
       isDown, 
       loc.tr(pWheel[tenths(shift, isDown)]), 
       exp - 1
-    );
+    ));
 
     if (type.diamond.includes(i)) {
-      star(
+      bounds.expand(star(
         shift,
         penrose.St1,
         !isDown, 
         loc.tr(sWheel[tenths(shift, !isDown)]), 
         exp - 1
-      );
+      ));
     }
   }
+  return bounds;
 }
 
 
@@ -1138,6 +1138,7 @@ function penta(fifths, type, isDown, loc, exp) {
  * @returns 
  */
 function star(fifths, type, isDown, loc, exp) {
+  const bounds = new Bounds();
   const name = type.name;
   fifths = norm(fifths);
   //console.log(`${type.name}: ${fifths}, exp: ${exp} ${loc}`)
@@ -1145,19 +1146,19 @@ function star(fifths, type, isDown, loc, exp) {
   if (exp == 0) {
     // Draw the figure.  Finished
     //console.log(`typeColor: ${type.typeColor}`);
-    figure(
+    bounds.expand(figure(
       type.typeColor,
       loc,
-      type.shape[tenths(fifths, isDown)]);
-    return;
+      type.shape[tenths(fifths, isDown)]));
+    return bounds;
   }
 
-  star(
+  bounds.expand(star(
     0, 
     penrose.St5, 
     !isDown, 
     loc, 
-    exp - 1);
+    exp - 1));
   
   for (let i = 0; i < 5; i ++) {
     const shift = norm(fifths + i);
@@ -1166,19 +1167,20 @@ function star(fifths, type, isDown, loc, exp) {
     const sWheel = sWheels[exp].w;
     const tWheel = tWheels[exp].w;
     if (type.color[i] != null) {
-      penta(
+      bounds.expand(penta(
         norm(shift), 
         penrose.Pe1, 
         !isDown, 
         loc.tr(sWheel[angle]), 
-        exp - 1);
+        exp - 1));
       
-      star(
+      bounds.expand(star(
         shift, 
         penrose.St3, 
         isDown, 
         loc.tr(tWheel[angle]), 
-        exp - 1);
+        exp - 1));
     }
   }
+  return bounds;
 }
