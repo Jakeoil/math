@@ -393,14 +393,14 @@ function penroseApp() {
         case penrose.Pe3:
         case penrose.Pe5:
           console.log("draw penta")
-          penta(controls.fifths, type, controls.isDown, p(x,y), 3);
+          penta(controls.fifths, type, controls.isDown, p(x,y), 4);
 
           break;
         case penrose.St1:
         case penrose.St3:
         case penrose.St5:
           console.log("draw star")
-          star(controls.fifths, type, controls.isDown, p(x,y), 3);
+          star(controls.fifths, type, controls.isDown, p(x,y), 4);
           break;
           
       }
@@ -759,10 +759,12 @@ function tWheelNext(exp) {
   );
 }
 
+// Wheel[0] is undefined
 const pWheels = [null];
 const sWheels = [null];
 const tWheels = [null];
 
+// Wheel1 is the seed.
 const pWheel1 = new Wheel(p(0, -6), p(3, -4), p(5, -2));
 const sWheel1 = new Wheel(p(0, -5), p(3, -5), p(5, -1));
 const tWheel1 = new Wheel(p(0, -8), p(5, -8), p(8, -2));
@@ -770,10 +772,12 @@ console.log(`real P1[1]: ${pWheel1.string}`);
 console.log(`real S1[1]: ${sWheel1.string}`);
 console.log(`real T1[1]: ${tWheel1.string}`);
 
+// Wheel[1] = Wheel1
 pWheels.push(pWheel1);
 sWheels.push(sWheel1);
 tWheels.push(tWheel1);
 
+// wheel2 is a hand picked seed
 const pWheel2 = new Wheel(p(0, -14), p(8, -12), p(13, -4));
 const sWheel2 = new Wheel(p(0, -15), p(8, -11), p(13, -5));
 const tWheel2 = new Wheel(p(0, -24), p(13, -18), p(21, -8));
@@ -782,6 +786,7 @@ console.log(`real P1[2]: ${pWheel2.string}`);
 console.log(`real S1[2]: ${sWheel2.string}`);
 console.log(`real T1[2]: ${tWheel2.string}`);
 
+// Wheel[2] = wheel2
 pWheels.push(pWheel2);
 sWheels.push(sWheel2);
 tWheels.push(tWheel2);
@@ -792,14 +797,33 @@ pWheel2Guess = pWheelNext(1);
 sWheel2Guess = sWheelNext(1);
 tWheel2Guess = tWheelNext(1);
 
+compare(pWheel2Guess, pWheel2);
+compare(sWheel2Guess, sWheel2);
+compare(tWheel2Guess, tWheel2);
+
 // Create xWheels[3]
 pWheels.push(pWheelNext(2));
 sWheels.push(sWheelNext(2));
-tWheels.push(sWheelNext(2));
-console.log(`real P1[3]: ${pWheels[3].string}`);
-console.log(`real S1[3]: ${sWheels[3].string}`);
-console.log(`real T1[3]: ${tWheels[3].string}`);
+tWheels.push(tWheelNext(2));
+//console.log(`real P1[3]: ${pWheels[3].string}`);
+//console.log(`real S1[3]: ${sWheels[3].string}`);
+//console.log(`real T1[3]: ${tWheels[3].string}`);
+// Create xWheels[4]
+pWheels.push(pWheelNext(3));
+sWheels.push(sWheelNext(3));
+tWheels.push(tWheelNext(3));
 
+
+
+function compare(a, b) {
+  for (let i = 0; i < 10; i++) {
+    const aEle = a.list[i]; 
+    const bEle = b.list[i];
+    if (! aEle.equals(bEle)) {
+      console.log(`angle: ${i}, a: ${aEle}, b: ${bEle}`);
+    }
+  }
+}
 
 // now calulate wheel 3
 

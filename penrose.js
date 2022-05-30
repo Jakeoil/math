@@ -18,6 +18,7 @@ class P {
   toString() {
     return JSON.stringify(this)
   }
+  equals = (b) => this.x == b.x && this.y == b.y
 
 }
 
