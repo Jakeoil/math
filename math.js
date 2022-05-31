@@ -319,16 +319,57 @@ function penroseApp() {
 
       y += 30;
       x = 25;
-      base = p(45, 65);
+    
+      let fifths = 0;
+      let isDown = true;
+      let base = p(45, 75);
+      let exp = 2
 
+      let pWheel = pWheels[exp].w;
+      let sWheel = sWheels[exp].w;
+      let pUp = pWheels[exp].up;
+      let pDown = pWheels[exp].down;
+      let sUp = sWheels[exp].up;
+      let sDown = sWheels[exp].down;
+      console.log(`pUp: ${pUp}`);
+      console.log(`pDown: ${pDown}`);
+    
+
+      // decagon(0, null, up, base, 2)
+      //loc.tr(pWheel[tenths(shift, isDown)]), 
+      
       grid(base, 18);
-      star(3, penrose.St1, DOWN, base.tr(p(-13, -4)), 1)
-      star(2, penrose.St1, DOWN, base.tr(p(13, -4)), 1);
-      penta(0, penrose.Pe3, DOWN, base.tr(p(0, -9)),1);
-      penta(2, penrose.Pe1, UP, base.tr(p(-8, 3)), 1);
-      penta(3, penrose.Pe1, UP, base.tr(p(8, 3)), 1);
-      star(0, penrose.St3, UP, base.tr(p(0, 14)), 1);
-    }
+      star(3, penrose.St1, isDown, base.tr(p(-13, 5)), exp-1)
+      star(2, penrose.St1, isDown, base.tr(p(13, 5)), exp-1);
+      penta(0, penrose.Pe3, isDown, base.tr(p(0, 0)),exp-1);
+      penta(2, penrose.Pe1, !isDown, base.tr(p(-8, 12)), exp-1);
+      penta(3, penrose.Pe1, !isDown, base.tr(p(8, 12)), exp-1);
+      star(0, penrose.St3, !isDown, base.tr(p(0, 23)), exp-1);
+    
+
+    base = p(15, 75);
+    exp = 1
+    pWheel = pWheels[exp].w;
+    sWheel = sWheels[exp].w;
+    pUp = pWheels[exp].up;
+    pDown = pWheels[exp].down;
+    sUp = sWheels[exp].up;
+    sDown = sWheels[exp].down;
+// decagon(0, null, up, base, 1)
+    // -5 , 1 is sWheel.list[2] or tenths(0+1, UP)
+    // 5,1 is sWheel.list[3]
+    // -3,4 is pWheel.list[6]
+    // 3,4 is pWheel.list[4]
+    // 0,9 is p9+s1  p43,4  s6 -3,5
+    diaOffs = 
+    grid(base, 10);
+    star(3, penrose.St1, isDown, base.tr(p(-5, 1)), exp-1)
+    star(2, penrose.St1, isDown, base.tr(p(5, 1)), exp-1);
+    penta(0, penrose.Pe3, isDown, base.tr(p(0, 0)),exp-1);
+    penta(2, penrose.Pe1, !isDown, base.tr(p(-3, 4)), exp-1);
+    penta(3, penrose.Pe1, !isDown, base.tr(p(3, 4)), exp-1);
+    star(0, penrose.St3, !isDown, base.tr(p(0, 9)), exp-1);
+  }
 
   }
   /**
@@ -491,27 +532,27 @@ function lineFigure(fill, offset, shape) {
  *        -6   -4,  -2,   2,   4,  6   4   2  -2    4 
  * 
  * 
- *       0              *
- *       4                  *
- *       8                      *
- *       12                         *
- *       13                          *
- *       14                           *
- *       13                          *
- *       12                         *
- *       8                      *     
- *       4                  *    
- *       0              *    
- *      -4          *
- *      -8      *
- *     -12  *
- *    -13  *
- *    -14 *  
- *    -13  *
- *     -12  *
- *      -8      *
- *      -4          *
- *       0              *    
+ *       0               *
+ *       4                   *
+ *       8                       *
+ *       12                          *
+ *       13                           *
+ *       14                            *
+ *       13                           *
+ *       12                          *
+ *       8                       *     
+ *       4                   *    
+ *       0               *    
+ *      -4           *
+ *      -8       *
+ *     -12   *
+ *     -13  *
+ *     -14 *  
+ *     -13  *
+ *     -12   *
+ *      -8       *
+ *      -4           *
+ *       0               *    
  *     
  * 
  * 
@@ -615,11 +656,41 @@ function compare(a, b) {
 // now calulate wheel 3
 
 /**
- * P: {"list":[{"x":0,"y":-6},{"x":3,"y":-4},{"x":5,"y":-2},{"x":5,"y":2},{"x":3,"y":4},{"x":0,"y":6},{"x":-3,"y":4},{"x":-5,"y":2},{"x":-5,"y":-2},{"x":-3,"y":-4}]}
- * S: {"list":[{"x":0,"y":-5},{"x":3,"y":-5},{"x":5,"y":-1},{"x":5,"y":1},{"x":3,"y":5},{"x":0,"y":5},{"x":-3,"y":5},{"x":-5,"y":1},{"x":-5,"y":-1},{"x":-3,"y":-5}]}
+ * P: {"list":[
+ *   {"x":0,"y":-6},
+ *   {"x":3,"y":-4},
+ *   {"x":5,"y":-2},
+ *   {"x":5,"y":2},
+ *   {"x":3,"y":4},
+ *   {"x":0,"y":6},
+ *   {"x":-3,"y":4},
+ *   {"x":-5,"y":2},
+ *   {"x":-5,"y":-2},
+ *   {"x":-3,"y":-4}]}
+ * S: {"list":[
+ *   {"x":0,"y":-5},
+ *   {"x":3,"y":-5},
+ *   {"x":5,"y":-1},
+ *   {"x":5,"y":1},
+ *   {"x":3,"y":5},
+ *   {"x":0,"y":5},
+ *   {"x":-3,"y":5},
+ *   {"x":-5,"y":1},
+ *   {"x":-5,"y":-1},
+ *   {"x":-3,"y":-5}]}
  * T: {"list":[{"x":0,"y":-8},{"x":5,"y":-8},{"x":8,"y":-2},{"x":8,"y":2},{"x":5,"y":8},{"x":0,"y":8},{"x":-5,"y":8},{"x":-8,"y":2},{"x":-8,"y":-2},{"x":-5,"y":-8}]}
- * P: {"list":[{"x":0,"y":-14},{"x":8,"y":-12},{"x":13,"y":-4},{"x":13,"y":4},{"x":8,"y":12},{"x":0,"y":14},{"x":-8,"y":12},{"x":-13,"y":4},{"x":-13,"y":-4},{"x":-8,"y":-12}]}
- * S: {"list":[{"x":0,"y":-15},{"x":8,"y":-11},{"x":13,"y":-5},{"x":13,"y":5},{"x":8,"y":11},{"x":0,"y":15},{"x":-8,"y":11},{"x":-13,"y":5},{"x":-13,"y":-5},{"x":-8,"y":-11}]}
+ * P: {"list":[
+ *   {"x":0,"y":-14},
+ *   {"x":8,"y":-12},
+ *   {"x":13,"y":-4},
+ *   {"x":13,"y":4},
+ *   {"x":8,"y":12},
+ *   {"x":0,"y":14},
+ *   {"x":-8,"y":12},{"x":-13,"y":4},{"x":-13,"y":-4},{"x":-8,"y":-12}]}
+ * S: {"list":[
+ *   {"x":0,"y":-15},
+ *   {"x":8,"y":-11},
+ *   {"x":13,"y":-5},{"x":13,"y":5},{"x":8,"y":11},{"x":0,"y":15},{"x":-8,"y":11},{"x":-13,"y":5},{"x":-13,"y":-5},{"x":-8,"y":-11}]}
  * T: {"list":[{"x":0,"y":-24},{"x":13,"y":-18},{"x":21,"y":-8},{"x":21,"y":8},{"x":13,"y":18},{"x":0,"y":24},{"x":-13,"y":18},{"x":-21,"y":8},{"x":-21,"y":-8},{"x":-13,"y":-18}]}
  * 
  */
@@ -747,6 +818,8 @@ function star(fifths, type, isDown, loc, exp) {
     return bounds;
   }
 
+
+
   bounds.expand(star(
     0, 
     penrose.St5, 
@@ -778,3 +851,38 @@ function star(fifths, type, isDown, loc, exp) {
   }
   return bounds;
 }
+
+/**
+ * Decagon is a type unto itself.
+ * 
+ * @param {*} fifths 
+ * @param {*} isDown 
+ * @param {*} loc 
+ * @param {*} exp 
+ * @returns 
+ * 
+ * The up version.
+ *         
+ *      + x    x +
+ *     x o  ,   o x
+ *    * x   o  x   *
+ *    .    +    .
+ *      +--*--+
+ */
+function deca(fifths, isDown, loc, exp) {
+  const bounds = new Bounds();
+  if (exp == 0) {
+    return bounds;
+  }
+  
+  const pWheel = pWheels[exp].w;
+  const sWheel = sWheels[exp].w;
+  star(3, penrose.St1, DOWN, base.tr(p(-13, 5)), 1)
+  star(3, penrose.St1, DOWN, base.tr(p(-13, 5)), 1)
+  star(2, penrose.St1, DOWN, base.tr(p(13, 5)), 1);
+  penta(0, penrose.Pe3, DOWN, base.tr(p(0, 0)),1);
+  penta(2, penrose.Pe1, UP, base.tr(p(-8, 12)), 1);
+  penta(3, penrose.Pe1, UP, base.tr(p(8, 12)), 1);
+  star(0, penrose.St3, UP, base.tr(p(0, 23)), 1);
+
+} 
