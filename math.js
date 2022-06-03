@@ -333,7 +333,6 @@ function penroseApp() {
       let sDown = sWheels[exp].down;
       console.log(`pUp: ${pUp}`);
       console.log(`pDown: ${pDown}`);
-      let shift = 0;
 
       // decagon(0, null, up, base, 2)
       //loc.tr(pWheel[tenths(shift, isDown)]), 
@@ -350,79 +349,53 @@ function penroseApp() {
 
     base = p(15, 75);
     exp = 1
-    pWheel = pWheels[exp].w;
-    sWheel = sWheels[exp].w;
+    //pWheel = pWheels[exp].w;
+    //sWheel = sWheels[exp].w;
     pUp = pWheels[exp].up;
     pDown = pWheels[exp].down;
     sUp = sWheels[exp].up;
     sDown = sWheels[exp].down;
-    /**
- * P: {"list":[
- *   {"x":0,"y":-6},  pWheel.w[0] pUp[0]
- *   {"x":3,"y":-4},  pWheel.w 1  down3
- *   {"x":5,"y":-2},  p         2 up1
- *   {"x":5,"y":2},   p         3  down4
- *   {"x":3,"y":4},   p          4  up2
- *   {"x":0,"y":6},    p        5  down0
- *   {"x":-3,"y":4},           6   up3
- *   {"x":-5,"y":2},           7  down1
- *   {"x":-5,"y":-2},          8  up4
- *   {"x":-3,"y":-4}]}         9 down2
- * S: {"list":[
- *   {"x":0,"y":-5},   0   up0
- *   {"x":3,"y":-5},   1   down3
- *   {"x":5,"y":-1},   2   up1
- *   {"x":5,"y":1},    3   down4
- *   {"x":3,"y":5},    4   up2
- *   {"x":0,"y":5},    5   down0
- *   {"x":-3,"y":5},   6   up3
- *   {"x":-5,"y":1},   7   down1
- *   {"x":-5,"y":-1},  8   up4
- *   {"x":-3,"y":-5}]} 9   down2
- */
-
-// decagon(0, null, up, base, 1)
-    // 0,9 is p9+s1  p4 = p-up2 =[3,4]  s6 = s-up3[-3,5]
 
     grid(base, 10);
-    shift = 1;
+    fifths = 1;
     isDown = false;
     
     //---------------------
     //   {"x":-5,"y":1},   7   down1
     let offs = isDown ? 
-      sDown[norm(1+shift)]:
-      sUp[norm(1+shift)];
+      sDown[norm(1+fifths)]:
+      sUp[norm(1+fifths)];
     console.log(`offs: ${offs} vs (-5, 1)`);
-    star(norm(shift+3), penrose.St1, isDown, base.tr(offs), exp-1); // sd1
+    star(norm(fifths+3), penrose.St1, isDown, base.tr(offs), exp-1); // sd1
     
     //   {"x":5,"y":1},    3   down4
     offs = isDown ?
-      sDown[norm(4+shift)]:
-      sUp[norm(4+shift)];
+      sDown[norm(4+fifths)]:
+      sUp[norm(4+fifths)];
     console.log(`offs: ${offs} vs (5, 1)`);
-    star(norm(shift+2), penrose.St1, isDown, base.tr(offs), exp-1);  // sd4
-    penta(shift+0, penrose.Pe3, isDown, base.tr(p(0, 0)),exp-1);  //
+    star(norm(fifths+2), penrose.St1, isDown, base.tr(offs), exp-1);  // sd4
+    
+    penta(fifths+0, penrose.Pe3, isDown, base.tr(p(0, 0)),exp-1);  //
     
     //   {"x":-3,"y":4},  p6   up 3
     offs = isDown ? 
-      pUp[norm(3+shift)]:
-      pDown[norm(3+shift)];
+      pUp[norm(3+fifths)]:
+      pDown[norm(3+fifths)];
     console.log(`offs: ${offs} vs (-3, 4)`);
-    penta(norm(shift+2), penrose.Pe1, !isDown, base.tr(offs), exp-1); 
+    penta(norm(fifths+2), penrose.Pe1, !isDown, base.tr(offs), exp-1); 
     //   {"x":3,"y":4},   p          4  u p2
     offs = isDown ?
-      pUp[norm(2+shift)]:
-      pDown[norm(2+shift)];
+      pUp[norm(2+fifths)]:
+      pDown[norm(2+fifths)];
     console.log(`offs: ${offs} vs (3, 4)`);
-    penta(norm(shift+3), penrose.Pe1, !isDown, base.tr(offs), exp-1);
+    penta(norm(fifths+3), penrose.Pe1, !isDown, base.tr(offs), exp-1);
     
     offs = isDown ? 
-      pUp[norm(2+shift)].tr(sUp[norm(3+shift)]):
-      pDown[norm(2+shift)].tr(sDown[norm(3+shift)]);
+      pUp[norm(2+fifths)].tr(sUp[norm(3+fifths)]):
+      pDown[norm(2+fifths)].tr(sDown[norm(3+fifths)]);
 
     console.log(`offs: ${offs} vs (0, 9)`);
-    star(shift+0, penrose.St3, !isDown, base.tr(offs), exp-1);
+    star(fifths+0, penrose.St3, !isDown, base.tr(offs), exp-1);
   }
 
   }
@@ -498,27 +471,37 @@ function penroseApp() {
     g.lineWidth = 1;
     scale = 5;
 
-    let x = 100;
-    let y = 100;
     drawScreen = function() {
       
-      console.log(`drawScreen ${controls.type}`);
-      const type = controls.typeList[controls.type];
-      switch (type) {
-        case penrose.Pe1:
-        case penrose.Pe3:
-        case penrose.Pe5:
-          console.log("draw penta")
-          penta(controls.fifths, type, controls.isDown, p(x,y), 4);
+      let x = 100;
+      let y = 250;
 
-          break;
-        case penrose.St1:
-        case penrose.St3:
-        case penrose.St5:
-          console.log("draw star")
-          star(controls.fifths, type, controls.isDown, p(x,y), 4);
-          break;
+      let decagon = true;
+      if (decagon) {
+        deca(controls.fifths, controls.isDown, p(20,20), 1);
+        deca(controls.fifths, controls.isDown, p(50,50), 2);
+        deca(controls.fifths, controls.isDown, p(210,80), 3);
+        deca(controls.fifths, controls.isDown, p(x,y), 4);
+
+      } else {
+        console.log(`drawScreen ${controls.type}`);
+        const type = controls.typeList[controls.type];
+        switch (type) {
+          case penrose.Pe1:
+          case penrose.Pe3:
+          case penrose.Pe5:
+            console.log("draw penta")
+            penta(controls.fifths, type, controls.isDown, p(x,y), 3);
+
+            break;
+          case penrose.St1:
+          case penrose.St3:
+          case penrose.St5:
+            console.log("draw star")
+            star(controls.fifths, type, controls.isDown, p(x,y), 3);
+            break;
           
+        }
       }
     }
     drawScreen();
@@ -923,20 +906,47 @@ function star(fifths, type, isDown, loc, exp) {
  *    .    +    .
  *      +--*--+
  */
-function deca(fifths, isDown, loc, exp) {
+
+function deca(fifths, isDown, base, exp) {
   const bounds = new Bounds();
   if (exp == 0) {
     return bounds;
   }
   
-  const pWheel = pWheels[exp].w;
-  const sWheel = sWheels[exp].w;
-  star(3, penrose.St1, DOWN, base.tr(p(-13, 5)), 1)
-  star(3, penrose.St1, DOWN, base.tr(p(-13, 5)), 1)
-  star(2, penrose.St1, DOWN, base.tr(p(13, 5)), 1);
-  penta(0, penrose.Pe3, DOWN, base.tr(p(0, 0)),1);
-  penta(2, penrose.Pe1, UP, base.tr(p(-8, 12)), 1);
-  penta(3, penrose.Pe1, UP, base.tr(p(8, 12)), 1);
-  star(0, penrose.St3, UP, base.tr(p(0, 23)), 1);
+  let pUp = pWheels[exp].up;
+  let pDown = pWheels[exp].down;
+  let sUp = sWheels[exp].up;
+  let sDown = sWheels[exp].down;
+  let offs; // Work variable
 
+  // The central yellow pentagon
+  penta(fifths, penrose.Pe3, isDown, base, exp-1);  //
+
+  // The two diamonds
+  offs = isDown ? 
+    sDown[norm(1 + fifths)]:
+    sUp[norm(1 + fifths)];
+  star(norm(fifths + 3), penrose.St1, isDown, base.tr(offs), exp - 1); // sd1
+  
+  offs = isDown ?
+    sDown[norm(4 + fifths)]:
+    sUp[norm(4 + fifths)];
+  star(norm(fifths + 2), penrose.St1, isDown, base.tr(offs), exp - 1);  // sd4
+
+  // The two orange pentagons
+  offs = isDown ? 
+    pUp[norm(3 + fifths)]:
+    pDown[norm(3 + fifths)];
+    penta(norm(fifths + 2), penrose.Pe1, !isDown, base.tr(offs), exp - 1); 
+
+  offs = isDown ?
+    pUp[norm(2 + fifths)]:
+    pDown[norm(2 + fifths)];
+   penta(norm(fifths + 3), penrose.Pe1, !isDown, base.tr(offs), exp - 1);
+
+  // And the boat
+  offs = isDown ? 
+    pUp[norm(2 + fifths)].tr(sUp[norm(3 + fifths)]):
+    pDown[norm(2 + fifths)].tr(sDown[norm(3 + fifths)]);
+    star(fifths + 0, penrose.St3, !isDown, base.tr(offs), exp - 1);
 } 
