@@ -1,6 +1,9 @@
 
 /**
- * To do: Elaborate this
+ * Orthoganal Penrose program version one.
+ * These routines process a grid. They do not control rendering.
+ * 
+ * 
  */
 class P {
   constructor(x, y) {
@@ -12,19 +15,33 @@ class P {
   // Vertical and Horizontal reflection
   vr = () => new P(this.x, -this.y)
   hr = () => new P(-this.x, this.y)
+  // If used, strictly for offsets
   div = (d) => new P(this.x / d, this.y / d)
+  // Sometimes you need to create new ones
   copy = (d) => new P(this.x, this.y)
+  // 
   toLoc = () => [this.x, this.y]
   toString() {
     return JSON.stringify(this)
   }
   equals = (b) => this.x == b.x && this.y == b.y
-
 }
 
+class Coord {
+  constructor(x, y) {
+    this.coord = [x,y];
+  }
+
+  tr = offset => [this.coord[0] + offset[0], this.coord[1] + offset[1]];
+  vr = () => [this.coord[0], -this.coord[1]];
+  hr = () => [-this.coord[0], this.coord[1]];
+  copy = [this.coord[0], this.coord[1]];
+  equals = (that) => this.coord[0] == that.coord[0] && this.coord[1] == that.coord[1];
+}
 /**
- * Convience functions
- *  
+ * Convenience functions
+ * Mostly due to the fact that I chose and object format
+ * rather than an ordered pair
  */
 const toP = (loc) => new P(loc[0], loc[1]);
 const p = (x, y) => new P(x, y);
@@ -33,7 +50,8 @@ function tenths(fifths, isDown) {
   return (fifths * 2 + (isDown ? 5 : 0)) % 10;
 }
 /**
- * Mutable class
+ * Mutable class 
+ * This measures and adjusts the bounding rectangle.
  */
 class Bounds {
   constructor() {
@@ -92,6 +110,66 @@ class Bounds {
   }
 }
 
+class BoundsCoord {
+  constructor() {
+    this.maxPoint = null;
+    this.minPoint = null;
+  }
+
+  /**
+   * Called from figure
+   * @param {*} offset 
+   * @param {*} point 
+   */
+  addPoint(offset, point) {
+    const logicalPoint = point.tr(offset);
+    if (!this.maxPoint || !this.minPoint) {
+      this.minPoint = logicalPoint.copy(); // private copies, not references
+      this.maxPoint = logicalPoint.copy();
+      return;
+    }
+
+    if(logicalPoint[0] < this.minPoint[0]) {
+      this.minPoint[0] = logicalPoint[0];
+    } else if(logicalPoint[0] > this.maxPoint[0]) {
+      this.maxPoint[0] = logicalPoint[0];
+    }
+    if (logicalPoint[1] < this.minPoint[1]) {
+      this.minPoint[1] = logicalPoint[1];
+    } else if (logicalPoint[1] > this.maxPoint[1]) {
+      this.maxPoint[1] = logicalPoint[1];
+    }
+  }
+
+  expand(bounds) {
+    if (!bounds) {
+      return;
+    }
+
+    if (!this.maxPoint || !this.minPoint) {
+      this.minPoint = bounds.minPoint;
+      this.maxPoint = bounds.maxPoint;
+      return;
+    }
+
+    if (bounds.minPoint[0] < this.minPoint[0]) {
+      this.minPoint[0] = bounds.minPoint[0];
+    }
+    if (bounds.minPoint[1] < this.minPoint[1]) {
+      this.minPoint[1] = bounds.minPoint[1];
+    }
+    if (bounds.maxPoint[0] > this.maxPoint[0]) {
+      this.maxPoint[0] = bounds.maxPoint[0];
+    }
+    if (bounds.maxPoint[1] > this.maxPoint[1]) {
+      this.maxPoint[1] = bounds.maxPoint[1];
+    }
+  }
+}
+
+/**
+ * Creates a 10 point wheel out of the first three coordinates (or Ps)
+ */
 class Wheel {
   constructor(p0, p1, p2) {
     this.list = [
@@ -121,6 +199,7 @@ class Wheel {
       this.w.map(
         it => [ it.x, it.y]))
   }
+  // get stringCoord(){ not needed?  
 }
 
 class Controls {
@@ -215,7 +294,7 @@ var penrose = (function()
       [0,4],[1,4],            [4,4],[5,4],
       [0,5],                        [5,5]]
   .map(function(item){return new P(item[0],item[1])});
-
+/*
   // This is replaced by Wheel
   // Pentagon center to pentagon center
   var P0 = new P(0,-6);
@@ -252,7 +331,7 @@ var penrose = (function()
   var T7 = T3.hr();
   var T8 = T2.hr();
   var T9 = T1.hr();
-
+*/
   ORANGE = "#e46c0a";
   BLUE   = "#0000ff";
   YELLOW = "#ffff00";
@@ -262,7 +341,10 @@ var penrose = (function()
    * 
    * @param {*} offset 
    * @param {*} scale 
+   * 
+   * These are deprecated too
    */
+  /*
   function pUp(offset, scale)
   {
     figure(penrose.BLUE,   offset, scale, penrose.penta[penrose.down[0]]);
@@ -278,8 +360,8 @@ var penrose = (function()
     for (var i = 0; i<5; i++)
       figure(penrose.YELLOW, offset.tr(penrose.p[penrose.down[i]]), scale, penrose.penta[penrose.down[i]]); // correct
   }
-
-
+*/
+/*
   function translate(offset, angle)
   {
     return {x: offset.x + DECAGON[angle.x], y: offset.y + DECAGON[angle.y]};
@@ -290,9 +372,11 @@ var penrose = (function()
     var r = angle + amount;
     return r < 0 ?r + 10 : r % 10
   }
+  */
   /*
    * Main function to render a pentagon
    */
+  /*
   function p0(order, angle, offset)
   {
     switch (order)
@@ -306,7 +390,8 @@ var penrose = (function()
        penta2(0, translate(offset, angle), rotate())
               ];
     }
-  }
+  } */
+  
   const shapes = {
     penta : 
       [
@@ -391,10 +476,11 @@ var penrose = (function()
     //  g         = document.getElementById(in_id).getContext("2d");
     //},
     //g : g,
+    /*
     p : [ P0, P1, P2, P3, P4, P5, P6, P7, P8, P9],
     s : [ S0, S1, S2, S3, S4, S5, S6, S7, S8, S9],
     t : [ T0, T1, T2, T3, T4, T5, T6, T7, T8, T9],
-
+   */
     up   : [0,2,4,6,8],  //
     down : [5,7,9,1,3],
     // okay, 10 of each

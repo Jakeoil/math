@@ -294,6 +294,7 @@ function penroseApp() {
     
     /**
      * Draws all of the penrose rotations
+     * Draws a few decagons too.
      */
     function drawBig() {
       g.fillStyle = "#ffffff";
@@ -317,88 +318,23 @@ function penroseApp() {
         y += spacing;
       }
 
-      y += 30;
-      x = 25;
-    
+      // Now some decagons
       let fifths = 0;
       let isDown = true;
       let base = p(45, 75);
       let exp = 2
-
-      let pWheel = pWheels[exp].w;
-      let sWheel = sWheels[exp].w;
-      let pUp = pWheels[exp].up;
-      let pDown = pWheels[exp].down;
-      let sUp = sWheels[exp].up;
-      let sDown = sWheels[exp].down;
-      console.log(`pUp: ${pUp}`);
-      console.log(`pDown: ${pDown}`);
-
-      // decagon(0, null, up, base, 2)
-      //loc.tr(pWheel[tenths(shift, isDown)]), 
-      
       grid(base, 18);
+      deca(fifths, isDown, base, exp);
 
-      star(3, penrose.St1, isDown, base.tr(p(-13, 5)), exp-1)
-      star(2, penrose.St1, isDown, base.tr(p(13, 5)), exp-1);
-      penta(0, penrose.Pe3, isDown, base.tr(p(0, 0)),exp-1);
-      penta(2, penrose.Pe1, !isDown, base.tr(p(-8, 12)), exp-1);
-      penta(3, penrose.Pe1, !isDown, base.tr(p(8, 12)), exp-1);
-      star(0, penrose.St3, !isDown, base.tr(p(0, 23)), exp-1);
-    
-
-    base = p(15, 75);
-    exp = 1
-    //pWheel = pWheels[exp].w;
-    //sWheel = sWheels[exp].w;
-    pUp = pWheels[exp].up;
-    pDown = pWheels[exp].down;
-    sUp = sWheels[exp].up;
-    sDown = sWheels[exp].down;
-
-    grid(base, 10);
-    fifths = 1;
-    isDown = false;
-    
-    //---------------------
-    //   {"x":-5,"y":1},   7   down1
-    let offs = isDown ? 
-      sDown[norm(1+fifths)]:
-      sUp[norm(1+fifths)];
-    console.log(`offs: ${offs} vs (-5, 1)`);
-    star(norm(fifths+3), penrose.St1, isDown, base.tr(offs), exp-1); // sd1
-    
-    //   {"x":5,"y":1},    3   down4
-    offs = isDown ?
-      sDown[norm(4+fifths)]:
-      sUp[norm(4+fifths)];
-    console.log(`offs: ${offs} vs (5, 1)`);
-    star(norm(fifths+2), penrose.St1, isDown, base.tr(offs), exp-1);  // sd4
-    
-    penta(fifths+0, penrose.Pe3, isDown, base.tr(p(0, 0)),exp-1);  //
-    
-    //   {"x":-3,"y":4},  p6   up 3
-    offs = isDown ? 
-      pUp[norm(3+fifths)]:
-      pDown[norm(3+fifths)];
-    console.log(`offs: ${offs} vs (-3, 4)`);
-    penta(norm(fifths+2), penrose.Pe1, !isDown, base.tr(offs), exp-1); 
-    //   {"x":3,"y":4},   p          4  u p2
-    offs = isDown ?
-      pUp[norm(2+fifths)]:
-      pDown[norm(2+fifths)];
-    console.log(`offs: ${offs} vs (3, 4)`);
-    penta(norm(fifths+3), penrose.Pe1, !isDown, base.tr(offs), exp-1);
-    
-    offs = isDown ? 
-      pUp[norm(2+fifths)].tr(sUp[norm(3+fifths)]):
-      pDown[norm(2+fifths)].tr(sDown[norm(3+fifths)]);
-
-    console.log(`offs: ${offs} vs (0, 9)`);
-    star(fifths+0, penrose.St3, !isDown, base.tr(offs), exp-1);
+      fifths = 1;
+      isDown = false;
+      base = p(15, 75);
+      exp = 1
+      grid(base, 10);
+      deca(fifths, isDown, base, exp);
+    }
   }
-
-  }
+  
   /**
    * For the third expansion we want to use a different scheme.
    * 
