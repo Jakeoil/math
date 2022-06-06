@@ -307,7 +307,7 @@ function penroseApp() {
       penrose.scale = scale; // Maybe does not use it.
 
       y = 5;
-      shapes = [penrose.penta, penrose.diamond_correct, penrose.star, penrose.boat];
+      shapes = [penrose.penta, penrose.diamond, penrose.star, penrose.boat];
       const spacing = 12;
       for (const shape of shapes) {
         for (let i = 0; i < 10; i++) {
