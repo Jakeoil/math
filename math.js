@@ -569,6 +569,7 @@ const tWheels = [null];
 const pWheel1 = new Wheel(p(0, -6), p(3, -4), p(5, -2));
 const sWheel1 = new Wheel(p(0, -5), p(3, -5), p(5, -1));
 const tWheel1 = new Wheel(p(0, -8), p(5, -8), p(8, -2));
+
 console.log(`real P1[1]: ${pWheel1.string}`);
 console.log(`real S1[1]: ${sWheel1.string}`);
 console.log(`real T1[1]: ${tWheel1.string}`);
@@ -578,43 +579,12 @@ pWheels.push(pWheel1);
 sWheels.push(sWheel1);
 tWheels.push(tWheel1);
 
-// wheel2 is a hand picked seed
-const pWheel2 = new Wheel(p(0, -14), p(8, -12), p(13, -4));
-const sWheel2 = new Wheel(p(0, -15), p(8, -11), p(13, -5));
-const tWheel2 = new Wheel(p(0, -24), p(13, -18), p(21, -8));
-
-console.log(`real P1[2]: ${pWheel2.string}`);
-console.log(`real S1[2]: ${sWheel2.string}`);
-console.log(`real T1[2]: ${tWheel2.string}`);
-
-// Wheel[2] = wheel2
-pWheels.push(pWheel2);
-sWheels.push(sWheel2);
-tWheels.push(tWheel2);
-console.log(`We have the wheel 1 and 2 pushed`)
-// check code
-
-pWheel2Guess = pWheelNext(1);
-sWheel2Guess = sWheelNext(1);
-tWheel2Guess = tWheelNext(1);
-
-compare(pWheel2Guess, pWheel2);
-compare(sWheel2Guess, sWheel2);
-compare(tWheel2Guess, tWheel2);
-
-// Create xWheels[3]
-pWheels.push(pWheelNext(2));
-sWheels.push(sWheelNext(2));
-tWheels.push(tWheelNext(2));
-//console.log(`real P1[3]: ${pWheels[3].string}`);
-//console.log(`real S1[3]: ${sWheels[3].string}`);
-//console.log(`real T1[3]: ${tWheels[3].string}`);
-// Create xWheels[4]
-pWheels.push(pWheelNext(3));
-sWheels.push(sWheelNext(3));
-tWheels.push(tWheelNext(3));
-
-
+const wheelMax = 5;
+for (let i = 1; i <= wheelMax; i++) {
+  pWheels.push(pWheelNext(i));
+  sWheels.push(sWheelNext(i));
+  tWheels.push(tWheelNext(i));
+}
 
 function compare(a, b) {
   for (let i = 0; i < 10; i++) {
@@ -625,48 +595,6 @@ function compare(a, b) {
     }
   }
 }
-
-// now calulate wheel 3
-
-/**
- * P: {"list":[
- *   {"x":0,"y":-6},
- *   {"x":3,"y":-4},
- *   {"x":5,"y":-2},
- *   {"x":5,"y":2},
- *   {"x":3,"y":4},
- *   {"x":0,"y":6},
- *   {"x":-3,"y":4},
- *   {"x":-5,"y":2},
- *   {"x":-5,"y":-2},
- *   {"x":-3,"y":-4}]}
- * S: {"list":[
- *   {"x":0,"y":-5},
- *   {"x":3,"y":-5},
- *   {"x":5,"y":-1},
- *   {"x":5,"y":1},
- *   {"x":3,"y":5},
- *   {"x":0,"y":5},
- *   {"x":-3,"y":5},
- *   {"x":-5,"y":1},
- *   {"x":-5,"y":-1},
- *   {"x":-3,"y":-5}]}
- * T: {"list":[{"x":0,"y":-8},{"x":5,"y":-8},{"x":8,"y":-2},{"x":8,"y":2},{"x":5,"y":8},{"x":0,"y":8},{"x":-5,"y":8},{"x":-8,"y":2},{"x":-8,"y":-2},{"x":-5,"y":-8}]}
- * P: {"list":[
- *   {"x":0,"y":-14},
- *   {"x":8,"y":-12},
- *   {"x":13,"y":-4},
- *   {"x":13,"y":4},
- *   {"x":8,"y":12},
- *   {"x":0,"y":14},
- *   {"x":-8,"y":12},{"x":-13,"y":4},{"x":-13,"y":-4},{"x":-8,"y":-12}]}
- * S: {"list":[
- *   {"x":0,"y":-15},
- *   {"x":8,"y":-11},
- *   {"x":13,"y":-5},{"x":13,"y":5},{"x":8,"y":11},{"x":0,"y":15},{"x":-8,"y":11},{"x":-13,"y":5},{"x":-13,"y":-5},{"x":-8,"y":-11}]}
- * T: {"list":[{"x":0,"y":-24},{"x":13,"y":-18},{"x":21,"y":-8},{"x":21,"y":8},{"x":13,"y":18},{"x":0,"y":24},{"x":-13,"y":18},{"x":-21,"y":8},{"x":-21,"y":-8},{"x":-13,"y":-18}]}
- * 
- */
 
 /****************************************************************************************
  * Recursive routine to draw pentagon type objects.
