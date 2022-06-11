@@ -128,7 +128,7 @@ function penroseApp() {
           bounds.expand(star(0, penrose.St3, false, new P(4,4),0));
           break;
         case 's1':
-          bounds.expand(star(0, penrose.St1, false, new P(1,0),0));
+          bounds.expand(star(2, penrose.St1, false, new P(1,2),0));
           break;
       }
       
