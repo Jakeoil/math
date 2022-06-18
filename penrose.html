@@ -15,8 +15,8 @@
     }
     #across { padding-left: 100px; display: block; }
     #meat {
-      border: 3px solid chocolate;
       display: flex;
+      height: 1000px;
     }
     #controls { 
       /* outline: 3px solid blue; */
@@ -27,6 +27,7 @@
     #content {
       /* outline: 3px solid greenyellow; */
       flex: 6;
+      margin-left: 10px;
       padding-left: 10px;
       overflow: scroll;
     }
@@ -65,11 +66,11 @@
   <nav id="across">
     <h2>Links</h2>
     <p>
-      <a href="#inflation-1"> Inflation 1 work area </a>|
-      <a href="#inflation-2"> Inflation 2 work area </a>|
-      <a href="#grid-work"> Grid-work test area</a>|
-      <a href="#generic-012">Generic test area </a>|
-      <a href="#generic-expansion-3"> Generic expansion</a>
+      <a href="#inf1"> Inflation 1 work area </a>|
+      <a href="#inf2"> Inflation 2 work area </a>|
+      <a href="#gwork"> Grid-work test area</a>|
+      <a href="#g012">Generic test area </a>|
+      <a href="#g3"> Generic expansion</a>
     </p>    
   </nav>
   <div id="meat">
@@ -87,19 +88,19 @@
     </div>
     <div id="content">
   
-      <h2>Inflation 1 work area</h2>
+      <h2 id="inf1">Inflation 1 work area</h2>
       <canvas id="inflation-1" width="100" height="100">Pentagons</canvas>
   
-      <h2>Inflation 2 work area</h2>
+      <h2 id="inf2">Inflation 2 work area</h2>
       <canvas id="inflation-2" width="1600" height="3100">Second test</canvas>
   
-      <h2>Grid-work test area</h2>
+      <h2 id="gwork">Grid-work test area</h2>
       <canvas id="grid-work" width="1600" height="1700">Second test</canvas>
   
-      <h2>Generic test area</h2>
+      <h2 id="g012">Generic test area</h2>
       <canvas id="generic-012" width="1200" height="999">Second test</canvas>
     
-      <h2>Generic expansion 3</h2>
+      <h2 id="g3">Generic expansion 3</h2>
       <canvas id="generic-expansion-3" width="1200" height="2500">Second test</canvas>
     </div>
   </div>
