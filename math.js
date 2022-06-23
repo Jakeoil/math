@@ -30,9 +30,9 @@ let stroke; // New
 function penroseApp() {
 
   // Can this be made into a function?
-  const eleFifths = document.getElementById("fifths");
-  const eleType = document.getElementById("type");
-  const eleIsDown = document.getElementById("isDown");
+  const eleFifths = document.querySelector("#fifths");
+  const eleType = document.querySelector("#type");
+  const eleIsDown = document.querySelector("#isDown");
   
   eleFifths.innerHTML = `fifths: ${controls.fifths}`;
   eleType.innerHTML = controls.typeName;
@@ -68,12 +68,12 @@ function penroseApp() {
   makeCanvas('s5');
   makeCanvas('s3');
   makeCanvas('s1');
-  drawFirstInflation('inflation-1');
-  drawSecondInflation('inflation-2');
-  drawGridWork('grid-work');
+  drawFirstInflation('inf1');
+  drawSecondInflation('inf2');
+  drawGridWork('gwork');
   // This is where I refactor _everything_
-  drawGeneric123('generic-012');
-  drawGeneric3('generic-expansion-3');
+  drawGeneric123('g012');
+  drawGeneric3('g3');
   
   /**
    * Called at end of draw cycle.  Redraws under the following conditions
@@ -144,8 +144,8 @@ function penroseApp() {
    * The first expansion draws penta(1) and star(1) varients
    * Sets the globals g and scale
    */
-  function drawFirstInflation(canvasId) {
-    var canvas = document.getElementById(canvasId);
+  function drawFirstInflation(id) {
+    const canvas = document.querySelector(`#${id} > canvas`);
     if (!canvas) {
       console.log("canvasId is null!");
       return;
@@ -220,8 +220,8 @@ function penroseApp() {
    * It draws the second expansion of each of the tiles.
    * 
    */
-  function drawSecondInflation(canvasId) {
-    const canvas = document.getElementById(canvasId);
+  function drawSecondInflation(id) {
+    const canvas = document.querySelector(`#${id} > canvas`);
     // g is global
     g = canvas.getContext("2d");
     drawScreen();
@@ -283,11 +283,12 @@ function penroseApp() {
     }
   }
 
-  function drawGridWork(canvasId) {
+  function drawGridWork(id) {
     const UP = false;
     const DOWN = true;
 
-    const canvas = document.getElementById(canvasId);
+    const canvas = document.querySelector(`#${id} > canvas`);
+
     g = canvas.getContext("2d");
     //drawScreen();
     drawBig();
@@ -345,8 +346,8 @@ function penroseApp() {
    * 
    * @param {} canvasId 
    */
-  function drawGeneric123(canvasId) {
-    const canvas = document.getElementById(canvasId);
+  function drawGeneric123(id) {
+    const canvas = document.querySelector(`#${id} > canvas`);
     // g is global
     g = canvas.getContext("2d");
     g.fillStyle = "#ffffff";
@@ -396,9 +397,10 @@ function penroseApp() {
     drawScreen();
   }
 
-  function drawGeneric3(canvasId) {
+  function drawGeneric3(id) {
     console.log(`drawGeneric3`)
-    const canvas = document.getElementById(canvasId);
+    const canvas = document.querySelector(`#${id} > canvas`);
+
     // g is global
     g = canvas.getContext("2d");
     g.fillStyle = "#ffffff";
