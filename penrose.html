@@ -20,6 +20,14 @@
         display: flex;
         height: 1000px;
       }
+      .pageButton {
+        border: none;
+        outline: none;
+        background-color: black;
+        color: white;
+
+      }
+
       #controls {
         /* outline: 3px solid blue; */
         flex: 1;
@@ -68,13 +76,12 @@
     <canvas id="s1" class="flowtile"></canvas>
 
     <nav id="across">
-      <h2>Links</h2>
       <p>
-        <a onclick="showPage('inf1')" href="#inf1"> Inflation 1 work area </a>|
-        <a onclick="showPage('inf2')"  href="#inf2"> Inflation 2 work area </a>|
-        <a onclick="showPage('gwork')" id ="defaultPage" href="#gwork"> Grid-work test area</a>|
-        <a onclick="showPage('g012')" href="#g012">Generic test area </a>|
-        <a onclick="showPage('g3')"  href="#g3"> Generic expansion</a>
+        <button class="pageButton" onclick="showPage('inf1',this)"> Inflation 1 work area </button>
+        <button class="pageButton" onclick="showPage('inf2',this)"> Inflation 2 work area </button>
+        <button class="pageButton" id ="defaultPage" onclick="showPage('gwork',this)"> Grid-work test area</button>
+        <button class="pageButton" onclick="showPage('g012',this)" >Generic test area </button>
+        <button class="pageButton" onclick="showPage('g3',this)"> Generic expansion</button>
       </p>
     </nav>
     <div id="meat">
@@ -116,7 +123,7 @@
     <script src="penrose.js"></script>
     <script src="math.js"></script>
     <script>
-      function showPage(id) {
+      function showPage(id, button) {
         const pages = document.querySelectorAll(".page");
         console.log(`id: ${id}`);
         for (page of pages) {
@@ -124,8 +131,17 @@
         }
         const active_page = document.querySelector(`#${id}`);
         active_page.style.display = "block";
+        const buttons = document.querySelectorAll(".pageButton");
+        for (pageButton of buttons) {
+          pageButton.style.background="black"
+          pageButton.style.color="white"
+      
+        }
+
+        button.style.background="white"
+        button.style.color="black"
       }
-      //document.querySelector("#defaultPage").click();
+      document.querySelector("#defaultPage").click();
     </script>
   </body>
 </html>
