@@ -41,20 +41,20 @@ function penroseApp() {
   const clickFifths = function () {
     controls.bumpFifths();
     eleFifths.innerHTML = `fifths: ${controls.fifths}`;
-    drawGeneric123('generic-012');
-    drawGeneric3('generic-expansion-3');
+    drawGeneric123('g012');
+    drawGeneric3('g3');
   };
   const clickType = function() {
     controls.bumpType();
     eleType.innerHTML = controls.typeName;
-    drawGeneric123('generic-012'); 
-    drawGeneric3('generic-expansion-3');
+    drawGeneric123('g012'); 
+    drawGeneric3('g3');
   }
   const clickIsDown = function() {
     controls.toggleDirection();
     eleIsDown.innerHTML = controls.direction;
-    drawGeneric123('generic-012'); 
-    drawGeneric3('generic-expansion-3');
+    drawGeneric123('g012'); 
+    drawGeneric3('g3');
   }
 
   eleFifths.addEventListener("click", clickFifths);
