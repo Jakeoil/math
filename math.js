@@ -22,6 +22,30 @@ let g;
 let scale;
 let stroke; // New
 
+const clickFifths = function () {
+  console.log("clickFifths")
+  controls.bumpFifths();
+  eleFifths.innerHTML = `fifths: ${controls.fifths}`;
+  drawGeneric123('g012');
+  drawGeneric3('g3');
+};
+const clickType = function() {
+  controls.bumpType();
+  eleType.innerHTML = controls.typeName;
+  drawGeneric123('g012'); 
+  drawGeneric3('g3');
+}
+const clickIsDown = function() {
+  controls.toggleDirection();
+  eleIsDown.innerHTML = controls.direction;
+  drawGeneric123('g012'); 
+  drawGeneric3('g3');
+}
+  // Can this be made into a function?
+  const eleFifths = document.querySelector("#fifths");
+  const eleType = document.querySelector("#type");
+  const eleIsDown = document.querySelector("#isDown");
+
 /**
  * Called when the page loads.
  * Creates all canvases.
@@ -29,37 +53,15 @@ let stroke; // New
  */
 function penroseApp() {
 
-  // Can this be made into a function?
-  const eleFifths = document.querySelector("#fifths");
-  const eleType = document.querySelector("#type");
-  const eleIsDown = document.querySelector("#isDown");
   
   eleFifths.innerHTML = `fifths: ${controls.fifths}`;
   eleType.innerHTML = controls.typeName;
   eleIsDown.innerHTML = controls.direction;
 
-  const clickFifths = function () {
-    controls.bumpFifths();
-    eleFifths.innerHTML = `fifths: ${controls.fifths}`;
-    drawGeneric123('g012');
-    drawGeneric3('g3');
-  };
-  const clickType = function() {
-    controls.bumpType();
-    eleType.innerHTML = controls.typeName;
-    drawGeneric123('g012'); 
-    drawGeneric3('g3');
-  }
-  const clickIsDown = function() {
-    controls.toggleDirection();
-    eleIsDown.innerHTML = controls.direction;
-    drawGeneric123('g012'); 
-    drawGeneric3('g3');
-  }
 
-  eleFifths.addEventListener("click", clickFifths);
-  eleType.addEventListener("click", clickType);
-  eleIsDown.addEventListener('click', clickIsDown);
+  //eleFifths.addEventListener("click", clickFifths);
+  //eleType.addEventListener("click", clickType);
+  //eleIsDown.addEventListener('click', clickIsDown);
   
   // load the little canvases.
   makeCanvas('p5');
@@ -91,6 +93,7 @@ function penroseApp() {
       setTimeout(drawFunction());
     }
   }
+
 
   /*************************************************************************************
    * Draws a little canvas with a shape.
@@ -336,6 +339,57 @@ function penroseApp() {
     }
   }
   
+  // function drawGeneric3(id) {
+  //   console.log(`drawGeneric3`)
+  //   const canvas = document.querySelector(`#${id} > canvas`);
+
+  //   // g is global
+  //   g = canvas.getContext("2d");
+  //   g.fillStyle = "#ffffff";
+  //   g.fillRect(0, 0, canvas.width, canvas.height);
+  //   g.strokeStyle = penrose.OUTLINE;
+  //   g.lineWidth = 1;
+  //   scale = 5;
+
+  //   drawScreen = function() {
+      
+  //     let x = 100;
+  //     let y = 250;
+
+  //     let decagon = true;
+  //     if (decagon) {
+  //       deca(controls.fifths, controls.isDown, p(20,20), 1);
+  //       deca(controls.fifths, controls.isDown, p(50,50), 2);
+  //       deca(controls.fifths, controls.isDown, p(210,80), 3);
+  //       deca(controls.fifths, controls.isDown, p(x,y), 4);
+
+  //     } else {
+  //       console.log(`drawScreen ${controls.type}`);
+  //       const type = controls.typeList[controls.type];
+  //       switch (type) {
+  //         case penrose.Pe1:
+  //         case penrose.Pe3:
+  //         case penrose.Pe5:
+  //           console.log("draw penta")
+  //           penta(controls.fifths, type, controls.isDown, p(x,y), 3);
+
+  //           break;
+  //         case penrose.St1:
+  //         case penrose.St3:
+  //         case penrose.St5:
+  //           console.log("draw star")
+  //           star(controls.fifths, type, controls.isDown, p(x,y), 3);
+  //           break;
+          
+  //       }
+  //     }
+  //   }
+  //   drawScreen();
+  // }
+
+
+}
+
   /**
    * For the third expansion we want to use a different scheme.
    * 
@@ -346,7 +400,7 @@ function penroseApp() {
    * 
    * @param {} canvasId 
    */
-  function drawGeneric123(id) {
+   function drawGeneric123(id) {
     const canvas = document.querySelector(`#${id} > canvas`);
     // g is global
     g = canvas.getContext("2d");
@@ -444,9 +498,6 @@ function penroseApp() {
     }
     drawScreen();
   }
-
-
-}
 
 /***
  * penrose is a global constant (does it have to be a var?)
