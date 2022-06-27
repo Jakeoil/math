@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="shortcut icon" href="map-icon.png" />
+        <title>Coylean Map Exploration</title>
+        <link rel="stylesheet" href="math.css" />
+        <style>
+            .flowtile {
+            border: 1px solid #d3d3d3;
+            display: inline-block;
+            /* vertical-align: middle */
+        }
+        #across {
+            padding-left: 100px;
+            display: block;
+        }
+        #meat {
+            display: flex;
+            height: 1000px;
+        }
+        .pageButton {
+            border: none;
+            outline: none;
+            background-color: black;
+            color: white;
+        }
+        #controls {
+            /* outline: 3px solid blue; */
+            flex: 1;
+            padding: 10px;
+            background: lightblue;
+        }
+        #content {
+            /* outline: 3px solid greenyellow; */
+            flex: 6;
+            margin-left: 10px;
+            padding-left: 10px;
+            overflow: scroll;
+        }
+    </style>
+    <script></script>
+</head>
+
+<body>
+    <header>
+        <h1>Coylean Map exploration</h1>
+        <h2>
+          Move the true downs and rights back and forth
+        </h2>
+    </header>  
+    <div id="meat">
+        <div id="controls">
+            <h3>Controls</h3>
+            <button id="rights-left">Left</button>
+            <button id="rights-right">Right</button>
+            <br>
+            <button id="downs-up">Up</button>
+            <button id="downs-down">Down</button>
+        </div>
+        <div id="content">
+            <div id="explore-map">
+                <h2>Explore the map</h2>
+                <canvas></canvas>
+            </div>
+
+        </div>
+
+    </div>
+    <script>
+function coyleanSquare()
+{
+  const canvas = document.querySelector(`#explore-map > canvas`);
+  const square = canvas.getContext("2d");
+  const downs = [];
+  const rights = [];
+  const pri = function(n)
+  {
+    p = 0;
+    if (n == 0)
+      return 100;
+    
+    while (n % 2 == 0)
+    {
+      p++;
+      n = Math.floor(n/2);
+    }
+    return p;
+  }
+  
+  square.lineWidth = 1;
+
+  var SIZE = 65;
+  var SCALE = 8;
+  for(var i = 0; i < SIZE; i++)
+  {
+    downs.push(false);
+    rights.push(false);
+  }
+  downs[0] = true;
+  for(var j = 0; j < SIZE; j++) // Y (rights)
+  {
+    var y = j * SCALE; yp = y + SCALE;
+    for(var i = 0; i < SIZE; i++)  // X (downs)
+    {
+      var x = i * SCALE; xp = x + SCALE;
+      if (downs[i])
+      {
+        if (rights[j])
+        {
+          // _|
+          square.beginPath();
+          square.moveTo( xp, y);
+          square.lineTo( xp, yp);
+          square.lineTo( x,  yp);
+          square.stroke();
+            
+          if (pri(i) >= pri(j))
+          {
+            // _|
+            //  |
+            downs[i] = true;
+            rights[j] = false;
+          }
+          else
+          {
+            //  _|_
+            //
+            downs[i] = false;
+            rights[j] = true;
+          }
+        }
+        else
+        {
+          //   |_
+          //   |
+          square.beginPath();
+          square.moveTo( xp, y);
+          square.lineTo( xp, yp);
+          square.stroke();
+
+          if (pri(i) >= pri(j))
+          {
+            //   |_
+            //   |
+            downs[i] = true;
+            rights[j] = true;
+          }
+          else
+          {
+            //   |
+            //   |
+            downs[i] = true;
+            rights[j] =false;
+          }
+        }
+      }
+      else
+      {
+        if (rights[j])
+        {
+          //   __
+          square.beginPath();
+          square.moveTo( xp, yp);
+          square.lineTo( x,  yp);
+          square.stroke();
+          
+          if(pri(i) >= pri(j))
+          {
+            downs[i] = false;
+            rights[j] = true;
+          }
+          else
+          {
+            // ___
+            //  |
+            downs[i] =  true;
+            rights[j] = true;
+          }
+        }
+        else
+        {
+          downs[i] = false;
+          rights[j] = false;
+        }
+      }
+    }
+  }
+
+    </script>
+</body>

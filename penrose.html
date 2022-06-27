@@ -45,7 +45,7 @@
     <script></script>
   </head>
 
-  <body>
+  <body onLoad="penroseApp()">
     <header>
       <h1>Penrose Mosaic</h1>
       <h2>
@@ -87,13 +87,13 @@
     <div id="meat">
       <div id="controls">
         <h3>Controls</h3>
-        <button id="fifths">Fifths</button>
+        <button id="fifths" onClick="clickFifths()">Fifths</button>
         <br />
         <br />
-        <button id="type">Type</button>
+        <button id="type" onClick="clickType()">Type</button>
         <br />
         <br />
-        <button id="isDown">isDown</button>
+        <button id="isDown" onClick="clickIsDown()">isDown</button>
         <br />
       </div>
       <div id="content">
