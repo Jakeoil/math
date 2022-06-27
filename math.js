@@ -7,62 +7,48 @@
 /**
  * Globals
  */
-
-// The load listener is globally connected.
-addEventListener("load", eventWindowLoaded, false);
-function eventWindowLoaded() {
-  penroseApp();
-}
-
-// penrose globals referred to in parameterrs penta and star methods
 const controls = new Controls(0, 0, false);
+// Can this be made into a function?
+const eleFifths = document.querySelector("#fifths");
+const eleType = document.querySelector("#type");
+const eleIsDown = document.querySelector("#isDown");
+eleFifths.innerHTML = `fifths: ${controls.fifths}`;
+eleType.innerHTML = controls.typeName;
+eleIsDown.innerHTML = controls.direction;
 
 // Graphics globals for whole canvas
 let g;
 let scale;
 let stroke; // New
 
+
+/**
+ * Events for the three buttons
+ */
 const clickFifths = function () {
   console.log("clickFifths")
   controls.bumpFifths();
   eleFifths.innerHTML = `fifths: ${controls.fifths}`;
-  drawGeneric123('g012');
-  drawGeneric3('g3');
+  penroseApp();
 };
+
 const clickType = function() {
   controls.bumpType();
   eleType.innerHTML = controls.typeName;
-  drawGeneric123('g012'); 
-  drawGeneric3('g3');
+  penroseApp();
 }
 const clickIsDown = function() {
   controls.toggleDirection();
   eleIsDown.innerHTML = controls.direction;
-  drawGeneric123('g012'); 
-  drawGeneric3('g3');
+  penroseApp();
 }
-  // Can this be made into a function?
-  const eleFifths = document.querySelector("#fifths");
-  const eleType = document.querySelector("#type");
-  const eleIsDown = document.querySelector("#isDown");
 
 /**
  * Called when the page loads.
  * Creates all canvases.
  * Creates listeners for control buttons
  */
-function penroseApp() {
-
-  
-  eleFifths.innerHTML = `fifths: ${controls.fifths}`;
-  eleType.innerHTML = controls.typeName;
-  eleIsDown.innerHTML = controls.direction;
-
-
-  //eleFifths.addEventListener("click", clickFifths);
-  //eleType.addEventListener("click", clickType);
-  //eleIsDown.addEventListener('click', clickIsDown);
-  
+function penroseApp() {  
   // load the little canvases.
   makeCanvas('p5');
   makeCanvas('p3');
@@ -76,429 +62,378 @@ function penroseApp() {
   // This is where I refactor _everything_
   drawGeneric123('g012');
   drawGeneric3('g3');
-  
-  /**
-   * Called at end of draw cycle.  Redraws under the following conditions
-   *   The size of the canvas is greater than the bounds
-   *   (future) add a max bounds.
-   * @param {*} bounds 
-   * @param {*} canvas 
-   * @param {*} drawFunction 
-   */
-  function redraw(bounds, canvas, drawFunction) {
-    const computedWidth = bounds.maxPoint.x * scale + scale;
-    const computedHeight = bounds.maxPoint.y * scale + scale;
-    if (canvas.width != computedWidth || canvas.height != computedHeight) {
-      canvas.width = computedWidth; canvas.height = computedHeight;
-      setTimeout(drawFunction());
-    }
-  }
-
-
-  /*************************************************************************************
-   * Draws a little canvas with a shape.
-   * Shape depends on passed in ID.
-   */
-  function makeCanvas(canvasId) {
-    var canvas = document.getElementById(canvasId);
-    g = canvas.getContext("2d");
-
-    // for makeCanvas only
-    const drawScreen = function() {
-      // Initialize screen.
-      g.fillStyle = "#ffffff";
-      g.fillRect(0, 0, canvas.width, canvas.height);
-      g.fillStyle = penrose.ORANGE;  // This not needed
-      g.strokeStyle = penrose.OUTLINE;
-      g.lineWidth = 1;
-      scale = 10;
-      // this is a p0 down.
-      const bounds = new Bounds;
-      switch (canvasId) {
-        case 'p5':
-          bounds.expand(penta(0, penrose.Pe5, true, new P(3,3),0));
-          break;
-        case 'p3':
-          bounds.expand(penta(0, penrose.Pe3, false, new P(3,3),0));
-          break;
-        case 'p1':
-          bounds.expand(penta(0, penrose.Pe1, false, new P(3,3),0));
-          break;
-        case 's5':
-          bounds.expand(star(0, penrose.St5, false, new P(4,4),0));
-          break;
-        case 's3':
-          bounds.expand(star(0, penrose.St3, false, new P(4,4),0));
-          break;
-        case 's1':
-          bounds.expand(star(2, penrose.St1, false, new P(1,2),0));
-          break;
-      }
-      
-      // Make adjustments based on the bounds of the drawing.
-      redraw(bounds, canvas, drawScreen)
-    }
-
-    drawScreen();
-
-  }
-
-  /***************************************************************************************
-   * The first expansion draws penta(1) and star(1) varients
-   * Sets the globals g and scale
-   */
-  function drawFirstInflation(id) {
-    const canvas = document.querySelector(`#${id} > canvas`);
-    if (!canvas) {
-      console.log("canvasId is null!");
-      return;
-    }
-    g = canvas.getContext("2d");
-
-    const drawScreen = function() {
-      g.fillStyle = "#ffffff";
-      g.fillRect(0, 0, canvas.width, canvas.height);
-      g.fillStyle = penrose.ORANGE;
-      g.strokeStyle = penrose.OUTLINE;
-      g.lineWidth = 1;
-
-      scale = 10;
-      penrose.scale = scale;
-
-      x = 8;
-      y = 9;
-      const UP = false;
-      const DOWN = true;
-      const bounds = new Bounds();
-      bounds.expand(
-        penta(0, penrose.Pe5, UP, p(x,y),1));
-      penta(0, penrose.Pe5, DOWN, p(25,y),1);
-      y += 18;
-      for (let i = 0; i < 5; i++) {
-        penta(i, penrose.Pe3, UP, p(x + i * 20, y),1)
-      }
-      y += 20;
-      for (let i = 0; i < 5; i++) {
-        penta(i, penrose.Pe3, DOWN, p(x + i * 20, y),1)
-      }
-      y += 20;
-      for (let i = 0; i < 5; i++) {
-        penta(i, penrose.Pe1, UP, p(x + i * 20, y),1)
-      }
-      y += 20;
-      for (let i = 0; i < 5; i++) {
-        penta(i, penrose.Pe1, DOWN, p(x + i * 20,y),1)
-      }
-      y += 25;
-      star(0, penrose.St5, UP, p(15, y), 1);
-      star(0, penrose.St5, DOWN, p(45, y), 1);
-      x = 10;
-      y += 30;
-      for (let i = 0; i < 5; i++) {
-        star(i, penrose.St1, UP, p(x + i * 20, y), 1);
-      }
-      y += 25;
-      for (let i = 0; i < 5; i++) {
-        star(i, penrose.St1, DOWN, p(x + i * 20, y), 1);
-      }
-
-      x = 15;
-      y += 25;
-      for (let i = 0; i < 5; i++) {
-        star(i, penrose.St3, UP, p(x + i * 25, y), 1);
-      }
-
-      y += 25;
-      for (let i = 0; i < 5; i++) {
-        bounds.expand(
-          star(i, penrose.St3, DOWN, p(x + i * 25, y), 1));
-      }
-      // conditional redraw
-      redraw(bounds, canvas, drawScreen);
-    }
-    drawScreen();
-  }
-  /*************************************************************************************
-   * The second draw test is the expansion of the first draw test.
-   * It draws the second expansion of each of the tiles.
-   * 
-   */
-  function drawSecondInflation(id) {
-    const canvas = document.querySelector(`#${id} > canvas`);
-    // g is global
-    g = canvas.getContext("2d");
-    drawScreen();
-    /**
-     * 
-     */
-    function drawScreen() {
-      const UP = false;
-      const DOWN = true;
-      g.fillStyle = "#ffffff";
-      g.fillRect(0, 0, canvas.width, canvas.height);
-
-      g.fillStyle = penrose.ORANGE;
-      g.strokeStyle = penrose.OUTLINE;
-      g.lineWidth = 1;
-      scale = 5;
-
-      let x = 25;
-      let y = 25;
-      penta(0, penrose.Pe5, UP, p(x, y), 2);
-      penta(0, penrose.Pe5, DOWN, p(x + 50, y), 2); // 
-      y += 50;
-      x = 25;
-      for (let i = 0; i < 5; i++) {
-        penta(i, penrose.Pe3, UP,p(x + i * 50, y), 2);
-      }
-      y += 55;
-      for (let i = 0; i < 5; i++) {
-        penta(i, penrose.Pe3, DOWN,p(x + i * 50, y), 2);
-      }
-      y += 50;
-      for (let i = 0; i < 5; i++) {
-        penta(i, penrose.Pe1, UP,p(x + i * 50, y), 2);
-      }
-      y += 55;
-      for (let i = 0; i < 5; i++) {
-        penta(i, penrose.Pe1, DOWN, p(x + i * 50, y), 2);
-      }
-      y += 60  // one thru four
-      star(0, penrose.St5, UP, p(35, y), 2);
-      star(0, penrose.St5, DOWN, p(100, y), 2);
-      y += 74  // one thru four
-      x = 35;
-      for (let i = 0; i < 5; i++) {
-        star(i, penrose.St3, UP, p(x + i * 67, y), 2);
-      }
-      y += 70  // one thru four
-      for (let i = 0; i < 5; i++) {
-        star(i, penrose.St3, DOWN, p(x + i * 67, y), 2);
-      }
-      y += 75  // one thru four
-      for (let i = 0; i < 5; i++) {
-        star(i, penrose.St1, UP, p(x + i * 50, y), 2);
-      }
-      y += 60  // one thru four
-      for (let i = 0; i < 5; i++) {
-        star(i, penrose.St1, DOWN, p(x + i * 50, y), 2);
-      }
-    }
-  }
-
-  function drawGridWork(id) {
-    const UP = false;
-    const DOWN = true;
-
-    const canvas = document.querySelector(`#${id} > canvas`);
-
-    g = canvas.getContext("2d");
-    //drawScreen();
-    drawBig();
-    
-    /**
-     * Draws all of the penrose rotations
-     * Draws a few decagons too.
-     */
-    function drawBig() {
-      g.fillStyle = "#ffffff";
-      g.fillRect(0, 0, canvas.width, canvas.height);
-
-      g.fillStyle = penrose.ORANGE;
-      g.strokeStyle = penrose.OUTLINE;
-      g.lineWidth = 1;
-      scale = 10;
-      penrose.scale = scale; // Maybe does not use it.
-
-      y = 5;
-      shapes = [penrose.penta, penrose.diamond, penrose.star, penrose.boat];
-      const spacing = 12;
-      for (const shape of shapes) {
-        for (let i = 0; i < 10; i++) {
-          let offset = p((i + 1) * spacing, y);
-          figure(penrose.ORANGE, offset, shape[i]);
-          grid(p((i + 1) * spacing, y), 5);
-        }
-        y += spacing;
-      }
-
-      // Now some decagons
-      let fifths = 0;
-      let isDown = true;
-      let base = p(45, 75);
-      let exp = 2
-      grid(base, 18);
-      deca(fifths, isDown, base, exp);
-
-      fifths = 1;
-      isDown = false;
-      base = p(15, 75);
-      exp = 1
-      grid(base, 10);
-      deca(fifths, isDown, base, exp);
-    }
-  }
-  
-  // function drawGeneric3(id) {
-  //   console.log(`drawGeneric3`)
-  //   const canvas = document.querySelector(`#${id} > canvas`);
-
-  //   // g is global
-  //   g = canvas.getContext("2d");
-  //   g.fillStyle = "#ffffff";
-  //   g.fillRect(0, 0, canvas.width, canvas.height);
-  //   g.strokeStyle = penrose.OUTLINE;
-  //   g.lineWidth = 1;
-  //   scale = 5;
-
-  //   drawScreen = function() {
-      
-  //     let x = 100;
-  //     let y = 250;
-
-  //     let decagon = true;
-  //     if (decagon) {
-  //       deca(controls.fifths, controls.isDown, p(20,20), 1);
-  //       deca(controls.fifths, controls.isDown, p(50,50), 2);
-  //       deca(controls.fifths, controls.isDown, p(210,80), 3);
-  //       deca(controls.fifths, controls.isDown, p(x,y), 4);
-
-  //     } else {
-  //       console.log(`drawScreen ${controls.type}`);
-  //       const type = controls.typeList[controls.type];
-  //       switch (type) {
-  //         case penrose.Pe1:
-  //         case penrose.Pe3:
-  //         case penrose.Pe5:
-  //           console.log("draw penta")
-  //           penta(controls.fifths, type, controls.isDown, p(x,y), 3);
-
-  //           break;
-  //         case penrose.St1:
-  //         case penrose.St3:
-  //         case penrose.St5:
-  //           console.log("draw star")
-  //           star(controls.fifths, type, controls.isDown, p(x,y), 3);
-  //           break;
-          
-  //       }
-  //     }
-  //   }
-  //   drawScreen();
-  // }
-
-
 }
 
-  /**
-   * For the third expansion we want to use a different scheme.
-   * 
-   * expansion
-   * star or pentagon
-   * 5 4 or 2
-   * up or down
-   * 
-   * @param {} canvasId 
-   */
-   function drawGeneric123(id) {
-    const canvas = document.querySelector(`#${id} > canvas`);
-    // g is global
-    g = canvas.getContext("2d");
+/*************************************************************************************
+ * Draws a little canvas with a shape.
+ * Shape depends on passed in ID.
+ */
+function makeCanvas(canvasId) {
+  var canvas = document.getElementById(canvasId);
+  g = canvas.getContext("2d");
+  // for makeCanvas only
+  const drawScreen = function() {
+    // Initialize screen.
     g.fillStyle = "#ffffff";
     g.fillRect(0, 0, canvas.width, canvas.height);
-    //g.fillStyle = penrose.ORANGE;
+    g.fillStyle = penrose.ORANGE;  // This not needed
+    g.strokeStyle = penrose.OUTLINE;
+    g.lineWidth = 1;
+    scale = 10;
+    // this is a p0 down.
+    const bounds = new Bounds;
+    switch (canvasId) {
+      case 'p5':
+        bounds.expand(penta(0, penrose.Pe5, true, new P(3,3),0));
+        break;
+      case 'p3':
+        bounds.expand(penta(0, penrose.Pe3, false, new P(3,3),0));
+        break;
+      case 'p1':
+        bounds.expand(penta(0, penrose.Pe1, false, new P(3,3),0));
+        break;
+      case 's5':
+        bounds.expand(star(0, penrose.St5, false, new P(4,4),0));
+        break;
+      case 's3':
+        bounds.expand(star(0, penrose.St3, false, new P(4,4),0));
+        break;
+      case 's1':
+        bounds.expand(star(2, penrose.St1, false, new P(1,2),0));
+        break;
+    }
+    
+    // Make adjustments based on the bounds of the drawing.
+    redraw(bounds, canvas, drawScreen)
+  }
+
+  drawScreen();
+}
+
+/**
+ * Called at end of draw cycle.  Redraws under the following conditions
+ *   The size of the canvas is greater than the bounds
+ *   (future) add a max bounds.
+ * @param {*} bounds 
+ * @param {*} canvas 
+ * @param {*} drawFunction 
+ */
+function redraw(bounds, canvas, drawFunction) {
+  const computedWidth = bounds.maxPoint.x * scale + scale;
+  const computedHeight = bounds.maxPoint.y * scale + scale;
+  if (canvas.width != computedWidth || canvas.height != computedHeight) {
+    canvas.width = computedWidth; canvas.height = computedHeight;
+    setTimeout(drawFunction());
+  }
+}
+
+/***************************************************************************************
+ * The first expansion draws penta(1) and star(1) varients
+ * Sets the globals g and scale
+ */
+
+function drawFirstInflation(id) {
+  const canvas = document.querySelector(`#${id} > canvas`);
+  if (!canvas) {
+    console.log("canvasId is null!");
+    return;
+  }
+  g = canvas.getContext("2d");
+
+  const drawScreen = function() {
+    g.fillStyle = "#ffffff";
+    g.fillRect(0, 0, canvas.width, canvas.height);
+    g.fillStyle = penrose.ORANGE;
+    g.strokeStyle = penrose.OUTLINE;
+    g.lineWidth = 1;
+
+    scale = 10;
+    penrose.scale = scale;
+
+    x = 8;
+    y = 9;
+    const UP = false;
+    const DOWN = true;
+    const bounds = new Bounds();
+    bounds.expand(
+      penta(0, penrose.Pe5, UP, p(x,y),1));
+    penta(0, penrose.Pe5, DOWN, p(25,y),1);
+    y += 18;
+    for (let i = 0; i < 5; i++) {
+      penta(i, penrose.Pe3, UP, p(x + i * 20, y),1)
+    }
+    y += 20;
+    for (let i = 0; i < 5; i++) {
+      penta(i, penrose.Pe3, DOWN, p(x + i * 20, y),1)
+    }
+    y += 20;
+    for (let i = 0; i < 5; i++) {
+      penta(i, penrose.Pe1, UP, p(x + i * 20, y),1)
+    }
+    y += 20;
+    for (let i = 0; i < 5; i++) {
+      penta(i, penrose.Pe1, DOWN, p(x + i * 20,y),1)
+    }
+    y += 25;
+    star(0, penrose.St5, UP, p(15, y), 1);
+    star(0, penrose.St5, DOWN, p(45, y), 1);
+    x = 10;
+    y += 30;
+    for (let i = 0; i < 5; i++) {
+      star(i, penrose.St1, UP, p(x + i * 20, y), 1);
+    }
+    y += 25;
+    for (let i = 0; i < 5; i++) {
+      star(i, penrose.St1, DOWN, p(x + i * 20, y), 1);
+    }
+
+    x = 15;
+    y += 25;
+    for (let i = 0; i < 5; i++) {
+      star(i, penrose.St3, UP, p(x + i * 25, y), 1);
+    }
+
+    y += 25;
+    for (let i = 0; i < 5; i++) {
+      bounds.expand(
+        star(i, penrose.St3, DOWN, p(x + i * 25, y), 1));
+    }
+    // conditional redraw
+    redraw(bounds, canvas, drawScreen);
+  }
+  drawScreen();
+}
+/*************************************************************************************
+ * The second draw test is the expansion of the first draw test.
+ * It draws the second expansion of each of the tiles.
+ * 
+ */
+ function drawSecondInflation(id) {
+  const canvas = document.querySelector(`#${id} > canvas`);
+  // g is global
+  g = canvas.getContext("2d");
+  drawScreen();
+  /**
+   * 
+   */
+  function drawScreen() {
+    const UP = false;
+    const DOWN = true;
+    g.fillStyle = "#ffffff";
+    g.fillRect(0, 0, canvas.width, canvas.height);
+
+    g.fillStyle = penrose.ORANGE;
+    g.strokeStyle = penrose.OUTLINE;
+    g.lineWidth = 1;
+    scale = 5;
+
+    let x = 25;
+    let y = 25;
+    penta(0, penrose.Pe5, UP, p(x, y), 2);
+    penta(0, penrose.Pe5, DOWN, p(x + 50, y), 2); // 
+    y += 50;
+    x = 25;
+    for (let i = 0; i < 5; i++) {
+      penta(i, penrose.Pe3, UP,p(x + i * 50, y), 2);
+    }
+    y += 55;
+    for (let i = 0; i < 5; i++) {
+      penta(i, penrose.Pe3, DOWN,p(x + i * 50, y), 2);
+    }
+    y += 50;
+    for (let i = 0; i < 5; i++) {
+      penta(i, penrose.Pe1, UP,p(x + i * 50, y), 2);
+    }
+    y += 55;
+    for (let i = 0; i < 5; i++) {
+      penta(i, penrose.Pe1, DOWN, p(x + i * 50, y), 2);
+    }
+    y += 60  // one thru four
+    star(0, penrose.St5, UP, p(35, y), 2);
+    star(0, penrose.St5, DOWN, p(100, y), 2);
+    y += 74  // one thru four
+    x = 35;
+    for (let i = 0; i < 5; i++) {
+      star(i, penrose.St3, UP, p(x + i * 67, y), 2);
+    }
+    y += 70  // one thru four
+    for (let i = 0; i < 5; i++) {
+      star(i, penrose.St3, DOWN, p(x + i * 67, y), 2);
+    }
+    y += 75  // one thru four
+    for (let i = 0; i < 5; i++) {
+      star(i, penrose.St1, UP, p(x + i * 50, y), 2);
+    }
+    y += 60  // one thru four
+    for (let i = 0; i < 5; i++) {
+      star(i, penrose.St1, DOWN, p(x + i * 50, y), 2);
+    }
+  }
+}
+
+function drawGridWork(id) {
+  const UP = false;
+  const DOWN = true;
+
+  const canvas = document.querySelector(`#${id} > canvas`);
+
+  g = canvas.getContext("2d");
+  //drawScreen();
+  drawBig();
+  
+  /**
+   * Draws all of the penrose rotations
+   * Draws a few decagons too.
+   */
+  function drawBig() {
+    g.fillStyle = "#ffffff";
+    g.fillRect(0, 0, canvas.width, canvas.height);
+
+    g.fillStyle = penrose.ORANGE;
     g.strokeStyle = penrose.OUTLINE;
     g.lineWidth = 1;
     scale = 10;
     penrose.scale = scale; // Maybe does not use it.
 
-    function starType(type) {
-      switch (controls.typeList[type]) {
-        case penrose.Pe1: return penrose.St1;
-        case penrose.Pe3: return penrose.St3;
-        case penrose.Pe5: return penrose.St5;
-        default: return controls.typeList[type];
+    y = 5;
+    shapes = [penrose.penta, penrose.diamond, penrose.star, penrose.boat];
+    const spacing = 12;
+    for (const shape of shapes) {
+      for (let i = 0; i < 10; i++) {
+        let offset = p((i + 1) * spacing, y);
+        figure(penrose.ORANGE, offset, shape[i]);
+        grid(p((i + 1) * spacing, y), 5);
       }
-    }
-    function pentaType(type) {
-
-      switch (controls.typeList[type]) {
-        case penrose.St1: return penrose.Pe1;
-        case penrose.St3: return penrose.Pe3;
-        case penrose.St5: return penrose.Pe5;
-        default: return controls.typeList[type];
-      }
+      y += spacing;
     }
 
-    const drawScreen = function() {
-      console.log('--Pentagon')
-      let x = 13; let y = 26;
-      const bounds = penta(controls.fifths, pentaType(controls.type), controls.isDown, p(x,y), 0);
-      x += 21;
-      penta(controls.fifths, pentaType(controls.type), controls.isDown, p(x,y), 1);
-      x += 34;
-      penta(controls.fifths, pentaType(controls.type), controls.isDown, p(x,y), 2);
-      
-      console.log('--Diamond up 4');
-      x = 13; y += 55;
-      star(controls.fifths, starType(controls.type), controls.isDown, p(x,y), 0);
-      x += 21;
-      star(controls.fifths, starType(controls.type), controls.isDown, p(x,y), 1);
-      x += 54;
-      star(controls.fifths, starType(controls.type), controls.isDown, p(x,y), 2);
-    }
+    // Now some decagons
+    let fifths = 0;
+    let isDown = true;
+    let base = p(45, 75);
+    let exp = 2
+    grid(base, 18);
+    deca(fifths, isDown, base, exp);
 
-    drawScreen();
+    fifths = 1;
+    isDown = false;
+    base = p(15, 75);
+    exp = 1
+    grid(base, 10);
+    deca(fifths, isDown, base, exp);
+  }
+}
+
+/**
+ * For the third expansion we want to use a different scheme.
+ * 
+ * expansion
+ * star or pentagon
+ * 5 4 or 2
+ * up or down
+ * 
+ * @param {} canvasId 
+ */
+function drawGeneric123(id) {
+  const canvas = document.querySelector(`#${id} > canvas`);
+  // g is global
+  g = canvas.getContext("2d");
+  g.fillStyle = "#ffffff";
+  g.fillRect(0, 0, canvas.width, canvas.height);
+  //g.fillStyle = penrose.ORANGE;
+  g.strokeStyle = penrose.OUTLINE;
+  g.lineWidth = 1;
+  scale = 10;
+  penrose.scale = scale; // Maybe does not use it.
+
+  function starType(type) {
+    switch (controls.typeList[type]) {
+      case penrose.Pe1: return penrose.St1;
+      case penrose.Pe3: return penrose.St3;
+      case penrose.Pe5: return penrose.St5;
+      default: return controls.typeList[type];
+    }
   }
 
-  function drawGeneric3(id) {
-    console.log(`drawGeneric3`)
-    const canvas = document.querySelector(`#${id} > canvas`);
-
-    // g is global
-    g = canvas.getContext("2d");
-    g.fillStyle = "#ffffff";
-    g.fillRect(0, 0, canvas.width, canvas.height);
-    g.strokeStyle = penrose.OUTLINE;
-    g.lineWidth = 1;
-    scale = 5;
-
-    drawScreen = function() {
-      
-      let x = 100;
-      let y = 250;
-
-      let decagon = true;
-      if (decagon) {
-        deca(controls.fifths, controls.isDown, p(20,20), 1);
-        deca(controls.fifths, controls.isDown, p(50,50), 2);
-        deca(controls.fifths, controls.isDown, p(210,80), 3);
-        deca(controls.fifths, controls.isDown, p(x,y), 4);
-
-      } else {
-        console.log(`drawScreen ${controls.type}`);
-        const type = controls.typeList[controls.type];
-        switch (type) {
-          case penrose.Pe1:
-          case penrose.Pe3:
-          case penrose.Pe5:
-            console.log("draw penta")
-            penta(controls.fifths, type, controls.isDown, p(x,y), 3);
-
-            break;
-          case penrose.St1:
-          case penrose.St3:
-          case penrose.St5:
-            console.log("draw star")
-            star(controls.fifths, type, controls.isDown, p(x,y), 3);
-            break;
-          
-        }
-      }
+  function pentaType(type) {
+    switch (controls.typeList[type]) {
+      case penrose.St1: return penrose.Pe1;
+      case penrose.St3: return penrose.Pe3;
+      case penrose.St5: return penrose.Pe5;
+      default: return controls.typeList[type];
     }
-    drawScreen();
   }
 
+  const drawScreen = function() {
+    console.log('--Pentagon')
+    let x = 13; let y = 26;
+    const bounds = penta(controls.fifths, pentaType(controls.type), controls.isDown, p(x,y), 0);
+    x += 21;
+    penta(controls.fifths, pentaType(controls.type), controls.isDown, p(x,y), 1);
+    x += 34;
+    penta(controls.fifths, pentaType(controls.type), controls.isDown, p(x,y), 2);
+    
+    console.log('--Diamond up 4');
+    x = 13; y += 55;
+    star(controls.fifths, starType(controls.type), controls.isDown, p(x,y), 0);
+    x += 21;
+    star(controls.fifths, starType(controls.type), controls.isDown, p(x,y), 1);
+    x += 54;
+    star(controls.fifths, starType(controls.type), controls.isDown, p(x,y), 2);
+  }
+
+  drawScreen();
+}
+
+function drawGeneric3(id) {
+  console.log(`drawGeneric3`)
+  const canvas = document.querySelector(`#${id} > canvas`);
+
+  // g is global
+  g = canvas.getContext("2d");
+  g.fillStyle = "#ffffff";
+  g.fillRect(0, 0, canvas.width, canvas.height);
+  g.strokeStyle = penrose.OUTLINE;
+  g.lineWidth = 1;
+  scale = 5;
+
+  drawScreen = function() {
+    
+    let x = 100;
+    let y = 250;
+
+    let decagon = true;
+    if (decagon) {
+      deca(controls.fifths, controls.isDown, p(20,20), 1);
+      deca(controls.fifths, controls.isDown, p(50,50), 2);
+      deca(controls.fifths, controls.isDown, p(210,80), 3);
+      deca(controls.fifths, controls.isDown, p(x,y), 4);
+
+    } else {
+      console.log(`drawScreen ${controls.type}`);
+      const type = controls.typeList[controls.type];
+      switch (type) {
+        case penrose.Pe1:
+        case penrose.Pe3:
+        case penrose.Pe5:
+          console.log("draw penta")
+          penta(controls.fifths, type, controls.isDown, p(x,y), 3);
+
+          break;
+        case penrose.St1:
+        case penrose.St3:
+        case penrose.St5:
+          console.log("draw star")
+          star(controls.fifths, type, controls.isDown, p(x,y), 3);
+          break;
+        
+      }
+    }
+  }
+  drawScreen();
+}
+
+  
 /***
  * penrose is a global constant (does it have to be a var?)
  * This is called only from expansion 1
