@@ -58,24 +58,44 @@ function pri(n) {
             
 function outputs(vertical, horizontal, i, j) {
     if (! horizontal && ! vertical) {
-    return [false, false];
+        return [false, false];
     }
 
     let downWins = pri(i) >= pri(j);
     if (horizontal && vertical) {
-    if (downWins) return [true, false];
-    else return [false, true];   
+        if (downWins) return [true, false];
+        else return [false, true];   
     }
     
     if (vertical) {
-    if (downWins) return [true, true];
-    else return [false, true];
+        if (downWins) return [true, true];
+        else return [false, true];
     } else {
-    if (downWins) return [false, true];
-    else return [true, true];
+        if (downWins) return [false, true];
+        else return [true, true];
     }
 }
 
+/**
+ * A loop on rows and columns.
+ * Creates a matrix using a column with numRows rights.
+ * And a row with numColumns downs
+ *  
+ * @param {Maintain} numRows 
+ * @param {*} numColumns 
+ */
+function loops(numRows, numColumns) {
+    initCol = new Array(numRows).fill(true);
+    initRow = new Array(numColumns).fill(true);
+    downMatrix = new Array(numRows).fill([]);
+    rightMatrix = new Array(numColumns).fill([]);
+    for (let j = 0; j < numRows; j++) {
+        for (let i = 0; i < numColumns; i++) {
+
+        }
+    }
+
+}
 function exploreMap(id) {
     // We should be using these to set the size of the canvas
     const SIZE = 65;
