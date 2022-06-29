@@ -76,7 +76,30 @@ function outputs(vertical, horizontal, i, j) {
     }
 }
 
+class Row extends Array {
+    toString() {
+        return this.reduce(
+            (previousValue, currentValue) => previousValue + (currentValue ? "|" : "."),
+            ""
+        )
+    }
+}
+
+class Col extends Array {
+    toString() {
+        return this.reduce(
+            (previousValue, currentValue) => previousValue + (currentValue ? "-" : "."),
+            ""
+        )
+    }
+
+}
 /**
+ * The Southeast Loop
+ * 
+ * This computes the default sector of the Coylean Region
+ * From the initial row and columns, all set, it builds two Matrices based 
+ * on the horizontal and vertical size.
  * A loop on rows and columns.
  * Creates a matrix using a column with numRows rights.
  * And a row with numColumns downs
@@ -84,18 +107,80 @@ function outputs(vertical, horizontal, i, j) {
  * @param {Maintain} numRows 
  * @param {*} numColumns 
  */
-function loops(numRows, numColumns) {
-    initCol = new Array(numRows).fill(true);
-    initRow = new Array(numColumns).fill(true);
-    downMatrix = new Array(numRows).fill([]);
-    rightMatrix = new Array(numColumns).fill([]);
-    for (let j = 0; j < numRows; j++) {
-        for (let i = 0; i < numColumns; i++) {
+function seLoop(numRows, numColumns) {
+    const initCol = new Col(numRows).fill(true);
+    const initRow = new Row(numColumns).fill(true);
+    console.log(`initCol: ${initCol}`);
+    console.log(`initRow: ${initRow}`);
+    const downMatrix = new Array(numRows).fill(new Row());
+    const rightMatrix = new Array(numColumns).fill(new Col());
+    downMatrix[0] = initRow;
+    rightMatrix[0] = initCol;
+    console.log(`downMatrix:${downMatrix}`);
+    console.log(`rightMatrix:${rightMatrix}`);
+    for (let j = 0; j < numRows - 1; j++) {
+        for (let i = 0; i < numColumns - 1; i++) {
+            a = outputs(
+                downMatrix[j][i], 
+                rightMatrix[i][j],
+                i + 0, j + 0);
+            console.log(`a: ${a}, j: ${j},i: ${i}`);    
+            //downMatrix[j + 1][i] = a[0];
+            //rightMatrix[i + 1][j] = a[1];
+            [ downMatrix[j + 1][i], rightMatrix[i + 1][j] ] = a;
 
+                
+            console.log(`downMatrix:${downMatrix}`);
+            console.log(`rightMatrix:${rightMatrix}`);
+        
+        }
+    }
+    return [downMatrix, rightMatrix];
+}
+
+/*
+let [d , r] = seLoop(4,4);
+console.log(`downMatrix:${d}`);
+console.log(`rightMatrix:${r}`);
+
+for (let j = 0; j < r.length; j++) {
+    for (let i = 0; i < d.length; i++){
+        cell(d[j, i], r[i,j], i, j);
+    }
+}
+*/
+function cell(down, right, i, j) {
+    let x = i * SCALE; 
+    let xp = x + SCALE;
+    let y = j * SCALE; 
+    let yp = y + SCALE;
+    if (down) {
+        if (right) {
+            // _|
+            g.beginPath();
+            g.moveTo( xp, y);
+            g.lineTo( xp, yp);
+            g.lineTo( x,  yp);
+            g.stroke();
+        } else {
+            //   |
+            g.beginPath();
+            g.moveTo( xp, y);
+            g.lineTo( xp, yp);
+            g.stroke();
+        }
+    } else {
+        if (rights) {
+            //   __
+            g.beginPath();
+            g.moveTo( xp, yp);
+            g.lineTo( x,  yp);
+            g.stroke();
         }
     }
 
 }
+
 function exploreMap(id) {
     // We should be using these to set the size of the canvas
     const SIZE = 65;
@@ -106,6 +191,7 @@ function exploreMap(id) {
     g.lineWidth = 1;
     canvas.width = SCALE * (SIZE + 1);
     canvas.height = SCALE * (SIZE + 1);
+
     const drawScreen = function() {
         const downs = [];
         const rights = [];
@@ -185,6 +271,17 @@ function exploreMap(id) {
                             rights[j] = false;
                     }
                 }
+            }
+        }
+    }
+    const drawScreen2 = function() {
+        let [d , r] = seLoop(SIZE, SIZE);
+        console.log(`downMatrix:${d}`);
+        console.log(`rightMatrix:${r}`);
+
+        for (let j = 0; j < r.length; j++) {
+            for (let i = 0; i < d.length; i++){
+                cell(d[j, i], r[i,j], i, j);
             }
         }
     }
