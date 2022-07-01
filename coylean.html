@@ -21,13 +21,29 @@
         <div id="meat">
             <div id="controls">
                 <h3>Controls</h3>
-                <button id="rights-left" onClick="clickLeft()">Left</button>
-                <label id="rights-pos">000</label>
-                <button id="rights-right"  onClick="clickRight()">Right</button>
-                <br>
-                <button id="downs-up" onClick="clickUp()">Up</button>
-                <label id="downs-pos">000</label>
-                <button id="downs-down" onClick="clickDown()">Down</button>
+
+                <div>
+                    <h4> Init Columns</h4>
+                    <button id="rights-left" onClick="clickLeft()">Left</button>
+                    <label id="rights-pos"></label>
+                    <button id="rights-right"  onClick="clickRight()">Right</button>
+                    <br>
+                    <h4> Init Rows</h4>
+                    <button id="downs-up" onClick="clickUp()">Up</button>
+                    <label id="downs-pos"></label>
+                    <button id="downs-down" onClick="clickDown()">Down</button>
+                </div>
+                <div>
+                    <h4>Feature status</h4>
+                    <button id="feature-active" onClick="toggleActive()"></button>
+                </div>
+                <div>
+                    <h4>Size</h4>
+                    <button id="size-dec" onClick="clickSizeDec()">smaller</button>
+                    <button id="size-toggle" onClick="clickSizeToggle()"></button>
+                    <button id="size-inc" onClick="clickSizeInc()">larger</button>
+                    <br>
+                </div>
             </div>
             <div id="content">
                 <div id="explore-map">

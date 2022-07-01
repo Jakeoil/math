@@ -1,16 +1,22 @@
 let g;
-const SIZE = 65;
 const SCALE = 8;
-let rightsPos=0;
-let downsPos=0;
+
+/**
+ * Controls (preferences)
+ */
+let rightsPos=1;
+let downsPos=1;
 const eleLeft = document.querySelector('#rights-left');
 const eleRight = document.querySelector('#rights-right');
 const eleUp = document.querySelector('#downs-up');
 const eleDown = document.querySelector('#rights-right');
 const eleDownsPos = document.querySelector('#downs-pos');
 const eleRightsPos = document.querySelector('#rights-pos');
-
-const clickRight = function() {
+/**
+ * These control the are the rights- and downs- Pos
+ */
+ eleRightsPos.innerHTML = rightsPos;
+ const clickRight = function() {
     rightsPos++;
     eleRightsPos.innerHTML = rightsPos;
     coyleanApp();
@@ -21,6 +27,7 @@ const clickLeft = function() {
     eleRightsPos.innerHTML = rightsPos;
     coyleanApp();
 }
+eleDownsPos.innerHTML = downsPos;
 const clickUp = function() {
     downsPos--;
     eleDownsPos.innerHTML = downsPos;
@@ -32,6 +39,46 @@ const clickDown = function() {
     eleDownsPos.innerHTML = downsPos;
     coyleanApp();
 }
+
+let feature_active=false;
+
+const eleActive = document.querySelector('#feature-active');
+eleActive.innerHTML = feature_active?"ACTIVE":"NOT ACTIVE";
+const toggleActive = function() {
+    feature_active = !feature_active;
+    eleActive.innerHTML = feature_active?"ACTIVE":"NOT ACTIVE";
+    coyleanApp();
+}
+
+let SIZE = 65;
+const eleSizeDec = document.querySelector('#size-dec');
+const eleSizeInc = document.querySelector('#size-inc');
+const eleSizeToggle = document.querySelector('#size-toggle');
+eleSizeToggle.innerHTML = SIZE;
+const clickSizeInc = function() {
+    SIZE++;
+    eleSizeToggle.innerHTML = SIZE;
+    coyleanApp();
+}
+
+const clickSizeDec = function() {
+    if (SIZE > 1)
+        SIZE--;
+    eleSizeToggle.innerHTML = SIZE;
+    coyleanApp();
+
+}
+
+const clickSizeToggle = function() {
+    if (SIZE < 10) {
+        SIZE = 65;
+    } else {
+        SIZE = 5;
+    }
+    eleSizeToggle.innerHTML = SIZE;
+    coyleanApp();
+}
+
 
 function coyleanApp() {
     console.log('draw the map');
@@ -177,7 +224,7 @@ function cell(down, right, i, j) {
 
 function exploreMap(id) {
     // We should be using these to set the size of the canvas
-    const SIZE = 5;
+    //const SIZE = 5;
     const SCALE = 8
     canvas = document.querySelector(`#explore-map > canvas`);
     
@@ -280,5 +327,9 @@ function exploreMap(id) {
             }
         }
     }
-    drawScreen()
+
+    if(feature_active)
+        drawScreen2();
+    else
+        drawScreen();
 }
