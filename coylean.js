@@ -38,6 +38,10 @@ function coyleanApp() {
     exploreMap('explore-map');
 }
 
+/** Returns the evenness of a number
+ * 1 is the least even (0)
+ * 0 is the most 100. 2^100 is just as even 
+ */
 function pri(n) {
     let p = 0;
     if (n == 0)
@@ -57,6 +61,8 @@ function pri(n) {
  */
             
 function outputs(vertical, horizontal, i, j) {
+    console.log(`outputs vert: ${vertical}, hor: ${horizontal},` + 
+    `i: ${i}-> ${pri(i)}, j: ${j}-> ${pri(j)},`)
     if (! horizontal && ! vertical) {
         return [false, false];
     }
@@ -69,17 +75,17 @@ function outputs(vertical, horizontal, i, j) {
     
     if (vertical) {
         if (downWins) return [true, true];
-        else return [false, true];
+        else return [true, false];
     } else {
         if (downWins) return [false, true];
-        else return [true, true];
+        else return [false, true];
     }
 }
 
 class Row extends Array {
     toString() {
         return this.reduce(
-            (previousValue, currentValue) => previousValue + (currentValue ? "|" : "."),
+            (previousValue, currentValue) => previousValue + (currentValue ? "|" : "o"),
             ""
         )
     }
@@ -88,7 +94,7 @@ class Row extends Array {
 class Col extends Array {
     toString() {
         return this.reduce(
-            (previousValue, currentValue) => previousValue + (currentValue ? "-" : "."),
+            (previousValue, currentValue) => previousValue + (currentValue ? "-" : "o"),
             ""
         )
     }
@@ -110,46 +116,34 @@ class Col extends Array {
 function seLoop(numRows, numColumns) {
     const initCol = new Col(numRows).fill(true);
     const initRow = new Row(numColumns).fill(true);
-    console.log(`initCol: ${initCol}`);
-    console.log(`initRow: ${initRow}`);
+    console.log(`initCol 0 uses j as index: ${initCol}`);
+    console.log(`initRow 0 uses i as index: ${initRow}`);
     const downMatrix = new Array(numRows).fill(new Row());
     const rightMatrix = new Array(numColumns).fill(new Col());
     downMatrix[0] = initRow;
     rightMatrix[0] = initCol;
-    console.log(`downMatrix:${downMatrix}`);
-    console.log(`rightMatrix:${rightMatrix}`);
-    for (let j = 0; j < numRows - 1; j++) {
+    for (let j = 0; j < numRows - 1; j++) {  // 0 1 2 3 -> 1 2 3 4
+        // right matrix column zero is inited
         for (let i = 0; i < numColumns - 1; i++) {
+            console.log(`input: downMatrix row ${j}[${i}] ${downMatrix[j][i]?"|":"o"}\n` +
+                        `      rightMatrix col ${i}[${j}] ${rightMatrix[i][j]?"-":"o"}`);
+            console.log(`pri ${pri(j+1) >= pri(i+1) ? "|" : "-"}`);
             a = outputs(
                 downMatrix[j][i], 
                 rightMatrix[i][j],
-                i + 0, j + 0);
-            console.log(`a: ${a}, j: ${j},i: ${i}`);    
-            //downMatrix[j + 1][i] = a[0];
-            //rightMatrix[i + 1][j] = a[1];
-            [ downMatrix[j + 1][i], rightMatrix[i + 1][j] ] = a;
-
-                
-            console.log(`downMatrix:${downMatrix}`);
-            console.log(`rightMatrix:${rightMatrix}`);
-        
+                i + 1, j + 1);  // adding one to make it one
+            console.log(`a: ${a}, j: ${j},i: ${i}`);   
+            [ downMatrix[j + 1][i + 1], rightMatrix[i + 1][j + 1] ] = a;
+            console.log(`output: downMatrix row ${j+1}[${i + 1}]: ${a[0]?"|":"o"}\n` +
+                        `        rightMatrix col ${i+1}[${j + 1}]: ${a[1]?"-":"o"}`);        
         }
+        console.log(`row j+1:${j+1} complete: ${downMatrix[j+1]}`)
     }
     return [downMatrix, rightMatrix];
 }
 
-/*
-let [d , r] = seLoop(4,4);
-console.log(`downMatrix:${d}`);
-console.log(`rightMatrix:${r}`);
-
-for (let j = 0; j < r.length; j++) {
-    for (let i = 0; i < d.length; i++){
-        cell(d[j, i], r[i,j], i, j);
-    }
-}
-*/
 function cell(down, right, i, j) {
+    console.log(`cell: down: ${down}, right: ${right}`);
     let x = i * SCALE; 
     let xp = x + SCALE;
     let y = j * SCALE; 
@@ -183,7 +177,7 @@ function cell(down, right, i, j) {
 
 function exploreMap(id) {
     // We should be using these to set the size of the canvas
-    const SIZE = 65;
+    const SIZE = 5;
     const SCALE = 8
     canvas = document.querySelector(`#explore-map > canvas`);
     
@@ -275,13 +269,14 @@ function exploreMap(id) {
         }
     }
     const drawScreen2 = function() {
+        console.log(`seLoop SIZE ${SIZE}`)
         let [d , r] = seLoop(SIZE, SIZE);
-        console.log(`downMatrix:${d}`);
-        console.log(`rightMatrix:${r}`);
+        console.log(`downMatrix of rows:${d}`);
+        console.log(`rightMatrix of columns:${r}`);
 
         for (let j = 0; j < r.length; j++) {
             for (let i = 0; i < d.length; i++){
-                cell(d[j, i], r[i,j], i, j);
+                cell(d[j], [i], r[i], [j], i, j);
             }
         }
     }
