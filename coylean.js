@@ -40,7 +40,7 @@ const clickDown = function() {
     coyleanApp();
 }
 
-let feature_active=false;
+let feature_active=true;
 
 const eleActive = document.querySelector('#feature-active');
 eleActive.innerHTML = feature_active?"ACTIVE":"NOT ACTIVE";
@@ -50,7 +50,7 @@ const toggleActive = function() {
     coyleanApp();
 }
 
-let SIZE = 65;
+let SIZE = 5;
 const eleSizeDec = document.querySelector('#size-dec');
 const eleSizeInc = document.querySelector('#size-inc');
 const eleSizeToggle = document.querySelector('#size-toggle');
@@ -78,7 +78,6 @@ const clickSizeToggle = function() {
     eleSizeToggle.innerHTML = SIZE;
     coyleanApp();
 }
-
 
 function coyleanApp() {
     console.log('draw the map');
@@ -108,13 +107,12 @@ function pri(n) {
  */
             
 function outputs(vertical, horizontal, i, j) {
-    console.log(`outputs vert: ${vertical}, hor: ${horizontal},` + 
-    `i: ${i}-> ${pri(i)}, j: ${j}-> ${pri(j)},`)
+    console.log(` ${vertical?"|":"o"}  ${i + rightsPos}->${pri(i+rightsPos)} -- ${horizontal?"-":"o"} ${j + rightsPos}->${pri(j + rightsPos)},`)
     if (! horizontal && ! vertical) {
         return [false, false];
     }
 
-    let downWins = pri(i) >= pri(j);
+    let downWins = pri(i + rightsPos) >= pri(j + downsPos);
     if (horizontal && vertical) {
         if (downWins) return [true, false];
         else return [false, true];   
@@ -171,6 +169,7 @@ function seLoop(numRows, numColumns) {
     rightMatrix[0] = initCol;
     for (let j = 0; j < numRows - 1; j++) {  // 0 1 2 3 -> 1 2 3 4
         // right matrix column zero is inited
+        downMatrix[j+1][0] = true;
         for (let i = 0; i < numColumns - 1; i++) {
             console.log(`input: downMatrix row ${j}[${i}] ${downMatrix[j][i]?"|":"o"}\n` +
                         `      rightMatrix col ${i}[${j}] ${rightMatrix[i][j]?"-":"o"}`);
@@ -178,7 +177,7 @@ function seLoop(numRows, numColumns) {
             a = outputs(
                 downMatrix[j][i], 
                 rightMatrix[i][j],
-                i + 1, j + 1);  // adding one to make it one
+                i, j);  // adding one to make it one
             console.log(`a: ${a}, j: ${j},i: ${i}`);   
             [ downMatrix[j + 1][i + 1], rightMatrix[i + 1][j + 1] ] = a;
             console.log(`output: downMatrix row ${j+1}[${i + 1}]: ${a[0]?"|":"o"}\n` +
@@ -190,6 +189,7 @@ function seLoop(numRows, numColumns) {
 }
 
 function cell(down, right, i, j) {
+    
     console.log(`cell: down: ${down}, right: ${right}`);
     let x = i * SCALE; 
     let xp = x + SCALE;
@@ -323,7 +323,10 @@ function exploreMap(id) {
 
         for (let j = 0; j < r.length; j++) {
             for (let i = 0; i < d.length; i++){
-                cell(d[j], [i], r[i], [j], i, j);
+                let vert = d[j][i];
+                let hor = r[i][j];
+                console.log(`${vert} ${hor}`)
+                cell(d[j][i], r[i][j], i, j);
             }
         }
     }
