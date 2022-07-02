@@ -1,3 +1,5 @@
+'use strict'
+
 /**
  * Orthoganal Penrose program version one.
  * These routines process a grid. They do not control rendering.
@@ -432,9 +434,9 @@ var penrose = (function () {
   ].map(function (item) {
     return new P(item[0], item[1]);
   });
-  ORANGE = "#e46c0a";
-  BLUE = "#0000ff";
-  YELLOW = "#ffff00";
+  const ORANGE = "#e46c0a";
+  const BLUE = "#0000ff";
+  const YELLOW = "#ffff00";
 
   const shapes = {
     penta: [

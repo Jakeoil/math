@@ -1,3 +1,4 @@
+'use strict'
 let g;
 const SCALE = 8;
 
@@ -179,7 +180,7 @@ function seLoop(numRows, numColumns) {
             console.log(`compute ${JSON.stringify({i,j})}`)
             console.log(`input: downMatrix row ${j}[${i}] ${downMatrix[j][i]?"|":"o"}\n` +
                         `      rightMatrix col ${i}[${j}] ${rightMatrix[i][j]?"-":"o"}`);
-            a = outputs(
+            const a = outputs(
                 downMatrix[j][i],   // this is correct
                 rightMatrix[i][j],
                 i, j);  
@@ -243,7 +244,7 @@ function exploreMap(id) {
     // We should be using these to set the size of the canvas
     //const SIZE = 5;
     const SCALE = 8
-    canvas = document.querySelector(`#explore-map > canvas`);
+    const canvas = document.querySelector(`#explore-map > canvas`);
     
     g = canvas.getContext("2d");
     g.lineWidth = 1;

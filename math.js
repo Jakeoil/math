@@ -1,3 +1,5 @@
+'use strict'
+
 /**
  * Penrose Mozaic Webapp version 1.
  * Jeff Coyles Penrose type one pattern made out of square tiles of three colors.
@@ -150,8 +152,8 @@ function drawFirstInflation(id) {
     scale = 10;
     penrose.scale = scale;
 
-    x = 8;
-    y = 9;
+    let x = 8;
+    let y = 9;
     const UP = false;
     const DOWN = true;
     const bounds = new Bounds();
@@ -293,8 +295,8 @@ function drawGridWork(id) {
     scale = 10;
     penrose.scale = scale; // Maybe does not use it.
 
-    y = 5;
-    shapes = [penrose.penta, penrose.diamond, penrose.star, penrose.boat];
+    let y = 5;
+    const shapes = [penrose.penta, penrose.diamond, penrose.star, penrose.boat];
     const spacing = 12;
     for (const shape of shapes) {
       for (let i = 0; i < 10; i++) {
@@ -423,7 +425,7 @@ function drawGeneric3(id) {
   g.lineWidth = 1;
   scale = 5;
 
-  drawScreen = function () {
+  const drawScreen = function () {
     let x = 100;
     let y = 250;
 
