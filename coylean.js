@@ -172,6 +172,7 @@ function seLoop(numRows, numColumns) {
         return [false, false];
     }
 
+
     let downWins = pri(i + rightsPos) >= pri(j + downsPos);
     if (horizontal && vertical) {
         if (downWins) return [true, false];
@@ -183,7 +184,7 @@ function seLoop(numRows, numColumns) {
         else return [true, false];
     } else {
         if (downWins) return [false, true];
-        else return [false, true];
+        else return [true, true];
     }
 }
 
