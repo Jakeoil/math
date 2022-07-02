@@ -1,9 +1,10 @@
+'use strict'
 
 /**
  * Orthoganal Penrose program version one.
  * These routines process a grid. They do not control rendering.
- * 
- * 
+ *
+ *
  */
 class P {
   constructor(x, y) {
@@ -11,32 +12,33 @@ class P {
     this.y = y;
   }
   // translate
-  tr = v => new P(this.x + v.x, this.y + v.y)
+  tr = (v) => new P(this.x + v.x, this.y + v.y);
   // Vertical and Horizontal reflection
-  vr = () => new P(this.x, -this.y)
-  hr = () => new P(-this.x, this.y)
+  vr = () => new P(this.x, -this.y);
+  hr = () => new P(-this.x, this.y);
   // If used, strictly for offsets
-  div = (d) => new P(this.x / d, this.y / d)
+  div = (d) => new P(this.x / d, this.y / d);
   // Sometimes you need to create new ones
-  copy = (d) => new P(this.x, this.y)
-  // 
-  toLoc = () => [this.x, this.y]
+  copy = (d) => new P(this.x, this.y);
+  //
+  toLoc = () => [this.x, this.y];
   toString() {
-    return JSON.stringify(this)
+    return JSON.stringify(this);
   }
-  equals = (b) => this.x == b.x && this.y == b.y
+  equals = (b) => this.x == b.x && this.y == b.y;
 }
 
 class Coord {
   constructor(x, y) {
-    this.coord = [x,y];
+    this.coord = [x, y];
   }
 
-  tr = offset => [this.coord[0] + offset[0], this.coord[1] + offset[1]];
+  tr = (offset) => [this.coord[0] + offset[0], this.coord[1] + offset[1]];
   vr = () => [this.coord[0], -this.coord[1]];
   hr = () => [-this.coord[0], this.coord[1]];
   copy = [this.coord[0], this.coord[1]];
-  equals = (that) => this.coord[0] == that.coord[0] && this.coord[1] == that.coord[1];
+  equals = (that) =>
+    this.coord[0] == that.coord[0] && this.coord[1] == that.coord[1];
 }
 /**
  * Convenience functions
@@ -45,12 +47,12 @@ class Coord {
  */
 const toP = (loc) => new P(loc[0], loc[1]);
 const p = (x, y) => new P(x, y);
-const norm = (n) => (n % 5 + 5) % 5
+const norm = (n) => ((n % 5) + 5) % 5;
 function tenths(fifths, isDown) {
   return (fifths * 2 + (isDown ? 5 : 0)) % 10;
 }
 /**
- * Mutable class 
+ * Mutable class
  * This measures and adjusts the bounding rectangle.
  */
 class Bounds {
@@ -61,20 +63,20 @@ class Bounds {
 
   /**
    * Called from figure
-   * @param {*} offset 
-   * @param {*} point 
+   * @param {*} offset
+   * @param {*} point
    */
   addPoint(offset, point) {
-    const logicalPoint = (new P(offset.x + point.x, offset.y + point.y));
+    const logicalPoint = new P(offset.x + point.x, offset.y + point.y);
     if (!this.maxPoint || !this.minPoint) {
       this.minPoint = logicalPoint.copy(); // private copies, not references
       this.maxPoint = logicalPoint.copy();
       return;
     }
 
-    if(logicalPoint.x < this.minPoint.x) {
+    if (logicalPoint.x < this.minPoint.x) {
       this.minPoint.x = logicalPoint.x;
-    } else if(logicalPoint.x > this.maxPoint.x) {
+    } else if (logicalPoint.x > this.maxPoint.x) {
       this.maxPoint.x = logicalPoint.x;
     }
     if (logicalPoint.y < this.minPoint.y) {
@@ -118,8 +120,8 @@ class BoundsCoord {
 
   /**
    * Called from figure
-   * @param {*} offset 
-   * @param {*} point 
+   * @param {*} offset
+   * @param {*} point
    */
   addPoint(offset, point) {
     const logicalPoint = point.tr(offset);
@@ -129,9 +131,9 @@ class BoundsCoord {
       return;
     }
 
-    if(logicalPoint[0] < this.minPoint[0]) {
+    if (logicalPoint[0] < this.minPoint[0]) {
       this.minPoint[0] = logicalPoint[0];
-    } else if(logicalPoint[0] > this.maxPoint[0]) {
+    } else if (logicalPoint[0] > this.maxPoint[0]) {
       this.maxPoint[0] = logicalPoint[0];
     }
     if (logicalPoint[1] < this.minPoint[1]) {
@@ -173,7 +175,7 @@ class BoundsCoord {
 class Wheel {
   constructor(p0, p1, p2) {
     this.list = [
-      p0.copy(), 
+      p0.copy(),
       p1.copy(),
       p2.copy(),
       p2.vr(),
@@ -183,23 +185,33 @@ class Wheel {
       p2.vr().hr(),
       p2.hr(),
       p1.hr(),
-    ]
+    ];
   }
   get up() {
-    return [this.list[0], this.list[2], this.list[4], this.list[6], this.list[8],];
+    return [
+      this.list[0],
+      this.list[2],
+      this.list[4],
+      this.list[6],
+      this.list[8],
+    ];
   }
   get down() {
-    return [this.list[5], this.list[7], this.list[9], this.list[1], this.list[3],];
+    return [
+      this.list[5],
+      this.list[7],
+      this.list[9],
+      this.list[1],
+      this.list[3],
+    ];
   }
   get w() {
     return this.list;
   }
-  get string(){
-    return JSON.stringify(
-      this.w.map(
-        it => [ it.x, it.y]))
+  get string() {
+    return JSON.stringify(this.w.map((it) => [it.x, it.y]));
   }
-  // get stringCoord(){ not needed?  
+  // get stringCoord(){ not needed?
 }
 
 class Controls {
@@ -211,7 +223,7 @@ class Controls {
   bumpFifths() {
     this.fifths = norm(this.fifths + 1);
   }
-  
+
   get typeName() {
     return this.typeList[this.type].name;
   }
@@ -222,236 +234,322 @@ class Controls {
     return this.isDown ? "Down" : "Up";
   }
   toggleDirection() {
-    this.isDown = ! this.isDown;
+    this.isDown = !this.isDown;
   }
-  
-  typeList = [penrose.Pe1, penrose.Pe3, penrose.Pe5, penrose.St1, penrose.St3, penrose.St5]
+
+  typeList = [
+    penrose.Pe1,
+    penrose.Pe3,
+    penrose.Pe5,
+    penrose.St1,
+    penrose.St3,
+    penrose.St5,
+  ];
 }
 // Build the api
-var penrose = (function()
-{
-
-  var id;  
+var penrose = (function () {
+  var id;
   var offset = {};
 
-  var penta_up = [ [2,0],[3,0],
-             [1,1],[2,1],[3,1],[4,1],
-       [0,2],[1,2],[2,2],[3,2],[4,2],[5,2],
-       [0,3],[1,3],[2,3],[3,3],[4,3],[5,3],
-             [1,4],[2,4],[3,4],[4,4],
-             [1,5],[2,5],[3,5],[4,5]]
-    .map(function(item){return new P(item[0],item[1])});
+  var penta_up = [
+    [2, 0],
+    [3, 0],
+    [1, 1],
+    [2, 1],
+    [3, 1],
+    [4, 1],
+    [0, 2],
+    [1, 2],
+    [2, 2],
+    [3, 2],
+    [4, 2],
+    [5, 2],
+    [0, 3],
+    [1, 3],
+    [2, 3],
+    [3, 3],
+    [4, 3],
+    [5, 3],
+    [1, 4],
+    [2, 4],
+    [3, 4],
+    [4, 4],
+    [1, 5],
+    [2, 5],
+    [3, 5],
+    [4, 5],
+  ].map(function (item) {
+    return new P(item[0], item[1]);
+  });
 
-  var diamond_up =[[0,0],[1,0],
-                   [0,1],[1,1],
-                   [0,2],[1,2],
-                   [0,3],[1,3]]
-    .map(function(item){return new P(item[0],item[1])});
+  var diamond_up = [
+    [0, 0],
+    [1, 0],
+    [0, 1],
+    [1, 1],
+    [0, 2],
+    [1, 2],
+    [0, 3],
+    [1, 3],
+  ].map(function (item) {
+    return new P(item[0], item[1]);
+  });
 
+  var diamond_too = [
+    [1, 0],
+    [2, 0],
+    [3, 0],
+    [4, 0],
+    [0, 1],
+    [1, 1],
+    [2, 1],
+    [3, 1],
+  ].map(function (item) {
+    return new P(item[0], item[1]);
+  });
 
-  var diamond_too = [[1,0],[2,0],[3,0],[4,0],
-               [0,1],[1,1],[2,1],[3,1]]
-    .map(function(item){return new P(item[0],item[1])});
+  var diamond_for = [
+    [0, 0],
+    [0, 1],
+    [1, 1],
+    [1, 2],
+    [2, 2],
+    [1, 3],
+    [2, 3],
+    [2, 4],
+    [3, 4],
+    [3, 5],
+  ].map(function (item) {
+    return new P(item[0], item[1]);
+  });
 
-  var diamond_for = [[0,0],
-                     [0,1],[1,1],
-                           [1,2],[2,2],
-                           [1,3],[2,3],
-                                 [2,4],[3,4],
-                                       [3,5]]
-    .map(function(item){return new P(item[0],item[1])});
+  var star_up = [
+    [3, 0],
+    [4, 0],
+    [3, 1],
+    [4, 1],
+    [0, 2],
+    [1, 2],
+    [2, 2],
+    [3, 2],
+    [4, 2],
+    [5, 2],
+    [6, 2],
+    [7, 2],
+    [1, 3],
+    [2, 3],
+    [3, 3],
+    [4, 3],
+    [5, 3],
+    [6, 3],
+    [2, 4],
+    [3, 4],
+    [4, 4],
+    [5, 4],
+    [2, 5],
+    [3, 5],
+    [4, 5],
+    [5, 5],
+    [1, 6],
+    [2, 6],
+    [5, 6],
+    [6, 6],
+    [1, 7],
+    [6, 7],
+  ].map(function (item) {
+    return new P(item[0], item[1]);
+  });
 
-  var star_up =      [[3,0],[4,0],
-                      [3,1],[4,1],
-    [0,2],[1,2],[2,2],[3,2],[4,2],[5,2],[6,2],[7,2],
-          [1,3],[2,3],[3,3],[4,3],[5,3],[6,3],
-                [2,4],[3,4],[4,4],[5,4],
-                [2,5],[3,5],[4,5],[5,5],
-          [1,6],[2,6],            [5,6],[6,6],
-          [1,7],                        [6,7]]
-    .map(function(item){return new P(item[0],item[1])});
+  var boat_up = [
+    [3, 0],
+    [4, 0],
+    [3, 1],
+    [4, 1],
+    [0, 2],
+    [1, 2],
+    [2, 2],
+    [3, 2],
+    [4, 2],
+    [5, 2],
+    [6, 2],
+    [7, 2],
+    [1, 3],
+    [2, 3],
+    [3, 3],
+    [4, 3],
+    [5, 3],
+    [6, 3],
+  ].map(function (item) {
+    return new P(item[0], item[1]);
+  });
 
-  var boat_up =      [[3,0],[4,0],
-                      [3,1],[4,1],
-    [0,2],[1,2],[2,2],[3,2],[4,2],[5,2],[6,2],[7,2],
-          [1,3],[2,3],[3,3],[4,3],[5,3],[6,3]]
-  .map(function(item){return new P(item[0],item[1])});
+  var boat_too = [
+    [0, 0],
+    [1, 0],
+    [0, 1],
+    [1, 1],
+    [0, 2],
+    [1, 2],
+    [2, 2],
+    [3, 2],
+    [4, 2],
+    [0, 3],
+    [1, 3],
+    [2, 3],
+    [3, 3],
+    [1, 4],
+    [2, 4],
+    [1, 5],
+    [2, 5],
+    [2, 6],
+    [3, 6],
+    [3, 7],
+  ].map(function (item) {
+    return new P(item[0], item[1]);
+  });
 
-  var boat_too = [[0,0],[1,0],
-                  [0,1],[1,1],
-                  [0,2],[1,2],[2,2],[3,2],[4,2],
-                  [0,3],[1,3],[2,3],[3,3],
-                        [1,4],[2,4],
-                        [1,5],[2,5],
-                              [2,6],[3,6],
-                                    [3,7]]
-    .map(function(item){return new P(item[0],item[1])});
+  var boat_for = [
+    [3, 0],
+    [4, 0],
+    [5, 0],
+    [6, 0],
+    [2, 1],
+    [3, 1],
+    [4, 1],
+    [5, 1],
+    [1, 2],
+    [2, 2],
+    [3, 2],
+    [4, 2],
+    [1, 3],
+    [2, 3],
+    [3, 3],
+    [4, 3],
+    [0, 4],
+    [1, 4],
+    [4, 4],
+    [5, 4],
+    [0, 5],
+    [5, 5],
+  ].map(function (item) {
+    return new P(item[0], item[1]);
+  });
+  const ORANGE = "#e46c0a";
+  const BLUE = "#0000ff";
+  const YELLOW = "#ffff00";
 
-  var boat_for =       [[3,0],[4,0],[5,0],[6,0],
-                  [2,1],[3,1],[4,1],[5,1],
-            [1,2],[2,2],[3,2],[4,2],
-            [1,3],[2,3],[3,3],[4,3],
-      [0,4],[1,4],            [4,4],[5,4],
-      [0,5],                        [5,5]]
-  .map(function(item){return new P(item[0],item[1])});
-  ORANGE = "#e46c0a";
-  BLUE   = "#0000ff";
-  YELLOW = "#ffff00";
-  
   const shapes = {
-    penta : 
-      [
-        penta_up.map((item) => new P( item.x - 3,   item.y - 3)),
-        penta_up.map((item) => new P(-item.x + 2,  -item.y + 2)),
-        penta_up.map((item) => new P( item.x - 3,   item.y - 3)),
-        penta_up.map((item) => new P(-item.x + 2,  -item.y + 2)),
-        penta_up.map((item) => new P( item.x - 3,   item.y - 3)),
-        penta_up.map((item) => new P(-item.x + 2,  -item.y + 2)),
-        penta_up.map((item) => new P( item.x - 3,   item.y - 3)),
-        penta_up.map((item) => new P(-item.x + 2,  -item.y + 2)),
-        penta_up.map((item) => new P( item.x - 3,   item.y - 3)),
-        penta_up.map((item) => new P(-item.x + 2,  -item.y + 2)),
-      ],
-      diamond :
-      [
-        diamond_up.map((item) => new P( item.x - 1,  item.y - 4)),
-        diamond_for.map((item) => new P(-item.x + 2,  item.y - 4)),
-        diamond_too.map((item) => new P(-item.x + 3, -item.y - 1)),
-        diamond_too.map((item) => new P(-item.x + 3,  item.y + 0)),
-        diamond_for.map((item) => new P(-item.x + 2, -item.y + 3)),
-        diamond_up.map( (item) => new P( item.x - 1,  item.y - 0)),
-        diamond_for.map((item) => new P( item.x - 3, -item.y + 3)),
-        diamond_too.map((item) => new P( item.x - 4,  item.y - 0)),
-        diamond_too.map((item) => new P( item.x - 4, -item.y - 1)),
-        diamond_for.map((item) => new P( item.x - 3,  item.y - 4)),
-      ],
+    penta: [
+      penta_up.map((item) => new P(item.x - 3, item.y - 3)),
+      penta_up.map((item) => new P(-item.x + 2, -item.y + 2)),
+      penta_up.map((item) => new P(item.x - 3, item.y - 3)),
+      penta_up.map((item) => new P(-item.x + 2, -item.y + 2)),
+      penta_up.map((item) => new P(item.x - 3, item.y - 3)),
+      penta_up.map((item) => new P(-item.x + 2, -item.y + 2)),
+      penta_up.map((item) => new P(item.x - 3, item.y - 3)),
+      penta_up.map((item) => new P(-item.x + 2, -item.y + 2)),
+      penta_up.map((item) => new P(item.x - 3, item.y - 3)),
+      penta_up.map((item) => new P(-item.x + 2, -item.y + 2)),
+    ],
+    diamond: [
+      diamond_up.map((item) => new P(item.x - 1, item.y - 4)),
+      diamond_for.map((item) => new P(-item.x + 2, item.y - 4)),
+      diamond_too.map((item) => new P(-item.x + 3, -item.y - 1)),
+      diamond_too.map((item) => new P(-item.x + 3, item.y + 0)),
+      diamond_for.map((item) => new P(-item.x + 2, -item.y + 3)),
+      diamond_up.map((item) => new P(item.x - 1, item.y - 0)),
+      diamond_for.map((item) => new P(item.x - 3, -item.y + 3)),
+      diamond_too.map((item) => new P(item.x - 4, item.y - 0)),
+      diamond_too.map((item) => new P(item.x - 4, -item.y - 1)),
+      diamond_for.map((item) => new P(item.x - 3, item.y - 4)),
+    ],
     //
-    boat :
-      [
-        boat_up.map( (item) => new P( item.x - 4,  item.y - 4)),
-        boat_for.map((item) => new P( item.x - 3, -item.y + 1)),
-        boat_too.map((item) => new P( item.x - 1,  item.y - 4)),
-        boat_too.map((item) => new P( item.x - 1, -item.y + 3)),
-        boat_for.map((item) => new P( item.x - 3,  item.y - 2)),
-        boat_up.map((item) => new P( item.x - 4, -item.y + 3)),
-        boat_for.map((item) => new P(-item.x + 2,  item.y - 2)),
-        boat_too.map((item) => new P(-item.x + 0, -item.y + 3)),
-        boat_too.map((item) => new P(-item.x + 0,  item.y - 4)),
-        boat_for.map((item) => new P(-item.x + 2, -item.y + 1)),
-      ],
-      
+    boat: [
+      boat_up.map((item) => new P(item.x - 4, item.y - 4)),
+      boat_for.map((item) => new P(item.x - 3, -item.y + 1)),
+      boat_too.map((item) => new P(item.x - 1, item.y - 4)),
+      boat_too.map((item) => new P(item.x - 1, -item.y + 3)),
+      boat_for.map((item) => new P(item.x - 3, item.y - 2)),
+      boat_up.map((item) => new P(item.x - 4, -item.y + 3)),
+      boat_for.map((item) => new P(-item.x + 2, item.y - 2)),
+      boat_too.map((item) => new P(-item.x + 0, -item.y + 3)),
+      boat_too.map((item) => new P(-item.x + 0, item.y - 4)),
+      boat_for.map((item) => new P(-item.x + 2, -item.y + 1)),
+    ],
+
     //--
-    star : 
-      [
-        star_up.map((item) => new P( item.x - 4,  item.y - 4)),
-        star_up.map((item) => new P(-item.x + 3, -item.y + 3)),
-        star_up.map((item) => new P( item.x - 4,  item.y - 4)),
-        star_up.map((item) => new P(-item.x + 3, -item.y + 3)),
-        star_up.map((item) => new P( item.x - 4,  item.y - 4)),
-        star_up.map((item) => new P(-item.x + 3, -item.y + 3)),
-        star_up.map((item) => new P( item.x - 4,  item.y - 4)),
-        star_up.map((item) => new P(-item.x + 3, -item.y + 3)),
-        star_up.map((item) => new P( item.x - 4,  item.y - 4)),
-        star_up.map((item) => new P(-item.x + 3, -item.y + 3)),
-      ],
+    star: [
+      star_up.map((item) => new P(item.x - 4, item.y - 4)),
+      star_up.map((item) => new P(-item.x + 3, -item.y + 3)),
+      star_up.map((item) => new P(item.x - 4, item.y - 4)),
+      star_up.map((item) => new P(-item.x + 3, -item.y + 3)),
+      star_up.map((item) => new P(item.x - 4, item.y - 4)),
+      star_up.map((item) => new P(-item.x + 3, -item.y + 3)),
+      star_up.map((item) => new P(item.x - 4, item.y - 4)),
+      star_up.map((item) => new P(-item.x + 3, -item.y + 3)),
+      star_up.map((item) => new P(item.x - 4, item.y - 4)),
+      star_up.map((item) => new P(-item.x + 3, -item.y + 3)),
+    ],
   };
   // This is the core penrose object.
   return {
-    ORANGE : "#e46c0a",
-    BLUE   : "#0000ff",
-    YELLOW : "#ffff00",
-    OUTLINE :"#4a7eba",
+    ORANGE: "#e46c0a",
+    BLUE: "#0000ff",
+    YELLOW: "#ffff00",
+    OUTLINE: "#4a7eba",
 
-    up   : [0,2,4,6,8],  //
-    down : [5,7,9,1,3],
+    up: [0, 2, 4, 6, 8], //
+    down: [5, 7, 9, 1, 3],
     // okay, 10 of each
-    penta : shapes.penta,
-    diamond : shapes.diamond,
-    boat :shapes.boat,
-    
+    penta: shapes.penta,
+    diamond: shapes.diamond,
+    boat: shapes.boat,
+
     //--
-    star : shapes.star,
-    
-      Pe5: {
-        name: 'Pe5',
-        color: [
-          YELLOW,
-          YELLOW,
-          YELLOW,
-          YELLOW,
-          YELLOW,  
-        ], 
-        twist: [ 0,0,0,0,0 ],
-        shape: shapes.penta,
-        typeColor: BLUE,
-        diamond:[],
-      },
-      Pe3: {
-        name: 'Pe3',
-        color: [
-          YELLOW,
-          YELLOW,
-          ORANGE,
-          ORANGE,
-          YELLOW,
-        ],
-        twist: [0, 0, -1, 1, 0],
-        shape: shapes.penta,
-        typeColor: YELLOW,
-        diamond:[0],
-      
-      },
-      Pe1: {
-        name: 'Pe1',
-        color: [
-          YELLOW,
-          ORANGE,
-          ORANGE,
-          ORANGE,
-          ORANGE,
-        ],
-        twist: [0, -1, 1, -1, 1],
-        shape: shapes.penta,
-        typeColor: ORANGE,
-        diamond:[1,4],
-      },
-      // for stars, the color indicates existence.
-      St5: {
-        name: 'St5: star',
-        color: [
-          BLUE,
-          BLUE,
-          BLUE,
-          BLUE,
-          BLUE,
-        ],
-        shape: shapes.star,
-        typeColor: BLUE,
-      },
-      St3: {
-        name: 'St3: boat',
-        color: [
-          BLUE,
-          BLUE,
-          null,
-          null,
-          BLUE,
-        ],
-        shape: shapes.boat,
-        typeColor: BLUE,
-      },
-      St1: {
-        name: 'St1: diamond',
-        color: [
-          BLUE,
-          null,
-          null,
-          null,
-          null,
-        ],
-        shape: shapes.diamond,
-        typeColor: BLUE,
-      },
-  }
- 
-})()
+    star: shapes.star,
+
+    Pe5: {
+      name: "Pe5",
+      color: [YELLOW, YELLOW, YELLOW, YELLOW, YELLOW],
+      twist: [0, 0, 0, 0, 0],
+      shape: shapes.penta,
+      typeColor: BLUE,
+      diamond: [],
+    },
+    Pe3: {
+      name: "Pe3",
+      color: [YELLOW, YELLOW, ORANGE, ORANGE, YELLOW],
+      twist: [0, 0, -1, 1, 0],
+      shape: shapes.penta,
+      typeColor: YELLOW,
+      diamond: [0],
+    },
+    Pe1: {
+      name: "Pe1",
+      color: [YELLOW, ORANGE, ORANGE, ORANGE, ORANGE],
+      twist: [0, -1, 1, -1, 1],
+      shape: shapes.penta,
+      typeColor: ORANGE,
+      diamond: [1, 4],
+    },
+    // for stars, the color indicates existence.
+    St5: {
+      name: "St5: star",
+      color: [BLUE, BLUE, BLUE, BLUE, BLUE],
+      shape: shapes.star,
+      typeColor: BLUE,
+    },
+    St3: {
+      name: "St3: boat",
+      color: [BLUE, BLUE, null, null, BLUE],
+      shape: shapes.boat,
+      typeColor: BLUE,
+    },
+    St1: {
+      name: "St1: diamond",
+      color: [BLUE, null, null, null, null],
+      shape: shapes.diamond,
+      typeColor: BLUE,
+    },
+  };
+})();
