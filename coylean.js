@@ -159,31 +159,39 @@ class Col extends Array {
  * @param {*} numColumns 
  */
 function seLoop(numRows, numColumns) {
-    const initCol = new Col(numRows).fill(true);
+    const initCol = new Col(numRows).fill(true);  // Full of rights
     const initRow = new Row(numColumns).fill(true);
     console.log(`initCol 0 uses j as index: ${initCol}`);
     console.log(`initRow 0 uses i as index: ${initRow}`);
-    const downMatrix = new Array(numRows).fill(new Row());
-    const rightMatrix = new Array(numColumns).fill(new Col());
-    downMatrix[0] = initRow;
-    rightMatrix[0] = initCol;
-    for (let j = 0; j < numRows - 1; j++) {  // 0 1 2 3 -> 1 2 3 4
-        // right matrix column zero is inited
-        downMatrix[j+1][0] = true;
-        for (let i = 0; i < numColumns - 1; i++) {
+    // We have to provide a column/row for the waste
+    //const downMatrix = new Array(numRows + 1).fill(new Row());
+    const downMatrix = [...Array(numRows + 1)].map(x =>new Row);
+    //const rightMatrix = new Array(numColumns + 1).fill(new Col());
+    const rightMatrix = [...Array(numColumns + 1)].map(x =>new Col());
+    let j = 0;
+    downMatrix[j] = initRow;  // Full of rights
+    console.log(`row j:${j} down matrix: ${downMatrix[j]}`)
+    for (j = 0; j < numRows; j++) { 
+        // right matrix column zero first element i=0 inited
+        let i = 0;
+        rightMatrix[i][j] = true;
+        for (i = 0; i < numColumns ; i++) {
+            console.log(`compute ${JSON.stringify({i,j})}`)
             console.log(`input: downMatrix row ${j}[${i}] ${downMatrix[j][i]?"|":"o"}\n` +
                         `      rightMatrix col ${i}[${j}] ${rightMatrix[i][j]?"-":"o"}`);
-            console.log(`pri ${pri(j+1) >= pri(i+1) ? "|" : "-"}`);
             a = outputs(
-                downMatrix[j][i], 
+                downMatrix[j][i],   // this is correct
                 rightMatrix[i][j],
-                i, j);  // adding one to make it one
+                i, j);  
             console.log(`a: ${a}, j: ${j},i: ${i}`);   
-            [ downMatrix[j + 1][i + 1], rightMatrix[i + 1][j + 1] ] = a;
-            console.log(`output: downMatrix row ${j+1}[${i + 1}]: ${a[0]?"|":"o"}\n` +
-                        `        rightMatrix col ${i+1}[${j + 1}]: ${a[1]?"-":"o"}`);        
+            downMatrix[j+1][i] = a[0];
+            rightMatrix[i+1][j]= a[1];
+            console.log(`input2: downMatrix row ${j}[${i}] ${downMatrix[j][i]?"|":"o"}\n` +
+                        `      rightMatrix col ${i}[${j}] ${rightMatrix[i][j]?"-":"o"}`);
+            console.log(`output: downMatrix row ${j+1}[${i}]: ${a[0]?"|":"o"}\n` +
+                        `        rightMatrix col ${i+1}[${j}]: ${a[1]?"-":"o"}`);        
         }
-        console.log(`row j+1:${j+1} complete: ${downMatrix[j+1]}`)
+        console.log(`row j:${j} complete: ${downMatrix[j]}`)
     }
     return [downMatrix, rightMatrix];
 }
@@ -195,15 +203,18 @@ function cell(down, right, i, j) {
     let xp = x + SCALE;
     let y = j * SCALE; 
     let yp = y + SCALE;
+    console.log(`y: ${y}, yp: ${yp}`)
     if (down) {
         if (right) {
             // _|
+            console.log(`down right`);
             g.beginPath();
             g.moveTo( xp, y);
             g.lineTo( xp, yp);
             g.lineTo( x,  yp);
             g.stroke();
         } else {
+            console.log(`down`);
             //   |
             g.beginPath();
             g.moveTo( xp, y);
@@ -211,12 +222,18 @@ function cell(down, right, i, j) {
             g.stroke();
         }
     } else {
-        if (rights) {
+        console.log(`not down`);
+        if (right) {
+            console.log(`right`);
+
             //   __
             g.beginPath();
             g.moveTo( xp, yp);
             g.lineTo( x,  yp);
             g.stroke();
+        }
+        else {
+            console.log("nothing");
         }
     }
 
@@ -232,6 +249,7 @@ function exploreMap(id) {
     g.lineWidth = 1;
     canvas.width = SCALE * (SIZE + 1);
     canvas.height = SCALE * (SIZE + 1);
+    console.log(`canvas width ${canvas.width} height: ${canvas.height}`);
 
     const drawScreen = function() {
         const downs = [];
@@ -320,13 +338,17 @@ function exploreMap(id) {
         let [d , r] = seLoop(SIZE, SIZE);
         console.log(`downMatrix of rows:${d}`);
         console.log(`rightMatrix of columns:${r}`);
+        
 
-        for (let j = 0; j < r.length; j++) {
-            for (let i = 0; i < d.length; i++){
+        for (let j = 0; j < SIZE; j++) {
+            for (let i = 0; i < SIZE; i++){
+                console.log(`j:${j}, i:${i}`);
                 let vert = d[j][i];
                 let hor = r[i][j];
                 console.log(`${vert} ${hor}`)
                 cell(d[j][i], r[i][j], i, j);
+                console.log(`finished j:${j}, i:${i}`);
+
             }
         }
     }
