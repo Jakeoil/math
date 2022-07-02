@@ -67,7 +67,6 @@ const clickSizeDec = function() {
         SIZE--;
     eleSizeToggle.innerHTML = SIZE;
     coyleanApp();
-
 }
 
 const clickSizeToggle = function() {
@@ -101,13 +100,73 @@ function pri(n) {
     return p;
 }
 
+
+/**
+ * These little wrappers allow nice string methods for logging.
+ */
+class Row extends Array {
+    toString() {
+        return this.reduce(
+            (previousValue, currentValue) => previousValue + (currentValue ? "|" : "o"),
+            ""
+        )
+    }
+}
+
+class Col extends Array {
+    toString() {
+        return this.reduce(
+            (previousValue, currentValue) => previousValue + (currentValue ? "-" : "o"),
+            ""
+        )
+    }
+}
+
+/**
+ * The Southeast Loop
+ * 
+ * This computes the default sector of the Coylean Region
+ * From the initial row and columns, all set, it builds two Matrices based 
+ * on the horizontal and vertical size.
+ * A loop on rows and columns.
+ * Creates a matrix using a column with numRows rights.
+ * And a row with numColumns downs
+ *  
+ */
+function seLoop(numRows, numColumns) {
+    const initRow = new Row(numColumns).fill(true);
+    const downMatrix = [...Array(numRows + 1)].map(x =>new Row);
+    const rightMatrix = [...Array(numColumns + 1)].map(x =>new Col());
+    let j = 0;
+    downMatrix[j] = initRow;  // Full of rights
+    for (j = 0; j < numRows; j++) { 
+        // right matrix column zero first element i=0 inited
+        let i = 0;
+        rightMatrix[i][j] = true;
+        for (i = 0; i < numColumns ; i++) {
+            console.log(`input: downMatrix row ${j}[${i}] ${downMatrix[j][i]?"|":"o"}\n` +
+                        `      rightMatrix col ${i}[${j}] ${rightMatrix[i][j]?"-":"o"}`);
+            const a = reaction(
+                downMatrix[j][i],   // this is correct
+                rightMatrix[i][j],
+                i, j);  
+            downMatrix[j+1][i] = a[0];
+            rightMatrix[i+1][j]= a[1];
+            console.log(`output: downMatrix row ${j+1}[${i}]: ${a[0]?"|":"o"}\n` +
+                        `        rightMatrix col ${i+1}[${j}]: ${a[1]?"-":"o"}`);        
+        }
+        console.log(`row j:${j} complete: ${downMatrix[j]}`)
+    }
+    return [downMatrix, rightMatrix];
+}
+
 /***
  * Purely logical result of inputs horizontal and vertical.
  * The direction should not matter so southeast is a bad name.
  * i and j is the logical, determining the outputs.
  */
             
-function outputs(vertical, horizontal, i, j) {
+ function reaction(vertical, horizontal, i, j) {
     console.log(` ${vertical?"|":"o"}  ${i + rightsPos}->${pri(i+rightsPos)} -- ${horizontal?"-":"o"} ${j + rightsPos}->${pri(j + rightsPos)},`)
     if (! horizontal && ! vertical) {
         return [false, false];
@@ -128,94 +187,21 @@ function outputs(vertical, horizontal, i, j) {
     }
 }
 
-class Row extends Array {
-    toString() {
-        return this.reduce(
-            (previousValue, currentValue) => previousValue + (currentValue ? "|" : "o"),
-            ""
-        )
-    }
-}
-
-class Col extends Array {
-    toString() {
-        return this.reduce(
-            (previousValue, currentValue) => previousValue + (currentValue ? "-" : "o"),
-            ""
-        )
-    }
-
-}
-/**
- * The Southeast Loop
- * 
- * This computes the default sector of the Coylean Region
- * From the initial row and columns, all set, it builds two Matrices based 
- * on the horizontal and vertical size.
- * A loop on rows and columns.
- * Creates a matrix using a column with numRows rights.
- * And a row with numColumns downs
- *  
- * @param {Maintain} numRows 
- * @param {*} numColumns 
- */
-function seLoop(numRows, numColumns) {
-    const initCol = new Col(numRows).fill(true);  // Full of rights
-    const initRow = new Row(numColumns).fill(true);
-    console.log(`initCol 0 uses j as index: ${initCol}`);
-    console.log(`initRow 0 uses i as index: ${initRow}`);
-    // We have to provide a column/row for the waste
-    //const downMatrix = new Array(numRows + 1).fill(new Row());
-    const downMatrix = [...Array(numRows + 1)].map(x =>new Row);
-    //const rightMatrix = new Array(numColumns + 1).fill(new Col());
-    const rightMatrix = [...Array(numColumns + 1)].map(x =>new Col());
-    let j = 0;
-    downMatrix[j] = initRow;  // Full of rights
-    console.log(`row j:${j} down matrix: ${downMatrix[j]}`)
-    for (j = 0; j < numRows; j++) { 
-        // right matrix column zero first element i=0 inited
-        let i = 0;
-        rightMatrix[i][j] = true;
-        for (i = 0; i < numColumns ; i++) {
-            console.log(`compute ${JSON.stringify({i,j})}`)
-            console.log(`input: downMatrix row ${j}[${i}] ${downMatrix[j][i]?"|":"o"}\n` +
-                        `      rightMatrix col ${i}[${j}] ${rightMatrix[i][j]?"-":"o"}`);
-            const a = outputs(
-                downMatrix[j][i],   // this is correct
-                rightMatrix[i][j],
-                i, j);  
-            console.log(`a: ${a}, j: ${j},i: ${i}`);   
-            downMatrix[j+1][i] = a[0];
-            rightMatrix[i+1][j]= a[1];
-            console.log(`input2: downMatrix row ${j}[${i}] ${downMatrix[j][i]?"|":"o"}\n` +
-                        `      rightMatrix col ${i}[${j}] ${rightMatrix[i][j]?"-":"o"}`);
-            console.log(`output: downMatrix row ${j+1}[${i}]: ${a[0]?"|":"o"}\n` +
-                        `        rightMatrix col ${i+1}[${j}]: ${a[1]?"-":"o"}`);        
-        }
-        console.log(`row j:${j} complete: ${downMatrix[j]}`)
-    }
-    return [downMatrix, rightMatrix];
-}
-
 function cell(down, right, i, j) {
-    
     console.log(`cell: down: ${down}, right: ${right}`);
     let x = i * SCALE; 
     let xp = x + SCALE;
     let y = j * SCALE; 
     let yp = y + SCALE;
-    console.log(`y: ${y}, yp: ${yp}`)
     if (down) {
         if (right) {
             // _|
-            console.log(`down right`);
             g.beginPath();
             g.moveTo( xp, y);
             g.lineTo( xp, yp);
             g.lineTo( x,  yp);
             g.stroke();
         } else {
-            console.log(`down`);
             //   |
             g.beginPath();
             g.moveTo( xp, y);
@@ -223,21 +209,14 @@ function cell(down, right, i, j) {
             g.stroke();
         }
     } else {
-        console.log(`not down`);
         if (right) {
-            console.log(`right`);
-
             //   __
             g.beginPath();
             g.moveTo( xp, yp);
             g.lineTo( x,  yp);
             g.stroke();
         }
-        else {
-            console.log("nothing");
-        }
     }
-
 }
 
 function exploreMap(id) {
