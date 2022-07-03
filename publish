@@ -3,3 +3,7 @@ cp penrose.js /Volumes/jakeoil.net/public_html/math
 cp penrose.html /Volumes/jakeoil.net/public_html/math
 cp blog.html /Volumes/jakeoil.net/public_html/math
 cp coylean.html /Volumes/jakeoil.net/public_html/math
+cp coylean.js /Volumes/jakeoil.net/public_html/math
+cp math.css /Volumes/jakeoil.net/public_html/math
+
+
