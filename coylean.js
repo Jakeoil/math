@@ -1,12 +1,12 @@
 'use strict'
 let g;
-const SCALE = 8;
 
 /**
  * Controls (preferences)
  */
 let rightsPos=1;
 let downsPos=1;
+
 const eleLeft = document.querySelector('#rights-left');
 const eleRight = document.querySelector('#rights-right');
 const eleUp = document.querySelector('#downs-up');
@@ -17,33 +17,33 @@ const eleRightsPos = document.querySelector('#rights-pos');
  * These control the are the rights- and downs- Pos
  */
  eleRightsPos.innerHTML = rightsPos;
+ eleDownsPos.innerHTML = downsPos;
+
  const clickRight = function() {
     rightsPos++;
     eleRightsPos.innerHTML = rightsPos;
     coyleanApp();
 }
-
 const clickLeft = function() {
     rightsPos--;
     eleRightsPos.innerHTML = rightsPos;
     coyleanApp();
 }
-eleDownsPos.innerHTML = downsPos;
 const clickUp = function() {
     downsPos--;
     eleDownsPos.innerHTML = downsPos;
     coyleanApp();
 }
-
 const clickDown = function() {
     downsPos++;
     eleDownsPos.innerHTML = downsPos;
     coyleanApp();
 }
 
-let feature_active=true;
+let feature_active=false;
 
 const eleActive = document.querySelector('#feature-active');
+
 eleActive.innerHTML = feature_active?"ACTIVE":"NOT ACTIVE";
 const toggleActive = function() {
     feature_active = !feature_active;
@@ -51,24 +51,24 @@ const toggleActive = function() {
     coyleanApp();
 }
 
-let SIZE = 5;
+let SIZE = 65;
+
 const eleSizeDec = document.querySelector('#size-dec');
 const eleSizeInc = document.querySelector('#size-inc');
 const eleSizeToggle = document.querySelector('#size-toggle');
+
 eleSizeToggle.innerHTML = SIZE;
 const clickSizeInc = function() {
     SIZE++;
     eleSizeToggle.innerHTML = SIZE;
     coyleanApp();
 }
-
 const clickSizeDec = function() {
     if (SIZE > 1)
         SIZE--;
     eleSizeToggle.innerHTML = SIZE;
     coyleanApp();
 }
-
 const clickSizeToggle = function() {
     if (SIZE < 10) {
         SIZE = 65;
@@ -79,14 +79,35 @@ const clickSizeToggle = function() {
     coyleanApp();
 }
 
-function coyleanApp() {
-    console.log('draw the map');
-    exploreMap('explore-map');
+let SCALE = 8;
+
+const eleScaleDec = document.querySelector('#scale-dec');
+const eleScaleInc = document.querySelector('#scale-inc');
+const eleScaleReset = document.querySelector('#scale-reset');
+
+eleScaleReset.innerHTML = SCALE;
+const clickScaleInc = function() {
+    SCALE++;
+    eleScaleReset.innerHTML = SCALE;
+    coyleanApp();
+}
+const clickScaleDec = function() {
+    if (SCALE > 1)
+      SCALE--;
+    eleScaleReset.innerHTML = SCALE;
+    coyleanApp();
+}
+const clickScaleReset = function() {
+    if (SCALE != 8) 
+        SCALE = 8;
+    eleScaleReset.innerHTML = SIZE;
+    coyleanApp();
 }
 
 /** Returns the evenness of a number
  * 1 is the least even (0)
  * 0 is the most 100. 2^100 is just as even 
+ * WE CAN DO BETTER THAN THIS
  */
 function pri(n) {
     let p = 0;
@@ -99,7 +120,6 @@ function pri(n) {
     }
     return p;
 }
-
 
 /**
  * These little wrappers allow nice string methods for logging.
@@ -121,6 +141,15 @@ class Col extends Array {
         )
     }
 }
+
+/**
+ * This little stub is almost pointless
+ */
+function coyleanApp() {
+    console.log('draw the map');
+    exploreMap('explore-map');
+}
+
 
 /**
  * The Southeast Loop
@@ -166,7 +195,7 @@ function seLoop(numRows, numColumns) {
  * i and j is the logical, determining the outputs.
  */
             
- function reaction(vertical, horizontal, i, j) {
+function reaction(vertical, horizontal, i, j) {
     console.log(` ${vertical?"|":"o"}  ${i + rightsPos}->${pri(i+rightsPos)} -- ${horizontal?"-":"o"} ${j + rightsPos}->${pri(j + rightsPos)},`)
     if (! horizontal && ! vertical) {
         return [false, false];
@@ -221,9 +250,6 @@ function cell(down, right, i, j) {
 }
 
 function exploreMap(id) {
-    // We should be using these to set the size of the canvas
-    //const SIZE = 5;
-    const SCALE = 8
     const canvas = document.querySelector(`#explore-map > canvas`);
     
     g = canvas.getContext("2d");
@@ -231,7 +257,8 @@ function exploreMap(id) {
     canvas.width = SCALE * (SIZE + 1);
     canvas.height = SCALE * (SIZE + 1);
     console.log(`canvas width ${canvas.width} height: ${canvas.height}`);
-
+    //const drawScreen = coyleanLegacy();
+    
     const drawScreen = function() {
         const downs = [];
         const rights = [];
@@ -314,6 +341,7 @@ function exploreMap(id) {
             }
         }
     }
+    
     const drawScreen2 = function() {
         console.log(`seLoop SIZE ${SIZE}`)
         let [d , r] = seLoop(SIZE, SIZE);
@@ -338,4 +366,91 @@ function exploreMap(id) {
         drawScreen2();
     else
         drawScreen();
+}
+
+/**
+ * Can see g and the globals.
+ */
+function coyleanLegacy() {
+    const downs = [];
+    const rights = [];
+
+    for(let i = 0; i < SIZE; i++) {
+        downs.push(false);
+        rights.push(false);
+    }
+    downs[0] = true; // !!! set them all to true
+    // !!start j at 1. add right base
+    for(let j = 0; j < SIZE; j++) { // Y (rights)
+        let y = j * SCALE; 
+        let yp = y + SCALE;
+        for(let i = 0; i < SIZE; i++) { // X (downs) 
+            let x = i * SCALE; 
+            let xp = x + SCALE;
+            if (downs[i]) {
+                if (rights[j]) {
+                    // _|
+                    g.beginPath();
+                    g.moveTo( xp, y);
+                    g.lineTo( xp, yp);
+                    g.lineTo( x,  yp);
+                    g.stroke();
+
+                    if (pri(i) >= pri(j)) {
+                    
+                        // _|
+                        //  |
+                        downs[i] = true;
+                        rights[j] = false;
+                    } else {
+                        //  _|_
+                        //
+                        downs[i] = false;
+                        rights[j] = true;
+                    }
+                } else {
+                    //   |_
+                    //   |
+                    g.beginPath();
+                    g.moveTo( xp, y);
+                    g.lineTo( xp, yp);
+                    g.stroke();
+
+                    if (pri(i) >= pri(j)) {
+                        //   |_
+                        //   |
+                        downs[i] = true;
+                        rights[j] = true;
+                    } else {
+                        //   |
+                        //   |
+                        downs[i] = true;
+                        rights[j] =false;
+                    }
+                }
+            } else {
+                if (rights[j]) {
+                    //   __
+                    g.beginPath();
+                    g.moveTo( xp, yp);
+                    g.lineTo( x,  yp);
+                    g.stroke();
+
+                    if(pri(i) >= pri(j)) {
+                        downs[i] = false;
+                        rights[j] = true;
+                    } else {
+                        // ___
+                        //  |
+                        downs[i] =  true;
+                        rights[j] = true;
+                    }
+                } else {
+                    downs[i] = false;
+                        rights[j] = false;
+                }
+            }
+        }
+    }
+
 }
