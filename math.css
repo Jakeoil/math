@@ -48,11 +48,10 @@ canvas.apple-ii
 .control-group {
   border: 3px outset rgb(208, 236, 246);
   margin: 0px 0px 5px 0px;
-  padding: 0px 0px 5px 3px; 
+  padding: 0px 0px 15px 3px; 
 }
-.explore {
+.show-it {
   display: block;
-  outline: 3px solid brown;
 }
 
 #content {

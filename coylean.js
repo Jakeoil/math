@@ -5,7 +5,7 @@ let g;
  * Controls (preferences)
  */
 
-const elesExplore = document.querySelectorAll('.explore');
+const elesExplore = document.querySelectorAll('.show-it');
  
 /**
  * Map type
@@ -17,7 +17,7 @@ const eleActive = document.querySelector('#feature-active');
 const refreshFeatureActive = () => {
     eleActive.innerHTML = feature_active?"Explore":"Legacy";
     for (let ele of elesExplore) {
-        ele.style.display = feature_active? "inline": "none"; 
+        ele.style.display = feature_active? "block": "none"; 
     }
 }
 refreshFeatureActive();
