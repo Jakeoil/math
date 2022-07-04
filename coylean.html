@@ -21,35 +21,35 @@
         <div id="meat">
             <div id="controls">
                 <h3>Controls</h3>
-                <div>
-                    <h4> Init Columns</h4>
+                <div class="control-group">
+                    <h4>Map type</h4>
+                    <button id="feature-active" onClick="toggleActive()"></button>
+                </div>
+                <div class="control-group">
+                    <div>
+                        <h4>Size</h4>
+                        <button id="size-dec" onClick="clickSizeDec()">smaller</button>
+                        <button id="size-toggle" onClick="clickSizeToggle()"></button>
+                        <button id="size-inc" onClick="clickSizeInc()">larger</button>
+                    </div>
+                    <div>
+                        <h4>Scale</h4>
+                        <button id="scale-dec" onClick="clickScaleDec()">smaller</button>
+                        <button id="scale-reset" onClick="clickScaleReset()"></button>
+                        <button id="scale-inc" onClick="clickScaleInc()">larger</button>
+                    </div>
+                </div>
+                <section class="control-group explore">
+                    <h4>Horizontal init column</h4>
                     <button id="rights-left" onClick="clickLeft()">Left</button>
                     <label id="rights-pos"></label>
                     <button id="rights-right"  onClick="clickRight()">Right</button>
                     <br>
-                    <h4> Init Rows</h4>
+                    <h4>Vertical init row</h4>
                     <button id="downs-up" onClick="clickUp()">Up</button>
                     <label id="downs-pos"></label>
                     <button id="downs-down" onClick="clickDown()">Down</button>
-                </div>
-                <div>
-                    <h4>Feature status</h4>
-                    <button id="feature-active" onClick="toggleActive()"></button>
-                </div>
-                <div>
-                    <h4>Size</h4>
-                    <button id="size-dec" onClick="clickSizeDec()">smaller</button>
-                    <button id="size-toggle" onClick="clickSizeToggle()"></button>
-                    <button id="size-inc" onClick="clickSizeInc()">larger</button>
-                    <br>
-                </div>
-                <div>
-                    <h4>Scale</h4>
-                    <button id="scale-dec" onClick="clickScaleDec()">smaller</button>
-                    <button id="scale-reset" onClick="clickScaleReset()"></button>
-                    <button id="scale-inc" onClick="clickScaleInc()">larger</button>
-                    <br>
-                </div>
+                </section>
             </div>
             <div id="content">
                 <div id="explore-map">

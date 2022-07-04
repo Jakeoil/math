@@ -4,53 +4,32 @@ let g;
 /**
  * Controls (preferences)
  */
-let rightsPos=1;
-let downsPos=1;
 
-const eleLeft = document.querySelector('#rights-left');
-const eleRight = document.querySelector('#rights-right');
-const eleUp = document.querySelector('#downs-up');
-const eleDown = document.querySelector('#rights-right');
-const eleDownsPos = document.querySelector('#downs-pos');
-const eleRightsPos = document.querySelector('#rights-pos');
+const elesExplore = document.querySelectorAll('.explore');
+ 
 /**
- * These control the are the rights- and downs- Pos
+ * Map type
  */
- eleRightsPos.innerHTML = rightsPos;
- eleDownsPos.innerHTML = downsPos;
-
- const clickRight = function() {
-    rightsPos++;
-    eleRightsPos.innerHTML = rightsPos;
-    coyleanApp();
-}
-const clickLeft = function() {
-    rightsPos--;
-    eleRightsPos.innerHTML = rightsPos;
-    coyleanApp();
-}
-const clickUp = function() {
-    downsPos--;
-    eleDownsPos.innerHTML = downsPos;
-    coyleanApp();
-}
-const clickDown = function() {
-    downsPos++;
-    eleDownsPos.innerHTML = downsPos;
-    coyleanApp();
-}
-
 let feature_active=false;
 
 const eleActive = document.querySelector('#feature-active');
 
-eleActive.innerHTML = feature_active?"ACTIVE":"NOT ACTIVE";
+const refreshFeatureActive = () => {
+    eleActive.innerHTML = feature_active?"Explore":"Legacy";
+    for (let ele of elesExplore) {
+        ele.style.display = feature_active? "inline": "none"; 
+    }
+}
+refreshFeatureActive();
 const toggleActive = function() {
     feature_active = !feature_active;
-    eleActive.innerHTML = feature_active?"ACTIVE":"NOT ACTIVE";
+    refreshFeatureActive();
     coyleanApp();
 }
 
+/**
+ * Size and Scale
+ */
 let SIZE = 65;
 
 const eleSizeDec = document.querySelector('#size-dec');
@@ -78,7 +57,7 @@ const clickSizeToggle = function() {
     eleSizeToggle.innerHTML = SIZE;
     coyleanApp();
 }
-
+ 
 let SCALE = 8;
 
 const eleScaleDec = document.querySelector('#scale-dec');
@@ -93,7 +72,7 @@ const clickScaleInc = function() {
 }
 const clickScaleDec = function() {
     if (SCALE > 1)
-      SCALE--;
+    SCALE--;
     eleScaleReset.innerHTML = SCALE;
     coyleanApp();
 }
@@ -103,6 +82,47 @@ const clickScaleReset = function() {
     eleScaleReset.innerHTML = SIZE;
     coyleanApp();
 }
+
+/**
+ * Horizontal and Vertical Initializations
+ */
+let rightsPos=1;
+let downsPos=1;
+
+const eleLeft = document.querySelector('#rights-left');
+const eleRight = document.querySelector('#rights-right');
+const eleUp = document.querySelector('#downs-up');
+const eleDown = document.querySelector('#rights-right');
+const eleDownsPos = document.querySelector('#downs-pos');
+const eleRightsPos = document.querySelector('#rights-pos');
+
+/**
+ * These control the are the rights- and downs- Pos
+ */
+ eleRightsPos.innerHTML = rightsPos;
+ eleDownsPos.innerHTML = downsPos;
+
+ const clickRight = function() {
+    rightsPos++;
+    eleRightsPos.innerHTML = rightsPos;
+    coyleanApp();
+}
+const clickLeft = function() {
+    rightsPos--;
+    eleRightsPos.innerHTML = rightsPos;
+    coyleanApp();
+}
+const clickUp = function() {
+    downsPos--;
+    eleDownsPos.innerHTML = downsPos;
+    coyleanApp();
+}
+const clickDown = function() {
+    downsPos++;
+    eleDownsPos.innerHTML = downsPos;
+    coyleanApp();
+}
+
 
 /** Returns the evenness of a number
  * 1 is the least even (0)

@@ -51,4 +51,13 @@ canvas.apple-ii
   padding-left: 10px;
   overflow: scroll;
 }
+.control-group {
+  border: 3px outset rgb(208, 236, 246);
+  margin: 5px;
+  padding-left: 3px;
+  padding-bottom: 5px;
+}
+.explore {
+  display: block;
+}
 
