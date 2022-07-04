@@ -177,9 +177,6 @@ function exploreMap(id) {
     g.lineWidth = 1;
     canvas.width = SCALE * (SIZE + 1);
     canvas.height = SCALE * (SIZE + 1);
-    console.log(`canvas width ${canvas.width} height: ${canvas.height}`);
-    //const drawScreen = coyleanLegacy();
-    
     const drawScreen = feature_active ? coyleanExploration : coyleanLegacy;
 
     drawScreen();
@@ -271,22 +268,37 @@ function coyleanLegacy() {
     }
 }
 
+/**
+ * Two matrices representing the vertical strokes and horizontal strokes respectivily.
+ * Render them.
+ * 
+ * Preconditions:
+ *     rightsPos
+ *     downsPos
+ */
 function coyleanExploration() {
-    console.log(`seLoop SIZE ${SIZE}`)
-    let [d , r] = seLoop(SIZE, SIZE);
-    console.log(`downMatrix of rows:${d}`);
-    console.log(`rightMatrix of columns:${r}`);
-    
+    let width = SIZE;
+    let height = SIZE;
+    // seLoop(height - downsPos, width-rightsPos);
+    let [downMatrix , rightMatrix] = seLoop(height, width);
+    // Future, do the same for the swLoop where we go left. -i.
+    //   
+    //   h = height - downsPos; w = rightsPos;
+    //   rightsPos = (-rightsPos + 1) 
+    //   swLoop(h, w);
 
+    //   
+    // The nwLoop, where we go left and up.
+    //   nwLoop(downsPos, rightsPos);
+    //   rightsPos = (-rightsPos + 1)   
+    //   downsPos = (-downsPos + 1)   
+    // The neLoop, where we go up.
+    //   neLoop(downsPos, width - rightsPos);
+    //   downsPos = (-downsPos + 1)   
+    
     for (let j = 0; j < SIZE; j++) {
         for (let i = 0; i < SIZE; i++){
-            console.log(`j:${j}, i:${i}`);
-            let vert = d[j][i];
-            let hor = r[i][j];
-            console.log(`${vert} ${hor}`)
-            cell(d[j][i], r[i][j], i, j);
-            console.log(`finished j:${j}, i:${i}`);
-
+            cell(downMatrix[j][i], rightMatrix[i][j], i, j);
         }
     }
 
@@ -314,52 +326,50 @@ function coyleanExploration() {
         let i = 0;
         rightMatrix[i][j] = true;
         for (i = 0; i < numColumns ; i++) {
-            console.log(`input: downMatrix row ${j}[${i}] ${downMatrix[j][i]?"|":"o"}\n` +
-                        `      rightMatrix col ${i}[${j}] ${rightMatrix[i][j]?"-":"o"}`);
             const a = reaction(
                 downMatrix[j][i],   // this is correct
                 rightMatrix[i][j],
                 i, j);  
             downMatrix[j+1][i] = a[0];
             rightMatrix[i+1][j]= a[1];
-            console.log(`output: downMatrix row ${j+1}[${i}]: ${a[0]?"|":"o"}\n` +
-                        `        rightMatrix col ${i+1}[${j}]: ${a[1]?"-":"o"}`);        
         }
-        console.log(`row j:${j} complete: ${downMatrix[j]}`)
     }
     return [downMatrix, rightMatrix];
 }
 
+
 function cell(down, right, i, j) {
-    console.log(`cell: down: ${down}, right: ${right}`);
+    if (! down && ! right)
+        return;
+        
     let x = i * SCALE; 
     let xp = x + SCALE;
     let y = j * SCALE; 
     let yp = y + SCALE;
-    if (down) {
-        if (right) {
-            // _|
-            g.beginPath();
-            g.moveTo( xp, y);
-            g.lineTo( xp, yp);
-            g.lineTo( x,  yp);
-            g.stroke();
-        } else {
-            //   |
-            g.beginPath();
-            g.moveTo( xp, y);
-            g.lineTo( xp, yp);
-            g.stroke();
-        }
-    } else {
-        if (right) {
-            //   __
-            g.beginPath();
-            g.moveTo( xp, yp);
-            g.lineTo( x,  yp);
-            g.stroke();
-        }
+
+    if (down && right) {
+        // _|
+        g.beginPath();
+        g.moveTo( xp, y);
+        g.lineTo( xp, yp);
+        g.lineTo( x,  yp);
+        g.stroke();
+        return;
     }
+    
+    if (down) {
+        //   |
+        g.beginPath();
+        g.moveTo( xp, y);
+        g.lineTo( xp, yp);
+        g.stroke();
+        return;
+    }
+    //   __
+    g.beginPath();
+    g.moveTo( xp, yp);
+    g.lineTo( x,  yp);
+    g.stroke();
 }
 
 /***
@@ -369,7 +379,6 @@ function cell(down, right, i, j) {
  */
             
  function reaction(vertical, horizontal, i, j) {
-    console.log(` ${vertical?"|":"o"}  ${i + rightsPos}->${pri(i+rightsPos)} -- ${horizontal?"-":"o"} ${j + rightsPos}->${pri(j + rightsPos)},`)
     if (! horizontal && ! vertical) {
         return [false, false];
     }
