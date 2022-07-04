@@ -21,9 +21,14 @@
         <div id="meat">
             <div id="controls">
                 <h3>Controls</h3>
-                <div class="control-group">
+                <div class="control-group" id="feature">
                     <h4>Map type</h4>
                     <button id="feature-active" onClick="toggleActive()"></button>
+                    <br>
+                    <input type="radio" name="feature" id="leg" onClick="featureClicked()">
+                    <label for="leg">Legacy</label>
+                    <input type="radio" name="feature" id="exp" onClick="featureClicked()">
+                    <label for="exp">Explore map</label>
                 </div>
                 <div class="control-group">
                     <div>

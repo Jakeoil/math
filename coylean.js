@@ -13,20 +13,54 @@ const elesExplore = document.querySelectorAll('.show-it');
 let feature_active=false;
 
 const eleActive = document.querySelector('#feature-active');
+const radioButtons = document.querySelectorAll("input[name='feature']")
 
 const refreshFeatureActive = () => {
+    for (let button of radioButtons) {
+        if (feature_active) {
+            if (button.id == "exp") {
+                if (! button.checked)
+                    button.checked = true;
+            }
+        } else {
+            if (button.id == "leg") {
+                if (! button.checked)
+                    button.checked = true;
+            } 
+        }
+    }
     eleActive.innerHTML = feature_active?"Explore":"Legacy";
     for (let ele of elesExplore) {
         ele.style.display = feature_active? "block": "none"; 
     }
+        
 }
+
+
 refreshFeatureActive();
 const toggleActive = function() {
     feature_active = !feature_active;
     refreshFeatureActive();
+
+
     coyleanApp();
 }
 
+
+
+const featureClicked = function() {
+    console.log("radio button clicked");
+    for (let button of radioButtons) {
+        if (button.checked) {
+            console.log(`value: ${button.value}`)
+            feature_active = button.id == "exp"
+            console.log(`feature-active: ${feature_active}`);
+            refreshFeatureActive();
+        }
+    }
+    coyleanApp();
+
+}
 /**
  * Size and Scale
  */
