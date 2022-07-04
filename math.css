@@ -41,23 +41,25 @@ canvas.apple-ii
 #controls {
   /* outline: 3px solid blue; */
   flex: 1;
-  padding: 10px;
+  padding: 8px;
   background: lightblue;
 }
+
+.control-group {
+  border: 3px outset rgb(208, 236, 246);
+  margin: 0px 0px 5px 0px;
+  padding: 0px 0px 5px 3px; 
+}
+.explore {
+  display: block;
+  outline: 3px solid brown;
+}
+
 #content {
   /* outline: 3px solid greenyellow; */
   flex: 6;
   margin-left: 10px;
   padding-left: 10px;
   overflow: scroll;
-}
-.control-group {
-  border: 3px outset rgb(208, 236, 246);
-  margin: 5px;
-  padding-left: 3px;
-  padding-bottom: 5px;
-}
-.explore {
-  display: block;
 }
 

@@ -326,12 +326,11 @@ function coyleanExploration() {
         let i = 0;
         rightMatrix[i][j] = true;
         for (i = 0; i < numColumns ; i++) {
-            const a = reaction(
-                downMatrix[j][i],   // this is correct
-                rightMatrix[i][j],
-                i, j);  
-            downMatrix[j+1][i] = a[0];
-            rightMatrix[i+1][j]= a[1];
+            [ downMatrix[j+1][i] = a[0], rightMatrix[i+1][j]= a[1] ] =
+                reaction(
+                    downMatrix[j][i],   // this is correct
+                    rightMatrix[i][j],
+                    i, j);
         }
     }
     return [downMatrix, rightMatrix];
