@@ -1,4 +1,4 @@
-'use strict'
+"use strict";
 
 /**
  * Penrose Mozaic Webapp version 1.
@@ -38,6 +38,7 @@ const clickType = function () {
   eleType.innerHTML = controls.typeName;
   penroseApp();
 };
+
 const clickIsDown = function () {
   controls.toggleDirection();
   eleIsDown.innerHTML = controls.direction;
