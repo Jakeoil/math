@@ -1,64 +1,59 @@
-body 
-{
-  margin-left:10px;
-  margin-right:10px;
-  line-height: 1.5;
-  FONT-FAMILY: Arial, Helvetica, sans-serif; 
-  font-size: 0.8em;
+body {
+    margin-left: 10px;
+    margin-right: 10px;
+    line-height: 1.5;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 0.8em;
 }
-.codeblock 
-{
-  margin: 0 30px 0px 30px;
-  font-size:12px;
-  font-family:Monaco,Courier,"Courier New";
+.codeblock {
+    margin: 0 30px 0px 30px;
+    font-size: 12px;
+    font-family: Monaco, Courier, "Courier New";
 }
-canvas.apple-ii
-{
-  background:#000000;
+canvas.apple-ii {
+    background: #000000;
 }
 
 .flowtile {
-  border: 1px solid #d3d3d3;
-  display: inline-block;
-  /* vertical-align: middle */
+    border: 1px solid #d3d3d3;
+    display: inline-block;
+    /* vertical-align: middle */
 }
 #across {
-  padding-left: 100px;
-  display: block;
+    padding-left: 100px;
+    display: block;
 }
 #meat {
-  display: flex;
-  height: 1000px;
+    display: flex;
+    height: 1000px;
 }
 .pageButton {
-  border: none;
-  outline: none;
-  background-color: black;
-  color: white;
-
+    border: none;
+    outline: none;
+    background-color: black;
+    color: white;
 }
 
 #controls {
-  /* outline: 3px solid blue; */
-  flex: 1;
-  padding: 8px;
-  background: lightblue;
+    /* outline: 3px solid blue; */
+    flex: 1;
+    padding: 8px;
+    background: lightblue;
 }
 
 .control-group {
-  border: 3px outset rgb(208, 236, 246);
-  margin: 0px 0px 5px 0px;
-  padding: 0px 0px 15px 3px; 
+    border: 3px outset rgb(208, 236, 246);
+    margin: 0px 0px 5px 0px;
+    padding: 0px 0px 15px 3px;
 }
 .show-it {
-  display: block;
+    display: block;
 }
 
 #content {
-  /* outline: 3px solid greenyellow; */
-  flex: 6;
-  margin-left: 10px;
-  padding-left: 10px;
-  overflow: scroll;
+    /* outline: 3px solid greenyellow; */
+    flex: 6;
+    margin-left: 10px;
+    padding-left: 10px;
+    overflow: scroll;
 }
-

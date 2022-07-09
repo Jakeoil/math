@@ -1,113 +1,135 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="shortcut icon" href="map-icon.png" />
-    <title>Penrose Mosaic</title>
-    <link rel="stylesheet" href="math.css" />
-    <style>
-    </style>
-    <script></script>
-  </head>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="shortcut icon" href="map-icon.png" />
+        <title>Penrose Mosaic</title>
+        <link rel="stylesheet" href="math.css" />
+        <style></style>
+        <script></script>
+    </head>
 
-  <body onLoad="penroseApp()">
-    <header>
-      <h1>Penrose Mosaic</h1>
-      <h2>
-        A square tiling based on
-        <a href="https://web.ma.utexas.edu/users/radin/Pentaplexity.pdf"
-          >Penrose's first non-periodic tiling</a
-        >
-      </h2>
-    </header>
+    <body onLoad="penroseApp()">
+        <header>
+            <h1>Penrose Mosaic</h1>
+            <h2>
+                A square tiling based on
+                <a href="https://web.ma.utexas.edu/users/radin/Pentaplexity.pdf"
+                    >Penrose's first non-periodic tiling</a
+                >
+            </h2>
+        </header>
 
-    <p>
-      I found the mosaic pattern while working with graph paper. I found you
-      could produce a very convincing version of this tiling with the segments:
-      [4,0],[3,2] and [1,4]. The gave a sufficient approximation of 4 * [cos n,
-      sin n] where n = 0, 36 and 72
-    </p>
-    <span>The tiles of the type one set are pentagons (p5:</span>
-    <canvas id="p5" class="flowtile"> </canvas>
-    <span>, p3: </span>
-    <canvas id="p3" class="flowtile"></canvas>
-    <span>, p1:</span>
-    <canvas id="p1" class="flowtile"></canvas>
-    <span>), stars:</span>
-    <canvas id="s5" class="flowtile"></canvas>
-    <span>, boats: </span>
-    <canvas id="s3" class="flowtile"></canvas>
-    <span>and diamonds: </span>
-    <canvas id="s1" class="flowtile"></canvas>
+        <p>
+            I found the mosaic pattern while working with graph paper. I found
+            you could produce a very convincing version of this tiling with the
+            segments: [4,0],[3,2] and [1,4]. The gave a sufficient approximation
+            of 4 * [cos n, sin n] where n = 0, 36 and 72
+        </p>
+        <span>The tiles of the type one set are pentagons (p5:</span>
+        <canvas id="p5" class="flowtile"> </canvas>
+        <span>, p3: </span>
+        <canvas id="p3" class="flowtile"></canvas>
+        <span>, p1:</span>
+        <canvas id="p1" class="flowtile"></canvas>
+        <span>), stars:</span>
+        <canvas id="s5" class="flowtile"></canvas>
+        <span>, boats: </span>
+        <canvas id="s3" class="flowtile"></canvas>
+        <span>and diamonds: </span>
+        <canvas id="s1" class="flowtile"></canvas>
 
-    <nav id="across">
-      <p>
-        <button class="pageButton" onclick="showPage('inf1',this)"> Inflation 1 work area </button>
-        <button class="pageButton" onclick="showPage('inf2',this)"> Inflation 2 work area </button>
-        <button class="pageButton" id ="defaultPage" onclick="showPage('gwork',this)"> Grid-work test area</button>
-        <button class="pageButton" onclick="showPage('g012',this)" >Generic test area </button>
-        <button class="pageButton" onclick="showPage('g3',this)"> Generic expansion</button>
-      </p>
-    </nav>
-    <div id="meat">
-      <div id="controls">
-        <h3>Controls</h3>
-        <button id="fifths" onClick="clickFifths()">Fifths</button>
-        <br />
-        <br />
-        <button id="type" onClick="clickType()">Type</button>
-        <br />
-        <br />
-        <button id="isDown" onClick="clickIsDown()">isDown</button>
-        <br />
-      </div>
-      <div id="content">
-        <div id="inf1" class="page">
-          <h2>Inflation 1 work area</h2>
-          <canvas id="inflation-1" width="100" height="100">Pentagons</canvas>
+        <nav id="across">
+            <p>
+                <button class="pageButton" onclick="showPage('inf1',this)">
+                    Inflation 1 work area
+                </button>
+                <button class="pageButton" onclick="showPage('inf2',this)">
+                    Inflation 2 work area
+                </button>
+                <button
+                    class="pageButton"
+                    id="defaultPage"
+                    onclick="showPage('gwork',this)"
+                >
+                    Grid-work test area
+                </button>
+                <button class="pageButton" onclick="showPage('g012',this)">
+                    Generic test area
+                </button>
+                <button class="pageButton" onclick="showPage('g3',this)">
+                    Generic expansion
+                </button>
+            </p>
+        </nav>
+        <div id="meat">
+            <div id="controls">
+                <h3>Controls</h3>
+                <button id="fifths" onClick="clickFifths()">Fifths</button>
+                <br />
+                <br />
+                <button id="type" onClick="clickType()">Type</button>
+                <br />
+                <br />
+                <button id="isDown" onClick="clickIsDown()">isDown</button>
+                <br />
+            </div>
+            <div id="content">
+                <div id="inf1" class="page">
+                    <h2>Inflation 1 work area</h2>
+                    <canvas id="inflation-1" width="100" height="100"
+                        >Pentagons</canvas
+                    >
+                </div>
+                <div id="inf2" class="page">
+                    <h2>Inflation 2 work area</h2>
+                    <canvas id="inflation-2" width="1600" height="3100"
+                        >Second test</canvas
+                    >
+                </div>
+                <div id="gwork" class="page">
+                    <h2>Grid-work test area</h2>
+                    <canvas id="grid-work" width="1600" height="1700"
+                        >Second test</canvas
+                    >
+                </div>
+                <div id="g012" class="page">
+                    <h2>Generic test area</h2>
+                    <canvas id="generic-012" width="1200" height="999"
+                        >Second test</canvas
+                    >
+                </div>
+                <div id="g3" class="page">
+                    <h2>Generic expansion 3</h2>
+                    <canvas id="generic-expansion-3" width="1200" height="2500"
+                        >Second test</canvas
+                    >
+                </div>
+            </div>
         </div>
-        <div id="inf2" class="page">
-          <h2>Inflation 2 work area</h2>
-          <canvas id="inflation-2" width="1600" height="3100">Second test</canvas>
-        </div>
-        <div id="gwork" class="page">
-          <h2>Grid-work test area</h2>
-          <canvas id="grid-work" width="1600" height="1700">Second test</canvas>
-        </div>
-        <div id="g012" class="page">
-          <h2>Generic test area</h2>
-          <canvas id="generic-012" width="1200" height="999">Second test</canvas>
-        </div>
-        <div id="g3" class="page">
-          <h2>Generic expansion 3</h2>
-          <canvas id="generic-expansion-3" width="1200" height="2500">Second test</canvas>
-        </div>
-      </div>
-    </div>
-  
-    <script src="penrose.js"></script>
-    <script src="math.js"></script>
-    <script>
-      function showPage(id, button) {
-        const pages = document.querySelectorAll(".page");
-        console.log(`id: ${id}`);
-        for (page of pages) {
-          page.style.display = "none";
-        }
-        const active_page = document.querySelector(`#${id}`);
-        active_page.style.display = "block";
-        const buttons = document.querySelectorAll(".pageButton");
-        for (pageButton of buttons) {
-          pageButton.style.background="black"
-          pageButton.style.color="white"
-      
-        }
 
-        button.style.background="white"
-        button.style.color="black"
-      }
-      document.querySelector("#defaultPage").click();
-    </script>
-  </body>
+        <script src="penrose.js"></script>
+        <script src="math.js"></script>
+        <script>
+            function showPage(id, button) {
+                const pages = document.querySelectorAll(".page");
+                console.log(`id: ${id}`);
+                for (page of pages) {
+                    page.style.display = "none";
+                }
+                const active_page = document.querySelector(`#${id}`);
+                active_page.style.display = "block";
+                const buttons = document.querySelectorAll(".pageButton");
+                for (pageButton of buttons) {
+                    pageButton.style.background = "black";
+                    pageButton.style.color = "white";
+                }
+
+                button.style.background = "white";
+                button.style.color = "black";
+            }
+            document.querySelector("#defaultPage").click();
+        </script>
+    </body>
 </html>
