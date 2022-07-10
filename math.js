@@ -314,20 +314,54 @@ function drawGridWork(id) {
             y += spacing;
         }
 
-        // Now some decagons
-        let fifths = 0;
-        let isDown = true;
-        let base = p(45, 75);
-        let exp = 2;
-        grid(base, 18);
-        deca(fifths, isDown, base, exp);
+        let fifths;
+        let isDown;
+        let base;
+        let exp;
 
-        fifths = 1;
+        // Now some decagons
+
+        fifths = 0;
         isDown = false;
         base = p(15, 75);
         exp = 1;
-        grid(base, 10);
         deca(fifths, isDown, base, exp);
+        grid(base, 10);
+
+        fifths = 0;
+        isDown = false;
+        base = p(45, 75);
+        exp = 2;
+        deca(fifths, isDown, base, exp);
+        grid(base, 18);
+
+        fifths = 3;
+        isDown = true;
+        base = p(15, 115);
+        exp = 1;
+        deca(fifths, isDown, base, exp);
+        grid(base, 10);
+
+        fifths = 3;
+        isDown = true;
+        base = p(45, 115);
+        exp = 2;
+        deca(fifths, isDown, base, exp);
+        grid(base, 18);
+
+        fifths = 1;
+        isDown = false;
+        base = p(15, 155);
+        exp = 1;
+        deca(fifths, isDown, base, exp);
+        grid(base, 10);
+
+        fifths = 1;
+        isDown = false;
+        base = p(45, 155);
+        exp = 2;
+        deca(fifths, isDown, base, exp);
+        grid(base, 18);
     }
 }
 
@@ -531,6 +565,17 @@ function grid(offset, size) {
             );
         }
     }
+    //
+    g.strokeStyle = "#FF0000";
+    g.beginPath();
+    g.moveTo(offset.x * scale, (offset.y - size) * scale);
+    g.lineTo(offset.x * scale, (offset.y + size) * scale);
+    g.stroke();
+
+    g.beginPath();
+    g.moveTo((offset.x - size) * scale, offset.y * scale);
+    g.lineTo((offset.x + size) * scale, offset.y * scale);
+    g.stroke();
 }
 
 function measure(offset, shape) {
@@ -611,30 +656,46 @@ function tWheelNext(exp) {
     );
 }
 
+function dWheelNext(exp) {
+    console.log(`exp: ${exp}`);
+    const p = pWheels[exp].w;
+    const d = dWheels[exp].w;
+    console.log(`(${d[0].tr(p[0])}, ${d[1].tr(p[1])}, ${d[2].tr(p[2])}`);
+    return new Wheel(d[0].tr(p[0]), d[1].tr(p[1]), d[2].tr(p[2]));
+}
+
 // Wheel[0] is undefined
 const pWheels = [null];
 const sWheels = [null];
 const tWheels = [null];
+const dWheels = [null];
 
 // Wheel1 is the seed.
 const pWheel1 = new Wheel(p(0, -6), p(3, -4), p(5, -2));
 const sWheel1 = new Wheel(p(0, -5), p(3, -5), p(5, -1));
 const tWheel1 = new Wheel(p(0, -8), p(5, -8), p(8, -2));
+const dWheel1 = new Wheel(p(0, -3), p(2, -3), p(3, -1));
+
+// dWheel2
+const dWheel2 = new Wheel(p(0, -3 - 6), p(2 + 3, -3 - 4), p(8, -2 - 3));
 
 console.log(`real P1[1]: ${pWheel1.string}`);
 console.log(`real S1[1]: ${sWheel1.string}`);
 console.log(`real T1[1]: ${tWheel1.string}`);
+console.log(`real D1[1]: ${dWheel1.string}`);
 
 // Wheel[1] = Wheel1
 pWheels.push(pWheel1);
 sWheels.push(sWheel1);
 tWheels.push(tWheel1);
+dWheels.push(dWheel1);
 
 const wheelMax = 5;
 for (let i = 1; i <= wheelMax; i++) {
     pWheels.push(pWheelNext(i));
     sWheels.push(sWheelNext(i));
     tWheels.push(tWheelNext(i));
+    dWheels.push(dWheelNext(i));
 }
 
 function compare(a, b) {
