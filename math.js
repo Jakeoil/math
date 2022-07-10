@@ -870,12 +870,17 @@ function star(fifths, type, isDown, loc, exp) {
  *      +--*--+
  */
 
-function deca(fifths, isDown, base, exp) {
+function deca(fifths, isDown, loc, exp) {
     const bounds = new Bounds();
     if (exp == 0) {
         return bounds;
     }
 
+    // Move the center of the decagon to the real center.
+    let dUp = dWheels[exp].up;
+    let dDown = dWheels[exp].down;
+    let dOff = isDown ? dUp[fifths] : dDown[fifths];
+    let base = loc.tr(dOff);
     let pUp = pWheels[exp].up;
     let pDown = pWheels[exp].down;
     let sUp = sWheels[exp].up;
