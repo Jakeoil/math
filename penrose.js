@@ -246,6 +246,152 @@ class Controls {
         penrose.St5,
     ];
 }
+var quadrille = (function () {
+    // prettier-ignore
+    const pentaUp = [
+        [0, -3],
+        [3, -1],
+        [2, 3],
+        [2, -3],
+        [-3, 1],
+    ];
+    // prettier-ignore
+    const starUp = [
+        [0, -6],
+        [1, -2],
+        [5, -2],
+        [2, 0],
+        [3, 4],
+        [0, 2],
+        [-3, 4],
+        [-2, 0],
+        [-5, -2],
+        [-1, -2],
+    ];
+    // prettier-ignore
+    const diamondUp = [
+        [0, -6],
+        [1, -2],
+        [0, 2],
+        [-1, -2],
+    ];
+    // prettier-ignore
+    const diamondWon = [[3, -4], [0, -2], [-1, 2], [2, 0] ];
+    // prettier-ignore
+    const diamondToo = [[5, -2], [2, 0], [-2, 0], [1, -2],];
+    // prettier-ignore
+    const boatUp = [
+        [0, -6],
+        [1, -2],
+        [5, -2],
+        [2, 0],
+        [-2, 0],
+        [-5, -2],
+        [-1, -2],
+    ];
+    // prettier-ignore
+    const boatWon = [
+        [3, -4],
+        [0, -2],
+        [-3, -4],
+        [-2, 0],
+        [1, 2],
+        [5, 2],
+    ];
+    // prettier-ignore
+    const boatToo = [
+        [5, -2],
+        [2, 0],
+        [3, 4],
+        [0, 2],
+        [-1, -2],
+        [0, -6],
+    ];
+})();
+class OrthoOutlinex {
+    constructor() {
+        // prettier-ignore
+        this.penta_up = [
+            [0, -3], [3,-1], [2, 3], [2, -3], [-3, 1],
+        ];
+        // prettier-ignore
+        this.star_up = [
+            [0, -6], [1, -2], [5, -2], [2, 0], [3, 4],
+            [0, 2], [-3, 4], [-2, 0], [-5, -2], [-1, -2],
+        ];
+        // prettier-ignore
+        this.diamond_up = [
+            [0, -6], [1, -2],
+            [0, 2], [-1, -2],
+        ];
+        // prettier-ignore
+        this.diamond_too = [[5, -2], [2, 0], [-2, 0], [1, -2],];
+        // prettier-ignore
+        this.diamond_for = [[3, 4], [0, 2], [-1, -2], [2, 0]];
+
+        // prettier-ignore
+        this.boat_up = [
+            [0, -6], [1, -2], [5, -2],[2,0],[-2,0],[-5,-2],[-1,-2]
+        ];
+        // prettier-ignore
+        this.boat_too = [
+            [5, -2],[2,0],[3,4],[0,2],[-1,-2],[0,-6]
+        ];
+        // prettier-ignore
+        this.boat_for = [3, 4], [0, 2], [-3, 4], [-2, 0], [1, -2], [5, -2];
+
+        this.shapes = {
+            penta: [
+                this.penta_up.map((item) => [item[0], item[1]]),
+                this.penta_up.map((item) => [-item[0], -item[1]]),
+                this.penta_up.map((item) => [item[0], item[1]]),
+                this.penta_up.map((item) => [-item[0], -item[1]]),
+                this.penta_up.map((item) => [item[0], item[1]]),
+                this.penta_up.map((item) => [-item[0], -item[1]]),
+                this.penta_up.map((item) => [item[0], item[1]]),
+                this.penta_up.map((item) => [-item[0], -item[1]]),
+                this.penta_up.map((item) => [item[0], item[1]]),
+                this.penta_up.map((item) => [-item[0], -item[1]]),
+            ],
+            diamond: [
+                this.diamond_up.map((item) => [item[0], item[1]]),
+                this.diamond_for.map((item) => [-item[0], -item[1]]),
+                this.diamond_too.map((item) => [-item[0], item[1]]),
+                this.diamond_too.map((item) => [-item[0], -item[1]]),
+                this.diamond_for.map((item) => [-item[0], item[1]]),
+                this.diamond_up.map((item) => [item[0], item[1]]),
+                this.diamond_for.map((item) => [item[0], -item[1]]),
+                this.diamond_too.map((item) => [item[0], item[1]]),
+                this.diamond_too.map((item) => [item[0], -item[1]]),
+                this.diamond_for.map((item) => [item[0], item[1]]),
+            ],
+            boat: [
+                this.boat_up.map((item) => [item[0], item[1]]),
+                this.boat_for.map((item) => [item[0], -item[1]]),
+                this.boat_too.map((item) => [item[0], item[1]]),
+                this.boat_too.map((item) => [item[0], -item[1]]),
+                this.boat_for.map((item) => [item[0], item[1]]),
+                this.boat_up.map((item) => [item[0], -item[1]]),
+                this.boat_for.map((item) => [-item[0], item[1]]),
+                this.boat_too.map((item) => [-item[0], -item[1]]),
+                this.boat_too.map((item) => [-item[0], item[1]]),
+                this.boat_for.map((item) => [-item[0], -item[1]]),
+            ],
+            star: [
+                this.star_up.map((item) => [item[0], item[1]]),
+                this.star_up.map((item) => [-item[0], -item[1]]),
+                this.star_up.map((item) => [item[0], item[1]]),
+                this.star_up.map((item) => [-item[0], -item[1]]),
+                this.star_up.map((item) => [item[0], item[1]]),
+                this.star_up.map((item) => [-item[0], -item[1]]),
+                this.star_up.map((item) => [item[0], item[1]]),
+                this.star_up.map((item) => [-item[0], -item[1]]),
+                this.star_up.map((item) => [item[0], item[1]]),
+                this.star_up.map((item) => [-item[0], -item[1]]),
+            ],
+        };
+    }
+}
 // Build the api
 var penrose = (function () {
     var id;

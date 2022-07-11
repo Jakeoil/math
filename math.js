@@ -585,7 +585,13 @@ function measure(offset, shape) {
     }
     return bounds;
 }
-function lineFigure(fill, offset, shape) {}
+function lineFigure(fill, offset, shape) {
+    for (const point of shape) {
+        g.strokeStyle = "#000";
+        g.beginPath();
+        // ... to be continued
+    }
+}
 
 /***  
  * Discussion of the second expansions penta points.
