@@ -714,7 +714,7 @@ function compare(a, b) {
     }
 }
 
-/****************************************************************************************
+/*******************************************************************************
  * Recursive routine to draw pentagon type objects.
  * P5, P3 and P1  Up versions shown
  *
@@ -763,7 +763,6 @@ function penta(fifths, type, isDown, loc, exp) {
 
     for (let i = 0; i < 5; i++) {
         const shift = norm(fifths + i);
-
         bounds.expand(
             penta(
                 norm(shift + type.twist[i]),
