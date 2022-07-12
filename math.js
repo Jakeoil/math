@@ -314,6 +314,22 @@ function drawGridWork(id) {
             y += spacing;
         }
 
+        y = 5;
+        const qShapes = [
+            quadrille.penta,
+            quadrille.diamond,
+            quadrille.star,
+            quadrille.boat,
+        ];
+
+        for (const shape of qShapes) {
+            for (let i = 0; i < 10; i++) {
+                let offset = p((i + 1) * spacing, y);
+                outline(penrose.ORANGE, offset, shape[i]);
+            }
+            y += spacing;
+        }
+
         let fifths;
         let isDown;
         let base;
@@ -585,12 +601,27 @@ function measure(offset, shape) {
     }
     return bounds;
 }
-function lineFigure(fill, offset, shape) {
+function outline(fill, offset, shape) {
+    let start = true;
     for (const point of shape) {
-        g.strokeStyle = "#000";
-        g.beginPath();
-        // ... to be continued
+        g.strokeStyle = "#000000";
+        g.lineWidth = 2;
+        if (start) {
+            g.beginPath();
+            g.moveTo(
+                (point.x + offset.x) * scale,
+                (point.y + offset.y) * scale
+            );
+            start = false;
+        } else {
+            g.lineTo(
+                (point.x + offset.x) * scale,
+                (point.y + offset.y) * scale
+            );
+        }
     }
+    g.closePath();
+    g.stroke();
 }
 
 /***  
@@ -663,7 +694,6 @@ function tWheelNext(exp) {
 }
 
 function dWheelNext(exp) {
-    console.log(`exp: ${exp}`);
     const p = pWheels[exp].w;
     const d = dWheels[exp].w;
     console.log(`(${d[0].tr(p[0])}, ${d[1].tr(p[1])}, ${d[2].tr(p[2])}`);

@@ -254,7 +254,7 @@ class Controls {
 var quadrille = (function () {
     // prettier-ignore
     const pentaUp = [
-        [0, -3], [3, -1], [2, 3], [2, -3], [-3, 1]
+        [0, -3], [3, -1], [2, 3], [-2, 3], [-3, -1]
     ].map(function (item) {
         return new P(item[0], item[1]);
     });
@@ -287,12 +287,12 @@ var quadrille = (function () {
 
     // prettier-ignore
     const boatWon = [
-        [3, -4], [0, -2], [-3, -4], [-2, 0], [1, 2], [5, 2],
+        [3, -4], [2 , 0], [ 5,  2], [1, 2], [-2,0], [-3,-4],[0, -2]
     ].map(function(item){return new P(item[0],item[1])});
     // prettier-ignore
     const boatToo = [
         [5, -2], [2, 0], [3, 4],
-        [0, 2],[-1, -2], [0, -6]
+        [0, 2],[-1, -2], [0, -6], [1, -2]
     ].map(function (item) { return new P(item[0], item[1]) });
 
     const Quadrille = {};
