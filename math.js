@@ -29,6 +29,33 @@ let starBlue = penrose.BLUE;
 // p3Yellow = "lightgreen";
 // p1Orange = "red";
 // starBlue = "cyan";
+const eleP5Color = document.querySelector("p5-color");
+const eleP3Color = document.querySelector("p3-color");
+const eleP1Color = document.querySelector("p1-color");
+const eleStarColor = document.querySelector("star-color");
+
+/**
+ * Shape-Mode:
+ *   "mosaic"
+ *      Mosaic tiles
+ *   "quadrille"
+ *      Filled outlines like on graph paper
+ *   "real"
+ *      five fold real symmetry
+ */
+const MODE_MOSAIC = "mosaic";
+const MODE_QUADRILLE = "quadrille";
+const MODE_REAL = "real";
+const MODE_LIST = [MODE_MOSAIC, MODE_QUADRILLE, MODE_REAL];
+
+let shapeMode = MODE_MOSAIC;
+const eleMode = document.querySelector("#shape-mode");
+
+if (eleMode) eleMode.innerHTML = shapeMode;
+
+const clickMode = function () {
+    console.log(`Current mode ${shapeMode}`);
+};
 
 /**
  * This is the default global for the shape and orientation controls
@@ -553,6 +580,14 @@ function drawGeneric3(id) {
     drawScreen();
 }
 
+function fig(fill, offset, shape) {
+    switch (shapeMode) {
+        case MODE_MOSAIC:
+            return figure(fill, offset, shape);
+        case MODE_QUADRILLE:
+            return outline(fill, offset, shape);
+    }
+}
 /***
  * penrose is a global constant (does it have to be a var?)
  * This is called only from expansion 1
@@ -589,6 +624,38 @@ function figure(fill, offset, shape) {
     return bounds;
 }
 
+function outline(fill, offset, shape) {
+    let start = true;
+    const bounds = new Bounds();
+    for (const point of shape) {
+        g.strokeStyle = "#000000";
+        g.fillStyle = fill;
+        g.lineWidth = 2;
+        if (start) {
+            g.beginPath();
+            g.moveTo(
+                (point.x + offset.x) * scale,
+                (point.y + offset.y) * scale
+            );
+            start = false;
+        } else {
+            g.lineTo(
+                (point.x + offset.x) * scale,
+                (point.y + offset.y) * scale
+            );
+        }
+
+        bounds.addPoint(offset, point);
+    }
+    g.closePath();
+    g.stroke();
+    if (fill) {
+        g.fill();
+    }
+
+    return bounds;
+}
+
 function grid(offset, size) {
     g.strokeStyle = penrose.OUTLINE;
     for (let y = -size; y < size; y++) {
@@ -621,33 +688,6 @@ function measure(offset, shape) {
     }
     return bounds;
 }
-function outline(fill, offset, shape) {
-    let start = true;
-    for (const point of shape) {
-        g.strokeStyle = "#000000";
-        g.fillStyle = fill;
-        g.lineWidth = 2;
-        if (start) {
-            g.beginPath();
-            g.moveTo(
-                (point.x + offset.x) * scale,
-                (point.y + offset.y) * scale
-            );
-            start = false;
-        } else {
-            g.lineTo(
-                (point.x + offset.x) * scale,
-                (point.y + offset.y) * scale
-            );
-        }
-    }
-    g.closePath();
-    g.stroke();
-    if (fill) {
-        g.fill();
-    }
-}
-
 /***  
  * Discussion of the second expansions penta points.
  * These are the x and y offset from a center rectangle to an inverted rectangle.
