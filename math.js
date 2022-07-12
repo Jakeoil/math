@@ -589,6 +589,11 @@ function drawGeneric3(id) {
 }
 
 function fig(fill, offset, shape) {
+    if (!shape) {
+        let bounds = new Bounds();
+        bounds.addPoint(offset, offset);
+        return bounds;
+    }
     switch (shapeMode) {
         case MODE_MOSAIC:
             return figure(fill, offset, shape);
@@ -600,6 +605,19 @@ function fig(fill, offset, shape) {
             bounds.addPoint(offset, offset);
             return bounds;
     }
+}
+
+function getShapes(key) {
+    switch (shapeMode) {
+        case MODE_MOSAIC:
+            console.log(`mosaic key: ${key}`);
+            return mosaic[key];
+        case MODE_QUADRILLE:
+            return quadrille[key];
+        case MODE_REAL:
+            return null;
+    }
+    return null;
 }
 /***
  * penrose is a global constant (does it have to be a var?)
@@ -870,9 +888,15 @@ function penta(fifths, type, isDown, loc, exp) {
     const bounds = new Bounds();
     fifths = norm(fifths);
     if (exp == 0) {
-        bounds.expand(
-            fig(pColor(type.typeColor), loc, type.shape[tenths(fifths, isDown)])
-        );
+        let shapes = getShapes(type.shapeKey);
+        if (shapes) {
+            bounds.expand(
+                fig(pColor(type.typeColor), loc, shapes[tenths(fifths, isDown)])
+            );
+        } else {
+            bounds.addPoint(loc, loc);
+        }
+
         return bounds; // call figure
     }
 
@@ -940,14 +964,16 @@ function star(fifths, type, isDown, loc, exp) {
     const bounds = new Bounds();
     const name = type.name;
     fifths = norm(fifths);
-    //console.log(`${type.name}: ${fifths}, exp: ${exp} ${loc}`)
-
     if (exp == 0) {
-        // Draw the figure.  Finished
-        //console.log(`typeColor: ${type.typeColor}`);
-        bounds.expand(
-            fig(pColor(type.typeColor), loc, type.shape[tenths(fifths, isDown)])
-        );
+        let shapes = getShapes(type.shapeKey);
+        if (shapes) {
+            bounds.expand(
+                fig(pColor(type.typeColor), loc, shapes[tenths(fifths, isDown)])
+            );
+        } else {
+            bounds.addPoint(loc, loc);
+        }
+
         return bounds;
     }
 

@@ -49,12 +49,18 @@ I then proceeded to code the second expansion using the manually produced wheels
 
 After lots of bugs, I sidetracked into some other tasks.
 
-One was to keep track of the size of the figure.  I have a bounds class that returns the extremes of the figure.  Routines which call this figure 
+One was to keep track of the size of the figure.  I have a bounds class that returns the extremes of the figure.  Routines which call this figure return a new bounds which is accumulated.
+
+Now I added some controls. This required learning a little bit about page layouts and much css.
+I had to struggle with the tWheel.
+
+I added a decagon, but it was not centered.
+Fixed expansion 4 and up.
 
 # To do list
 
--   [ ] Decagon is working although I would like to center rotation. Code is just plain to complicated at the moment.
--   [ ] Add the vector paths for the shapes.
+-   [X] Decagon is working although I would like to center rotation. Code is just plain too complicated at the moment.
+-   [X] Add the vector paths for the shapes.
 -   [ ] Improve the mini grid figure.
 -   [ ] Play with writing text on the canvas.
 -   [ ] Do a rewrite using module.

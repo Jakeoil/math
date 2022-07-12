@@ -475,7 +475,7 @@ var mosaic = (function () {
     //     Mosaic.star = wheel(starUp);
     //     Mosaic.boat = wheel(boatUp, boatWon, boatToo);
     //     Mosaic.diamond = wheel(diamondUp, diamondWon, diamondToo);
-    return mosaic;
+    return Mosaic;
 })();
 // Build the api
 var penrose = (function () {
