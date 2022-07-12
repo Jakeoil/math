@@ -111,6 +111,9 @@ class Bounds {
             this.maxPoint.y = bounds.maxPoint.y;
         }
     }
+    toString() {
+        return JSON.stringify(this);
+    }
 }
 
 class BoundsCoord {
@@ -344,6 +347,136 @@ var quadrille = (function () {
     return Quadrille;
 })();
 
+var mosaic = (function () {
+    // prettier-ignore
+    var penta_up = [ [2,0],[3,0],
+             [1,1],[2,1],[3,1],[4,1],
+       [0,2],[1,2],[2,2],[3,2],[4,2],[5,2],
+       [0,3],[1,3],[2,3],[3,3],[4,3],[5,3],
+             [1,4],[2,4],[3,4],[4,4],
+             [1,5],[2,5],[3,5],[4,5]]
+    .map(function(item){return new P(item[0],item[1])});
+
+    // prettier-ignore
+    var diamond_up =[[0,0],[1,0],
+                   [0,1],[1,1],
+                   [0,2],[1,2],
+                   [0,3],[1,3]]
+    .map(function(item){return new P(item[0],item[1])});
+
+    // prettier-ignore
+    var diamond_too = [[1,0],[2,0],[3,0],[4,0],
+               [0,1],[1,1],[2,1],[3,1]]
+    .map(function(item){return new P(item[0],item[1])});
+
+    // prettier-ignore
+    var diamond_for = [[0,0],
+                     [0,1],[1,1],
+                           [1,2],[2,2],
+                           [1,3],[2,3],
+                                 [2,4],[3,4],
+                                       [3,5]]
+    .map(function(item){return new P(item[0],item[1])});
+
+    // prettier-ignore
+    var star_up =      [[3,0],[4,0],
+                      [3,1],[4,1],
+    [0,2],[1,2],[2,2],[3,2],[4,2],[5,2],[6,2],[7,2],
+          [1,3],[2,3],[3,3],[4,3],[5,3],[6,3],
+                [2,4],[3,4],[4,4],[5,4],
+                [2,5],[3,5],[4,5],[5,5],
+          [1,6],[2,6],            [5,6],[6,6],
+          [1,7],                        [6,7]]
+    .map(function(item){return new P(item[0],item[1])});
+
+    // prettier-ignore
+    var boat_up =      [[3,0],[4,0],
+                      [3,1],[4,1],
+    [0,2],[1,2],[2,2],[3,2],[4,2],[5,2],[6,2],[7,2],
+          [1,3],[2,3],[3,3],[4,3],[5,3],[6,3]]
+  .map(function(item){return new P(item[0],item[1])});
+
+    // prettier-ignore
+    var boat_too = [[0,0],[1,0],
+                  [0,1],[1,1],
+                  [0,2],[1,2],[2,2],[3,2],[4,2],
+                  [0,3],[1,3],[2,3],[3,3],
+                        [1,4],[2,4],
+                        [1,5],[2,5],
+                              [2,6],[3,6],
+                                    [3,7]]
+    .map(function(item){return new P(item[0],item[1])});
+
+    // prettier-ignore
+    var boat_for =       [[3,0],[4,0],[5,0],[6,0],
+                  [2,1],[3,1],[4,1],[5,1],
+            [1,2],[2,2],[3,2],[4,2],
+            [1,3],[2,3],[3,3],[4,3],
+      [0,4],[1,4],            [4,4],[5,4],
+      [0,5],                        [5,5]]
+  .map(function(item){return new P(item[0],item[1])});
+    const Mosaic = {
+        penta: [
+            penta_up.map((item) => new P(item.x - 3, item.y - 3)),
+            penta_up.map((item) => new P(-item.x + 2, -item.y + 2)),
+            penta_up.map((item) => new P(item.x - 3, item.y - 3)),
+            penta_up.map((item) => new P(-item.x + 2, -item.y + 2)),
+            penta_up.map((item) => new P(item.x - 3, item.y - 3)),
+            penta_up.map((item) => new P(-item.x + 2, -item.y + 2)),
+            penta_up.map((item) => new P(item.x - 3, item.y - 3)),
+            penta_up.map((item) => new P(-item.x + 2, -item.y + 2)),
+            penta_up.map((item) => new P(item.x - 3, item.y - 3)),
+            penta_up.map((item) => new P(-item.x + 2, -item.y + 2)),
+        ],
+        diamond: [
+            diamond_up.map((item) => new P(item.x - 1, item.y - 4)),
+            diamond_for.map((item) => new P(-item.x + 2, item.y - 4)),
+            diamond_too.map((item) => new P(-item.x + 3, -item.y - 1)),
+            diamond_too.map((item) => new P(-item.x + 3, item.y + 0)),
+            diamond_for.map((item) => new P(-item.x + 2, -item.y + 3)),
+            diamond_up.map((item) => new P(item.x - 1, item.y - 0)),
+            diamond_for.map((item) => new P(item.x - 3, -item.y + 3)),
+            diamond_too.map((item) => new P(item.x - 4, item.y - 0)),
+            diamond_too.map((item) => new P(item.x - 4, -item.y - 1)),
+            diamond_for.map((item) => new P(item.x - 3, item.y - 4)),
+        ],
+        //
+        boat: [
+            boat_up.map((item) => new P(item.x - 4, item.y - 4)),
+            boat_for.map((item) => new P(item.x - 3, -item.y + 1)),
+            boat_too.map((item) => new P(item.x - 1, item.y - 4)),
+            boat_too.map((item) => new P(item.x - 1, -item.y + 3)),
+            boat_for.map((item) => new P(item.x - 3, item.y - 2)),
+            boat_up.map((item) => new P(item.x - 4, -item.y + 3)),
+            boat_for.map((item) => new P(-item.x + 2, item.y - 2)),
+            boat_too.map((item) => new P(-item.x + 0, -item.y + 3)),
+            boat_too.map((item) => new P(-item.x + 0, item.y - 4)),
+            boat_for.map((item) => new P(-item.x + 2, -item.y + 1)),
+        ],
+
+        //--
+        star: [
+            star_up.map((item) => new P(item.x - 4, item.y - 4)),
+            star_up.map((item) => new P(-item.x + 3, -item.y + 3)),
+            star_up.map((item) => new P(item.x - 4, item.y - 4)),
+            star_up.map((item) => new P(-item.x + 3, -item.y + 3)),
+            star_up.map((item) => new P(item.x - 4, item.y - 4)),
+            star_up.map((item) => new P(-item.x + 3, -item.y + 3)),
+            star_up.map((item) => new P(item.x - 4, item.y - 4)),
+            star_up.map((item) => new P(-item.x + 3, -item.y + 3)),
+            star_up.map((item) => new P(item.x - 4, item.y - 4)),
+            star_up.map((item) => new P(-item.x + 3, -item.y + 3)),
+        ],
+    };
+
+    // const Mosaic = {};
+
+    //     Mosaic.penta = wheel(pentaUp);
+    //     Mosaic.star = wheel(starUp);
+    //     Mosaic.boat = wheel(boatUp, boatWon, boatToo);
+    //     Mosaic.diamond = wheel(diamondUp, diamondWon, diamondToo);
+    return mosaic;
+})();
 // Build the api
 var penrose = (function () {
     var id;
@@ -493,7 +626,6 @@ var penrose = (function () {
         penta: shapes.penta,
         diamond: shapes.diamond,
         boat: shapes.boat,
-
         //--
         star: shapes.star,
 
@@ -502,6 +634,7 @@ var penrose = (function () {
             color: [YELLOW, YELLOW, YELLOW, YELLOW, YELLOW],
             twist: [0, 0, 0, 0, 0],
             shape: shapes.penta,
+            shapeKey: "penta",
             typeColor: BLUE_P,
             diamond: [],
         },
@@ -510,6 +643,7 @@ var penrose = (function () {
             color: [YELLOW, YELLOW, ORANGE, ORANGE, YELLOW],
             twist: [0, 0, -1, 1, 0],
             shape: shapes.penta,
+            shapeKey: "penta",
             typeColor: YELLOW,
             diamond: [0],
         },
@@ -518,6 +652,7 @@ var penrose = (function () {
             color: [YELLOW, ORANGE, ORANGE, ORANGE, ORANGE],
             twist: [0, -1, 1, -1, 1],
             shape: shapes.penta,
+            shapeKey: "penta",
             typeColor: ORANGE,
             diamond: [1, 4],
         },
@@ -526,18 +661,21 @@ var penrose = (function () {
             name: "St5: star",
             color: [BLUE, BLUE, BLUE, BLUE, BLUE],
             shape: shapes.star,
+            shapeKey: "star",
             typeColor: BLUE,
         },
         St3: {
             name: "St3: boat",
             color: [BLUE, BLUE, null, null, BLUE],
             shape: shapes.boat,
+            shapeKey: "boat",
             typeColor: BLUE,
         },
         St1: {
             name: "St1: diamond",
             color: [BLUE, null, null, null, null],
             shape: shapes.diamond,
+            shapeKey: "diamond",
             typeColor: BLUE,
         },
     };

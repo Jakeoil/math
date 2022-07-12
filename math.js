@@ -48,13 +48,19 @@ const MODE_QUADRILLE = "quadrille";
 const MODE_REAL = "real";
 const MODE_LIST = [MODE_MOSAIC, MODE_QUADRILLE, MODE_REAL];
 
-let shapeMode = MODE_MOSAIC;
+let shapeMode = MODE_QUADRILLE;
 const eleMode = document.querySelector("#shape-mode");
 
 if (eleMode) eleMode.innerHTML = shapeMode;
 
 const clickMode = function () {
     console.log(`Current mode ${shapeMode}`);
+    console.log(`length: ${MODE_LIST.length}`);
+    console.log(`idx: ${MODE_LIST.indexOf("quadrille")}`);
+    let new_idx = (MODE_LIST.indexOf(shapeMode) + 1) % MODE_LIST.length;
+    shapeMode = MODE_LIST[new_idx];
+    if (eleMode) eleMode.innerHTML = shapeMode;
+    penroseApp();
 };
 
 /**
@@ -134,7 +140,9 @@ function makeCanvas(canvasId) {
         const bounds = new Bounds();
         switch (canvasId) {
             case "p5":
+                console.log(`draw`);
                 bounds.expand(penta(0, penrose.Pe5, true, new P(3, 3), 0));
+                console.log(`bounds: ${bounds}`);
                 break;
             case "p3":
                 bounds.expand(penta(0, penrose.Pe3, false, new P(3, 3), 0));
@@ -586,6 +594,11 @@ function fig(fill, offset, shape) {
             return figure(fill, offset, shape);
         case MODE_QUADRILLE:
             return outline(fill, offset, shape);
+        case MODE_REAL:
+        default:
+            let bounds = new Bounds();
+            bounds.addPoint(offset, offset);
+            return bounds;
     }
 }
 /***
@@ -630,7 +643,7 @@ function outline(fill, offset, shape) {
     for (const point of shape) {
         g.strokeStyle = "#000000";
         g.fillStyle = fill;
-        g.lineWidth = 2;
+        g.lineWidth = 1;
         if (start) {
             g.beginPath();
             g.moveTo(
@@ -858,11 +871,7 @@ function penta(fifths, type, isDown, loc, exp) {
     fifths = norm(fifths);
     if (exp == 0) {
         bounds.expand(
-            figure(
-                pColor(type.typeColor),
-                loc,
-                type.shape[tenths(fifths, isDown)]
-            )
+            fig(pColor(type.typeColor), loc, type.shape[tenths(fifths, isDown)])
         );
         return bounds; // call figure
     }
@@ -937,11 +946,7 @@ function star(fifths, type, isDown, loc, exp) {
         // Draw the figure.  Finished
         //console.log(`typeColor: ${type.typeColor}`);
         bounds.expand(
-            figure(
-                pColor(type.typeColor),
-                loc,
-                type.shape[tenths(fifths, isDown)]
-            )
+            fig(pColor(type.typeColor), loc, type.shape[tenths(fifths, isDown)])
         );
         return bounds;
     }
