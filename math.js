@@ -10,23 +10,41 @@
 /**
  * Globals
  */
+// Graphics globals for whole canvas
+let g;
+
+// These may be controllable
+let scale;
+let stroke; // New
+/**
+ * These global values shall be controllable
+ * Set them to the defaults
+ */
+let p5Blue = penrose.BLUE;
+let p3Yellow = penrose.YELLOW;
+let p1Orange = penrose.ORANGE;
+let starBlue = penrose.BLUE;
+
+// p5Blue = "black";
+// p3Yellow = "lightgreen";
+// p1Orange = "red";
+// starBlue = "cyan";
+
+/**
+ * This is the default global for the shape and orientation controls
+ */
 const controls = new Controls(0, 0, false);
 // Can this be made into a function?
+
 const eleFifths = document.querySelector("#fifths");
 const eleType = document.querySelector("#type");
 const eleIsDown = document.querySelector("#isDown");
-eleFifths.innerHTML = `fifths: ${controls.fifths}`;
-eleType.innerHTML = controls.typeName;
-eleIsDown.innerHTML = controls.direction;
-
-// Graphics globals for whole canvas
-let g;
-let scale;
-let stroke; // New
 
 /**
+ * Initialization and
  * Events for the three buttons
  */
+eleFifths.innerHTML = `fifths: ${controls.fifths}`;
 const clickFifths = function () {
     console.log("clickFifths");
     controls.bumpFifths();
@@ -34,12 +52,14 @@ const clickFifths = function () {
     penroseApp();
 };
 
+eleType.innerHTML = controls.typeName;
 const clickType = function () {
     controls.bumpType();
     eleType.innerHTML = controls.typeName;
     penroseApp();
 };
 
+eleIsDown.innerHTML = controls.direction;
 const clickIsDown = function () {
     controls.toggleDirection();
     eleIsDown.innerHTML = controls.direction;
@@ -147,7 +167,7 @@ function drawFirstInflation(id) {
     const drawScreen = function () {
         g.fillStyle = "#ffffff";
         g.fillRect(0, 0, canvas.width, canvas.height);
-        g.fillStyle = penrose.ORANGE;
+        g.fillStyle = p1Orange;
         g.strokeStyle = penrose.OUTLINE;
         g.lineWidth = 1;
 
@@ -291,7 +311,7 @@ function drawGridWork(id) {
         g.fillStyle = "#ffffff";
         g.fillRect(0, 0, canvas.width, canvas.height);
 
-        g.fillStyle = penrose.ORANGE;
+        g.fillStyle = p1Orange;
         g.strokeStyle = penrose.OUTLINE;
         g.lineWidth = 1;
         scale = 10;
@@ -308,7 +328,7 @@ function drawGridWork(id) {
         for (const shape of shapes) {
             for (let i = 0; i < 10; i++) {
                 let offset = p((i + 1) * spacing, y);
-                figure(penrose.ORANGE, offset, shape[i]);
+                figure(p1Orange, offset, shape[i]);
                 grid(p((i + 1) * spacing, y), 5);
             }
             y += spacing;
@@ -325,7 +345,8 @@ function drawGridWork(id) {
         for (const shape of qShapes) {
             for (let i = 0; i < 10; i++) {
                 let offset = p((i + 1) * spacing, y);
-                outline(penrose.ORANGE, offset, shape[i]);
+                // outline("transparent", offset, shape[i]);
+                outline(p3Yellow + "44", offset, shape[i]);
             }
             y += spacing;
         }
@@ -397,7 +418,6 @@ function drawGeneric123(id) {
     g = canvas.getContext("2d");
     g.fillStyle = "#ffffff";
     g.fillRect(0, 0, canvas.width, canvas.height);
-    //g.fillStyle = penrose.ORANGE;
     g.strokeStyle = penrose.OUTLINE;
     g.lineWidth = 1;
     scale = 10;
@@ -605,6 +625,7 @@ function outline(fill, offset, shape) {
     let start = true;
     for (const point of shape) {
         g.strokeStyle = "#000000";
+        g.fillStyle = fill;
         g.lineWidth = 2;
         if (start) {
             g.beginPath();
@@ -622,6 +643,9 @@ function outline(fill, offset, shape) {
     }
     g.closePath();
     g.stroke();
+    if (fill) {
+        g.fill();
+    }
 }
 
 /***  
@@ -744,6 +768,18 @@ function compare(a, b) {
     }
 }
 
+function pColor(type) {
+    switch (type) {
+        case penrose.BLUE:
+            return p5Blue;
+        case penrose.YELLOW:
+            return p3Yellow;
+        case penrose.ORANGE:
+            return p1Orange;
+    }
+    return null;
+}
+
 /*******************************************************************************
  * Recursive routine to draw pentagon type objects.
  * P5, P3 and P1  Up versions shown
@@ -780,7 +816,11 @@ function penta(fifths, type, isDown, loc, exp) {
     fifths = norm(fifths);
     if (exp == 0) {
         bounds.expand(
-            figure(type.typeColor, loc, type.shape[tenths(fifths, isDown)])
+            figure(
+                pColor(type.typeColor),
+                loc,
+                type.shape[tenths(fifths, isDown)]
+            )
         );
         return bounds; // call figure
     }
@@ -855,7 +895,11 @@ function star(fifths, type, isDown, loc, exp) {
         // Draw the figure.  Finished
         //console.log(`typeColor: ${type.typeColor}`);
         bounds.expand(
-            figure(type.typeColor, loc, type.shape[tenths(fifths, isDown)])
+            figure(
+                pColor(type.typeColor),
+                loc,
+                type.shape[tenths(fifths, isDown)]
+            )
         );
         return bounds;
     }

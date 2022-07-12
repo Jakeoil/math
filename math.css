@@ -46,12 +46,17 @@ canvas.apple-ii {
     margin: 0px 0px 5px 0px;
     padding: 0px 0px 15px 3px;
 }
-.show-it {
+
+/* prettier ignore */
+.control-group h4 {
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+}
+.can-explore {
     display: block;
 }
 
 #content {
-    /* outline: 3px solid greenyellow; */
     flex: 6;
     margin-left: 10px;
     padding-left: 10px;
