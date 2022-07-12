@@ -20,7 +20,7 @@ let stroke; // New
  * These global values shall be controllable
  * Set them to the defaults
  */
-let p5Blue = penrose.BLUE;
+let p5Blue = penrose.BLUE_P;
 let p3Yellow = penrose.YELLOW;
 let p1Orange = penrose.ORANGE;
 let starBlue = penrose.BLUE;
@@ -771,6 +771,8 @@ function compare(a, b) {
 function pColor(type) {
     switch (type) {
         case penrose.BLUE:
+            return starBlue;
+        case penrose.BLUE_P:
             return p5Blue;
         case penrose.YELLOW:
             return p3Yellow;

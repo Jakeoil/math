@@ -420,6 +420,7 @@ var penrose = (function () {
     const ORANGE = "#e46c0a";
     const BLUE = "#0000ff";
     const YELLOW = "#ffff00";
+    const BLUE_P = "#00f";
 
     const shapes = {
         penta: [
@@ -476,9 +477,14 @@ var penrose = (function () {
     };
     // This is the core penrose object.
     return {
-        ORANGE: "#e46c0a",
-        BLUE: "#0000ff",
-        YELLOW: "#ffff00",
+        // ORANGE: "#e46c0a",
+        // BLUE: "#0000ff",
+        // YELLOW: "#ffff00",
+        // BLUE_P: "#00f", // Just making the string different
+        ORANGE: ORANGE,
+        BLUE: BLUE,
+        YELLOW: YELLOW,
+        BLUE_P: BLUE_P, // Just making the string different
         OUTLINE: "#4a7eba",
 
         up: [0, 2, 4, 6, 8], //
@@ -496,7 +502,7 @@ var penrose = (function () {
             color: [YELLOW, YELLOW, YELLOW, YELLOW, YELLOW],
             twist: [0, 0, 0, 0, 0],
             shape: shapes.penta,
-            typeColor: BLUE,
+            typeColor: BLUE_P,
             diamond: [],
         },
         Pe3: {
