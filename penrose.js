@@ -515,139 +515,15 @@ var mosaic = (function () {
 // Build the api
 
 var penrose = (function () {
-    var id;
-    var offset = {};
-
-    // prettier-ignore
-    var penta_up = [ [2,0],[3,0],
-             [1,1],[2,1],[3,1],[4,1],
-       [0,2],[1,2],[2,2],[3,2],[4,2],[5,2],
-       [0,3],[1,3],[2,3],[3,3],[4,3],[5,3],
-             [1,4],[2,4],[3,4],[4,4],
-             [1,5],[2,5],[3,5],[4,5]]
-    .map(function(item){return new P(item[0],item[1])});
-
-    // prettier-ignore
-    var diamond_up =[[0,0],[1,0],
-                   [0,1],[1,1],
-                   [0,2],[1,2],
-                   [0,3],[1,3]]
-    .map(function(item){return new P(item[0],item[1])});
-
-    // prettier-ignore
-    var diamond_too = [[1,0],[2,0],[3,0],[4,0],
-               [0,1],[1,1],[2,1],[3,1]]
-    .map(function(item){return new P(item[0],item[1])});
-
-    // prettier-ignore
-    var diamond_for = [[0,0],
-                     [0,1],[1,1],
-                           [1,2],[2,2],
-                           [1,3],[2,3],
-                                 [2,4],[3,4],
-                                       [3,5]]
-    .map(function(item){return new P(item[0],item[1])});
-
-    // prettier-ignore
-    var star_up =      [[3,0],[4,0],
-                      [3,1],[4,1],
-    [0,2],[1,2],[2,2],[3,2],[4,2],[5,2],[6,2],[7,2],
-          [1,3],[2,3],[3,3],[4,3],[5,3],[6,3],
-                [2,4],[3,4],[4,4],[5,4],
-                [2,5],[3,5],[4,5],[5,5],
-          [1,6],[2,6],            [5,6],[6,6],
-          [1,7],                        [6,7]]
-    .map(function(item){return new P(item[0],item[1])});
-
-    // prettier-ignore
-    var boat_up =      [[3,0],[4,0],
-                      [3,1],[4,1],
-    [0,2],[1,2],[2,2],[3,2],[4,2],[5,2],[6,2],[7,2],
-          [1,3],[2,3],[3,3],[4,3],[5,3],[6,3]]
-  .map(function(item){return new P(item[0],item[1])});
-
-    // prettier-ignore
-    var boat_too = [[0,0],[1,0],
-                  [0,1],[1,1],
-                  [0,2],[1,2],[2,2],[3,2],[4,2],
-                  [0,3],[1,3],[2,3],[3,3],
-                        [1,4],[2,4],
-                        [1,5],[2,5],
-                              [2,6],[3,6],
-                                    [3,7]]
-    .map(function(item){return new P(item[0],item[1])});
-
-    // prettier-ignore
-    var boat_for =       [[3,0],[4,0],[5,0],[6,0],
-                  [2,1],[3,1],[4,1],[5,1],
-            [1,2],[2,2],[3,2],[4,2],
-            [1,3],[2,3],[3,3],[4,3],
-      [0,4],[1,4],            [4,4],[5,4],
-      [0,5],                        [5,5]]
-  .map(function(item){return new P(item[0],item[1])});
-
     const ORANGE = "#e46c0a";
     const BLUE = "#0000ff";
     const YELLOW = "#ffff00";
     const BLUE_P = "#00f";
+
     const SHAPE_PENTA = "penta";
     const SHAPE_STAR = "star";
     const SHAPE_BOAT = "boat";
     const SHAPE_DIAMOND = "diamond";
-
-    const shapes = {
-        penta: [
-            penta_up.map((item) => new P(item.x - 3, item.y - 3)),
-            penta_up.map((item) => new P(-item.x + 2, -item.y + 2)),
-            penta_up.map((item) => new P(item.x - 3, item.y - 3)),
-            penta_up.map((item) => new P(-item.x + 2, -item.y + 2)),
-            penta_up.map((item) => new P(item.x - 3, item.y - 3)),
-            penta_up.map((item) => new P(-item.x + 2, -item.y + 2)),
-            penta_up.map((item) => new P(item.x - 3, item.y - 3)),
-            penta_up.map((item) => new P(-item.x + 2, -item.y + 2)),
-            penta_up.map((item) => new P(item.x - 3, item.y - 3)),
-            penta_up.map((item) => new P(-item.x + 2, -item.y + 2)),
-        ],
-        diamond: [
-            diamond_up.map((item) => new P(item.x - 1, item.y - 4)),
-            diamond_for.map((item) => new P(-item.x + 2, item.y - 4)),
-            diamond_too.map((item) => new P(-item.x + 3, -item.y - 1)),
-            diamond_too.map((item) => new P(-item.x + 3, item.y + 0)),
-            diamond_for.map((item) => new P(-item.x + 2, -item.y + 3)),
-            diamond_up.map((item) => new P(item.x - 1, item.y - 0)),
-            diamond_for.map((item) => new P(item.x - 3, -item.y + 3)),
-            diamond_too.map((item) => new P(item.x - 4, item.y - 0)),
-            diamond_too.map((item) => new P(item.x - 4, -item.y - 1)),
-            diamond_for.map((item) => new P(item.x - 3, item.y - 4)),
-        ],
-        //
-        boat: [
-            boat_up.map((item) => new P(item.x - 4, item.y - 4)),
-            boat_for.map((item) => new P(item.x - 3, -item.y + 1)),
-            boat_too.map((item) => new P(item.x - 1, item.y - 4)),
-            boat_too.map((item) => new P(item.x - 1, -item.y + 3)),
-            boat_for.map((item) => new P(item.x - 3, item.y - 2)),
-            boat_up.map((item) => new P(item.x - 4, -item.y + 3)),
-            boat_for.map((item) => new P(-item.x + 2, item.y - 2)),
-            boat_too.map((item) => new P(-item.x + 0, -item.y + 3)),
-            boat_too.map((item) => new P(-item.x + 0, item.y - 4)),
-            boat_for.map((item) => new P(-item.x + 2, -item.y + 1)),
-        ],
-
-        //--
-        star: [
-            star_up.map((item) => new P(item.x - 4, item.y - 4)),
-            star_up.map((item) => new P(-item.x + 3, -item.y + 3)),
-            star_up.map((item) => new P(item.x - 4, item.y - 4)),
-            star_up.map((item) => new P(-item.x + 3, -item.y + 3)),
-            star_up.map((item) => new P(item.x - 4, item.y - 4)),
-            star_up.map((item) => new P(-item.x + 3, -item.y + 3)),
-            star_up.map((item) => new P(item.x - 4, item.y - 4)),
-            star_up.map((item) => new P(-item.x + 3, -item.y + 3)),
-            star_up.map((item) => new P(item.x - 4, item.y - 4)),
-            star_up.map((item) => new P(-item.x + 3, -item.y + 3)),
-        ],
-    };
 
     const pSeed = [p(0, -6), p(3, -4), p(5, -2)];
     const sSeed = [p(0, -5), p(3, -5), p(5, -1)];
@@ -668,6 +544,19 @@ var penrose = (function () {
 
         up: [0, 2, 4, 6, 8], //
         down: [5, 7, 9, 1, 3],
+
+        SHAPE_PENTA: SHAPE_PENTA,
+        SHAPE_STAR: SHAPE_STAR,
+        SHAPE_BOAT: SHAPE_BOAT,
+        SHAPE_DIAMOND: SHAPE_DIAMOND,
+
+        // Valid for QUADRILLE and MOSAIC.
+        // Not for real,
+        pSeed: pSeed,
+        sSeed: sSeed,
+        tSeed: tSeed,
+        dSeed: dSeed,
+
         // okay, 10 of each
         // penta: shapes.penta,
         // diamond: shapes.diamond,

@@ -5,6 +5,8 @@
  * Jeff Coyles Penrose type one pattern made out of square tiles of
  * three colors.
  * Requires penrose.js
+ *
+ * Added Quadrille mode. Shows graph paper version.
  */
 
 /**
@@ -41,7 +43,9 @@ const eleStarColor = document.querySelector("star-color");
  *   "quadrille"
  *      Filled outlines like on graph paper
  *   "real"
- *      five fold real symmetry
+ *      True five fold real symmetry todo
+ *
+ * Should this be declared in penrose.js
  */
 const MODE_MOSAIC = "mosaic";
 const MODE_QUADRILLE = "quadrille";
@@ -54,9 +58,6 @@ const eleMode = document.querySelector("#shape-mode");
 if (eleMode) eleMode.innerHTML = shapeMode;
 
 const clickMode = function () {
-    console.log(`Current mode ${shapeMode}`);
-    console.log(`length: ${MODE_LIST.length}`);
-    console.log(`idx: ${MODE_LIST.indexOf("quadrille")}`);
     let new_idx = (MODE_LIST.indexOf(shapeMode) + 1) % MODE_LIST.length;
     shapeMode = MODE_LIST[new_idx];
     if (eleMode) eleMode.innerHTML = shapeMode;
@@ -120,7 +121,12 @@ function penroseApp() {
     drawGeneric3("g3");
 }
 
-/*************************************************************************************
+/******************************************************************************
+ * Screen Drawing Routiens
+ *
+ *****************************************************************************/
+
+/***
  * Draws a little canvas with a shape.
  * Shape depends on passed in ID.
  */
@@ -186,11 +192,10 @@ function redraw(bounds, canvas, drawFunction) {
     }
 }
 
-/***************************************************************************************
+/**
  * The first expansion draws penta(1) and star(1) varients
  * Sets the globals g and scale
  */
-
 function drawFirstInflation(id) {
     const canvas = document.querySelector(`#${id} > canvas`);
     if (!canvas) {
@@ -260,7 +265,8 @@ function drawFirstInflation(id) {
     };
     drawScreen();
 }
-/*************************************************************************************
+
+/**
  * The second draw test is the expansion of the first draw test.
  * It draws the second expansion of each of the tiles.
  *
@@ -328,6 +334,9 @@ function drawSecondInflation(id) {
     }
 }
 
+/***
+ * A lot of cools stuff for computing sizes here
+ */
 function drawGridWork(id) {
     const UP = false;
     const DOWN = true;
@@ -335,7 +344,7 @@ function drawGridWork(id) {
     const canvas = document.querySelector(`#${id} > canvas`);
 
     g = canvas.getContext("2d");
-    //drawScreen();
+    //drawScreen(); // We could use a control for this
     drawBig();
 
     /**
@@ -361,11 +370,16 @@ function drawGridWork(id) {
         ];
 
         // PENROSE OR GLOBAL
-        const shapeKeys = ["penta", "diamond", "star", "boat"];
+        const shapeKeys = [
+            penrose.SHAPE_PENTA,
+            penrose.SHAPE_DIAMOND,
+            penrose.SHAPE_STAR,
+            penrose.SHAPE_BOAT,
+        ];
+
         const spacing = 12;
         for (const key of shapeKeys) {
-            //for (const shape of shapes) {
-            const shape = getShapes(key);
+            const shape = getShapeSet(key);
             for (let i = 0; i < 10; i++) {
                 let offset = p((i + 1) * spacing, y);
                 fig(p1Orange, offset, shape[i]);
@@ -548,6 +562,10 @@ function drawGeneric123(id) {
     drawScreen();
 }
 
+/***
+ * This draws big decas.
+ * Let's make it friendlier
+ */
 function drawGeneric3(id) {
     console.log(`drawGeneric3`);
     const canvas = document.querySelector(`#${id} > canvas`);
@@ -593,6 +611,17 @@ function drawGeneric3(id) {
     drawScreen();
 }
 
+/**********************************************************
+ * Routines used by penta, star and deca.  Move these closer.
+ */
+
+/**
+ * The generic figure function is a mess. Let's find a better way.
+ * @param {} fill
+ * @param {*} offset
+ * @param {*} shape
+ * @returns
+ */
 function fig(fill, offset, shape) {
     if (!shape) {
         let bounds = new Bounds();
@@ -612,7 +641,7 @@ function fig(fill, offset, shape) {
     }
 }
 
-function getShapes(key) {
+function getShapeSet(key) {
     switch (shapeMode) {
         case MODE_MOSAIC:
             console.log(`mosaic key: ${key}`);
@@ -624,11 +653,14 @@ function getShapes(key) {
     }
     return null;
 }
+
 /***
  * penrose is a global constant (does it have to be a var?)
  * This is called only from expansion 1
  */
-/**
+
+/***
+ * Used by Mosaic figure.
  * This is the routine that ultimately renders the 'tile'
  * @param {*} fill One of the colors
  * @param {*} offset Location in P format
@@ -660,6 +692,10 @@ function figure(fill, offset, shape) {
     return bounds;
 }
 
+/***
+ * Used for quadrille
+ *
+ */
 function outline(fill, offset, shape) {
     let start = true;
     const bounds = new Bounds();
@@ -692,6 +728,9 @@ function outline(fill, offset, shape) {
     return bounds;
 }
 
+/***
+ * Draws a nice graph.
+ */
 function grid(offset, size) {
     g.strokeStyle = penrose.OUTLINE;
     for (let y = -size; y < size; y++) {
@@ -717,6 +756,12 @@ function grid(offset, size) {
     g.stroke();
 }
 
+/**
+ * Have no use for this yet.  Maybe delete
+ * @param {*} offset
+ * @param {*} shape
+ * @returns
+ */
 function measure(offset, shape) {
     const bounds = new Bounds();
     for (const point of shape) {
@@ -724,7 +769,7 @@ function measure(offset, shape) {
     }
     return bounds;
 }
-/***  
+/***************************************************************  
  * Discussion of the second expansions penta points.
  * These are the x and y offset from a center rectangle to an inverted rectangle.
  * There are five of them. Let's call the x coordinate cos and the y
@@ -806,17 +851,12 @@ const sWheels = [null];
 const tWheels = [null];
 const dWheels = [null];
 
-const pSeed = [p(0, -6), p(3, -4), p(5, -2)];
-const sSeed = [p(0, -5), p(3, -5), p(5, -1)];
-const tSeed = [p(0, -8), p(5, -8), p(8, -2)];
-const dSeed = [p(0, -3), p(2, -3), p(3, -1)];
-
 // Wheel1 is the seed.
 //const pWheel1 = new Wheel(p(0, -6), p(3, -4), p(5, -2));
-const pWheel1 = new Wheel(...pSeed);
-const sWheel1 = new Wheel(...sSeed);
-const tWheel1 = new Wheel(...tSeed);
-const dWheel1 = new Wheel(...dSeed);
+const pWheel1 = new Wheel(...penrose.pSeed);
+const sWheel1 = new Wheel(...penrose.sSeed);
+const tWheel1 = new Wheel(...penrose.tSeed);
+const dWheel1 = new Wheel(...penrose.dSeed);
 
 console.log(`real P1[1]: ${pWheel1.string}`);
 console.log(`real S1[1]: ${sWheel1.string}`);
@@ -896,7 +936,7 @@ function penta(fifths, type, isDown, loc, exp) {
     const bounds = new Bounds();
     fifths = norm(fifths);
     if (exp == 0) {
-        let shapes = getShapes(type.shapeKey);
+        let shapes = getShapeSet(type.shapeKey);
         if (shapes) {
             bounds.expand(
                 fig(pColor(type.typeColor), loc, shapes[tenths(fifths, isDown)])
@@ -941,7 +981,7 @@ function penta(fifths, type, isDown, loc, exp) {
     return bounds;
 }
 
-/******************************************************************************************
+/******************************************************************************
  * S5, S3 and S1  Up versions shown
  *    s5   star
  *
@@ -973,7 +1013,7 @@ function star(fifths, type, isDown, loc, exp) {
     const name = type.name;
     fifths = norm(fifths);
     if (exp == 0) {
-        let shapes = getShapes(type.shapeKey);
+        let shapes = getShapeSet(type.shapeKey);
         if (shapes) {
             bounds.expand(
                 fig(pColor(type.typeColor), loc, shapes[tenths(fifths, isDown)])
