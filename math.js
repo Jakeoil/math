@@ -48,7 +48,7 @@ const MODE_QUADRILLE = "quadrille";
 const MODE_REAL = "real";
 const MODE_LIST = [MODE_MOSAIC, MODE_QUADRILLE, MODE_REAL];
 
-let shapeMode = MODE_QUADRILLE;
+let shapeMode = MODE_MOSAIC;
 const eleMode = document.querySelector("#shape-mode");
 
 if (eleMode) eleMode.innerHTML = shapeMode;
@@ -801,14 +801,17 @@ const sWheels = [null];
 const tWheels = [null];
 const dWheels = [null];
 
-// Wheel1 is the seed.
-const pWheel1 = new Wheel(p(0, -6), p(3, -4), p(5, -2));
-const sWheel1 = new Wheel(p(0, -5), p(3, -5), p(5, -1));
-const tWheel1 = new Wheel(p(0, -8), p(5, -8), p(8, -2));
-const dWheel1 = new Wheel(p(0, -3), p(2, -3), p(3, -1));
+const pSeed = [p(0, -6), p(3, -4), p(5, -2)];
+const sSeed = [p(0, -5), p(3, -5), p(5, -1)];
+const tSeed = [p(0, -8), p(5, -8), p(8, -2)];
+const dSeed = [p(0, -3), p(2, -3), p(3, -1)];
 
-// dWheel2
-const dWheel2 = new Wheel(p(0, -3 - 6), p(2 + 3, -3 - 4), p(8, -2 - 3));
+// Wheel1 is the seed.
+//const pWheel1 = new Wheel(p(0, -6), p(3, -4), p(5, -2));
+const pWheel1 = new Wheel(...pSeed);
+const sWheel1 = new Wheel(...sSeed);
+const tWheel1 = new Wheel(...tSeed);
+const dWheel1 = new Wheel(...dSeed);
 
 console.log(`real P1[1]: ${pWheel1.string}`);
 console.log(`real S1[1]: ${sWheel1.string}`);

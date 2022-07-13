@@ -250,7 +250,42 @@ class Controls {
         penrose.St5,
     ];
 }
+/**
+ * This should be easy, we just need drawing of the regular pentagon.
+ */
+var real = (function () {
+    /**
+     * Unit pentagon coordinates
+     */
+    const SQRT5 = Math.sqrt(5);
+    const PHI = (SQRT5 + 1) / 2;
+    const INV_PHI = PHI - 1;
+    const PHI2 = 6 + 2 * SQRT5 + 1;
+    const cos0 = 1;
+    const cos1 = PHI / 2;
+    const cos2 = INV_PHI / 2;
+    const sin0 = 0;
+    const sin2 = Math.sqrt(10 + 2 * SQRT5) / 4;
+    const sin4 = Math.sqrt(10 - 2 * SQRT5) / 4;
+    const side = 2 * sin4;
+    const norm4 = (it) => (it * 4) / side;
+    const u0 = [sin0, -cos0].map(norm4);
+    const u1 = [sin2, -cos1].map(norm4);
+    const u2 = [sin4, cos2].map(norm4);
+    const u3 = [-sin4, cos2].map(norm4);
+    const u4 = [-sin2, -cos1].map(norm4);
+    // the length of the side here is
+    // side is greater than on. I we want to normalize to 4.
 
+    const pentaUp = [u0, u1, u2, u3, u4];
+
+    const Real = {};
+    Real.pentaUp = pentaUp;
+    return Real;
+})();
+console.log(
+    `pentaUp: [${real.pentaUp[0]}],[${real.pentaUp[1]}],[${real.pentaUp[3]}],[${real.pentaUp[3]}],[${real.pentaUp[4]}]`
+);
 /**
  * This is the path model that would work on graph paper
  */
