@@ -513,6 +513,7 @@ var mosaic = (function () {
     return Mosaic;
 })();
 // Build the api
+
 var penrose = (function () {
     var id;
     var offset = {};
@@ -589,6 +590,10 @@ var penrose = (function () {
     const BLUE = "#0000ff";
     const YELLOW = "#ffff00";
     const BLUE_P = "#00f";
+    const SHAPE_PENTA = "penta";
+    const SHAPE_STAR = "star";
+    const SHAPE_BOAT = "boat";
+    const SHAPE_DIAMOND = "diamond";
 
     const shapes = {
         penta: [
@@ -643,6 +648,12 @@ var penrose = (function () {
             star_up.map((item) => new P(-item.x + 3, -item.y + 3)),
         ],
     };
+
+    const pSeed = [p(0, -6), p(3, -4), p(5, -2)];
+    const sSeed = [p(0, -5), p(3, -5), p(5, -1)];
+    const tSeed = [p(0, -8), p(5, -8), p(8, -2)];
+    const dSeed = [p(0, -3), p(2, -3), p(3, -1)];
+
     // This is the core penrose object.
     return {
         // ORANGE: "#e46c0a",
@@ -658,18 +669,18 @@ var penrose = (function () {
         up: [0, 2, 4, 6, 8], //
         down: [5, 7, 9, 1, 3],
         // okay, 10 of each
-        penta: shapes.penta,
-        diamond: shapes.diamond,
-        boat: shapes.boat,
-        //--
-        star: shapes.star,
+        // penta: shapes.penta,
+        // diamond: shapes.diamond,
+        // boat: shapes.boat,
+        // //--
+        // star: shapes.star,
 
         Pe5: {
             name: "Pe5",
             color: [YELLOW, YELLOW, YELLOW, YELLOW, YELLOW],
             twist: [0, 0, 0, 0, 0],
-            shape: shapes.penta,
-            shapeKey: "penta",
+            //shape: shapes.penta,
+            shapeKey: SHAPE_PENTA,
             typeColor: BLUE_P,
             diamond: [],
         },
@@ -677,8 +688,8 @@ var penrose = (function () {
             name: "Pe3",
             color: [YELLOW, YELLOW, ORANGE, ORANGE, YELLOW],
             twist: [0, 0, -1, 1, 0],
-            shape: shapes.penta,
-            shapeKey: "penta",
+            //            shape: shapes.penta,
+            shapeKey: SHAPE_PENTA,
             typeColor: YELLOW,
             diamond: [0],
         },
@@ -686,8 +697,9 @@ var penrose = (function () {
             name: "Pe1",
             color: [YELLOW, ORANGE, ORANGE, ORANGE, ORANGE],
             twist: [0, -1, 1, -1, 1],
-            shape: shapes.penta,
-            shapeKey: "penta",
+            //          shape: shapes.penta,
+            shapeKey: SHAPE_PENTA,
+            //            shapeKey: "penta",
             typeColor: ORANGE,
             diamond: [1, 4],
         },
@@ -695,22 +707,22 @@ var penrose = (function () {
         St5: {
             name: "St5: star",
             color: [BLUE, BLUE, BLUE, BLUE, BLUE],
-            shape: shapes.star,
-            shapeKey: "star",
+            //shape: shapes.star,
+            shapeKey: SHAPE_STAR,
             typeColor: BLUE,
         },
         St3: {
             name: "St3: boat",
             color: [BLUE, BLUE, null, null, BLUE],
-            shape: shapes.boat,
-            shapeKey: "boat",
+            //shape: shapes.boat,
+            shapeKey: SHAPE_BOAT,
             typeColor: BLUE,
         },
         St1: {
             name: "St1: diamond",
             color: [BLUE, null, null, null, null],
-            shape: shapes.diamond,
-            shapeKey: "diamond",
+            //shape: shapes.diamond,
+            shapeKey: SHAPE_DIAMOND,
             typeColor: BLUE,
         },
     };

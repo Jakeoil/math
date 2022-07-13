@@ -359,11 +359,16 @@ function drawGridWork(id) {
             penrose.star,
             penrose.boat,
         ];
+
+        // PENROSE OR GLOBAL
+        const shapeKeys = ["penta", "diamond", "star", "boat"];
         const spacing = 12;
-        for (const shape of shapes) {
+        for (const key of shapeKeys) {
+            //for (const shape of shapes) {
+            const shape = getShapes(key);
             for (let i = 0; i < 10; i++) {
                 let offset = p((i + 1) * spacing, y);
-                figure(p1Orange, offset, shape[i]);
+                fig(p1Orange, offset, shape[i]);
                 grid(p((i + 1) * spacing, y), 5);
             }
             y += spacing;
