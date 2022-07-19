@@ -256,24 +256,64 @@ class Controls {
 var real = (function () {
     /**
      * Unit pentagon coordinates
+     * Values come from
+     * https://mathworld.wolfram.com/RegularPentagon.html
+     *
+     * The coordinate system used in penrose differs from the standard.  First,
+     * the y axis is reversed, that is the up direction is negative. Second,
+     * angles are measured clockwise from y axis. There are three angle coor
+     * coordinate systems. up down and wheel.
+     * up and down are based on a right side up and upside down pentagon
+     * respectively. Those angles are measured in fifths startin with the
+     * 'apex'(measured in fifths 2pi/5 or 72 degrees), down, also measured in 
+     * fifths, and wheel which combines the two.
+     * [up0, down3, up1, down4, up2, down0, up3, down1, up4, down2]
+     * If up0, down3 and up1 are known, the entire wheel can be constructed.
+     * 
+     * The angles of all 10 coordinates can be derived from the values 0, 1,
+     * cos 36 cos 72 sin 72 and sin 144 (90-54) 
+    
+     * There is another coordinate system hiding away which is at a right angle 
+     * to the one described above
+     * measurement is called 'up'
+     * 
+     *  . . _|_
+     *  . _|* *|_ . 
+     *  _|* * * *|_ 
+     * |* * * * * *|
+     * |_ * * * * _|
+     *   |* * * *| 
+     *   |_______|
+
+     *
      */
     const SQRT5 = Math.sqrt(5);
     const PHI = (SQRT5 + 1) / 2;
     const INV_PHI = PHI - 1;
     const PHI2 = 6 + 2 * SQRT5 + 1;
+
     const cos0 = 1;
-    const cos1 = PHI / 2;
-    const cos2 = INV_PHI / 2;
+    // c_1 = cos(2pi/5)
+    const cos1 = PHI / 2; // .809  sin 54/ cos 36
+    const cos2 = INV_PHI / 2; // .309 sin 18/108 cos 72
     const sin0 = 0;
-    const sin2 = Math.sqrt(10 + 2 * SQRT5) / 4;
-    const sin4 = Math.sqrt(10 - 2 * SQRT5) / 4;
+    const sin2 = Math.sqrt(10 + 2 * SQRT5) / 4; // .951 sin 72 cos 18
+    const sin4 = Math.sqrt(10 - 2 * SQRT5) / 4; // .587 sin 36 cos 54
+    // side of unit circle R_unitCircle
     const side = 2 * sin4;
-    const norm4 = (it) => (it * 4) / side;
+    // Unit circle units to a = 4
+    const a = 4; // length of side
+    const norm4 = (it) => (it * a) / side;
     const u0 = [sin0, -cos0].map(norm4);
     const u1 = [sin2, -cos1].map(norm4);
     const u2 = [sin4, cos2].map(norm4);
     const u3 = [-sin4, cos2].map(norm4);
     const u4 = [-sin2, -cos1].map(norm4);
+
+    const R = (Math.sqrt(50 + 10 * SQRT5) * a) / 10;
+
+    const r = (Math.sqrt(25 + 10 * SQRT5) * a) / 10;
+
     // the length of the side here is
     // side is greater than on. I we want to normalize to 4.
 

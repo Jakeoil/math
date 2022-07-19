@@ -119,6 +119,7 @@ function penroseApp() {
     // This is where I refactor _everything_
     drawGeneric123("g012");
     drawGeneric3("g3");
+    drawRealWork("rWork");
 }
 
 /******************************************************************************
@@ -611,6 +612,24 @@ function drawGeneric3(id) {
     drawScreen();
 }
 
+function drawRealWork(id) {
+    console.log(`drawGeneric3`);
+    const canvas = document.querySelector(`#${id} > canvas`);
+
+    // g is global
+    g = canvas.getContext("2d");
+    g.fillStyle = "#ffffff";
+    g.fillRect(0, 0, canvas.width, canvas.height);
+    g.strokeStyle = penrose.OUTLINE;
+    g.lineWidth = 1;
+    scale = 10;
+
+    const drawScreen = function () {
+        //const rShapes = [real.penta];
+    };
+
+    drawScreen();
+}
 /**********************************************************
  * Routines used by penta, star and deca.  Move these closer.
  */
