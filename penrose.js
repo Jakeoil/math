@@ -3,9 +3,7 @@
 console.log("penrose.js");
 /**
  * Orthoganal Penrose program version one.
- * These routines process a grid. They do not control rendering.
- *
- *
+ * These routines process a scaled grid. They do not control rendering.
  */
 class P {
     constructor(x, y) {
@@ -19,6 +17,7 @@ class P {
     hr = () => new P(-this.x, this.y);
     // If used, strictly for offsets
     div = (d) => new P(this.x / d, this.y / d);
+    mult = (m) => new P(this.x * m, this.y * m);
     // Sometimes you need to create new ones
     copy = (d) => new P(this.x, this.y);
     //
@@ -29,18 +28,6 @@ class P {
     equals = (b) => this.x == b.x && this.y == b.y;
 }
 
-class Coord {
-    constructor(x, y) {
-        this.coord = [x, y];
-    }
-
-    tr = (offset) => [this.coord[0] + offset[0], this.coord[1] + offset[1]];
-    vr = () => [this.coord[0], -this.coord[1]];
-    hr = () => [-this.coord[0], this.coord[1]];
-    copy = [this.coord[0], this.coord[1]];
-    equals = (that) =>
-        this.coord[0] == that.coord[0] && this.coord[1] == that.coord[1];
-}
 /**
  * Convenience functions
  * Mostly due to the fact that I chose and object format
@@ -52,9 +39,12 @@ const norm = (n) => ((n % 5) + 5) % 5;
 function tenths(fifths, isDown) {
     return (fifths * 2 + (isDown ? 5 : 0)) % 10;
 }
+
 /**
  * Mutable class
  * This measures and adjusts the bounding rectangle.
+ * Only the element drawing function (figure) creates a new bounds and returns
+ * either a Bounds with the max min or null max min if nothing got drawn.
  */
 class Bounds {
     constructor() {
@@ -63,14 +53,14 @@ class Bounds {
     }
 
     /**
-     * Called from figure
+     * Called from within figure
      * @param {*} offset
      * @param {*} point
      */
     addPoint(offset, point) {
-        const logicalPoint = new P(offset.x + point.x, offset.y + point.y);
+        const logicalPoint = offset.tr(point);
         if (!this.maxPoint || !this.minPoint) {
-            this.minPoint = logicalPoint.copy(); // private copies, not references
+            this.minPoint = logicalPoint.copy();
             this.maxPoint = logicalPoint.copy();
             return;
         }
@@ -87,13 +77,26 @@ class Bounds {
         }
     }
 
+    /**
+     * Wrapper function for figure. figure returns a bounds object. This
+     * object is integrated (added, mutates) this.
+     * @param {} bounds
+     * @returns
+     */
     expand(bounds) {
         if (!bounds) {
-            console.log(TAG, "Makes no sense");
+            // Figure returned null?
+            console.log(TAG, "expand: Figure returned null?");
+            return;
+        }
+
+        if (!bounds.maxPoint || !bounds.minPoint) {
+            // figure didn't draw anything.
             return;
         }
 
         if (!this.maxPoint || !this.minPoint) {
+            // This is the first expansion of this.
             this.minPoint = bounds.minPoint;
             this.maxPoint = bounds.maxPoint;
             return;
@@ -117,65 +120,9 @@ class Bounds {
     }
 }
 
-// class BoundsCoord {
-//     constructor() {
-//         this.maxPoint = null;
-//         this.minPoint = null;
-//     }
-
-//     /**
-//      * Called from figure
-//      * @param {*} offset
-//      * @param {*} point
-//      */
-//     addPoint(offset, point) {
-//         const logicalPoint = point.tr(offset);
-//         if (!this.maxPoint || !this.minPoint) {
-//             this.minPoint = logicalPoint.copy(); // private copies, not references
-//             this.maxPoint = logicalPoint.copy();
-//             return;
-//         }
-
-//         if (logicalPoint[0] < this.minPoint[0]) {
-//             this.minPoint[0] = logicalPoint[0];
-//         } else if (logicalPoint[0] > this.maxPoint[0]) {
-//             this.maxPoint[0] = logicalPoint[0];
-//         }
-//         if (logicalPoint[1] < this.minPoint[1]) {
-//             this.minPoint[1] = logicalPoint[1];
-//         } else if (logicalPoint[1] > this.maxPoint[1]) {
-//             this.maxPoint[1] = logicalPoint[1];
-//         }
-//     }
-
-//     expand(bounds) {
-//         if (!bounds) {
-//             return;
-//         }
-
-//         if (!this.maxPoint || !this.minPoint) {
-//             this.minPoint = bounds.minPoint;
-//             this.maxPoint = bounds.maxPoint;
-//             return;
-//         }
-
-//         if (bounds.minPoint[0] < this.minPoint[0]) {
-//             this.minPoint[0] = bounds.minPoint[0];
-//         }
-//         if (bounds.minPoint[1] < this.minPoint[1]) {
-//             this.minPoint[1] = bounds.minPoint[1];
-//         }
-//         if (bounds.maxPoint[0] > this.maxPoint[0]) {
-//             this.maxPoint[0] = bounds.maxPoint[0];
-//         }
-//         if (bounds.maxPoint[1] > this.maxPoint[1]) {
-//             this.maxPoint[1] = bounds.maxPoint[1];
-//         }
-//     }
-// }
-
 /**
  * Creates a 10 point wheel out of the first three coordinates (or Ps)
+ * Input is up[0], down[3], up[1]
  */
 class Wheel {
     constructor(p0, p1, p2) {
@@ -223,7 +170,7 @@ class Wheel {
  * Return a shape wheel based on a minimal set of
  * shapes. The shapes with five fold symmetry only need
  * up as input. All others require element 0, 1 and 2 positions.
- * aka up0, down4, up2
+ * aka up0, down3, up2
  */
 function shapeWheel(up, won, too) {
     if (up) {
@@ -257,6 +204,11 @@ function shapeWheel(up, won, too) {
     return [];
 }
 
+/**
+ * A clustered set of globals
+ * Cannot say whether it was a good idea to cluster them
+ * Added cookie handling
+ */
 class Controls {
     constructor(fifths, typeIndex, isDown) {
         this.fifths = fifths;
@@ -286,6 +238,7 @@ class Controls {
         cookie.setIsDown(this.isDown);
     }
 
+    // eww, should add the decagon?
     typeList = [
         penrose.Pe1,
         penrose.Pe3,
@@ -296,6 +249,11 @@ class Controls {
     ];
 }
 
+/**
+ * cookie logic from  https://javascript.info/cookie
+ * @param {*} name
+ * @returns
+ */
 // returns the cookie with the given name,
 // or undefined if not found
 function getCookie(name) {
@@ -309,6 +267,7 @@ function getCookie(name) {
     return matches ? decodeURIComponent(matches[1]) : undefined;
 }
 
+// Good option is {"max-age": 3600}  // one hour
 function setCookie(name, value, options = {}) {
     options = {
         path: "/",
@@ -339,6 +298,7 @@ function deleteCookie(name) {
     });
 }
 
+// The cookie interface
 var cookie = (function () {
     const Cookie = {};
     Cookie.getShapeMode = function (sm) {
@@ -376,59 +336,104 @@ var cookie = (function () {
 var real = (function () {
     /**
      * Unit pentagon coordinates
-     * Values come from
+     * Values come from the only f*ing place on the internet that bothers:
      * https://mathworld.wolfram.com/RegularPentagon.html
+     * https://mathworld.wolfram.com/Pentagram.html
      *
-     * The coordinate system used in penrose differs from the standard.  First,
-     * the y axis is reversed, that is the up direction is negative. Second,
-     * angles are measured clockwise from y axis. There are three angle coor
-     * coordinate systems. up down and wheel.
-     * up and down are based on a right side up and upside down pentagon
-     * respectively. Those angles are measured in fifths startin with the
-     * 'apex'(measured in fifths 2pi/5 or 72 degrees), down, also measured in 
-     * fifths, and wheel which combines the two.
-     * [up0, down3, up1, down4, up2, down0, up3, down1, up4, down2]
-     * If up0, down3 and up1 are known, the entire wheel can be constructed.
-     * 
-     * The angles of all 10 coordinates can be derived from the values 0, 1,
-     * cos 36 cos 72 sin 72 and sin 144 (90-54) 
-    
-     * There is another coordinate system hiding away which is at a right angle 
-     * to the one described above
-     * measurement is called 'up'
-     * 
-     *  . . _|_
-     *  . _|* *|_ . 
-     *  _|* * * *|_ 
-     * |* * * * * *|
-     * |_ * * * * _|
-     *   |* * * *| 
-     *   |_______|
-
+     * The coordinate system used in Penrose differs from the math standard.
+     * First, As in virtually all graphics programs, the y axis is reversed.
+     * Up is negative. Up is also the default 0 angle.
+     * Second, angles are measured clockwise from y axis. Angles are
+     * integers.  There are three angle coordinate system: up down and wheel.
+     *
+     * up refers to the vertices of a right side up pentagon, that is, a
+     * pentagon  with a horizontal base and a apex on top. The top
+     * coordinate, up[0] is P(0, <negative value>). The angles are mod 5
+     * integers referred to as fifths. A fifth is actually n * 2*PI/5 or 72
+     * degrees.
+     *
+     * A vertical reflection of the up system gives you the down system, based
+     * on an 'upside down' pentagon. Thus the down[0] coordinate is
+     * P(0, <positive value>).
+     *
+     * Both systems combined give the 10 angles of the mod 10 wheel system.
+     * Elements 0 to 9 are clockwise: [ up0, down3, up1, down4, up2, down0,
+     * up3, down1, up4, down2]]. The angle here is 36 degrees or a tenth of a
+     *  circle: n * PI / 5
+     *
+     * Given the value of up0 (wheel0), down3 (wheel1) and up1 (wheel2), the
+     * entire wheel can be constructed based on vertical and horizontal
+     * reflections of those three.
+     *
+     * There is another coordinate system hiding away which is at a right angle
+     * to the one described above. Fortunately we don't use that one.
+     *
+     *                              u0
+     *                               *
+     *                     d2 *             * d3
+     *
+     *                   u4 *                 * u1
+     *                               o
+     *                   d1 *                 * d4
+     *
+     *                     u3 *            * u2
+     *                               *
+     *                              d0
      *
      */
-    const SQRT5 = Math.sqrt(5);
-    const PHI = (SQRT5 + 1) / 2;
-    const INV_PHI = PHI - 1;
-    const PHI2 = 6 + 2 * SQRT5 + 1;
+    const SQRT5 = Math.sqrt(5); // 2.236
+    const PHI = (SQRT5 + 1) / 2; // 1.618
+    console.log(`sqrt5: ${SQRT5}, PHI: ${PHI}`);
 
-    const cos0 = 1;
-    // c_1 = cos(2pi/5)
-    const cos1 = PHI / 2; // .809  sin 54/ cos 36
-    const cos2 = INV_PHI / 2; // .309 sin 18/108 cos 72
-    const sin0 = 0;
-    const sin2 = Math.sqrt(10 + 2 * SQRT5) / 4; // .951 sin 72 cos 18
-    const sin4 = Math.sqrt(10 - 2 * SQRT5) / 4; // .587 sin 36 cos 54
+    // Here are the computed points of an up pentagon with bigR = 1
+    const ct_0 = Math.cos(0);
+    const ct_1 = Math.cos((2 * Math.PI) / 5);
+    const ct_2 = Math.cos(Math.PI / 5);
+    const st_0 = Math.sin(1);
+    const st_1 = Math.sin((2 * Math.PI) / 5);
+    const st_2 = Math.sin((4 * Math.PI) / 5);
+
+    const c_0 = 1; // 1.0
+    const c_1 = (SQRT5 - 1) / 4; // .309
+    const c_2 = (SQRT5 + 1) / 4; // .809
+    const s_0 = 0; // 0.0
+    const s_1 = Math.sqrt(10 + 2 * SQRT5) / 4; // .951 sin 72 cos 18
+    const s_2 = Math.sqrt(10 - 2 * SQRT5) / 4; // .588 sin 36 cos 54
+    console.log(`s1 ${st_1} ${s_1} c1 ${ct_1} ${c_1}`);
+    console.log(`s2 ${st_2} ${s_2} c2 ${ct_2} ${c_2}`);
     // side of unit circle R_unitCircle
-    const side = 2 * sin4;
+    const unitPentagonSide = 2 * s_2;
+    console.log(`Unit pentagon side: ${unitPentagonSide}`); // 1.177
     // Unit circle units to a = 4
-    const a = 4; // length of side
-    const norm4 = (it) => (it * a) / side;
-    const u0 = [sin0, -cos0].map(norm4);
-    const u1 = [sin2, -cos1].map(norm4);
-    const u2 = [sin4, cos2].map(norm4);
-    const u3 = [-sin4, cos2].map(norm4);
-    const u4 = [-sin2, -cos1].map(norm4);
+    const a = 4; // desired length of side
+    const norm4 = (it) => (it * a) / unitPentagonSide;
+    const unitUp = [
+        [s_0, -c_0],
+        [s_1, -c_1],
+        [s_2, c_2],
+        [-s_2, c_2],
+        [-s_1, -c_1],
+    ].map(toP);
+
+    const pentaUp = unitUp.map((item) => item.mult(a).div(unitPentagonSide));
+
+    // okay, let's do the pentagram now
+    // The pentagram tips
+    const rho = Math.sqrt((25 - 11 * SQRT5) / 10);
+    const rho4 = (it) => (it / rho) * 4;
+    const t0 = [s_0, -c_0].map(rho4);
+    const t1 = [s_1, -c_1].map(rho4);
+    const t2 = [s_2, c_2].map(rho4);
+    const t3 = [-s_2, c_2].map(rho4);
+    const t4 = [-s_1, -c_1].map(rho4);
+
+    // The pentagram dimples
+    const r4 = (it) => it * 4;
+    const pc0 = [s_0, -c_0].map(r4);
+    const pc1 = [s_1, -c_1].map(r4);
+    const pc2 = [s_2, c_2].map(r4);
+    const pc3 = [-s_2, c_2].map(r4);
+    const pc4 = [-s_1, -c_1].map(r4);
 
     const R = (Math.sqrt(50 + 10 * SQRT5) * a) / 10;
 
@@ -437,19 +442,22 @@ var real = (function () {
     // the length of the side here is
     // side is greater than on. I we want to normalize to 4.
 
-    const pentaUp = [u0, u1, u2, u3, u4].map(toP);
+    //const pentaUp = [u0, u1, u2, u3, u4].map(toP);
+    console.log(`pentaUp: ${pentaUp}`);
 
+    const starUp = [t0, t2, t4, t1, t3].map(toP);
+    console.log(`starUp:`);
     // !!! fake
     // prettier-ignore
-    const starUp = [
-        [0, -6], [1, -2], [5, -2], [2, 0], [3, 4],
-        [0, 2], [-3, 4], [-2, 0], [-5, -2], [-1, -2],
-    ].map(toP);
-
+    // const starUp = [
+    //      [0, -6], [1, -2], [5, -2], [2, 0], [3, 4],
+    //      [0, 2], [-3, 4], [-2, 0], [-5, -2], [-1, -2],
+    //  ].map(toP);
+    const diamondUp = [pc0, pc1, pc2, pc3, pc4].map(toP);
     // prettier-ignore
-    const diamondUp = [
-        [0, -6], [1, -2], [0, 2], [-1, -2]
-    ].map(toP);
+    //const diamondUp = [
+    //    [0, -6], [1, -2], [0, 2], [-1, -2]
+    //].map(toP);
 
     // prettier-ignore
     const diamondWon = [
