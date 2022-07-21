@@ -383,30 +383,72 @@ var real = (function () {
      */
     const SQRT5 = Math.sqrt(5); // 2.236
     const PHI = (SQRT5 + 1) / 2; // 1.618
+    const sqrt = Math.sqrt;
     console.log(`sqrt5: ${SQRT5}, PHI: ${PHI}`);
 
     // Here are the computed points of an up pentagon with bigR = 1
-    const ct_0 = Math.cos(0);
-    const ct_1 = Math.cos((2 * Math.PI) / 5);
-    const ct_2 = Math.cos(Math.PI / 5);
-    const st_0 = Math.sin(1);
-    const st_1 = Math.sin((2 * Math.PI) / 5);
-    const st_2 = Math.sin((4 * Math.PI) / 5);
+
+    // const ct_0 = Math.cos(0);
+    // const ct_1 = Math.cos((2 * Math.PI) / 5);
+    // const ct_2 = Math.cos(Math.PI / 5);
+    // const st_0 = Math.sin(1);
+    // const st_1 = Math.sin((2 * Math.PI) / 5);
+    // const st_2 = Math.sin((4 * Math.PI) / 5);
 
     const c_0 = 1; // 1.0
     const c_1 = (SQRT5 - 1) / 4; // .309
     const c_2 = (SQRT5 + 1) / 4; // .809
     const s_0 = 0; // 0.0
-    const s_1 = Math.sqrt(10 + 2 * SQRT5) / 4; // .951 sin 72 cos 18
-    const s_2 = Math.sqrt(10 - 2 * SQRT5) / 4; // .588 sin 36 cos 54
-    console.log(`s1 ${st_1} ${s_1} c1 ${ct_1} ${c_1}`);
-    console.log(`s2 ${st_2} ${s_2} c2 ${ct_2} ${c_2}`);
+    const s_1 = sqrt(10 + 2 * SQRT5) / 4; // .951 sin 72 cos 18
+    const s_2 = sqrt(10 - 2 * SQRT5) / 4; // .588 sin 36 cos 54
+
+    console.log(`s1: ${s_1}, c1: ${c_1}`);
+    console.log(`s2: ${s_2}, c2: ${c_2}`);
+
+    /**
+     * Adjusts the proportions of the object
+     * @param {*} variables
+     *
+     * @param {*} input
+     * @param {*} target
+     */
+    function solve(variables, inputKey, value, target) {
+        if (!variables) {
+            return null;
+        }
+        let oldValue = variables[inputKey];
+        // zero is not allowed for any value
+        if (!oldValue) {
+            return null;
+        }
+
+        let factor;
+        if (value) {
+            factor = (1 / oldValue) * value;
+        } else {
+            // set to 1 if none sent
+            factor = 1 / oldValue;
+        }
+        let oldResult = variables[target];
+        if (oldResult) {
+            return oldResult * factor;
+        } else {
+            let newVariables = {};
+            let keys = Object.keys(variables);
+            for (const key of keys) {
+                newVariables[key] = variables[key] * factor;
+            }
+            return newVariables;
+        }
+    }
+
     // side of unit circle R_unitCircle
-    const unitPentagonSide = 2 * s_2;
+    const unitPentagonSide = 2 * s_2; // this is little_a_pent
     console.log(`Unit pentagon side: ${unitPentagonSide}`); // 1.177
     // Unit circle units to a = 4
     const a = 4; // desired length of side
     const norm4 = (it) => (it * a) / unitPentagonSide;
+    // pgon.R = 1;
     const unitUp = [
         [s_0, -c_0],
         [s_1, -c_1],
@@ -415,12 +457,49 @@ var real = (function () {
         [-s_1, -c_1],
     ].map(toP);
 
+    const uPgon = {
+        a: 2 * s_2,
+        R: 1.0,
+    };
+    console.log(`uPgon: ${JSON.stringify(uPgon)}`);
+
+    const R = solve(uPgon, "a", 4, "R");
+    console.log(`R old: ${uPgon.R}, R: ${R}`);
+
+    const vs = solve(uPgon, "a", 4);
+    console.log(`R old: ${uPgon.R}, R: ${JSON.stringify(vs)}`);
+
+    // The proportions of the relevent pgon parts.
+    const pgon = {
+        a: 1.0,
+        R: sqrt(50 + 10 * SQRT5) / 10, // .8507
+        r: sqrt(25 + 10 * SQRT5) / 10, // .688
+        x: sqrt(25 - 10 * SQRT5) / 10, // .162
+    };
+    console.log(`pgon: ${JSON.stringify(pgon)}`);
+
     const pentaUp = unitUp.map((item) => item.mult(a).div(unitPentagonSide));
 
-    // okay, let's do the pentagram now
+    // okay, let's do the pentagram now.
+    // In the pentagram diagram the center pentagon has side littleB.
+    // The star arm has side littleA, this corresponds to unitPentagonSide
+    // 2 * littleA * littleB = 1;
+    // But first, our anchor: bigR. This _was_ 1 above, but now it's
+
+    const pgram = {
+        a: (3 - SQRT5) / 2, // .382
+        b: SQRT5 - 2, // .236
+        R: sqrt((25 - 11 * SQRT5) / 10), // .2008
+        r: sqrt((5 - 2 * SQRT5) / 5) / 2, // .162
+        rho: sqrt((5 - SQRT5) / 10), // .525
+    };
+    console.log(`pgram: ${JSON.stringify(pgram)}`);
+
+    // t table uses gramBigR + the BigR of the a pentagon. ahee!
+
+    // a correspond
     // The pentagram tips
-    const rho = Math.sqrt((25 - 11 * SQRT5) / 10);
-    const rho4 = (it) => (it / rho) * 4;
+    const rho4 = (it) => (it / pgram.rho) * 4;
     const t0 = [s_0, -c_0].map(rho4);
     const t1 = [s_1, -c_1].map(rho4);
     const t2 = [s_2, c_2].map(rho4);
@@ -435,9 +514,9 @@ var real = (function () {
     const pc3 = [-s_2, c_2].map(r4);
     const pc4 = [-s_1, -c_1].map(r4);
 
-    const R = (Math.sqrt(50 + 10 * SQRT5) * a) / 10;
+    //const R = (Math.sqrt(50 + 10 * SQRT5) * a) / 10;
 
-    const r = (Math.sqrt(25 + 10 * SQRT5) * a) / 10;
+    //const r = (Math.sqrt(25 + 10 * SQRT5) * a) / 10;
 
     // the length of the side here is
     // side is greater than on. I we want to normalize to 4.
