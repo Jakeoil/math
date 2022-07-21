@@ -384,6 +384,7 @@ var real = (function () {
     const SQRT5 = Math.sqrt(5); // 2.236
     const PHI = (SQRT5 + 1) / 2; // 1.618
     const sqrt = Math.sqrt;
+    const stringify = JSON.stringify;
     console.log(`sqrt5: ${SQRT5}, PHI: ${PHI}`);
 
     // Here are the computed points of an up pentagon with bigR = 1
@@ -461,13 +462,13 @@ var real = (function () {
         a: 2 * s_2,
         R: 1.0,
     };
-    console.log(`uPgon: ${JSON.stringify(uPgon)}`);
+    console.log(`uPgon: ${stringify(uPgon)}`);
 
     const R = solve(uPgon, "a", 4, "R");
     console.log(`R old: ${uPgon.R}, R: ${R}`);
 
     const vs = solve(uPgon, "a", 4);
-    console.log(`R old: ${uPgon.R}, R: ${JSON.stringify(vs)}`);
+    console.log(`old: ${stringify(uPgon.R)}, new : ${stringify(vs)}`);
 
     // The proportions of the relevent pgon parts.
     const pgon = {
@@ -476,9 +477,9 @@ var real = (function () {
         r: sqrt(25 + 10 * SQRT5) / 10, // .688
         x: sqrt(25 - 10 * SQRT5) / 10, // .162
     };
-    console.log(`pgon: ${JSON.stringify(pgon)}`);
+    console.log(`pgon: ${stringify(pgon)}`);
 
-    const pentaUp = unitUp.map((item) => item.mult(a).div(unitPentagonSide));
+    const pentaUp = unitUp.map((item) => item.mult(R));
 
     // okay, let's do the pentagram now.
     // In the pentagram diagram the center pentagon has side littleB.
@@ -493,10 +494,13 @@ var real = (function () {
         r: sqrt((5 - 2 * SQRT5) / 5) / 2, // .162
         rho: sqrt((5 - SQRT5) / 10), // .525
     };
-    console.log(`pgram: ${JSON.stringify(pgram)}`);
+    console.log(`pgram: ${stringify(pgram)}`);
 
+    const newPgram = solve(pgram, "a", 4);
+    console.log(`newPgram: ${stringify(newPgram)}`);
     // t table uses gramBigR + the BigR of the a pentagon. ahee!
-
+    const starTips = unitUp.map((it) => it.mult(newPgram.rho));
+    console.log(`startTips: ${stringify(starTips)}`);
     // a correspond
     // The pentagram tips
     const rho4 = (it) => (it / pgram.rho) * 4;
@@ -507,6 +511,8 @@ var real = (function () {
     const t4 = [-s_1, -c_1].map(rho4);
 
     // The pentagram dimples
+    const starDimples = unitUp.map((it) => it.mult(newPgram.R));
+    console.log(`starDimples: ${stringify(starDimples)}`);
     const r4 = (it) => it * 4;
     const pc0 = [s_0, -c_0].map(r4);
     const pc1 = [s_1, -c_1].map(r4);
@@ -523,8 +529,14 @@ var real = (function () {
 
     //const pentaUp = [u0, u1, u2, u3, u4].map(toP);
     console.log(`pentaUp: ${pentaUp}`);
-
-    const starUp = [t0, t2, t4, t1, t3].map(toP);
+    const starUp = [
+        starTips[0],
+        starTips[2],
+        starTips[4],
+        starTips[1],
+        starTips[3],
+    ];
+    //    const starUp = [t0, t2, t4, t1, t3].map(toP);
     console.log(`starUp:`);
     // !!! fake
     // prettier-ignore
