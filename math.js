@@ -53,6 +53,7 @@ const MODE_REAL = "real";
 const MODE_LIST = [MODE_MOSAIC, MODE_QUADRILLE, MODE_REAL];
 
 let shapeMode = MODE_MOSAIC;
+shapeMode = cookie.getShapeMode(MODE_MOSAIC); // cookie
 const eleMode = document.querySelector("#shape-mode");
 
 if (eleMode) eleMode.innerHTML = shapeMode;
@@ -60,6 +61,7 @@ if (eleMode) eleMode.innerHTML = shapeMode;
 const clickMode = function () {
     let new_idx = (MODE_LIST.indexOf(shapeMode) + 1) % MODE_LIST.length;
     shapeMode = MODE_LIST[new_idx];
+    cookie.setShapeMode(shapeMode);
     if (eleMode) eleMode.innerHTML = shapeMode;
     penroseApp();
 };
@@ -67,7 +69,9 @@ const clickMode = function () {
 /**
  * This is the default global for the shape and orientation controls
  */
+// Note: cookies are a bitch here.
 const controls = new Controls(0, 0, false);
+
 // Can this be made into a function?
 
 const eleFifths = document.querySelector("#fifths");
@@ -119,7 +123,7 @@ function penroseApp() {
     // This is where I refactor _everything_
     drawGeneric123("g012");
     drawGeneric3("g3");
-    drawRealWork("rWork");
+    drawRealWork("rwork");
 }
 
 /******************************************************************************
@@ -134,6 +138,7 @@ function penroseApp() {
 function makeCanvas(canvasId) {
     var canvas = document.getElementById(canvasId);
     g = canvas.getContext("2d");
+
     // for makeCanvas only
     const drawScreen = function () {
         // Initialize screen.
@@ -179,14 +184,22 @@ function makeCanvas(canvasId) {
  * Called at end of draw cycle.  Redraws under the following conditions
  *   The size of the canvas is greater than the bounds
  *   (future) add a max bounds.
+ *   Fix: canvas apparently stores an integer. Is it a floor round or ceiling.
  * @param {*} bounds
  * @param {*} canvas
  * @param {*} drawFunction
  */
 function redraw(bounds, canvas, drawFunction) {
+    console.log(`redraw`);
     const computedWidth = bounds.maxPoint.x * scale + scale;
     const computedHeight = bounds.maxPoint.y * scale + scale;
-    if (canvas.width != computedWidth || canvas.height != computedHeight) {
+    console.log(
+        `${computedWidth} ${computedHeight} cw: ${canvas.width} ch: ${canvas.height}`
+    );
+    if (
+        canvas.width != Math.floor(computedWidth) ||
+        canvas.height != Math.floor(computedHeight)
+    ) {
         canvas.width = computedWidth;
         canvas.height = computedHeight;
         setTimeout(drawFunction());
@@ -510,7 +523,7 @@ function drawGeneric123(id) {
         let y = 26;
         const bounds = penta(
             controls.fifths,
-            pentaType(controls.type),
+            pentaType(controls.typeIndex),
             controls.isDown,
             p(x, y),
             0
@@ -518,7 +531,7 @@ function drawGeneric123(id) {
         x += 21;
         penta(
             controls.fifths,
-            pentaType(controls.type),
+            pentaType(controls.typeIndex),
             controls.isDown,
             p(x, y),
             1
@@ -526,7 +539,7 @@ function drawGeneric123(id) {
         x += 34;
         penta(
             controls.fifths,
-            pentaType(controls.type),
+            pentaType(controls.typeIndex),
             controls.isDown,
             p(x, y),
             2
@@ -537,7 +550,7 @@ function drawGeneric123(id) {
         y += 55;
         star(
             controls.fifths,
-            starType(controls.type),
+            starType(controls.typeIndex),
             controls.isDown,
             p(x, y),
             0
@@ -545,7 +558,7 @@ function drawGeneric123(id) {
         x += 21;
         star(
             controls.fifths,
-            starType(controls.type),
+            starType(controls.typeIndex),
             controls.isDown,
             p(x, y),
             1
@@ -553,7 +566,7 @@ function drawGeneric123(id) {
         x += 54;
         star(
             controls.fifths,
-            starType(controls.type),
+            starType(controls.typeIndex),
             controls.isDown,
             p(x, y),
             2
@@ -590,8 +603,8 @@ function drawGeneric3(id) {
             deca(controls.fifths, controls.isDown, p(210, 80), 3);
             deca(controls.fifths, controls.isDown, p(x, y), 4);
         } else {
-            console.log(`drawScreen ${controls.type}`);
-            const type = controls.typeList[controls.type];
+            console.log(`drawScreen ${controls.typeIndex}`);
+            const type = controls.typeList[controls.typeIndex];
             switch (type) {
                 case penrose.Pe1:
                 case penrose.Pe3:
@@ -613,7 +626,7 @@ function drawGeneric3(id) {
 }
 
 function drawRealWork(id) {
-    console.log(`drawGeneric3`);
+    console.log(`drawRealWork id: ${id}`);
     const canvas = document.querySelector(`#${id} > canvas`);
 
     // g is global
@@ -653,6 +666,7 @@ function fig(fill, offset, shape) {
         case MODE_QUADRILLE:
             return outline(fill, offset, shape);
         case MODE_REAL:
+            return outline(fill, offset, shape);
         default:
             let bounds = new Bounds();
             bounds.addPoint(offset, offset);
@@ -663,12 +677,11 @@ function fig(fill, offset, shape) {
 function getShapeSet(key) {
     switch (shapeMode) {
         case MODE_MOSAIC:
-            console.log(`mosaic key: ${key}`);
             return mosaic[key];
         case MODE_QUADRILLE:
             return quadrille[key];
         case MODE_REAL:
-            return null;
+            return real[key];
     }
     return null;
 }

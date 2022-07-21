@@ -89,6 +89,7 @@ class Bounds {
 
     expand(bounds) {
         if (!bounds) {
+            console.log(TAG, "Makes no sense");
             return;
         }
 
@@ -116,62 +117,62 @@ class Bounds {
     }
 }
 
-class BoundsCoord {
-    constructor() {
-        this.maxPoint = null;
-        this.minPoint = null;
-    }
+// class BoundsCoord {
+//     constructor() {
+//         this.maxPoint = null;
+//         this.minPoint = null;
+//     }
 
-    /**
-     * Called from figure
-     * @param {*} offset
-     * @param {*} point
-     */
-    addPoint(offset, point) {
-        const logicalPoint = point.tr(offset);
-        if (!this.maxPoint || !this.minPoint) {
-            this.minPoint = logicalPoint.copy(); // private copies, not references
-            this.maxPoint = logicalPoint.copy();
-            return;
-        }
+//     /**
+//      * Called from figure
+//      * @param {*} offset
+//      * @param {*} point
+//      */
+//     addPoint(offset, point) {
+//         const logicalPoint = point.tr(offset);
+//         if (!this.maxPoint || !this.minPoint) {
+//             this.minPoint = logicalPoint.copy(); // private copies, not references
+//             this.maxPoint = logicalPoint.copy();
+//             return;
+//         }
 
-        if (logicalPoint[0] < this.minPoint[0]) {
-            this.minPoint[0] = logicalPoint[0];
-        } else if (logicalPoint[0] > this.maxPoint[0]) {
-            this.maxPoint[0] = logicalPoint[0];
-        }
-        if (logicalPoint[1] < this.minPoint[1]) {
-            this.minPoint[1] = logicalPoint[1];
-        } else if (logicalPoint[1] > this.maxPoint[1]) {
-            this.maxPoint[1] = logicalPoint[1];
-        }
-    }
+//         if (logicalPoint[0] < this.minPoint[0]) {
+//             this.minPoint[0] = logicalPoint[0];
+//         } else if (logicalPoint[0] > this.maxPoint[0]) {
+//             this.maxPoint[0] = logicalPoint[0];
+//         }
+//         if (logicalPoint[1] < this.minPoint[1]) {
+//             this.minPoint[1] = logicalPoint[1];
+//         } else if (logicalPoint[1] > this.maxPoint[1]) {
+//             this.maxPoint[1] = logicalPoint[1];
+//         }
+//     }
 
-    expand(bounds) {
-        if (!bounds) {
-            return;
-        }
+//     expand(bounds) {
+//         if (!bounds) {
+//             return;
+//         }
 
-        if (!this.maxPoint || !this.minPoint) {
-            this.minPoint = bounds.minPoint;
-            this.maxPoint = bounds.maxPoint;
-            return;
-        }
+//         if (!this.maxPoint || !this.minPoint) {
+//             this.minPoint = bounds.minPoint;
+//             this.maxPoint = bounds.maxPoint;
+//             return;
+//         }
 
-        if (bounds.minPoint[0] < this.minPoint[0]) {
-            this.minPoint[0] = bounds.minPoint[0];
-        }
-        if (bounds.minPoint[1] < this.minPoint[1]) {
-            this.minPoint[1] = bounds.minPoint[1];
-        }
-        if (bounds.maxPoint[0] > this.maxPoint[0]) {
-            this.maxPoint[0] = bounds.maxPoint[0];
-        }
-        if (bounds.maxPoint[1] > this.maxPoint[1]) {
-            this.maxPoint[1] = bounds.maxPoint[1];
-        }
-    }
-}
+//         if (bounds.minPoint[0] < this.minPoint[0]) {
+//             this.minPoint[0] = bounds.minPoint[0];
+//         }
+//         if (bounds.minPoint[1] < this.minPoint[1]) {
+//             this.minPoint[1] = bounds.minPoint[1];
+//         }
+//         if (bounds.maxPoint[0] > this.maxPoint[0]) {
+//             this.maxPoint[0] = bounds.maxPoint[0];
+//         }
+//         if (bounds.maxPoint[1] > this.maxPoint[1]) {
+//             this.maxPoint[1] = bounds.maxPoint[1];
+//         }
+//     }
+// }
 
 /**
  * Creates a 10 point wheel out of the first three coordinates (or Ps)
@@ -218,27 +219,71 @@ class Wheel {
     // get stringCoord(){ not needed?
 }
 
+/**
+ * Return a shape wheel based on a minimal set of
+ * shapes. The shapes with five fold symmetry only need
+ * up as input. All others require element 0, 1 and 2 positions.
+ * aka up0, down4, up2
+ */
+function shapeWheel(up, won, too) {
+    if (up) {
+        if (won) {
+            return [
+                up.map((item) => item.copy()),
+                won.map((item) => item.copy()),
+                too.map((item) => item.copy()),
+                too.map((item) => item.vr()),
+                won.map((item) => item.vr()),
+                up.map((item) => item.vr()),
+                won.map((item) => item.vr().hr()),
+                too.map((item) => item.vr().hr()),
+                too.map((item) => item.hr()),
+                won.map((item) => item.hr()),
+            ];
+        }
+        return [
+            up.map((item) => item.copy()),
+            up.map((item) => item.vr()),
+            up.map((item) => item.copy()),
+            up.map((item) => item.vr()),
+            up.map((item) => item.copy()),
+            up.map((item) => item.vr()),
+            up.map((item) => item.copy()),
+            up.map((item) => item.vr()),
+            up.map((item) => item.copy()),
+            up.map((item) => item.vr()),
+        ];
+    }
+    return [];
+}
+
 class Controls {
-    constructor(fifths, type, isDown) {
+    constructor(fifths, typeIndex, isDown) {
         this.fifths = fifths;
-        this.type = type;
+        this.typeIndex = typeIndex;
         this.isDown = isDown;
+        this.fifths = cookie.getFifths(fifths);
+        this.typeIndex = cookie.getTypeIndex(typeIndex);
+        this.isDown = cookie.getIsDown(isDown);
     }
     bumpFifths() {
         this.fifths = norm(this.fifths + 1);
+        cookie.setFifths(this.fifths);
     }
 
     get typeName() {
-        return this.typeList[this.type].name;
+        return this.typeList[this.typeIndex].name;
     }
     bumpType() {
-        this.type = (this.type + 1) % this.typeList.length;
+        this.typeIndex = (this.typeIndex + 1) % this.typeList.length;
+        cookie.setTypeIndex(this.typeIndex);
     }
     get direction() {
         return this.isDown ? "Down" : "Up";
     }
     toggleDirection() {
         this.isDown = !this.isDown;
+        cookie.setIsDown(this.isDown);
     }
 
     typeList = [
@@ -250,6 +295,81 @@ class Controls {
         penrose.St5,
     ];
 }
+
+// returns the cookie with the given name,
+// or undefined if not found
+function getCookie(name) {
+    let matches = document.cookie.match(
+        new RegExp(
+            "(?:^|; )" +
+                name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, "\\$1") +
+                "=([^;]*)"
+        )
+    );
+    return matches ? decodeURIComponent(matches[1]) : undefined;
+}
+
+function setCookie(name, value, options = {}) {
+    options = {
+        path: "/",
+        // add other defaults here if necessary
+        ...options,
+    };
+
+    if (options.expires instanceof Date) {
+        options.expires = options.expires.toUTCString();
+    }
+
+    let updatedCookie =
+        encodeURIComponent(name) + "=" + encodeURIComponent(value);
+
+    for (let optionKey in options) {
+        updatedCookie += "; " + optionKey;
+        let optionValue = options[optionKey];
+        if (optionValue !== true) {
+            updatedCookie += "=" + optionValue;
+        }
+    }
+
+    document.cookie = updatedCookie;
+}
+function deleteCookie(name) {
+    setCookie(name, "", {
+        "max-age": -1,
+    });
+}
+
+var cookie = (function () {
+    const Cookie = {};
+    Cookie.getShapeMode = function (sm) {
+        console.log(`getShapeMode: ${document.cookie}`);
+        const cookie = getCookie("shape-mode");
+        if (cookie) {
+            console.log(`found: ${document.cookie}`);
+            return cookie;
+        }
+        return sm;
+    };
+    Cookie.getFifths = function (fifths) {
+        return fifths;
+    };
+    Cookie.getIsDown = function (isDown) {
+        return isDown;
+    };
+    Cookie.getTypeIndex = function (index) {
+        return index;
+    };
+    Cookie.setShapeMode = function (sm) {
+        console.log(`setShapeMode(${sm}): ${document.cookie}`);
+        setCookie("shape-mode", sm, { "max-age": 3600 });
+        console.log(`cookie set: ${document.cookie}`);
+    };
+    Cookie.setFifths = function (fifths) {};
+    Cookie.setIsDown = function (isDown) {};
+    Cookie.setTypeIndex = function (index) {};
+
+    return Cookie;
+})();
 /**
  * This should be easy, we just need drawing of the regular pentagon.
  */
@@ -317,15 +437,57 @@ var real = (function () {
     // the length of the side here is
     // side is greater than on. I we want to normalize to 4.
 
-    const pentaUp = [u0, u1, u2, u3, u4];
+    const pentaUp = [u0, u1, u2, u3, u4].map(toP);
+
+    // !!! fake
+    // prettier-ignore
+    const starUp = [
+        [0, -6], [1, -2], [5, -2], [2, 0], [3, 4],
+        [0, 2], [-3, 4], [-2, 0], [-5, -2], [-1, -2],
+    ].map(toP);
+
+    // prettier-ignore
+    const diamondUp = [
+        [0, -6], [1, -2], [0, 2], [-1, -2]
+    ].map(toP);
+
+    // prettier-ignore
+    const diamondWon = [
+        [3, -4], [0, -2], [-1, 2], [2, 0]
+    ].map(toP);
+
+    // prettier-ignore
+    const diamondToo = [
+        [5, -2], [2, 0], [-2, 0], [1, -2]
+    ].map(toP);
+
+    // prettier-ignore
+    const boatUp = [
+        [0, -6], [1, -2], [5, -2], [2, 0], [-2, 0], [-5, -2], [-1, -2]
+    ].map(toP);
+
+    // prettier-ignore
+    const boatWon = [
+        [3, -4], [2 , 0], [ 5,  2], [1, 2], [-2,0], [-3,-4],[0, -2]
+    ].map(toP);
+    // prettier-ignore
+    const boatToo = [
+        [5, -2], [2, 0], [3, 4],
+        [0, 2],[-1, -2], [0, -6], [1, -2]
+    ].map(toP);
 
     const Real = {};
-    Real.pentaUp = pentaUp;
+    Real.penta = shapeWheel(pentaUp);
+    Real.star = shapeWheel(starUp);
+    Real.boat = shapeWheel(boatUp, boatWon, boatToo);
+    Real.diamond = shapeWheel(diamondUp, diamondWon, diamondToo);
+
     return Real;
 })();
-console.log(
-    `pentaUp: [${real.pentaUp[0]}],[${real.pentaUp[1]}],[${real.pentaUp[3]}],[${real.pentaUp[3]}],[${real.pentaUp[4]}]`
-);
+
+//console.log(
+//    `pentaUp: [${real.pentaUp[0]}],[${real.pentaUp[1]}],[${real.pentaUp[3]}],//[${real.pentaUp[3]}],[${real.pentaUp[4]}]`
+//);
 /**
  * This is the path model that would work on graph paper
  */
@@ -333,91 +495,50 @@ var quadrille = (function () {
     // prettier-ignore
     const pentaUp = [
         [0, -3], [3, -1], [2, 3], [-2, 3], [-3, -1]
-    ].map(function (item) {
-        return new P(item[0], item[1]);
-    });
+    ].map(toP);
 
     // prettier-ignore
     const starUp = [
         [0, -6], [1, -2], [5, -2], [2, 0], [3, 4],
         [0, 2], [-3, 4], [-2, 0], [-5, -2], [-1, -2],
-    ].map(function(item){return new P(item[0],item[1])});
+    ].map(toP);
 
     // prettier-ignore
     const diamondUp = [
         [0, -6], [1, -2], [0, 2], [-1, -2]
-    ].map(function(item){return new P(item[0],item[1])});
+    ].map(toP);
 
     // prettier-ignore
     const diamondWon = [
         [3, -4], [0, -2], [-1, 2], [2, 0]
-    ].map(function (item) { return new P(item[0], item[1])});
+    ].map(toP);
 
     // prettier-ignore
     const diamondToo = [
         [5, -2], [2, 0], [-2, 0], [1, -2]
-    ].map(function (item) { return new P(item[0], item[1]) });
+    ].map(toP);
 
     // prettier-ignore
     const boatUp = [
         [0, -6], [1, -2], [5, -2], [2, 0], [-2, 0], [-5, -2], [-1, -2]
-    ].map(function(item){return new P(item[0],item[1])});
+    ].map(toP);
 
     // prettier-ignore
     const boatWon = [
         [3, -4], [2 , 0], [ 5,  2], [1, 2], [-2,0], [-3,-4],[0, -2]
-    ].map(function(item){return new P(item[0],item[1])});
+    ].map(toP);
     // prettier-ignore
     const boatToo = [
         [5, -2], [2, 0], [3, 4],
         [0, 2],[-1, -2], [0, -6], [1, -2]
-    ].map(function (item) { return new P(item[0], item[1]) });
+    ].map(toP);
 
     const Quadrille = {};
 
-    Quadrille.penta = wheel(pentaUp);
-    Quadrille.star = wheel(starUp);
-    Quadrille.boat = wheel(boatUp, boatWon, boatToo);
-    Quadrille.diamond = wheel(diamondUp, diamondWon, diamondToo);
-
-    /**
-     * Return a shape wheel based on the shape
-     * @param {} up
-     * @param {*} won
-     * @param {*} two
-     * @returns
-     */
-    function wheel(up, won, too) {
-        if (up) {
-            if (won) {
-                return [
-                    up.map((item) => item.copy()),
-                    won.map((item) => item.copy()),
-                    too.map((item) => item.copy()),
-                    too.map((item) => item.vr()),
-                    won.map((item) => item.vr()),
-                    up.map((item) => item.vr()),
-                    won.map((item) => item.vr().hr()),
-                    too.map((item) => item.vr().hr()),
-                    too.map((item) => item.hr()),
-                    won.map((item) => item.hr()),
-                ];
-            }
-            return [
-                up.map((item) => item.copy()),
-                up.map((item) => item.vr()),
-                up.map((item) => item.copy()),
-                up.map((item) => item.vr()),
-                up.map((item) => item.copy()),
-                up.map((item) => item.vr()),
-                up.map((item) => item.copy()),
-                up.map((item) => item.vr()),
-                up.map((item) => item.copy()),
-                up.map((item) => item.vr()),
-            ];
-        }
-        return [];
-    }
+    Quadrille.penta = shapeWheel(pentaUp);
+    Quadrille.star = shapeWheel(starUp);
+    Quadrille.boat = shapeWheel(boatUp, boatWon, boatToo);
+    Quadrille.diamond = shapeWheel(diamondUp, diamondWon, diamondToo);
 
     return Quadrille;
 })();
@@ -430,19 +551,19 @@ var mosaic = (function () {
        [0,3],[1,3],[2,3],[3,3],[4,3],[5,3],
              [1,4],[2,4],[3,4],[4,4],
              [1,5],[2,5],[3,5],[4,5]]
-    .map(function(item){return new P(item[0],item[1])});
+    .map(toP);
 
     // prettier-ignore
     var diamond_up =[[0,0],[1,0],
                    [0,1],[1,1],
                    [0,2],[1,2],
                    [0,3],[1,3]]
-    .map(function(item){return new P(item[0],item[1])});
+    .map(toP);
 
     // prettier-ignore
     var diamond_too = [[1,0],[2,0],[3,0],[4,0],
                [0,1],[1,1],[2,1],[3,1]]
-    .map(function(item){return new P(item[0],item[1])});
+    .map(toP);
 
     // prettier-ignore
     var diamond_for = [[0,0],
@@ -451,7 +572,7 @@ var mosaic = (function () {
                            [1,3],[2,3],
                                  [2,4],[3,4],
                                        [3,5]]
-    .map(function(item){return new P(item[0],item[1])});
+    .map(toP);
 
     // prettier-ignore
     var star_up =      [[3,0],[4,0],
@@ -462,14 +583,14 @@ var mosaic = (function () {
                 [2,5],[3,5],[4,5],[5,5],
           [1,6],[2,6],            [5,6],[6,6],
           [1,7],                        [6,7]]
-    .map(function(item){return new P(item[0],item[1])});
+    .map(toP);
 
     // prettier-ignore
     var boat_up =      [[3,0],[4,0],
                       [3,1],[4,1],
     [0,2],[1,2],[2,2],[3,2],[4,2],[5,2],[6,2],[7,2],
           [1,3],[2,3],[3,3],[4,3],[5,3],[6,3]]
-  .map(function(item){return new P(item[0],item[1])});
+    .map(toP);
 
     // prettier-ignore
     var boat_too = [[0,0],[1,0],
@@ -480,7 +601,7 @@ var mosaic = (function () {
                         [1,5],[2,5],
                               [2,6],[3,6],
                                     [3,7]]
-    .map(function(item){return new P(item[0],item[1])});
+    .map(toP);
 
     // prettier-ignore
     var boat_for =       [[3,0],[4,0],[5,0],[6,0],
@@ -489,7 +610,8 @@ var mosaic = (function () {
             [1,3],[2,3],[3,3],[4,3],
       [0,4],[1,4],            [4,4],[5,4],
       [0,5],                        [5,5]]
-  .map(function(item){return new P(item[0],item[1])});
+      .map(toP);
+
     const Mosaic = {
         penta: [
             penta_up.map((item) => new P(item.x - 3, item.y - 3)),
@@ -570,6 +692,9 @@ var penrose = (function () {
     const tSeed = [p(0, -8), p(5, -8), p(8, -2)];
     const dSeed = [p(0, -3), p(2, -3), p(3, -1)];
 
+    const Penrose = {};
+    Penrose.ORANGE = ORANGE;
+
     // This is the core penrose object.
     return {
         // ORANGE: "#e46c0a",
@@ -597,12 +722,7 @@ var penrose = (function () {
         tSeed: tSeed,
         dSeed: dSeed,
 
-        // okay, 10 of each
-        // penta: shapes.penta,
-        // diamond: shapes.diamond,
-        // boat: shapes.boat,
-        // //--
-        // star: shapes.star,
+        // Moved the shapes to mosaic
 
         Pe5: {
             name: "Pe5",
