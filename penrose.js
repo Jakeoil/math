@@ -492,10 +492,12 @@ var real = (function () {
     const pgram = {
         a: (3 - SQRT5) / 2, // .382
         b: SQRT5 - 2, // .236
-        c: 1, //
+        c: 1, // Missing from diagram, but by definition 2 * b + a
         R: sqrt((25 - 11 * SQRT5) / 10), // .2008
         r: sqrt((5 - 2 * SQRT5) / 5) / 2, // .162
         rho: sqrt((5 - SQRT5) / 10), // .525
+        y: sqrt((25 - 11 * SQRT5) / 2) / 2,
+        x: (SQRT5 - 1) / 4,
     };
 
     console.log(`pgram: ${stringify(pgram)}`);
@@ -595,7 +597,7 @@ var real = (function () {
     //const pSeed = [p(0, -6), p(3, -4), p(5, -2)];
     // sSeed is the distance between a pentagon and the near diamond
     // This is pgon.R + pgram.r
-    const sMag = solve(pgon, "a", 4, "R") + solve(pgram, "a", 4, "r");
+    const sMag = solve(pgon, "a", 4, "R") + solve(pgram, "a", 4, "R");
     Real.sSeed = [
         unitUp[0].mult(sMag),
         unitDown[3].mult(sMag),
@@ -607,13 +609,17 @@ var real = (function () {
     // It's a real bitch. The star center to tip is pgram with a set to 4.
     // The pentagon altitude is pgon R + r with a set to 4.
     // Finally that little distance between the tip and the base of the boat is
-    // pgram rho - r with c = 4...whew
-    const tMag =
-        solve(pgram, "a", 4, "R") +
-        solve(pgon, "a", 4, "R") +
-        solve(pgon, "a", 4, "r") +
-        solve(pgram, "c", 4, "rho") -
-        solve(pgram, "c", 4, "r");
+    // pgram rho - r with c = 4...whew..Wrong!!
+
+    // Okay, the distance is the distance between the centers of two a=4 stars.
+    // So simply pgram.R + pgram
+    const tMag = (solve(pgram, "a", 4, "R") + solve(pgram, "a", 4, "y")) * 2;
+
+    // solve(pgram, "a", 4, "R") +
+    // solve(pgon, "a", 4, "R") +
+    // solve(pgon, "a", 4, "r") +
+    // solve(pgram, "c", 4, "rho") -
+    // solve(pgram, "c", 4, "r");
     Real.tSeed = [
         unitUp[0].mult(tMag),
         unitDown[3].mult(tMag),
