@@ -649,6 +649,10 @@ function drawRealWork(id) {
 
 /**
  * The generic figure function is a mess. Let's find a better way.
+ * It is too tightly coupled with to controls context.
+ * Real is gonna be a big problem.
+ * First the shape set.  Next the wheels.
+ *
  * @param {} fill
  * @param {*} offset
  * @param {*} shape
@@ -885,6 +889,7 @@ const dWheels = [null];
 
 // Wheel1 is the seed.
 //const pWheel1 = new Wheel(p(0, -6), p(3, -4), p(5, -2));
+// Ahh, can I change the seed for 'real'?
 const pWheel1 = new Wheel(...penrose.pSeed);
 const sWheel1 = new Wheel(...penrose.sSeed);
 const tWheel1 = new Wheel(...penrose.tSeed);

@@ -480,6 +480,7 @@ var real = (function () {
     // Note that uPgon is now unnecessary since uPgon.a * pgon.R == 1
     const pgon = {
         a: 1.0,
+        d: PHI,
         R: sqrt(50 + 10 * SQRT5) / 10, // .8507
         r: sqrt(25 + 10 * SQRT5) / 10, // .688
         x: sqrt(25 - 10 * SQRT5) / 10, // .162
@@ -491,6 +492,7 @@ var real = (function () {
     const pgram = {
         a: (3 - SQRT5) / 2, // .382
         b: SQRT5 - 2, // .236
+        c: 1, //
         R: sqrt((25 - 11 * SQRT5) / 10), // .2008
         r: sqrt((5 - 2 * SQRT5) / 5) / 2, // .162
         rho: sqrt((5 - SQRT5) / 10), // .525
@@ -579,6 +581,34 @@ var real = (function () {
         starDimples[0],
         starDimples[2],
     ];
+
+    // pSeed is the distance between two pentagon centers.
+    // It is basically 2 * pgon.r
+    const pMag = solve(pgon, "a", 4, "r") * 2;
+    console.log(`pMag: ${pMag}`);
+    const pSeed = [p(0, -6), p(3, -4), p(5, -2)];
+    // sSeed is the distance between a pentagon and the near diamond
+    // This is pgon.R + pgram.r
+    const sMag = solve(pgon, "a", 4, "R") + solve(pgram, "a", 4, "r");
+    console.log(`sMag: ${sMag}`);
+    const sSeed = [p(0, -5), p(3, -5), p(5, -1)];
+    // tSeed is the distance between a star and a boat in an expanded diamond.
+    // It's a real bitch. The star center to tip is pgram with a set to 4.
+    // The pentagon altitude is pgon R + r with a set to 4.
+    // Finally that little distance between the tip and the base of the boat is
+    // pgram rho - r with c = 4...whew
+    const tMag =
+        solve(pgram, "a", 4, "R") +
+        solve(pgon, "a", 4, "R") +
+        solve(pgon, "a", 4, "r") +
+        solve(pgram, "c", 4, "rho") -
+        solve(pgram, "c", 4, "r");
+    console.log(`tMag: ${tMag}`);
+    const tSeed = [p(0, -8), p(5, -8), p(8, -2)];
+    // dseed is simply pgon 2 * r + R with a set to 4.
+    const dMag = solve(pgon, "a", 4, "r");
+    console.log(`dMag: ${dMag}`);
+    const dSeed = [p(0, -3), p(2, -3), p(3, -1)];
 
     const Real = {};
     Real.penta = shapeWheel(pentaUp);
