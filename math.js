@@ -890,10 +890,28 @@ const dWheels = [null];
 // Wheel1 is the seed.
 //const pWheel1 = new Wheel(p(0, -6), p(3, -4), p(5, -2));
 // Ahh, can I change the seed for 'real'?
-const pWheel1 = new Wheel(...penrose.pSeed);
-const sWheel1 = new Wheel(...penrose.sSeed);
-const tWheel1 = new Wheel(...penrose.tSeed);
-const dWheel1 = new Wheel(...penrose.dSeed);
+
+const pWheel1 =
+    shapeMode == MODE_REAL
+        ? new Wheel(...real.pSeed)
+        : new Wheel(...penrose.pSeed);
+
+const sWheel1 =
+    shapeMode == MODE_REAL
+        ? new Wheel(...real.sSeed)
+        : new Wheel(...penrose.sSeed);
+const tWheel1 =
+    shapeMode == MODE_REAL
+        ? new Wheel(...real.tSeed)
+        : new Wheel(...penrose.tSeed);
+const dWheel1 =
+    shapeMode == MODE_REAL
+        ? new Wheel(...real.dSeed)
+        : new Wheel(...penrose.dSeed);
+
+//const sWheel1 = new Wheel(shapeMode == MODE_REAL...penrose.sSeed);
+//const tWheel1 = new Wheel(...penrose.tSeed);
+//const dWheel1 = new Wheel(...penrose.dSeed);
 
 console.log(`real P1[1]: ${pWheel1.string}`);
 console.log(`real S1[1]: ${sWheel1.string}`);

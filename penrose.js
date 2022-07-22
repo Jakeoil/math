@@ -581,17 +581,28 @@ var real = (function () {
         starDimples[0],
         starDimples[2],
     ];
+    const Real = {};
 
     // pSeed is the distance between two pentagon centers.
     // It is basically 2 * pgon.r
     const pMag = solve(pgon, "a", 4, "r") * 2;
-    console.log(`pMag: ${pMag}`);
-    const pSeed = [p(0, -6), p(3, -4), p(5, -2)];
+    Real.pSeed = [
+        unitUp[0].mult(pMag),
+        unitDown[3].mult(pMag),
+        unitUp[1].mult(pMag),
+    ];
+    console.log(`pMag: ${pMag}, ${Real.pSeed}`);
+    //const pSeed = [p(0, -6), p(3, -4), p(5, -2)];
     // sSeed is the distance between a pentagon and the near diamond
     // This is pgon.R + pgram.r
     const sMag = solve(pgon, "a", 4, "R") + solve(pgram, "a", 4, "r");
-    console.log(`sMag: ${sMag}`);
-    const sSeed = [p(0, -5), p(3, -5), p(5, -1)];
+    Real.sSeed = [
+        unitUp[0].mult(sMag),
+        unitDown[3].mult(sMag),
+        unitUp[1].mult(sMag),
+    ];
+    console.log(`sMag: ${sMag}, ${Real.sSeed}`);
+    //    const sSeed = [p(0, -5), p(3, -5), p(5, -1)];
     // tSeed is the distance between a star and a boat in an expanded diamond.
     // It's a real bitch. The star center to tip is pgram with a set to 4.
     // The pentagon altitude is pgon R + r with a set to 4.
@@ -603,14 +614,24 @@ var real = (function () {
         solve(pgon, "a", 4, "r") +
         solve(pgram, "c", 4, "rho") -
         solve(pgram, "c", 4, "r");
-    console.log(`tMag: ${tMag}`);
-    const tSeed = [p(0, -8), p(5, -8), p(8, -2)];
+    Real.tSeed = [
+        unitUp[0].mult(tMag),
+        unitDown[3].mult(tMag),
+        unitUp[1].mult(tMag),
+    ];
+    console.log(`tMag: ${tMag}, ${Real.tSeed}`);
+
+    //const tSeed = [p(0, -8), p(5, -8), p(8, -2)];
     // dseed is simply pgon 2 * r + R with a set to 4.
     const dMag = solve(pgon, "a", 4, "r");
-    console.log(`dMag: ${dMag}`);
-    const dSeed = [p(0, -3), p(2, -3), p(3, -1)];
+    Real.dSeed = [
+        unitUp[0].mult(dMag),
+        unitDown[3].mult(dMag),
+        unitUp[1].mult(dMag),
+    ];
+    console.log(`dMag: ${dMag}, ${Real.dSeed}`);
+    //const dSeed = [p(0, -3), p(2, -3), p(3, -1)];
 
-    const Real = {};
     Real.penta = shapeWheel(pentaUp);
     Real.star = shapeWheel(starUp);
     Real.boat = shapeWheel(boatUp, boatWon, boatToo);
