@@ -39,6 +39,7 @@ const norm = (n) => ((n % 5) + 5) % 5;
 function tenths(fifths, isDown) {
     return (fifths * 2 + (isDown ? 5 : 0)) % 10;
 }
+const stringify = JSON.stringify;
 
 /**
  * Mutable class
@@ -330,6 +331,45 @@ var cookie = (function () {
 
     return Cookie;
 })();
+
+/**
+ * Adjusts the proportions of the object linearly and returns results
+ * proportions: A table of lengths of a figure
+ * inputKey: The item whose value you want to fix.
+ * value: Default 1. Otherwise fixes the value to this value.
+ * targetKey: Field to be returned. Otherwise returns new proportions object
+ * with input fixed.
+ */
+function solve(proportions, inputKey, value, targetKey) {
+    if (!proportions) {
+        return null;
+    }
+    let oldValue = proportions[inputKey];
+    // zero is not allowed for any value
+    if (!oldValue) {
+        return null;
+    }
+
+    let factor;
+    if (value) {
+        factor = (1 / oldValue) * value;
+    } else {
+        // set to 1 if none sent
+        factor = 1 / oldValue;
+    }
+    let oldResult = proportions[targetKey];
+    if (oldResult) {
+        return oldResult * factor;
+    } else {
+        let newVariables = {};
+        let keys = Object.keys(proportions);
+        for (const key of keys) {
+            newVariables[key] = proportions[key] * factor;
+        }
+        return newVariables;
+    }
+}
+
 /**
  * This should be easy, we just need drawing of the regular pentagon.
  */
@@ -370,24 +410,27 @@ var real = (function () {
      *
      *                              u0
      *                               *
-     *                     d2 *             * d3
+     *                  d2 *                   * d3
      *
-     *                   u4 *                 * u1
+     *
+     *
+     *            u4 *                               * u1
+     *
      *                               o
-     *                   d1 *                 * d4
      *
-     *                     u3 *            * u2
-     *                               *
-     *                              d0
+     *            d1 *                               * d4
+     *
+     *
+     *
+     *                  u3 *                   * u2
+     *                                *
+     *                               d0
      *
      */
     const SQRT5 = Math.sqrt(5); // 2.236
     const PHI = (SQRT5 + 1) / 2; // 1.618
     const sqrt = Math.sqrt;
-    const stringify = JSON.stringify;
     console.log(`sqrt5: ${SQRT5}, PHI: ${PHI}`);
-
-    // Here are the computed points of an up pentagon with bigR = 1
 
     // const ct_0 = Math.cos(0);
     // const ct_1 = Math.cos((2 * Math.PI) / 5);
@@ -407,49 +450,8 @@ var real = (function () {
     console.log(`s2: ${s_2}, c2: ${c_2}`);
 
     /**
-     * Adjusts the proportions of the object
-     * @param {*} variables
-     *
-     * @param {*} input
-     * @param {*} target
+     * Unit pentagon
      */
-    function solve(variables, inputKey, value, target) {
-        if (!variables) {
-            return null;
-        }
-        let oldValue = variables[inputKey];
-        // zero is not allowed for any value
-        if (!oldValue) {
-            return null;
-        }
-
-        let factor;
-        if (value) {
-            factor = (1 / oldValue) * value;
-        } else {
-            // set to 1 if none sent
-            factor = 1 / oldValue;
-        }
-        let oldResult = variables[target];
-        if (oldResult) {
-            return oldResult * factor;
-        } else {
-            let newVariables = {};
-            let keys = Object.keys(variables);
-            for (const key of keys) {
-                newVariables[key] = variables[key] * factor;
-            }
-            return newVariables;
-        }
-    }
-
-    // side of unit circle R_unitCircle
-    const unitPentagonSide = 2 * s_2; // this is little_a_pent
-    console.log(`Unit pentagon side: ${unitPentagonSide}`); // 1.177
-    // Unit circle units to a = 4
-    const a = 4; // desired length of side
-    const norm4 = (it) => (it * a) / unitPentagonSide;
-    // pgon.R = 1;
     const unitUp = [
         [s_0, -c_0],
         [s_1, -c_1],
@@ -458,8 +460,12 @@ var real = (function () {
         [-s_1, -c_1],
     ].map(toP);
 
+    const unitDown = unitUp.map((it) => it.vr().hr());
+
+    // Relation between side and unit radius
+    // 2 * s_2 is the length of a unit pentagons base, hence the side
     const uPgon = {
-        a: 2 * s_2,
+        a: 2 * s_2, // 1.176
         R: 1.0,
     };
     console.log(`uPgon: ${stringify(uPgon)}`);
@@ -471,6 +477,7 @@ var real = (function () {
     console.log(`old: ${stringify(uPgon.R)}, new : ${stringify(vs)}`);
 
     // The proportions of the relevent pgon parts.
+    // Note that uPgon is now unnecessary since uPgon.a * pgon.R == 1
     const pgon = {
         a: 1.0,
         R: sqrt(50 + 10 * SQRT5) / 10, // .8507
@@ -479,14 +486,8 @@ var real = (function () {
     };
     console.log(`pgon: ${stringify(pgon)}`);
 
-    const pentaUp = unitUp.map((item) => item.mult(R));
-
-    // okay, let's do the pentagram now.
-    // In the pentagram diagram the center pentagon has side littleB.
-    // The star arm has side littleA, this corresponds to unitPentagonSide
-    // 2 * littleA * littleB = 1;
-    // But first, our anchor: bigR. This _was_ 1 above, but now it's
-
+    // The pentagram proportions. Note that a, the side is common
+    // between both pgon and pgram
     const pgram = {
         a: (3 - SQRT5) / 2, // .382
         b: SQRT5 - 2, // .236
@@ -494,86 +495,90 @@ var real = (function () {
         r: sqrt((5 - 2 * SQRT5) / 5) / 2, // .162
         rho: sqrt((5 - SQRT5) / 10), // .525
     };
+
     console.log(`pgram: ${stringify(pgram)}`);
 
     const newPgram = solve(pgram, "a", 4);
     console.log(`newPgram: ${stringify(newPgram)}`);
-    // t table uses gramBigR + the BigR of the a pentagon. ahee!
+
     const starTips = unitUp.map((it) => it.mult(newPgram.rho));
     console.log(`startTips: ${stringify(starTips)}`);
-    // a correspond
-    // The pentagram tips
-    const rho4 = (it) => (it / pgram.rho) * 4;
-    const t0 = [s_0, -c_0].map(rho4);
-    const t1 = [s_1, -c_1].map(rho4);
-    const t2 = [s_2, c_2].map(rho4);
-    const t3 = [-s_2, c_2].map(rho4);
-    const t4 = [-s_1, -c_1].map(rho4);
 
     // The pentagram dimples
-    const starDimples = unitUp.map((it) => it.mult(newPgram.R));
+    const starDimples = unitDown.map((it) => it.mult(newPgram.R));
     console.log(`starDimples: ${stringify(starDimples)}`);
-    const r4 = (it) => it * 4;
-    const pc0 = [s_0, -c_0].map(r4);
-    const pc1 = [s_1, -c_1].map(r4);
-    const pc2 = [s_2, c_2].map(r4);
-    const pc3 = [-s_2, c_2].map(r4);
-    const pc4 = [-s_1, -c_1].map(r4);
 
-    //const R = (Math.sqrt(50 + 10 * SQRT5) * a) / 10;
-
-    //const r = (Math.sqrt(25 + 10 * SQRT5) * a) / 10;
-
-    // the length of the side here is
-    // side is greater than on. I we want to normalize to 4.
-
-    //const pentaUp = [u0, u1, u2, u3, u4].map(toP);
+    const pentaUp = unitUp.map((item) => item.mult(R));
     console.log(`pentaUp: ${pentaUp}`);
+
     const starUp = [
         starTips[0],
-        starTips[2],
-        starTips[4],
+        starDimples[3],
         starTips[1],
+        starDimples[4],
+        starTips[2],
+        starDimples[0],
         starTips[3],
+        starDimples[1],
+        starTips[4],
+        starDimples[2],
     ];
-    //    const starUp = [t0, t2, t4, t1, t3].map(toP);
-    console.log(`starUp:`);
-    // !!! fake
     // prettier-ignore
-    // const starUp = [
-    //      [0, -6], [1, -2], [5, -2], [2, 0], [3, 4],
-    //      [0, 2], [-3, 4], [-2, 0], [-5, -2], [-1, -2],
-    //  ].map(toP);
-    const diamondUp = [pc0, pc1, pc2, pc3, pc4].map(toP);
-    // prettier-ignore
-    //const diamondUp = [
-    //    [0, -6], [1, -2], [0, 2], [-1, -2]
-    //].map(toP);
-
-    // prettier-ignore
-    const diamondWon = [
-        [3, -4], [0, -2], [-1, 2], [2, 0]
-    ].map(toP);
+    const diamondUp = [
+        starTips[0],
+        starDimples[3],
+        starDimples[0],
+        starDimples[2],
+    ];
 
     // prettier-ignore
     const diamondToo = [
-        [5, -2], [2, 0], [-2, 0], [1, -2]
-    ].map(toP);
+        starDimples[3],
+        starTips[1],
+        starDimples[4],
+        starDimples[1],
+    ];
+
+    // prettier-ignore
+    const diamondWon = [
+        starDimples[3],
+        starDimples[0],
+        starTips[3],
+        starDimples[1],
+    ].map((it) => it.hr().vr());
 
     // prettier-ignore
     const boatUp = [
-        [0, -6], [1, -2], [5, -2], [2, 0], [-2, 0], [-5, -2], [-1, -2]
-    ].map(toP);
+        starTips[0],
+        starDimples[3],
+        starTips[1],
+        starDimples[4],
+        starDimples[1],
+        starTips[4],
+        starDimples[2],
+    ];
 
     // prettier-ignore
     const boatWon = [
-        [3, -4], [2 , 0], [ 5,  2], [1, 2], [-2,0], [-3,-4],[0, -2]
-    ].map(toP);
+        starDimples[4],
+        starTips[2],
+        starDimples[0],
+        starTips[3],
+        starDimples[1],
+        starTips[4],
+        starDimples[2],
+    ].map((it) => it.hr().vr());
+
     // prettier-ignore
     const boatToo = [
-        [5, -2], [2, 0], [3, 4],
-        [0, 2],[-1, -2], [0, -6], [1, -2]
-    ].map(toP);
+        starTips[0],
+        starDimples[3],
+        starTips[1],
+        starDimples[4],
+        starTips[2],
+        starDimples[0],
+        starDimples[2],
+    ];
 
     const Real = {};
     Real.penta = shapeWheel(pentaUp);
