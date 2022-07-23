@@ -545,13 +545,8 @@ var real = (function () {
         a: 2 * s_2, // 1.176
         R: 1.0,
     };
-    console.log(`uPgon: ${stringify(uPgon)}`);
 
     const R = solve(uPgon, "a", 4, "R");
-    console.log(`R old: ${uPgon.R}, R: ${R}`);
-
-    const vs = solve(uPgon, "a", 4);
-    console.log(`old: ${stringify(uPgon.R)}, new : ${stringify(vs)}`);
 
     // The proportions of the relevent pgon parts.
     // Note that uPgon is now unnecessary since uPgon.a * pgon.R == 1
@@ -576,21 +571,17 @@ var real = (function () {
         y: sqrt((25 - 11 * SQRT5) / 2) / 2,
         x: (SQRT5 - 1) / 4,
     };
-
     console.log(`pgram: ${stringify(pgram)}`);
 
     const newPgram = solve(pgram, "a", 4);
-    console.log(`newPgram: ${stringify(newPgram)}`);
-
     const starTips = unitUp.map((it) => it.mult(newPgram.rho));
-    console.log(`startTips: ${stringify(starTips)}`);
+    console.log(`starTips: ${stringify(starTips)}`);
 
     // The pentagram dimples
     const starDimples = unitDown.map((it) => it.mult(newPgram.R));
     console.log(`starDimples: ${stringify(starDimples)}`);
 
     const pentaUp = unitUp.map((item) => item.mult(R));
-    console.log(`pentaUp: ${pentaUp}`);
 
     const starUp = [
         starTips[0],
@@ -604,7 +595,7 @@ var real = (function () {
         starTips[4],
         starDimples[2],
     ];
-    // prettier-ignore
+
     const diamondUp = [
         starTips[0],
         starDimples[3],
@@ -612,7 +603,6 @@ var real = (function () {
         starDimples[2],
     ];
 
-    // prettier-ignore
     const diamondToo = [
         starDimples[3],
         starTips[1],
@@ -620,7 +610,6 @@ var real = (function () {
         starDimples[1],
     ];
 
-    // prettier-ignore
     const diamondWon = [
         starDimples[3],
         starDimples[0],
@@ -628,7 +617,6 @@ var real = (function () {
         starDimples[1],
     ].map((it) => it.hr().vr());
 
-    // prettier-ignore
     const boatUp = [
         starTips[0],
         starDimples[3],
@@ -639,7 +627,6 @@ var real = (function () {
         starDimples[2],
     ];
 
-    // prettier-ignore
     const boatWon = [
         starDimples[4],
         starTips[2],
@@ -650,7 +637,6 @@ var real = (function () {
         starDimples[2],
     ].map((it) => it.hr().vr());
 
-    // prettier-ignore
     const boatToo = [
         starTips[0],
         starDimples[3],
@@ -660,30 +646,31 @@ var real = (function () {
         starDimples[0],
         starDimples[2],
     ];
+
     const Real = {};
 
     // pSeed is the distance between two pentagon centers.
     // It is basically 2 * pgon.r
     const pMag = solve(pgon, "a", 4, "r") * 2;
     const pSeed = makeSeed(pMag);
-    console.log(`pMag: ${pMag}, ${Real.pSeed}`);
+    //console.log(`pMag: ${pMag}, ${Real.pSeed}`);
 
     // sSeed is the distance between a pentagon and the near diamond
     // This is pgon.R + pgram.r
     const sMag = solve(pgon, "a", 4, "R") + solve(pgram, "a", 4, "R");
     const sSeed = makeSeed(sMag);
-    console.log(`sMag: ${sMag}, ${Real.sSeed}`);
+    //console.log(`sMag: ${sMag}, ${Real.sSeed}`);
 
     // tSeed distance is the centers of two stars with their feet touching
     // So simply (pgram.R + pgram.y) * 2;
     const tMag = (solve(pgram, "a", 4, "R") + solve(pgram, "a", 4, "y")) * 2;
     const tSeed = makeSeed(tMag);
-    console.log(`tMag: ${tMag}, ${Real.tSeed}`);
+    //console.log(`tMag: ${tMag}, ${Real.tSeed}`);
 
     // dseed is simply pgon 2 * r + R with a set to 4.
     const dMag = solve(pgon, "a", 4, "r");
     const dSeed = makeSeed(dMag);
-    console.log(`dMag: ${dMag}, ${Real.dSeed}`);
+    //console.log(`dMag: ${dMag}, ${Real.dSeed}`);
 
     Real.penta = shapeWheel(pentaUp);
     Real.star = shapeWheel(starUp);
@@ -707,52 +694,80 @@ var real = (function () {
     return Real;
 })();
 
-//console.log(
-//    `pentaUp: [${real.pentaUp[0]}],[${real.pentaUp[1]}],[${real.pentaUp[3]}],//[${real.pentaUp[3]}],[${real.pentaUp[4]}]`
-//);
-/**
+/*******************************************************
  * This is the path model that would work on graph paper
  */
 var quadrille = (function () {
-    // prettier-ignore
     const pentaUp = [
-        [0, -3], [3, -1], [2, 3], [-2, 3], [-3, -1]
+        [0, -3],
+        [3, -1],
+        [2, 3],
+        [-2, 3],
+        [-3, -1],
     ].map(toP);
 
-    // prettier-ignore
     const starUp = [
-        [0, -6], [1, -2], [5, -2], [2, 0], [3, 4],
-        [0, 2], [-3, 4], [-2, 0], [-5, -2], [-1, -2],
+        [0, -6],
+        [1, -2],
+        [5, -2],
+        [2, 0],
+        [3, 4],
+        [0, 2],
+        [-3, 4],
+        [-2, 0],
+        [-5, -2],
+        [-1, -2],
     ].map(toP);
 
-    // prettier-ignore
     const diamondUp = [
-        [0, -6], [1, -2], [0, 2], [-1, -2]
+        [0, -6],
+        [1, -2],
+        [0, 2],
+        [-1, -2],
     ].map(toP);
 
-    // prettier-ignore
     const diamondWon = [
-        [3, -4], [0, -2], [-1, 2], [2, 0]
+        [3, -4],
+        [0, -2],
+        [-1, 2],
+        [2, 0],
     ].map(toP);
 
-    // prettier-ignore
     const diamondToo = [
-        [5, -2], [2, 0], [-2, 0], [1, -2]
+        [5, -2],
+        [2, 0],
+        [-2, 0],
+        [1, -2],
     ].map(toP);
 
-    // prettier-ignore
     const boatUp = [
-        [0, -6], [1, -2], [5, -2], [2, 0], [-2, 0], [-5, -2], [-1, -2]
+        [0, -6],
+        [1, -2],
+        [5, -2],
+        [2, 0],
+        [-2, 0],
+        [-5, -2],
+        [-1, -2],
     ].map(toP);
 
-    // prettier-ignore
     const boatWon = [
-        [3, -4], [2 , 0], [ 5,  2], [1, 2], [-2,0], [-3,-4],[0, -2]
+        [3, -4],
+        [2, 0],
+        [5, 2],
+        [1, 2],
+        [-2, 0],
+        [-3, -4],
+        [0, -2],
     ].map(toP);
-    // prettier-ignore
+
     const boatToo = [
-        [5, -2], [2, 0], [3, 4],
-        [0, 2],[-1, -2], [0, -6], [1, -2]
+        [5, -2],
+        [2, 0],
+        [3, 4],
+        [0, 2],
+        [-1, -2],
+        [0, -6],
+        [1, -2],
     ].map(toP);
 
     const Quadrille = {};
@@ -765,6 +780,9 @@ var quadrille = (function () {
     return Quadrille;
 })();
 
+/*******************************************************
+ * This is the square tiles model, the Mosaic
+ */
 var mosaic = (function () {
     // prettier-ignore
     var penta_up = [ [2,0],[3,0],
@@ -888,16 +906,13 @@ var mosaic = (function () {
         ],
     };
 
-    // const Mosaic = {};
-
-    //     Mosaic.penta = wheel(pentaUp);
-    //     Mosaic.star = wheel(starUp);
-    //     Mosaic.boat = wheel(boatUp, boatWon, boatToo);
-    //     Mosaic.diamond = wheel(diamondUp, diamondWon, diamondToo);
     return Mosaic;
 })();
-// Build the api
 
+// Build the api
+/**
+ * This is stuff that is not specific to the mode or the default
+ */
 var penrose = (function () {
     const ORANGE = "#e46c0a";
     const BLUE = "#0000ff";

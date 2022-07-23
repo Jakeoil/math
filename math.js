@@ -53,31 +53,36 @@ const MODE_REAL = "real";
 const MODE_LIST = [MODE_MOSAIC, MODE_QUADRILLE, MODE_REAL];
 
 let shapeMode = MODE_MOSAIC;
-let pWheels;
-let sWheels;
-let tWheels;
-let dWheels;
+let pWheels, sWheels, tWheels, dWheels;
+let renderShape; // The function that will call figure
 shapeMode = cookie.getShapeMode(MODE_MOSAIC); // cookie
 const eleMode = document.querySelector("#shape-mode");
 
-const refreshShapeMode = () => {
+/**
+ * Changing the shape mode also changes the globals that penta, star and deca
+ * use.
+ * Todo: penta star and deca also have some crud, for example drawing the
+ * figures.
+ */
+function refreshShapeMode() {
     if (eleMode) eleMode.innerHTML = shapeMode;
-    if (shapeMode == MODE_REAL) {
-        [pWheels, sWheels, tWheels, dWheels] = [
-            real.pWheels,
-            real.sWheels,
-            real.tWheels,
-            real.dWheels,
-        ];
-    } else {
-        [pWheels, sWheels, tWheels, dWheels] = [
-            penrose.pWheels,
-            penrose.sWheels,
-            penrose.tWheels,
-            penrose.dWheels,
-        ];
-    }
-};
+    [pWheels, sWheels, tWheels, dWheels] =
+        shapeMode == MODE_REAL
+            ? [real.pWheels, real.sWheels, real.tWheels, real.dWheels]
+            : [
+                  penrose.pWheels,
+                  penrose.sWheels,
+                  penrose.tWheels,
+                  penrose.dWheels,
+              ];
+    renderShape =
+        shapeMode == MODE_MOSAIC
+            ? figure
+            : shapeMode == MODE_QUADRILLE
+            ? outline
+            : outline;
+}
+
 refreshShapeMode();
 
 const clickMode = function () {
@@ -91,7 +96,7 @@ const clickMode = function () {
 /**
  * This is the default global for the shape and orientation controls
  */
-// Note: cookies are a bitch here.
+// Note: cookies are a bitch here. (not so bad)
 const controls = new Controls(0, 0, false);
 
 // Can this be made into a function?
@@ -675,6 +680,9 @@ function drawRealWork(id) {
  * Real is gonna be a big problem.
  * First the shape set.  Next the wheels.
  *
+ * Note: this complexity will be fixed with the renderShape function which loads
+ * the correct routine into that variable.
+ *
  * @param {} fill
  * @param {*} offset
  * @param {*} shape
@@ -700,6 +708,11 @@ function fig(fill, offset, shape) {
     }
 }
 
+/**
+ * Todo, Move this to the shapeMode controls.
+ * @param {*} key
+ * @returns
+ */
 function getShapeSet(key) {
     switch (shapeMode) {
         case MODE_MOSAIC:
@@ -864,28 +877,6 @@ function measure(offset, shape) {
  * 
  * 
  * */
-
-// P is the offset of blue -> blue, blue -> yellow or blue -> orange
-// const [pWheels, sWheels, tWheels, dWheels] = makeWheels(
-//     penrose.pSeed,
-//     penrose.sSeed,
-//     penrose.tSeed,
-//     penrose.dSeed
-// );
-
-// [pWheels, sWheels, tWheels, dWheels] =
-//     shapeMode == MODE_REAL
-//         ? [real.pWheels, real.sWheels, real.tWheels, real.dWheels]
-//         : [penrose.pWheels, penrose.sWheels, penrose.tWheels, penrose.dWheels];
-
-console.log(pWheels);
-// Wheel1 is the seed.
-//const pWheel1 = new Wheel(p(0, -6), p(3, -4), p(5, -2));
-// Ahh, can I change the seed for 'real'?
-
-//const sWheel1 = new Wheel(shapeMode == MODE_REAL...penrose.sSeed);
-//const tWheel1 = new Wheel(...penrose.tSeed);
-//const dWheel1 = new Wheel(...penrose.dSeed);
 
 function compare(a, b) {
     for (let i = 0; i < 10; i++) {
