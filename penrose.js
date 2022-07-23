@@ -3,9 +3,7 @@
 console.log("penrose.js");
 /**
  * Orthoganal Penrose program version one.
- * These routines process a grid. They do not control rendering.
- *
- *
+ * These routines process a scaled grid. They do not control rendering.
  */
 class P {
     constructor(x, y) {
@@ -19,6 +17,7 @@ class P {
     hr = () => new P(-this.x, this.y);
     // If used, strictly for offsets
     div = (d) => new P(this.x / d, this.y / d);
+    mult = (m) => new P(this.x * m, this.y * m);
     // Sometimes you need to create new ones
     copy = (d) => new P(this.x, this.y);
     //
@@ -29,18 +28,6 @@ class P {
     equals = (b) => this.x == b.x && this.y == b.y;
 }
 
-class Coord {
-    constructor(x, y) {
-        this.coord = [x, y];
-    }
-
-    tr = (offset) => [this.coord[0] + offset[0], this.coord[1] + offset[1]];
-    vr = () => [this.coord[0], -this.coord[1]];
-    hr = () => [-this.coord[0], this.coord[1]];
-    copy = [this.coord[0], this.coord[1]];
-    equals = (that) =>
-        this.coord[0] == that.coord[0] && this.coord[1] == that.coord[1];
-}
 /**
  * Convenience functions
  * Mostly due to the fact that I chose and object format
@@ -52,9 +39,13 @@ const norm = (n) => ((n % 5) + 5) % 5;
 function tenths(fifths, isDown) {
     return (fifths * 2 + (isDown ? 5 : 0)) % 10;
 }
+const stringify = JSON.stringify;
+
 /**
  * Mutable class
  * This measures and adjusts the bounding rectangle.
+ * Only the element drawing function (figure) creates a new bounds and returns
+ * either a Bounds with the max min or null max min if nothing got drawn.
  */
 class Bounds {
     constructor() {
@@ -63,14 +54,14 @@ class Bounds {
     }
 
     /**
-     * Called from figure
+     * Called from within figure
      * @param {*} offset
      * @param {*} point
      */
     addPoint(offset, point) {
-        const logicalPoint = new P(offset.x + point.x, offset.y + point.y);
+        const logicalPoint = offset.tr(point);
         if (!this.maxPoint || !this.minPoint) {
-            this.minPoint = logicalPoint.copy(); // private copies, not references
+            this.minPoint = logicalPoint.copy();
             this.maxPoint = logicalPoint.copy();
             return;
         }
@@ -87,12 +78,26 @@ class Bounds {
         }
     }
 
+    /**
+     * Wrapper function for figure. figure returns a bounds object. This
+     * object is integrated (added, mutates) this.
+     * @param {} bounds
+     * @returns
+     */
     expand(bounds) {
         if (!bounds) {
+            // Figure returned null?
+            console.log(TAG, "expand: Figure returned null?");
+            return;
+        }
+
+        if (!bounds.maxPoint || !bounds.minPoint) {
+            // figure didn't draw anything.
             return;
         }
 
         if (!this.maxPoint || !this.minPoint) {
+            // This is the first expansion of this.
             this.minPoint = bounds.minPoint;
             this.maxPoint = bounds.maxPoint;
             return;
@@ -116,65 +121,9 @@ class Bounds {
     }
 }
 
-class BoundsCoord {
-    constructor() {
-        this.maxPoint = null;
-        this.minPoint = null;
-    }
-
-    /**
-     * Called from figure
-     * @param {*} offset
-     * @param {*} point
-     */
-    addPoint(offset, point) {
-        const logicalPoint = point.tr(offset);
-        if (!this.maxPoint || !this.minPoint) {
-            this.minPoint = logicalPoint.copy(); // private copies, not references
-            this.maxPoint = logicalPoint.copy();
-            return;
-        }
-
-        if (logicalPoint[0] < this.minPoint[0]) {
-            this.minPoint[0] = logicalPoint[0];
-        } else if (logicalPoint[0] > this.maxPoint[0]) {
-            this.maxPoint[0] = logicalPoint[0];
-        }
-        if (logicalPoint[1] < this.minPoint[1]) {
-            this.minPoint[1] = logicalPoint[1];
-        } else if (logicalPoint[1] > this.maxPoint[1]) {
-            this.maxPoint[1] = logicalPoint[1];
-        }
-    }
-
-    expand(bounds) {
-        if (!bounds) {
-            return;
-        }
-
-        if (!this.maxPoint || !this.minPoint) {
-            this.minPoint = bounds.minPoint;
-            this.maxPoint = bounds.maxPoint;
-            return;
-        }
-
-        if (bounds.minPoint[0] < this.minPoint[0]) {
-            this.minPoint[0] = bounds.minPoint[0];
-        }
-        if (bounds.minPoint[1] < this.minPoint[1]) {
-            this.minPoint[1] = bounds.minPoint[1];
-        }
-        if (bounds.maxPoint[0] > this.maxPoint[0]) {
-            this.maxPoint[0] = bounds.maxPoint[0];
-        }
-        if (bounds.maxPoint[1] > this.maxPoint[1]) {
-            this.maxPoint[1] = bounds.maxPoint[1];
-        }
-    }
-}
-
 /**
  * Creates a 10 point wheel out of the first three coordinates (or Ps)
+ * Input is up[0], down[3], up[1]
  */
 class Wheel {
     constructor(p0, p1, p2) {
@@ -217,30 +166,157 @@ class Wheel {
     }
     // get stringCoord(){ not needed?
 }
+class Wheels {
+    constructor(pSeed, sSeed, tSeed, dSeed) {
+        this.p = [null];
+        this.s = [null];
+        this.t = [null];
+        this.d = [null];
+    }
+}
+function makeWheels(pSeed, sSeed, tSeed, dSeed) {
+    function pWheelNext(exp) {
+        const p = pWheels[exp].w;
+        return new Wheel(
+            p[1].tr(p[0]).tr(p[9]),
+            p[2].tr(p[1]).tr(p[0]),
+            p[3].tr(p[2]).tr(p[1])
+        );
+    }
 
+    // S is the offset
+    function sWheelNext(exp) {
+        const p = pWheels[exp].w;
+        const s = sWheels[exp].w;
+        return new Wheel(
+            p[1].tr(p[0]).tr(s[9]),
+            p[2].tr(p[1]).tr(s[0]),
+            p[3].tr(p[2]).tr(s[1])
+        );
+    }
+
+    function tWheelNext(exp) {
+        const p = pWheels[exp].w;
+        const s = sWheels[exp].w;
+        return new Wheel(
+            s[1].tr(p[9]).tr(p[0]).tr(p[1]).tr(s[9]),
+            s[2].tr(p[0]).tr(p[1]).tr(p[2]).tr(s[0]),
+            s[3].tr(p[1]).tr(p[2]).tr(p[3]).tr(s[1])
+        );
+    }
+
+    function dWheelNext(exp) {
+        const p = pWheels[exp].w;
+        const d = dWheels[exp].w;
+        console.log(`(${d[0].tr(p[0])}, ${d[1].tr(p[1])}, ${d[2].tr(p[2])}`);
+        return new Wheel(d[0].tr(p[0]), d[1].tr(p[1]), d[2].tr(p[2]));
+    }
+
+    // Wheel[0] is undefined
+    const pWheels = [null];
+    const sWheels = [null];
+    const tWheels = [null];
+    const dWheels = [null];
+
+    const pWheel1 = new Wheel(...pSeed);
+    const sWheel1 = new Wheel(...sSeed);
+    const tWheel1 = new Wheel(...tSeed);
+    const dWheel1 = new Wheel(...dSeed);
+    console.log(`real P1[1]: ${pWheel1.string}`);
+    console.log(`real S1[1]: ${sWheel1.string}`);
+    console.log(`real T1[1]: ${tWheel1.string}`);
+    console.log(`real D1[1]: ${dWheel1.string}`);
+
+    // Wheel[1] = Wheel1
+    pWheels.push(pWheel1);
+    sWheels.push(sWheel1);
+    tWheels.push(tWheel1);
+    dWheels.push(dWheel1);
+
+    const wheelMax = 5;
+    for (let i = 1; i <= wheelMax; i++) {
+        pWheels.push(pWheelNext(i));
+        sWheels.push(sWheelNext(i));
+        tWheels.push(tWheelNext(i));
+        dWheels.push(dWheelNext(i));
+    }
+
+    return [pWheels, sWheels, tWheels, dWheels];
+}
+
+/**
+ * Return a shape wheel based on a minimal set of
+ * shapes. The shapes with five fold symmetry only need
+ * up as input. All others require element 0, 1 and 2 positions.
+ * aka up0, down3, up2
+ */
+function shapeWheel(up, won, too) {
+    if (up) {
+        if (won) {
+            return [
+                up.map((item) => item.copy()),
+                won.map((item) => item.copy()),
+                too.map((item) => item.copy()),
+                too.map((item) => item.vr()),
+                won.map((item) => item.vr()),
+                up.map((item) => item.vr()),
+                won.map((item) => item.vr().hr()),
+                too.map((item) => item.vr().hr()),
+                too.map((item) => item.hr()),
+                won.map((item) => item.hr()),
+            ];
+        }
+        return [
+            up.map((item) => item.copy()),
+            up.map((item) => item.vr()),
+            up.map((item) => item.copy()),
+            up.map((item) => item.vr()),
+            up.map((item) => item.copy()),
+            up.map((item) => item.vr()),
+            up.map((item) => item.copy()),
+            up.map((item) => item.vr()),
+            up.map((item) => item.copy()),
+            up.map((item) => item.vr()),
+        ];
+    }
+    return [];
+}
+
+/**
+ * A clustered set of globals
+ * Cannot say whether it was a good idea to cluster them
+ * Added cookie handling
+ */
 class Controls {
-    constructor(fifths, type, isDown) {
+    constructor(fifths, typeIndex, isDown) {
         this.fifths = fifths;
-        this.type = type;
+        this.typeIndex = typeIndex;
         this.isDown = isDown;
+        this.fifths = cookie.getFifths(fifths);
+        this.typeIndex = cookie.getTypeIndex(typeIndex);
+        this.isDown = cookie.getIsDown(isDown);
     }
     bumpFifths() {
         this.fifths = norm(this.fifths + 1);
+        cookie.setFifths(this.fifths);
     }
 
     get typeName() {
-        return this.typeList[this.type].name;
+        return this.typeList[this.typeIndex].name;
     }
     bumpType() {
-        this.type = (this.type + 1) % this.typeList.length;
+        this.typeIndex = (this.typeIndex + 1) % this.typeList.length;
+        cookie.setTypeIndex(this.typeIndex);
     }
     get direction() {
         return this.isDown ? "Down" : "Up";
     }
     toggleDirection() {
         this.isDown = !this.isDown;
+        cookie.setIsDown(this.isDown);
     }
 
+    // eww, should add the decagon?
     typeList = [
         penrose.Pe1,
         penrose.Pe3,
@@ -250,138 +326,463 @@ class Controls {
         penrose.St5,
     ];
 }
+
+/**
+ * cookie logic from  https://javascript.info/cookie
+ * @param {*} name
+ * @returns
+ */
+// returns the cookie with the given name,
+// or undefined if not found
+function getCookie(name) {
+    let matches = document.cookie.match(
+        new RegExp(
+            "(?:^|; )" +
+                name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, "\\$1") +
+                "=([^;]*)"
+        )
+    );
+    return matches ? decodeURIComponent(matches[1]) : undefined;
+}
+
+// Good option is {"max-age": 3600}  // one hour
+function setCookie(name, value, options = {}) {
+    options = {
+        path: "/",
+        // add other defaults here if necessary
+        ...options,
+    };
+
+    if (options.expires instanceof Date) {
+        options.expires = options.expires.toUTCString();
+    }
+
+    let updatedCookie =
+        encodeURIComponent(name) + "=" + encodeURIComponent(value);
+
+    for (let optionKey in options) {
+        updatedCookie += "; " + optionKey;
+        let optionValue = options[optionKey];
+        if (optionValue !== true) {
+            updatedCookie += "=" + optionValue;
+        }
+    }
+
+    document.cookie = updatedCookie;
+}
+function deleteCookie(name) {
+    setCookie(name, "", {
+        "max-age": -1,
+    });
+}
+
+// The cookie interface
+var cookie = (function () {
+    const Cookie = {};
+    Cookie.getShapeMode = function (sm) {
+        console.log(`getShapeMode: ${document.cookie}`);
+        const cookie = getCookie("shape-mode");
+        if (cookie) {
+            console.log(`found: ${document.cookie}`);
+            return cookie;
+        }
+        return sm;
+    };
+    Cookie.getFifths = function (fifths) {
+        return fifths;
+    };
+    Cookie.getIsDown = function (isDown) {
+        return isDown;
+    };
+    Cookie.getTypeIndex = function (index) {
+        return index;
+    };
+    Cookie.setShapeMode = function (sm) {
+        console.log(`setShapeMode(${sm}): ${document.cookie}`);
+        setCookie("shape-mode", sm, { "max-age": 3600 });
+        console.log(`cookie set: ${document.cookie}`);
+    };
+    Cookie.setFifths = function (fifths) {};
+    Cookie.setIsDown = function (isDown) {};
+    Cookie.setTypeIndex = function (index) {};
+
+    return Cookie;
+})();
+
+/**
+ * Adjusts the proportions of the object linearly and returns results
+ * proportions: A table of lengths of a figure
+ * inputKey: The item whose value you want to fix.
+ * value: Default 1. Otherwise fixes the value to this value.
+ * targetKey: Field to be returned. Otherwise returns new proportions object
+ * with input fixed.
+ */
+function solve(proportions, inputKey, value, targetKey) {
+    if (!proportions) {
+        return null;
+    }
+    let oldValue = proportions[inputKey];
+    // zero is not allowed for any value
+    if (!oldValue) {
+        return null;
+    }
+
+    let factor;
+    if (value) {
+        factor = (1 / oldValue) * value;
+    } else {
+        // set to 1 if none sent
+        factor = 1 / oldValue;
+    }
+    let oldResult = proportions[targetKey];
+    if (oldResult) {
+        return oldResult * factor;
+    } else {
+        let newVariables = {};
+        let keys = Object.keys(proportions);
+        for (const key of keys) {
+            newVariables[key] = proportions[key] * factor;
+        }
+        return newVariables;
+    }
+}
+
 /**
  * This should be easy, we just need drawing of the regular pentagon.
  */
 var real = (function () {
     /**
      * Unit pentagon coordinates
+     * Values come from the only f*ing place on the internet that bothers:
+     * https://mathworld.wolfram.com/RegularPentagon.html
+     * https://mathworld.wolfram.com/Pentagram.html
+     *
+     * The coordinate system used in Penrose differs from the math standard.
+     * First, As in virtually all graphics programs, the y axis is reversed.
+     * Up is negative. Up is also the default 0 angle.
+     * Second, angles are measured clockwise from y axis. Angles are
+     * integers.  There are three angle coordinate system: up down and wheel.
+     *
+     * up refers to the vertices of a right side up pentagon, that is, a
+     * pentagon  with a horizontal base and a apex on top. The top
+     * coordinate, up[0] is P(0, <negative value>). The angles are mod 5
+     * integers referred to as fifths. A fifth is actually n * 2*PI/5 or 72
+     * degrees.
+     *
+     * A vertical reflection of the up system gives you the down system, based
+     * on an 'upside down' pentagon. Thus the down[0] coordinate is
+     * P(0, <positive value>).
+     *
+     * Both systems combined give the 10 angles of the mod 10 wheel system.
+     * Elements 0 to 9 are clockwise: [ up0, down3, up1, down4, up2, down0,
+     * up3, down1, up4, down2]]. The angle here is 36 degrees or a tenth of a
+     *  circle: n * PI / 5
+     *
+     * Given the value of up0 (wheel0), down3 (wheel1) and up1 (wheel2), the
+     * entire wheel can be constructed based on vertical and horizontal
+     * reflections of those three.
+     *
+     * There is another coordinate system hiding away which is at a right angle
+     * to the one described above. Fortunately we don't use that one.
+     *
+     *                              u0
+     *                               *
+     *                  d2 *                   * d3
+     *
+     *
+     *
+     *            u4 *                               * u1
+     *
+     *                               o
+     *
+     *            d1 *                               * d4
+     *
+     *
+     *
+     *                  u3 *                   * u2
+     *                                *
+     *                               d0
+     *
      */
-    const SQRT5 = Math.sqrt(5);
-    const PHI = (SQRT5 + 1) / 2;
-    const INV_PHI = PHI - 1;
-    const PHI2 = 6 + 2 * SQRT5 + 1;
-    const cos0 = 1;
-    const cos1 = PHI / 2;
-    const cos2 = INV_PHI / 2;
-    const sin0 = 0;
-    const sin2 = Math.sqrt(10 + 2 * SQRT5) / 4;
-    const sin4 = Math.sqrt(10 - 2 * SQRT5) / 4;
-    const side = 2 * sin4;
-    const norm4 = (it) => (it * 4) / side;
-    const u0 = [sin0, -cos0].map(norm4);
-    const u1 = [sin2, -cos1].map(norm4);
-    const u2 = [sin4, cos2].map(norm4);
-    const u3 = [-sin4, cos2].map(norm4);
-    const u4 = [-sin2, -cos1].map(norm4);
-    // the length of the side here is
-    // side is greater than on. I we want to normalize to 4.
+    const SQRT5 = Math.sqrt(5); // 2.236
+    const PHI = (SQRT5 + 1) / 2; // 1.618
+    const sqrt = Math.sqrt;
+    console.log(`sqrt5: ${SQRT5}, PHI: ${PHI}`);
 
-    const pentaUp = [u0, u1, u2, u3, u4];
+    // const ct_0 = Math.cos(0);
+    // const ct_1 = Math.cos((2 * Math.PI) / 5);
+    // const ct_2 = Math.cos(Math.PI / 5);
+    // const st_0 = Math.sin(1);
+    // const st_1 = Math.sin((2 * Math.PI) / 5);
+    // const st_2 = Math.sin((4 * Math.PI) / 5);
+
+    const c_0 = 1; // 1.0
+    const c_1 = (SQRT5 - 1) / 4; // .309
+    const c_2 = (SQRT5 + 1) / 4; // .809
+    const s_0 = 0; // 0.0
+    const s_1 = sqrt(10 + 2 * SQRT5) / 4; // .951 sin 72 cos 18
+    const s_2 = sqrt(10 - 2 * SQRT5) / 4; // .588 sin 36 cos 54
+
+    console.log(`s1: ${s_1}, c1: ${c_1}`);
+    console.log(`s2: ${s_2}, c2: ${c_2}`);
+
+    /**
+     * Unit pentagon
+     */
+    const unitUp = [
+        [s_0, -c_0],
+        [s_1, -c_1],
+        [s_2, c_2],
+        [-s_2, c_2],
+        [-s_1, -c_1],
+    ].map(toP);
+
+    const unitDown = unitUp.map((it) => it.vr().hr());
+
+    // Relation between side and unit radius
+    // 2 * s_2 is the length of a unit pentagons base, hence the side
+    const uPgon = {
+        a: 2 * s_2, // 1.176
+        R: 1.0,
+    };
+
+    const R = solve(uPgon, "a", 4, "R");
+
+    // The proportions of the relevent pgon parts.
+    // Note that uPgon is now unnecessary since uPgon.a * pgon.R == 1
+    const pgon = {
+        a: 1.0,
+        d: PHI,
+        R: sqrt(50 + 10 * SQRT5) / 10, // .8507
+        r: sqrt(25 + 10 * SQRT5) / 10, // .688
+        x: sqrt(25 - 10 * SQRT5) / 10, // .162
+    };
+    console.log(`pgon: ${stringify(pgon)}`);
+
+    // The pentagram proportions. Note that a, the side is common
+    // between both pgon and pgram
+    const pgram = {
+        a: (3 - SQRT5) / 2, // .382
+        b: SQRT5 - 2, // .236
+        c: 1, // Missing from diagram, but by definition 2 * b + a
+        R: sqrt((25 - 11 * SQRT5) / 10), // .2008
+        r: sqrt((5 - 2 * SQRT5) / 5) / 2, // .162
+        rho: sqrt((5 - SQRT5) / 10), // .525
+        y: sqrt((25 - 11 * SQRT5) / 2) / 2,
+        x: (SQRT5 - 1) / 4,
+    };
+    console.log(`pgram: ${stringify(pgram)}`);
+
+    const newPgram = solve(pgram, "a", 4);
+    const starTips = unitUp.map((it) => it.mult(newPgram.rho));
+    console.log(`starTips: ${stringify(starTips)}`);
+
+    // The pentagram dimples
+    const starDimples = unitDown.map((it) => it.mult(newPgram.R));
+    console.log(`starDimples: ${stringify(starDimples)}`);
+
+    const pentaUp = unitUp.map((item) => item.mult(R));
+
+    const starUp = [
+        starTips[0],
+        starDimples[3],
+        starTips[1],
+        starDimples[4],
+        starTips[2],
+        starDimples[0],
+        starTips[3],
+        starDimples[1],
+        starTips[4],
+        starDimples[2],
+    ];
+
+    const diamondUp = [
+        starTips[0],
+        starDimples[3],
+        starDimples[0],
+        starDimples[2],
+    ];
+
+    const diamondToo = [
+        starDimples[3],
+        starTips[1],
+        starDimples[4],
+        starDimples[1],
+    ];
+
+    const diamondWon = [
+        starDimples[3],
+        starDimples[0],
+        starTips[3],
+        starDimples[1],
+    ].map((it) => it.hr().vr());
+
+    const boatUp = [
+        starTips[0],
+        starDimples[3],
+        starTips[1],
+        starDimples[4],
+        starDimples[1],
+        starTips[4],
+        starDimples[2],
+    ];
+
+    const boatWon = [
+        starDimples[4],
+        starTips[2],
+        starDimples[0],
+        starTips[3],
+        starDimples[1],
+        starTips[4],
+        starDimples[2],
+    ].map((it) => it.hr().vr());
+
+    const boatToo = [
+        starTips[0],
+        starDimples[3],
+        starTips[1],
+        starDimples[4],
+        starTips[2],
+        starDimples[0],
+        starDimples[2],
+    ];
 
     const Real = {};
-    Real.pentaUp = pentaUp;
+
+    // pSeed is the distance between two pentagon centers.
+    // It is basically 2 * pgon.r
+    const pMag = solve(pgon, "a", 4, "r") * 2;
+    const pSeed = makeSeed(pMag);
+    //console.log(`pMag: ${pMag}, ${Real.pSeed}`);
+
+    // sSeed is the distance between a pentagon and the near diamond
+    // This is pgon.R + pgram.r
+    const sMag = solve(pgon, "a", 4, "R") + solve(pgram, "a", 4, "R");
+    const sSeed = makeSeed(sMag);
+    //console.log(`sMag: ${sMag}, ${Real.sSeed}`);
+
+    // tSeed distance is the centers of two stars with their feet touching
+    // So simply (pgram.R + pgram.y) * 2;
+    const tMag = (solve(pgram, "a", 4, "R") + solve(pgram, "a", 4, "y")) * 2;
+    const tSeed = makeSeed(tMag);
+    //console.log(`tMag: ${tMag}, ${Real.tSeed}`);
+
+    // dseed is simply pgon 2 * r + R with a set to 4.
+    const dMag = solve(pgon, "a", 4, "r");
+    const dSeed = makeSeed(dMag);
+    //console.log(`dMag: ${dMag}, ${Real.dSeed}`);
+
+    Real.penta = shapeWheel(pentaUp);
+    Real.star = shapeWheel(starUp);
+    Real.boat = shapeWheel(boatUp, boatWon, boatToo);
+    Real.diamond = shapeWheel(diamondUp, diamondWon, diamondToo);
+
+    [Real.pWheels, Real.sWheels, Real.tWheels, Real.dWheels] = makeWheels(
+        pSeed,
+        sSeed,
+        tSeed,
+        dSeed
+    );
+
+    function makeSeed(mag) {
+        return [
+            unitUp[0].mult(mag),
+            unitDown[3].mult(mag),
+            unitUp[1].mult(mag),
+        ];
+    }
     return Real;
 })();
-console.log(
-    `pentaUp: [${real.pentaUp[0]}],[${real.pentaUp[1]}],[${real.pentaUp[3]}],[${real.pentaUp[3]}],[${real.pentaUp[4]}]`
-);
-/**
+
+/*******************************************************
  * This is the path model that would work on graph paper
  */
 var quadrille = (function () {
-    // prettier-ignore
     const pentaUp = [
-        [0, -3], [3, -1], [2, 3], [-2, 3], [-3, -1]
-    ].map(function (item) {
-        return new P(item[0], item[1]);
-    });
+        [0, -3],
+        [3, -1],
+        [2, 3],
+        [-2, 3],
+        [-3, -1],
+    ].map(toP);
 
-    // prettier-ignore
     const starUp = [
-        [0, -6], [1, -2], [5, -2], [2, 0], [3, 4],
-        [0, 2], [-3, 4], [-2, 0], [-5, -2], [-1, -2],
-    ].map(function(item){return new P(item[0],item[1])});
+        [0, -6],
+        [1, -2],
+        [5, -2],
+        [2, 0],
+        [3, 4],
+        [0, 2],
+        [-3, 4],
+        [-2, 0],
+        [-5, -2],
+        [-1, -2],
+    ].map(toP);
 
-    // prettier-ignore
     const diamondUp = [
-        [0, -6], [1, -2], [0, 2], [-1, -2]
-    ].map(function(item){return new P(item[0],item[1])});
+        [0, -6],
+        [1, -2],
+        [0, 2],
+        [-1, -2],
+    ].map(toP);
 
-    // prettier-ignore
     const diamondWon = [
-        [3, -4], [0, -2], [-1, 2], [2, 0]
-    ].map(function (item) { return new P(item[0], item[1])});
+        [3, -4],
+        [0, -2],
+        [-1, 2],
+        [2, 0],
+    ].map(toP);
 
-    // prettier-ignore
     const diamondToo = [
-        [5, -2], [2, 0], [-2, 0], [1, -2]
-    ].map(function (item) { return new P(item[0], item[1]) });
+        [5, -2],
+        [2, 0],
+        [-2, 0],
+        [1, -2],
+    ].map(toP);
 
-    // prettier-ignore
     const boatUp = [
-        [0, -6], [1, -2], [5, -2], [2, 0], [-2, 0], [-5, -2], [-1, -2]
-    ].map(function(item){return new P(item[0],item[1])});
+        [0, -6],
+        [1, -2],
+        [5, -2],
+        [2, 0],
+        [-2, 0],
+        [-5, -2],
+        [-1, -2],
+    ].map(toP);
 
-    // prettier-ignore
     const boatWon = [
-        [3, -4], [2 , 0], [ 5,  2], [1, 2], [-2,0], [-3,-4],[0, -2]
-    ].map(function(item){return new P(item[0],item[1])});
-    // prettier-ignore
+        [3, -4],
+        [2, 0],
+        [5, 2],
+        [1, 2],
+        [-2, 0],
+        [-3, -4],
+        [0, -2],
+    ].map(toP);
+
     const boatToo = [
-        [5, -2], [2, 0], [3, 4],
-        [0, 2],[-1, -2], [0, -6], [1, -2]
-    ].map(function (item) { return new P(item[0], item[1]) });
+        [5, -2],
+        [2, 0],
+        [3, 4],
+        [0, 2],
+        [-1, -2],
+        [0, -6],
+        [1, -2],
+    ].map(toP);
 
     const Quadrille = {};
 
-    Quadrille.penta = wheel(pentaUp);
-    Quadrille.star = wheel(starUp);
-    Quadrille.boat = wheel(boatUp, boatWon, boatToo);
-    Quadrille.diamond = wheel(diamondUp, diamondWon, diamondToo);
-
-    /**
-     * Return a shape wheel based on the shape
-     * @param {} up
-     * @param {*} won
-     * @param {*} two
-     * @returns
-     */
-    function wheel(up, won, too) {
-        if (up) {
-            if (won) {
-                return [
-                    up.map((item) => item.copy()),
-                    won.map((item) => item.copy()),
-                    too.map((item) => item.copy()),
-                    too.map((item) => item.vr()),
-                    won.map((item) => item.vr()),
-                    up.map((item) => item.vr()),
-                    won.map((item) => item.vr().hr()),
-                    too.map((item) => item.vr().hr()),
-                    too.map((item) => item.hr()),
-                    won.map((item) => item.hr()),
-                ];
-            }
-            return [
-                up.map((item) => item.copy()),
-                up.map((item) => item.vr()),
-                up.map((item) => item.copy()),
-                up.map((item) => item.vr()),
-                up.map((item) => item.copy()),
-                up.map((item) => item.vr()),
-                up.map((item) => item.copy()),
-                up.map((item) => item.vr()),
-                up.map((item) => item.copy()),
-                up.map((item) => item.vr()),
-            ];
-        }
-        return [];
-    }
+    Quadrille.penta = shapeWheel(pentaUp);
+    Quadrille.star = shapeWheel(starUp);
+    Quadrille.boat = shapeWheel(boatUp, boatWon, boatToo);
+    Quadrille.diamond = shapeWheel(diamondUp, diamondWon, diamondToo);
 
     return Quadrille;
 })();
 
+/*******************************************************
+ * This is the square tiles model, the Mosaic
+ */
 var mosaic = (function () {
     // prettier-ignore
     var penta_up = [ [2,0],[3,0],
@@ -390,19 +791,19 @@ var mosaic = (function () {
        [0,3],[1,3],[2,3],[3,3],[4,3],[5,3],
              [1,4],[2,4],[3,4],[4,4],
              [1,5],[2,5],[3,5],[4,5]]
-    .map(function(item){return new P(item[0],item[1])});
+    .map(toP);
 
     // prettier-ignore
     var diamond_up =[[0,0],[1,0],
                    [0,1],[1,1],
                    [0,2],[1,2],
                    [0,3],[1,3]]
-    .map(function(item){return new P(item[0],item[1])});
+    .map(toP);
 
     // prettier-ignore
     var diamond_too = [[1,0],[2,0],[3,0],[4,0],
                [0,1],[1,1],[2,1],[3,1]]
-    .map(function(item){return new P(item[0],item[1])});
+    .map(toP);
 
     // prettier-ignore
     var diamond_for = [[0,0],
@@ -411,7 +812,7 @@ var mosaic = (function () {
                            [1,3],[2,3],
                                  [2,4],[3,4],
                                        [3,5]]
-    .map(function(item){return new P(item[0],item[1])});
+    .map(toP);
 
     // prettier-ignore
     var star_up =      [[3,0],[4,0],
@@ -422,14 +823,14 @@ var mosaic = (function () {
                 [2,5],[3,5],[4,5],[5,5],
           [1,6],[2,6],            [5,6],[6,6],
           [1,7],                        [6,7]]
-    .map(function(item){return new P(item[0],item[1])});
+    .map(toP);
 
     // prettier-ignore
     var boat_up =      [[3,0],[4,0],
                       [3,1],[4,1],
     [0,2],[1,2],[2,2],[3,2],[4,2],[5,2],[6,2],[7,2],
           [1,3],[2,3],[3,3],[4,3],[5,3],[6,3]]
-  .map(function(item){return new P(item[0],item[1])});
+    .map(toP);
 
     // prettier-ignore
     var boat_too = [[0,0],[1,0],
@@ -440,7 +841,7 @@ var mosaic = (function () {
                         [1,5],[2,5],
                               [2,6],[3,6],
                                     [3,7]]
-    .map(function(item){return new P(item[0],item[1])});
+    .map(toP);
 
     // prettier-ignore
     var boat_for =       [[3,0],[4,0],[5,0],[6,0],
@@ -449,7 +850,8 @@ var mosaic = (function () {
             [1,3],[2,3],[3,3],[4,3],
       [0,4],[1,4],            [4,4],[5,4],
       [0,5],                        [5,5]]
-  .map(function(item){return new P(item[0],item[1])});
+      .map(toP);
+
     const Mosaic = {
         penta: [
             penta_up.map((item) => new P(item.x - 3, item.y - 3)),
@@ -504,16 +906,13 @@ var mosaic = (function () {
         ],
     };
 
-    // const Mosaic = {};
-
-    //     Mosaic.penta = wheel(pentaUp);
-    //     Mosaic.star = wheel(starUp);
-    //     Mosaic.boat = wheel(boatUp, boatWon, boatToo);
-    //     Mosaic.diamond = wheel(diamondUp, diamondWon, diamondToo);
     return Mosaic;
 })();
-// Build the api
 
+// Build the api
+/**
+ * This is stuff that is not specific to the mode or the default
+ */
 var penrose = (function () {
     const ORANGE = "#e46c0a";
     const BLUE = "#0000ff";
@@ -529,6 +928,15 @@ var penrose = (function () {
     const sSeed = [p(0, -5), p(3, -5), p(5, -1)];
     const tSeed = [p(0, -8), p(5, -8), p(8, -2)];
     const dSeed = [p(0, -3), p(2, -3), p(3, -1)];
+
+    const [pWheels, sWheels, tWheels, dWheels] = makeWheels(
+        pSeed,
+        sSeed,
+        tSeed,
+        dSeed
+    );
+    const Penrose = {};
+    Penrose.ORANGE = ORANGE;
 
     // This is the core penrose object.
     return {
@@ -557,12 +965,12 @@ var penrose = (function () {
         tSeed: tSeed,
         dSeed: dSeed,
 
-        // okay, 10 of each
-        // penta: shapes.penta,
-        // diamond: shapes.diamond,
-        // boat: shapes.boat,
-        // //--
-        // star: shapes.star,
+        pWheels: pWheels,
+        sWheels: sWheels,
+        tWheels: tWheels,
+        dWheels: dWheels,
+
+        // Moved the shapes to mosaic
 
         Pe5: {
             name: "Pe5",

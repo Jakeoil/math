@@ -53,21 +53,52 @@ const MODE_REAL = "real";
 const MODE_LIST = [MODE_MOSAIC, MODE_QUADRILLE, MODE_REAL];
 
 let shapeMode = MODE_MOSAIC;
+let pWheels, sWheels, tWheels, dWheels;
+let renderShape; // The function that will call figure
+shapeMode = cookie.getShapeMode(MODE_MOSAIC); // cookie
 const eleMode = document.querySelector("#shape-mode");
 
-if (eleMode) eleMode.innerHTML = shapeMode;
+/**
+ * Changing the shape mode also changes the globals that penta, star and deca
+ * use.
+ * Todo: penta star and deca also have some crud, for example drawing the
+ * figures.
+ */
+function refreshShapeMode() {
+    if (eleMode) eleMode.innerHTML = shapeMode;
+    [pWheels, sWheels, tWheels, dWheels] =
+        shapeMode == MODE_REAL
+            ? [real.pWheels, real.sWheels, real.tWheels, real.dWheels]
+            : [
+                  penrose.pWheels,
+                  penrose.sWheels,
+                  penrose.tWheels,
+                  penrose.dWheels,
+              ];
+    renderShape =
+        shapeMode == MODE_MOSAIC
+            ? figure
+            : shapeMode == MODE_QUADRILLE
+            ? outline
+            : outline;
+}
+
+refreshShapeMode();
 
 const clickMode = function () {
     let new_idx = (MODE_LIST.indexOf(shapeMode) + 1) % MODE_LIST.length;
     shapeMode = MODE_LIST[new_idx];
-    if (eleMode) eleMode.innerHTML = shapeMode;
+    cookie.setShapeMode(shapeMode);
+    refreshShapeMode();
     penroseApp();
 };
 
 /**
  * This is the default global for the shape and orientation controls
  */
+// Note: cookies are a bitch here. (not so bad)
 const controls = new Controls(0, 0, false);
+
 // Can this be made into a function?
 
 const eleFifths = document.querySelector("#fifths");
@@ -119,6 +150,7 @@ function penroseApp() {
     // This is where I refactor _everything_
     drawGeneric123("g012");
     drawGeneric3("g3");
+    drawRealWork("rwork");
 }
 
 /******************************************************************************
@@ -133,6 +165,7 @@ function penroseApp() {
 function makeCanvas(canvasId) {
     var canvas = document.getElementById(canvasId);
     g = canvas.getContext("2d");
+
     // for makeCanvas only
     const drawScreen = function () {
         // Initialize screen.
@@ -178,14 +211,22 @@ function makeCanvas(canvasId) {
  * Called at end of draw cycle.  Redraws under the following conditions
  *   The size of the canvas is greater than the bounds
  *   (future) add a max bounds.
+ *   Fix: canvas apparently stores an integer. Is it a floor round or ceiling.
  * @param {*} bounds
  * @param {*} canvas
  * @param {*} drawFunction
  */
 function redraw(bounds, canvas, drawFunction) {
+    console.log(`redraw`);
     const computedWidth = bounds.maxPoint.x * scale + scale;
     const computedHeight = bounds.maxPoint.y * scale + scale;
-    if (canvas.width != computedWidth || canvas.height != computedHeight) {
+    console.log(
+        `${computedWidth} ${computedHeight} cw: ${canvas.width} ch: ${canvas.height}`
+    );
+    if (
+        canvas.width != Math.floor(computedWidth) ||
+        canvas.height != Math.floor(computedHeight)
+    ) {
         canvas.width = computedWidth;
         canvas.height = computedHeight;
         setTimeout(drawFunction());
@@ -509,7 +550,7 @@ function drawGeneric123(id) {
         let y = 26;
         const bounds = penta(
             controls.fifths,
-            pentaType(controls.type),
+            pentaType(controls.typeIndex),
             controls.isDown,
             p(x, y),
             0
@@ -517,7 +558,7 @@ function drawGeneric123(id) {
         x += 21;
         penta(
             controls.fifths,
-            pentaType(controls.type),
+            pentaType(controls.typeIndex),
             controls.isDown,
             p(x, y),
             1
@@ -525,7 +566,7 @@ function drawGeneric123(id) {
         x += 34;
         penta(
             controls.fifths,
-            pentaType(controls.type),
+            pentaType(controls.typeIndex),
             controls.isDown,
             p(x, y),
             2
@@ -536,7 +577,7 @@ function drawGeneric123(id) {
         y += 55;
         star(
             controls.fifths,
-            starType(controls.type),
+            starType(controls.typeIndex),
             controls.isDown,
             p(x, y),
             0
@@ -544,7 +585,7 @@ function drawGeneric123(id) {
         x += 21;
         star(
             controls.fifths,
-            starType(controls.type),
+            starType(controls.typeIndex),
             controls.isDown,
             p(x, y),
             1
@@ -552,7 +593,7 @@ function drawGeneric123(id) {
         x += 54;
         star(
             controls.fifths,
-            starType(controls.type),
+            starType(controls.typeIndex),
             controls.isDown,
             p(x, y),
             2
@@ -589,8 +630,8 @@ function drawGeneric3(id) {
             deca(controls.fifths, controls.isDown, p(210, 80), 3);
             deca(controls.fifths, controls.isDown, p(x, y), 4);
         } else {
-            console.log(`drawScreen ${controls.type}`);
-            const type = controls.typeList[controls.type];
+            console.log(`drawScreen ${controls.typeIndex}`);
+            const type = controls.typeList[controls.typeIndex];
             switch (type) {
                 case penrose.Pe1:
                 case penrose.Pe3:
@@ -611,12 +652,37 @@ function drawGeneric3(id) {
     drawScreen();
 }
 
+function drawRealWork(id) {
+    console.log(`drawRealWork id: ${id}`);
+    const canvas = document.querySelector(`#${id} > canvas`);
+
+    // g is global
+    g = canvas.getContext("2d");
+    g.fillStyle = "#ffffff";
+    g.fillRect(0, 0, canvas.width, canvas.height);
+    g.strokeStyle = penrose.OUTLINE;
+    g.lineWidth = 1;
+    scale = 10;
+
+    const drawScreen = function () {
+        //const rShapes = [real.penta];
+    };
+
+    drawScreen();
+}
 /**********************************************************
  * Routines used by penta, star and deca.  Move these closer.
  */
 
 /**
  * The generic figure function is a mess. Let's find a better way.
+ * It is too tightly coupled with to controls context.
+ * Real is gonna be a big problem.
+ * First the shape set.  Next the wheels.
+ *
+ * Note: this complexity will be fixed with the renderShape function which loads
+ * the correct routine into that variable.
+ *
  * @param {} fill
  * @param {*} offset
  * @param {*} shape
@@ -634,6 +700,7 @@ function fig(fill, offset, shape) {
         case MODE_QUADRILLE:
             return outline(fill, offset, shape);
         case MODE_REAL:
+            return outline(fill, offset, shape);
         default:
             let bounds = new Bounds();
             bounds.addPoint(offset, offset);
@@ -641,15 +708,19 @@ function fig(fill, offset, shape) {
     }
 }
 
+/**
+ * Todo, Move this to the shapeMode controls.
+ * @param {*} key
+ * @returns
+ */
 function getShapeSet(key) {
     switch (shapeMode) {
         case MODE_MOSAIC:
-            console.log(`mosaic key: ${key}`);
             return mosaic[key];
         case MODE_QUADRILLE:
             return quadrille[key];
         case MODE_REAL:
-            return null;
+            return real[key];
     }
     return null;
 }
@@ -806,76 +877,6 @@ function measure(offset, shape) {
  * 
  * 
  * */
-
-// P is the offset of blue -> blue, blue -> yellow or blue -> orange
-function pWheelNext(exp) {
-    const p = pWheels[exp].w;
-    return new Wheel(
-        p[1].tr(p[0]).tr(p[9]),
-        p[2].tr(p[1]).tr(p[0]),
-        p[3].tr(p[2]).tr(p[1])
-    );
-}
-
-// S is the offset
-function sWheelNext(exp) {
-    const p = pWheels[exp].w;
-    const s = sWheels[exp].w;
-    return new Wheel(
-        p[1].tr(p[0]).tr(s[9]),
-        p[2].tr(p[1]).tr(s[0]),
-        p[3].tr(p[2]).tr(s[1])
-    );
-}
-
-function tWheelNext(exp) {
-    const p = pWheels[exp].w;
-    const s = sWheels[exp].w;
-    return new Wheel(
-        s[1].tr(p[9]).tr(p[0]).tr(p[1]).tr(s[9]),
-        s[2].tr(p[0]).tr(p[1]).tr(p[2]).tr(s[0]),
-        s[3].tr(p[1]).tr(p[2]).tr(p[3]).tr(s[1])
-    );
-}
-
-function dWheelNext(exp) {
-    const p = pWheels[exp].w;
-    const d = dWheels[exp].w;
-    console.log(`(${d[0].tr(p[0])}, ${d[1].tr(p[1])}, ${d[2].tr(p[2])}`);
-    return new Wheel(d[0].tr(p[0]), d[1].tr(p[1]), d[2].tr(p[2]));
-}
-
-// Wheel[0] is undefined
-const pWheels = [null];
-const sWheels = [null];
-const tWheels = [null];
-const dWheels = [null];
-
-// Wheel1 is the seed.
-//const pWheel1 = new Wheel(p(0, -6), p(3, -4), p(5, -2));
-const pWheel1 = new Wheel(...penrose.pSeed);
-const sWheel1 = new Wheel(...penrose.sSeed);
-const tWheel1 = new Wheel(...penrose.tSeed);
-const dWheel1 = new Wheel(...penrose.dSeed);
-
-console.log(`real P1[1]: ${pWheel1.string}`);
-console.log(`real S1[1]: ${sWheel1.string}`);
-console.log(`real T1[1]: ${tWheel1.string}`);
-console.log(`real D1[1]: ${dWheel1.string}`);
-
-// Wheel[1] = Wheel1
-pWheels.push(pWheel1);
-sWheels.push(sWheel1);
-tWheels.push(tWheel1);
-dWheels.push(dWheel1);
-
-const wheelMax = 5;
-for (let i = 1; i <= wheelMax; i++) {
-    pWheels.push(pWheelNext(i));
-    sWheels.push(sWheelNext(i));
-    tWheels.push(tWheelNext(i));
-    dWheels.push(dWheelNext(i));
-}
 
 function compare(a, b) {
     for (let i = 0; i < 10; i++) {
