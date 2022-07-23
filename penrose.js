@@ -166,6 +166,83 @@ class Wheel {
     }
     // get stringCoord(){ not needed?
 }
+class Wheels {
+    constructor(pSeed, sSeed, tSeed, dSeed) {
+        this.p = [null];
+        this.s = [null];
+        this.t = [null];
+        this.d = [null];
+    }
+}
+function makeWheels(pSeed, sSeed, tSeed, dSeed) {
+    function pWheelNext(exp) {
+        const p = pWheels[exp].w;
+        return new Wheel(
+            p[1].tr(p[0]).tr(p[9]),
+            p[2].tr(p[1]).tr(p[0]),
+            p[3].tr(p[2]).tr(p[1])
+        );
+    }
+
+    // S is the offset
+    function sWheelNext(exp) {
+        const p = pWheels[exp].w;
+        const s = sWheels[exp].w;
+        return new Wheel(
+            p[1].tr(p[0]).tr(s[9]),
+            p[2].tr(p[1]).tr(s[0]),
+            p[3].tr(p[2]).tr(s[1])
+        );
+    }
+
+    function tWheelNext(exp) {
+        const p = pWheels[exp].w;
+        const s = sWheels[exp].w;
+        return new Wheel(
+            s[1].tr(p[9]).tr(p[0]).tr(p[1]).tr(s[9]),
+            s[2].tr(p[0]).tr(p[1]).tr(p[2]).tr(s[0]),
+            s[3].tr(p[1]).tr(p[2]).tr(p[3]).tr(s[1])
+        );
+    }
+
+    function dWheelNext(exp) {
+        const p = pWheels[exp].w;
+        const d = dWheels[exp].w;
+        console.log(`(${d[0].tr(p[0])}, ${d[1].tr(p[1])}, ${d[2].tr(p[2])}`);
+        return new Wheel(d[0].tr(p[0]), d[1].tr(p[1]), d[2].tr(p[2]));
+    }
+
+    // Wheel[0] is undefined
+    const pWheels = [null];
+    const sWheels = [null];
+    const tWheels = [null];
+    const dWheels = [null];
+
+    const pWheel1 = new Wheel(...pSeed);
+    const sWheel1 = new Wheel(...sSeed);
+    const tWheel1 = new Wheel(...tSeed);
+    const dWheel1 = new Wheel(...dSeed);
+    console.log(`real P1[1]: ${pWheel1.string}`);
+    console.log(`real S1[1]: ${sWheel1.string}`);
+    console.log(`real T1[1]: ${tWheel1.string}`);
+    console.log(`real D1[1]: ${dWheel1.string}`);
+
+    // Wheel[1] = Wheel1
+    pWheels.push(pWheel1);
+    sWheels.push(sWheel1);
+    tWheels.push(tWheel1);
+    dWheels.push(dWheel1);
+
+    const wheelMax = 5;
+    for (let i = 1; i <= wheelMax; i++) {
+        pWheels.push(pWheelNext(i));
+        sWheels.push(sWheelNext(i));
+        tWheels.push(tWheelNext(i));
+        dWheels.push(dWheelNext(i));
+    }
+
+    return [pWheels, sWheels, tWheels, dWheels];
+}
 
 /**
  * Return a shape wheel based on a minimal set of
@@ -588,61 +665,45 @@ var real = (function () {
     // pSeed is the distance between two pentagon centers.
     // It is basically 2 * pgon.r
     const pMag = solve(pgon, "a", 4, "r") * 2;
-    Real.pSeed = [
-        unitUp[0].mult(pMag),
-        unitDown[3].mult(pMag),
-        unitUp[1].mult(pMag),
-    ];
+    const pSeed = makeSeed(pMag);
     console.log(`pMag: ${pMag}, ${Real.pSeed}`);
-    //const pSeed = [p(0, -6), p(3, -4), p(5, -2)];
+
     // sSeed is the distance between a pentagon and the near diamond
     // This is pgon.R + pgram.r
     const sMag = solve(pgon, "a", 4, "R") + solve(pgram, "a", 4, "R");
-    Real.sSeed = [
-        unitUp[0].mult(sMag),
-        unitDown[3].mult(sMag),
-        unitUp[1].mult(sMag),
-    ];
+    const sSeed = makeSeed(sMag);
     console.log(`sMag: ${sMag}, ${Real.sSeed}`);
-    //    const sSeed = [p(0, -5), p(3, -5), p(5, -1)];
-    // tSeed is the distance between a star and a boat in an expanded diamond.
-    // It's a real bitch. The star center to tip is pgram with a set to 4.
-    // The pentagon altitude is pgon R + r with a set to 4.
-    // Finally that little distance between the tip and the base of the boat is
-    // pgram rho - r with c = 4...whew..Wrong!!
 
-    // Okay, the distance is the distance between the centers of two a=4 stars.
-    // So simply pgram.R + pgram
+    // tSeed distance is the centers of two stars with their feet touching
+    // So simply (pgram.R + pgram.y) * 2;
     const tMag = (solve(pgram, "a", 4, "R") + solve(pgram, "a", 4, "y")) * 2;
-
-    // solve(pgram, "a", 4, "R") +
-    // solve(pgon, "a", 4, "R") +
-    // solve(pgon, "a", 4, "r") +
-    // solve(pgram, "c", 4, "rho") -
-    // solve(pgram, "c", 4, "r");
-    Real.tSeed = [
-        unitUp[0].mult(tMag),
-        unitDown[3].mult(tMag),
-        unitUp[1].mult(tMag),
-    ];
+    const tSeed = makeSeed(tMag);
     console.log(`tMag: ${tMag}, ${Real.tSeed}`);
 
-    //const tSeed = [p(0, -8), p(5, -8), p(8, -2)];
     // dseed is simply pgon 2 * r + R with a set to 4.
     const dMag = solve(pgon, "a", 4, "r");
-    Real.dSeed = [
-        unitUp[0].mult(dMag),
-        unitDown[3].mult(dMag),
-        unitUp[1].mult(dMag),
-    ];
+    const dSeed = makeSeed(dMag);
     console.log(`dMag: ${dMag}, ${Real.dSeed}`);
-    //const dSeed = [p(0, -3), p(2, -3), p(3, -1)];
 
     Real.penta = shapeWheel(pentaUp);
     Real.star = shapeWheel(starUp);
     Real.boat = shapeWheel(boatUp, boatWon, boatToo);
     Real.diamond = shapeWheel(diamondUp, diamondWon, diamondToo);
 
+    [Real.pWheels, Real.sWheels, Real.tWheels, Real.dWheels] = makeWheels(
+        pSeed,
+        sSeed,
+        tSeed,
+        dSeed
+    );
+
+    function makeSeed(mag) {
+        return [
+            unitUp[0].mult(mag),
+            unitDown[3].mult(mag),
+            unitUp[1].mult(mag),
+        ];
+    }
     return Real;
 })();
 
@@ -853,6 +914,12 @@ var penrose = (function () {
     const tSeed = [p(0, -8), p(5, -8), p(8, -2)];
     const dSeed = [p(0, -3), p(2, -3), p(3, -1)];
 
+    const [pWheels, sWheels, tWheels, dWheels] = makeWheels(
+        pSeed,
+        sSeed,
+        tSeed,
+        dSeed
+    );
     const Penrose = {};
     Penrose.ORANGE = ORANGE;
 
@@ -882,6 +949,11 @@ var penrose = (function () {
         sSeed: sSeed,
         tSeed: tSeed,
         dSeed: dSeed,
+
+        pWheels: pWheels,
+        sWheels: sWheels,
+        tWheels: tWheels,
+        dWheels: dWheels,
 
         // Moved the shapes to mosaic
 

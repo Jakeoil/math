@@ -53,16 +53,38 @@ const MODE_REAL = "real";
 const MODE_LIST = [MODE_MOSAIC, MODE_QUADRILLE, MODE_REAL];
 
 let shapeMode = MODE_MOSAIC;
+let pWheels;
+let sWheels;
+let tWheels;
+let dWheels;
 shapeMode = cookie.getShapeMode(MODE_MOSAIC); // cookie
 const eleMode = document.querySelector("#shape-mode");
 
-if (eleMode) eleMode.innerHTML = shapeMode;
+const refreshShapeMode = () => {
+    if (eleMode) eleMode.innerHTML = shapeMode;
+    if (shapeMode == MODE_REAL) {
+        [pWheels, sWheels, tWheels, dWheels] = [
+            real.pWheels,
+            real.sWheels,
+            real.tWheels,
+            real.dWheels,
+        ];
+    } else {
+        [pWheels, sWheels, tWheels, dWheels] = [
+            penrose.pWheels,
+            penrose.sWheels,
+            penrose.tWheels,
+            penrose.dWheels,
+        ];
+    }
+};
+refreshShapeMode();
 
 const clickMode = function () {
     let new_idx = (MODE_LIST.indexOf(shapeMode) + 1) % MODE_LIST.length;
     shapeMode = MODE_LIST[new_idx];
     cookie.setShapeMode(shapeMode);
-    if (eleMode) eleMode.innerHTML = shapeMode;
+    refreshShapeMode();
     penroseApp();
 };
 
@@ -844,93 +866,26 @@ function measure(offset, shape) {
  * */
 
 // P is the offset of blue -> blue, blue -> yellow or blue -> orange
-function pWheelNext(exp) {
-    const p = pWheels[exp].w;
-    return new Wheel(
-        p[1].tr(p[0]).tr(p[9]),
-        p[2].tr(p[1]).tr(p[0]),
-        p[3].tr(p[2]).tr(p[1])
-    );
-}
+// const [pWheels, sWheels, tWheels, dWheels] = makeWheels(
+//     penrose.pSeed,
+//     penrose.sSeed,
+//     penrose.tSeed,
+//     penrose.dSeed
+// );
 
-// S is the offset
-function sWheelNext(exp) {
-    const p = pWheels[exp].w;
-    const s = sWheels[exp].w;
-    return new Wheel(
-        p[1].tr(p[0]).tr(s[9]),
-        p[2].tr(p[1]).tr(s[0]),
-        p[3].tr(p[2]).tr(s[1])
-    );
-}
+// [pWheels, sWheels, tWheels, dWheels] =
+//     shapeMode == MODE_REAL
+//         ? [real.pWheels, real.sWheels, real.tWheels, real.dWheels]
+//         : [penrose.pWheels, penrose.sWheels, penrose.tWheels, penrose.dWheels];
 
-function tWheelNext(exp) {
-    const p = pWheels[exp].w;
-    const s = sWheels[exp].w;
-    return new Wheel(
-        s[1].tr(p[9]).tr(p[0]).tr(p[1]).tr(s[9]),
-        s[2].tr(p[0]).tr(p[1]).tr(p[2]).tr(s[0]),
-        s[3].tr(p[1]).tr(p[2]).tr(p[3]).tr(s[1])
-    );
-}
-
-function dWheelNext(exp) {
-    const p = pWheels[exp].w;
-    const d = dWheels[exp].w;
-    console.log(`(${d[0].tr(p[0])}, ${d[1].tr(p[1])}, ${d[2].tr(p[2])}`);
-    return new Wheel(d[0].tr(p[0]), d[1].tr(p[1]), d[2].tr(p[2]));
-}
-
-// Wheel[0] is undefined
-const pWheels = [null];
-const sWheels = [null];
-const tWheels = [null];
-const dWheels = [null];
-
+console.log(pWheels);
 // Wheel1 is the seed.
 //const pWheel1 = new Wheel(p(0, -6), p(3, -4), p(5, -2));
 // Ahh, can I change the seed for 'real'?
 
-const pWheel1 =
-    shapeMode == MODE_REAL
-        ? new Wheel(...real.pSeed)
-        : new Wheel(...penrose.pSeed);
-
-const sWheel1 =
-    shapeMode == MODE_REAL
-        ? new Wheel(...real.sSeed)
-        : new Wheel(...penrose.sSeed);
-const tWheel1 =
-    shapeMode == MODE_REAL
-        ? new Wheel(...real.tSeed)
-        : new Wheel(...penrose.tSeed);
-const dWheel1 =
-    shapeMode == MODE_REAL
-        ? new Wheel(...real.dSeed)
-        : new Wheel(...penrose.dSeed);
-
 //const sWheel1 = new Wheel(shapeMode == MODE_REAL...penrose.sSeed);
 //const tWheel1 = new Wheel(...penrose.tSeed);
 //const dWheel1 = new Wheel(...penrose.dSeed);
-
-console.log(`real P1[1]: ${pWheel1.string}`);
-console.log(`real S1[1]: ${sWheel1.string}`);
-console.log(`real T1[1]: ${tWheel1.string}`);
-console.log(`real D1[1]: ${dWheel1.string}`);
-
-// Wheel[1] = Wheel1
-pWheels.push(pWheel1);
-sWheels.push(sWheel1);
-tWheels.push(tWheel1);
-dWheels.push(dWheel1);
-
-const wheelMax = 5;
-for (let i = 1; i <= wheelMax; i++) {
-    pWheels.push(pWheelNext(i));
-    sWheels.push(sWheelNext(i));
-    tWheels.push(tWheelNext(i));
-    dWheels.push(dWheelNext(i));
-}
 
 function compare(a, b) {
     for (let i = 0; i < 10; i++) {
