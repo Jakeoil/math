@@ -210,9 +210,7 @@ function makeCanvas(canvasId) {
         const bounds = new Bounds();
         switch (canvasId) {
             case "p5":
-                console.log(`draw`);
                 bounds.expand(penta(0, penrose.Pe5, true, new P(3, 3), 0));
-                console.log(`bounds: ${bounds}`);
                 break;
             case "p3":
                 bounds.expand(penta(0, penrose.Pe3, false, new P(3, 3), 0));

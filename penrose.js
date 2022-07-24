@@ -10,24 +10,37 @@ class P {
         this.y = y;
     }
     // translate
-    tr = (v) => new P(this.x + v.x, this.y + v.y);
+    tr(v) {
+        return new P(this.x + v.x, this.y + v.y);
+    }
     // Vertical and Horizontal reflection
-    vr = () => new P(this.x, -this.y);
-    hr = () => new P(-this.x, this.y);
+    get vr() {
+        return new P(this.x, -this.y);
+    }
+    get hr() {
+        return new P(-this.x, this.y);
+    }
+    get copy() {
+        return new P(this.x, this.y);
+    }
     get neg() {
         return new P(-this.x, -this.y);
     }
     // If used, strictly for offsets
-    div = (d) => new P(this.x / d, this.y / d);
-    mult = (m) => new P(this.x * m, this.y * m);
-    // Sometimes you need to create new ones
-    copy = (d) => new P(this.x, this.y);
+    div(d) {
+        return new P(this.x / d, this.y / d);
+    }
+    mult(m) {
+        return new P(this.x * m, this.y * m);
+    }
     //
     toLoc = () => [this.x, this.y];
     toString() {
         return JSON.stringify(this);
     }
-    equals = (b) => this.x == b.x && this.y == b.y;
+    equals(b) {
+        this.x == b.x && this.y == b.y;
+    }
 }
 
 /**
@@ -63,8 +76,8 @@ class Bounds {
     addPoint(offset, point) {
         const logicalPoint = offset.tr(point);
         if (!this.maxPoint || !this.minPoint) {
-            this.minPoint = logicalPoint.copy();
-            this.maxPoint = logicalPoint.copy();
+            this.minPoint = logicalPoint.copy;
+            this.maxPoint = logicalPoint.copy;
             return;
         }
 
@@ -134,16 +147,16 @@ class Bounds {
 class Wheel {
     constructor(p0, p1, p2) {
         this.list = [
-            p0.copy(),
-            p1.copy(),
-            p2.copy(),
-            p2.vr(),
-            p1.vr(),
-            p0.vr(),
-            p1.vr().hr(),
-            p2.vr().hr(),
-            p2.hr(),
-            p1.hr(),
+            p0.copy,
+            p1.copy,
+            p2.copy,
+            p2.vr,
+            p1.vr,
+            p0.vr,
+            p1.neg,
+            p2.neg,
+            p2.hr,
+            p1.hr,
         ];
     }
     get up() {
@@ -260,29 +273,29 @@ function shapeWheel(up, won, too) {
     if (up) {
         if (won) {
             return [
-                up.map((item) => item.copy()),
-                won.map((item) => item.copy()),
-                too.map((item) => item.copy()),
-                too.map((item) => item.vr()),
-                won.map((item) => item.vr()),
-                up.map((item) => item.vr()),
-                won.map((item) => item.vr().hr()),
-                too.map((item) => item.vr().hr()),
-                too.map((item) => item.hr()),
-                won.map((item) => item.hr()),
+                up.map((item) => item.copy),
+                won.map((item) => item.copy),
+                too.map((item) => item.copy),
+                too.map((item) => item.vr),
+                won.map((item) => item.vr),
+                up.map((item) => item.vr),
+                won.map((item) => item.neg),
+                too.map((item) => item.neg),
+                too.map((item) => item.hr),
+                won.map((item) => item.hr),
             ];
         }
         return [
-            up.map((item) => item.copy()),
-            up.map((item) => item.vr()),
-            up.map((item) => item.copy()),
-            up.map((item) => item.vr()),
-            up.map((item) => item.copy()),
-            up.map((item) => item.vr()),
-            up.map((item) => item.copy()),
-            up.map((item) => item.vr()),
-            up.map((item) => item.copy()),
-            up.map((item) => item.vr()),
+            up.map((item) => item.copy),
+            up.map((item) => item.vr),
+            up.map((item) => item.copy),
+            up.map((item) => item.vr),
+            up.map((item) => item.copy),
+            up.map((item) => item.vr),
+            up.map((item) => item.copy),
+            up.map((item) => item.vr),
+            up.map((item) => item.copy),
+            up.map((item) => item.vr),
         ];
     }
     return [];
@@ -548,7 +561,7 @@ var real = (function () {
         [-s_1, -c_1],
     ].map(toP);
 
-    const unitDown = unitUp.map((it) => it.vr().hr());
+    const unitDown = unitUp.map((it) => it.neg);
 
     // Relation between side and unit radius
     // 2 * s_2 is the length of a unit pentagons base, hence the side
@@ -620,7 +633,7 @@ var real = (function () {
         starDimples[0],
         starTips[3],
         starDimples[1],
-    ].map((it) => it.hr().vr());
+    ].map((it) => it.neg);
 
     const boatUp = [
         starTips[0],
@@ -640,7 +653,7 @@ var real = (function () {
         starDimples[1],
         starTips[4],
         starDimples[2],
-    ].map((it) => it.hr().vr());
+    ].map((it) => it.neg);
 
     const boatToo = [
         starTips[0],
