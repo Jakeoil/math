@@ -139,7 +139,6 @@ let activeButtonIndex = cookie.getActiveButtonIndex(0);
 let navButtons = document.querySelectorAll(".pageButton");
 let pages = document.querySelectorAll(".page");
 
-console.log(`click because of restart. active index: ${activeButtonIndex}`);
 navButtons[activeButtonIndex].click();
 
 function pageClicked(pageId, button) {
@@ -153,7 +152,6 @@ function pageClicked(pageId, button) {
         let navButton = navButtons[index];
         if (navButton === button) {
             activeButtonIndex = index;
-            console.log(`click on ${index} with id: ${pageId}`);
             cookie.setActiveButtonIndex(index);
             navButton.style.background = "white";
             navButton.style.color = "black";
@@ -1144,3 +1142,27 @@ function deca(fifths, isDown, loc, exp) {
         : pDown[norm(2 + fifths)].tr(sDown[norm(3 + fifths)]);
     star(fifths + 0, penrose.St3, !isDown, base.tr(offs), exp - 1);
 }
+
+/****
+ * Create a canvas command and width and height
+ *
+ * @param {*} bounds
+ * @param {*} target
+ */
+function adjustBounds(bounds, loc) {
+    const adj = {
+        width: bounds.maxPoint.x - bounds.minPoint.x + 1,
+        height: bounds.maxPoint.y - bounds.minPoint.y + 1,
+        offset: loc.tr(bounds.minPoint.neg),
+    };
+    return adj;
+}
+
+// test adjust bounds
+const loc = p(10, 20);
+let bounds = new Bounds();
+bounds.addPoint(loc, p(5, 5));
+bounds.addPoint(loc, p(20, 20));
+let adj = adjustBounds(bounds, loc);
+
+console.log(`bounds: ${bounds}, adj: ${adj}`);

@@ -1,6 +1,5 @@
 "use strict";
 
-console.log("penrose.js");
 /**
  * Orthoganal Penrose program version one.
  * These routines process a scaled grid. They do not control rendering.
@@ -15,6 +14,9 @@ class P {
     // Vertical and Horizontal reflection
     vr = () => new P(this.x, -this.y);
     hr = () => new P(-this.x, this.y);
+    get neg() {
+        return new P(-this.x, -this.y);
+    }
     // If used, strictly for offsets
     div = (d) => new P(this.x / d, this.y / d);
     mult = (m) => new P(this.x * m, this.y * m);
@@ -116,6 +118,10 @@ class Bounds {
             this.maxPoint.y = bounds.maxPoint.y;
         }
     }
+    // doesn't check for null.
+    get minX() {
+        return this.minPoint && this.minPoint.x;
+    }
     toString() {
         return JSON.stringify(this);
     }
@@ -208,7 +214,7 @@ function makeWheels(pSeed, sSeed, tSeed, dSeed) {
     function dWheelNext(exp) {
         const p = pWheels[exp].w;
         const d = dWheels[exp].w;
-        console.log(`(${d[0].tr(p[0])}, ${d[1].tr(p[1])}, ${d[2].tr(p[2])}`);
+        //console.log(`(${d[0].tr(p[0])}, ${d[1].tr(p[1])}, ${d[2].tr(p[2])}`);
         return new Wheel(d[0].tr(p[0]), d[1].tr(p[1]), d[2].tr(p[2]));
     }
 
@@ -222,10 +228,10 @@ function makeWheels(pSeed, sSeed, tSeed, dSeed) {
     const sWheel1 = new Wheel(...sSeed);
     const tWheel1 = new Wheel(...tSeed);
     const dWheel1 = new Wheel(...dSeed);
-    console.log(`real P1[1]: ${pWheel1.string}`);
-    console.log(`real S1[1]: ${sWheel1.string}`);
-    console.log(`real T1[1]: ${tWheel1.string}`);
-    console.log(`real D1[1]: ${dWheel1.string}`);
+    // console.log(`real P1[1]: ${pWheel1.string}`);
+    // console.log(`real S1[1]: ${sWheel1.string}`);
+    // console.log(`real T1[1]: ${tWheel1.string}`);
+    // console.log(`real D1[1]: ${dWheel1.string}`);
 
     // Wheel[1] = Wheel1
     pWheels.push(pWheel1);
@@ -349,6 +355,7 @@ function getCookie(name) {
 function setCookie(name, value, options = {}) {
     options = {
         path: "/",
+        SameSite: "strict",
         // add other defaults here if necessary
         ...options,
     };
@@ -381,10 +388,8 @@ var cookie = (function () {
     const Cookie = {};
 
     Cookie.getShapeMode = function (sm) {
-        console.log(`getShapeMode: ${document.cookie}`);
         const cookie = getCookie("shape-mode");
         if (cookie) {
-            console.log(`found: ${document.cookie}`);
             return cookie;
         }
         return sm;
@@ -396,13 +401,11 @@ var cookie = (function () {
     Cookie.getActiveButtonIndex = function (index) {
         const cookie = getCookie("active-button-index");
         if (cookie) {
-            console.log(`found index cookie: ${cookie}`);
             return cookie;
         }
         return index;
     };
     Cookie.setActiveButtonIndex = function (index) {
-        console.log(`setting index cookie: ${index}`);
         setCookie("active-button-index", index, { "max-age": 3600 });
     };
 
@@ -460,9 +463,9 @@ function solve(proportions, inputKey, value, targetKey) {
     }
 }
 
-/**
+/********************************************************************
  * This should be easy, we just need drawing of the regular pentagon.
- */
+ *******************************************************************/
 var real = (function () {
     /**
      * Unit pentagon coordinates
@@ -520,7 +523,6 @@ var real = (function () {
     const SQRT5 = Math.sqrt(5); // 2.236
     const PHI = (SQRT5 + 1) / 2; // 1.618
     const sqrt = Math.sqrt;
-    console.log(`sqrt5: ${SQRT5}, PHI: ${PHI}`);
 
     // const ct_0 = Math.cos(0);
     // const ct_1 = Math.cos((2 * Math.PI) / 5);
@@ -535,10 +537,6 @@ var real = (function () {
     const s_0 = 0; // 0.0
     const s_1 = sqrt(10 + 2 * SQRT5) / 4; // .951 sin 72 cos 18
     const s_2 = sqrt(10 - 2 * SQRT5) / 4; // .588 sin 36 cos 54
-
-    console.log(`s1: ${s_1}, c1: ${c_1}`);
-    console.log(`s2: ${s_2}, c2: ${c_2}`);
-
     /**
      * Unit pentagon
      */
@@ -570,7 +568,6 @@ var real = (function () {
         r: sqrt(25 + 10 * SQRT5) / 10, // .688
         x: sqrt(25 - 10 * SQRT5) / 10, // .162
     };
-    console.log(`pgon: ${stringify(pgon)}`);
 
     // The pentagram proportions. Note that a, the side is common
     // between both pgon and pgram
@@ -584,15 +581,10 @@ var real = (function () {
         y: sqrt((25 - 11 * SQRT5) / 2) / 2,
         x: (SQRT5 - 1) / 4,
     };
-    console.log(`pgram: ${stringify(pgram)}`);
 
     const newPgram = solve(pgram, "a", 4);
     const starTips = unitUp.map((it) => it.mult(newPgram.rho));
-    console.log(`starTips: ${stringify(starTips)}`);
-
-    // The pentagram dimples
     const starDimples = unitDown.map((it) => it.mult(newPgram.R));
-    console.log(`starDimples: ${stringify(starDimples)}`);
 
     const pentaUp = unitUp.map((item) => item.mult(R));
 
