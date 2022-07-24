@@ -1,5 +1,7 @@
 "use strict";
 
+const stringify = JSON.stringify;
+
 /**
  * Orthoganal Penrose program version one.
  * These routines process a scaled grid. They do not control rendering.
@@ -33,10 +35,12 @@ class P {
     mult(m) {
         return new P(this.x * m, this.y * m);
     }
-    //
-    toLoc = () => [this.x, this.y];
+    // Not used?
+    get toLoc() {
+        return [this.x, this.y];
+    }
     toString() {
-        return JSON.stringify(this);
+        return stringify(this);
     }
     equals(b) {
         this.x == b.x && this.y == b.y;
@@ -54,7 +58,6 @@ const norm = (n) => ((n % 5) + 5) % 5;
 function tenths(fifths, isDown) {
     return (fifths * 2 + (isDown ? 5 : 0)) % 10;
 }
-const stringify = JSON.stringify;
 
 /**
  * Mutable class
@@ -136,7 +139,7 @@ class Bounds {
         return this.minPoint && this.minPoint.x;
     }
     toString() {
-        return JSON.stringify(this);
+        return stringify(this);
     }
 }
 
@@ -181,7 +184,7 @@ class Wheel {
         return this.list;
     }
     get string() {
-        return JSON.stringify(this.w.map((it) => [it.x, it.y]));
+        return stringify(this.w.map((it) => [it.x, it.y]));
     }
     // get stringCoord(){ not needed?
 }

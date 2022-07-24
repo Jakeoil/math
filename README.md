@@ -71,6 +71,7 @@ Fixed expansion 4 and up.
         Then we have scale. Kind of in between.
 
 -   [ ] Now that we have three different kinds of type 3, the 'figure' routine must be integrated better.  As it is, there is an ugly bit of guck in expansion 0
+Note: getting there, the figure seems easy to add, funky stuff with the types though.
 
 Bounds logic:
 -   [ ] Fix bounds logic so that items that do not create a bounds will not need to return a [0000].  This essentially forces a zero point to be added to the bounds.  The receiver of the bounds should gracefully ignore it.
@@ -82,7 +83,7 @@ Bounds logic:
 Controls
 -   [ ] Add color picker to the controls
 -   [ ] Add cookie so that controls and page defaults remain. Add an option to use them or not.
--   [ ] Add (named) parameters to star, penta and deca to override contols?
+-   [ ] Add (named) parameters to star, penta and deca to override controls?
 
 
 Menu:
