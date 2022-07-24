@@ -344,7 +344,6 @@ function drawFirstInflation(id) {
         g.lineWidth = 1;
 
         scale = 10;
-        penrose.scale = scale;
 
         let x = 8;
         let y = 9;
@@ -708,7 +707,7 @@ function drawGeneric3(id) {
     g.fillRect(0, 0, canvas.width, canvas.height);
     g.strokeStyle = penrose.OUTLINE;
     g.lineWidth = 1;
-    scale = 5;
+    scale = 4;
 
     const drawScreen = function () {
         let x = 100;
@@ -719,7 +718,7 @@ function drawGeneric3(id) {
             deca(controls.fifths, controls.isDown, p(20, 20), 1);
             deca(controls.fifths, controls.isDown, p(50, 50), 2);
             deca(controls.fifths, controls.isDown, p(210, 80), 3);
-            deca(controls.fifths, controls.isDown, p(x, y), 4);
+            deca(controls.fifths, controls.isDown, p(x, y), 6);
         } else {
             console.log(`drawScreen ${controls.typeIndex}`);
             const type = controls.typeList[controls.typeIndex];

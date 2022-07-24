@@ -255,7 +255,7 @@ function makeWheels(pSeed, sSeed, tSeed, dSeed) {
     tWheels.push(tWheel1);
     dWheels.push(dWheel1);
 
-    const wheelMax = 5;
+    const wheelMax = 10;
     for (let i = 1; i <= wheelMax; i++) {
         pWheels.push(pWheelNext(i));
         sWheels.push(sWheelNext(i));
