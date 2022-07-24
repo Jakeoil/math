@@ -379,6 +379,7 @@ function deleteCookie(name) {
 // The cookie interface
 var cookie = (function () {
     const Cookie = {};
+
     Cookie.getShapeMode = function (sm) {
         console.log(`getShapeMode: ${document.cookie}`);
         const cookie = getCookie("shape-mode");
@@ -388,6 +389,23 @@ var cookie = (function () {
         }
         return sm;
     };
+    Cookie.setShapeMode = function (sm) {
+        setCookie("shape-mode", sm, { "max-age": 3600 });
+    };
+
+    Cookie.getActiveButtonIndex = function (index) {
+        const cookie = getCookie("active-button-index");
+        if (cookie) {
+            console.log(`found index cookie: ${cookie}`);
+            return cookie;
+        }
+        return index;
+    };
+    Cookie.setActiveButtonIndex = function (index) {
+        console.log(`setting index cookie: ${index}`);
+        setCookie("active-button-index", index, { "max-age": 3600 });
+    };
+
     Cookie.getFifths = function (fifths) {
         return fifths;
     };
@@ -396,11 +414,6 @@ var cookie = (function () {
     };
     Cookie.getTypeIndex = function (index) {
         return index;
-    };
-    Cookie.setShapeMode = function (sm) {
-        console.log(`setShapeMode(${sm}): ${document.cookie}`);
-        setCookie("shape-mode", sm, { "max-age": 3600 });
-        console.log(`cookie set: ${document.cookie}`);
     };
     Cookie.setFifths = function (fifths) {};
     Cookie.setIsDown = function (isDown) {};

@@ -131,6 +131,39 @@ const clickIsDown = function () {
     penroseApp();
 };
 
+/***
+ *  Page Navigation defaults.
+ *
+ */
+let activeButtonIndex = cookie.getActiveButtonIndex(0);
+let navButtons = document.querySelectorAll(".pageButton");
+let pages = document.querySelectorAll(".page");
+
+console.log(`click because of restart. active index: ${activeButtonIndex}`);
+navButtons[activeButtonIndex].click();
+
+function pageClicked(pageId, button) {
+    for (let page of pages) {
+        page.style.display = "none";
+    }
+    const active_page = document.querySelector(`#${pageId}`);
+    active_page.style.display = "block";
+
+    for (let index = 0; index < navButtons.length; index++) {
+        let navButton = navButtons[index];
+        if (navButton === button) {
+            activeButtonIndex = index;
+            console.log(`click on ${index} with id: ${pageId}`);
+            cookie.setActiveButtonIndex(index);
+            navButton.style.background = "white";
+            navButton.style.color = "black";
+        } else {
+            navButton.style.background = "black";
+            navButton.style.color = "white";
+        }
+    }
+}
+
 /**
  * Called when the page loads.
  * Creates all canvases.

@@ -42,26 +42,22 @@
 
         <nav id="across">
             <p>
-                <button
-                    class="pageButton"
-                    onclick="showPage('inf1',this)"
-                    id="defaultPage"
-                >
+                <button class="pageButton" onclick="pageClicked('inf1',this)">
                     Inflation 1 work area
                 </button>
-                <button class="pageButton" onclick="showPage('inf2',this)">
+                <button class="pageButton" onclick="pageClicked('inf2',this)">
                     Inflation 2 work area
                 </button>
-                <button class="pageButton" onclick="showPage('gwork',this)">
+                <button class="pageButton" onclick="pageClicked('gwork',this)">
                     Grid-work test area
                 </button>
-                <button class="pageButton" onclick="showPage('g012',this)">
+                <button class="pageButton" onclick="pageClicked('g012',this)">
                     Generic test area
                 </button>
-                <button class="pageButton" onclick="showPage('g3',this)">
+                <button class="pageButton" onclick="pageClicked('g3',this)">
                     Generic expansion
                 </button>
-                <button class="pageButton" onclick="showPage('rwork', this)">
+                <button class="pageButton" onclick="pageClicked('rwork', this)">
                     Real test area
                 </button>
             </p>
@@ -111,25 +107,5 @@
 
         <script src="penrose.js"></script>
         <script src="math.js"></script>
-        <script>
-            function showPage(id, button) {
-                const pages = document.querySelectorAll(".page");
-                console.log(`id: ${id}`);
-                for (page of pages) {
-                    page.style.display = "none";
-                }
-                const active_page = document.querySelector(`#${id}`);
-                active_page.style.display = "block";
-                const buttons = document.querySelectorAll(".pageButton");
-                for (pageButton of buttons) {
-                    pageButton.style.background = "black";
-                    pageButton.style.color = "white";
-                }
-
-                button.style.background = "white";
-                button.style.color = "black";
-            }
-            document.querySelector("#defaultPage").click();
-        </script>
     </body>
 </html>
