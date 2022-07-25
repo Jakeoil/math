@@ -55,6 +55,7 @@ const MODE_LIST = [MODE_MOSAIC, MODE_QUADRILLE, MODE_REAL];
 let shapeMode = MODE_MOSAIC;
 let pWheels, sWheels, tWheels, dWheels;
 let renderShape; // The function that will call figure
+let shapeSet; // mode's shapeset
 shapeMode = cookie.getShapeMode(MODE_MOSAIC); // cookie
 const eleMode = document.querySelector("#shape-mode");
 
@@ -81,6 +82,15 @@ function refreshShapeMode() {
             : shapeMode == MODE_QUADRILLE
             ? outline
             : outline;
+
+    shapeSet =
+        shapeMode == MODE_MOSAIC
+            ? mosaic
+            : shapeMode == MODE_QUADRILLE
+            ? quadrille
+            : shapeMode == MODE_REAL
+            ? real
+            : null;
 }
 
 refreshShapeMode();
@@ -992,6 +1002,22 @@ function pColor(type) {
     return null;
 }
 
+function pShape(type) {
+    switch (type) {
+        case penrose.Pe1:
+        case penrose.Pe3:
+        case penrose.Pe5:
+            return shapeSet.penta;
+        case penrose.St1:
+            return shapeSet.diamond;
+        case penrose.St3:
+            return shapeSet.boat;
+        case penrose.St5:
+            return shapeSet.star;
+    }
+    return null;
+}
+
 /*******************************************************************************
  * Recursive routine to draw pentagon type objects.
  * P5, P3 and P1  Up versions shown
@@ -1027,10 +1053,14 @@ function penta(fifths, type, isDown, loc, exp) {
     const bounds = new Bounds();
     fifths = norm(fifths);
     if (exp == 0) {
-        let shapes = getShapeSet(type.shapeKey);
+        let shapes = pShape(type);
         if (shapes) {
             bounds.expand(
-                fig(pColor(type.typeColor), loc, shapes[tenths(fifths, isDown)])
+                renderShape(
+                    pColor(type.typeColor),
+                    loc,
+                    shapes[tenths(fifths, isDown)]
+                )
             );
         } else {
             bounds.addPoint(loc, loc);
@@ -1104,10 +1134,14 @@ function star(fifths, type, isDown, loc, exp) {
     const name = type.name;
     fifths = norm(fifths);
     if (exp == 0) {
-        let shapes = getShapeSet(type.shapeKey);
+        let shapes = pShape(type);
         if (shapes) {
             bounds.expand(
-                fig(pColor(type.typeColor), loc, shapes[tenths(fifths, isDown)])
+                renderShape(
+                    pColor(type.typeColor),
+                    loc,
+                    shapes[tenths(fifths, isDown)]
+                )
             );
         } else {
             bounds.addPoint(loc, loc);
