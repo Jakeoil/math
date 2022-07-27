@@ -705,6 +705,7 @@ var real = (function () {
         dSeed
     );
 
+    Real.key = "real";
     function makeSeed(mag) {
         return [
             unitUp[0].mult(mag),
@@ -797,7 +798,7 @@ var quadrille = (function () {
     Quadrille.star = shapeWheel(starUp);
     Quadrille.boat = shapeWheel(boatUp, boatWon, boatToo);
     Quadrille.diamond = shapeWheel(diamondUp, diamondWon, diamondToo);
-
+    Quadrille.key = "quadrille"; // declare these at penrose top
     return Quadrille;
 })();
 
@@ -925,6 +926,7 @@ var mosaic = (function () {
             star_up.map((item) => new P(item.x - 4, item.y - 4)),
             star_up.map((item) => new P(-item.x + 3, -item.y + 3)),
         ],
+        key: "mosaic",
     };
 
     return Mosaic;
@@ -945,6 +947,11 @@ var penrose = (function () {
     const SHAPE_BOAT = "boat";
     const SHAPE_DIAMOND = "diamond";
 
+    // These are common to both mosaic and quadrille.
+    // Othogonal vs Real. Integer vs Real proportions.
+    // Integer vs Real shapes.
+    // but also mosaic vs quadrille shapes.
+    // ah, the venn diagrams of it all.
     const pSeed = [p(0, -6), p(3, -4), p(5, -2)];
     const sSeed = [p(0, -5), p(3, -5), p(5, -1)];
     const tSeed = [p(0, -8), p(5, -8), p(8, -2)];
@@ -981,10 +988,10 @@ var penrose = (function () {
 
         // Valid for QUADRILLE and MOSAIC.
         // Not for real,
-        pSeed: pSeed,
-        sSeed: sSeed,
-        tSeed: tSeed,
-        dSeed: dSeed,
+        // pSeed: pSeed,
+        // sSeed: sSeed,
+        // tSeed: tSeed,
+        // dSeed: dSeed,
 
         pWheels: pWheels,
         sWheels: sWheels,

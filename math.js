@@ -55,7 +55,7 @@ const MODE_LIST = [MODE_MOSAIC, MODE_QUADRILLE, MODE_REAL];
 let shapeMode = MODE_MOSAIC;
 let pWheels, sWheels, tWheels, dWheels;
 let renderShape; // The function that will call figure
-let shapeSet; // mode's shapeset
+//let shapeSet; // mode's shapeset
 shapeMode = cookie.getShapeMode(MODE_MOSAIC); // cookie
 const eleMode = document.querySelector("#shape-mode");
 
@@ -83,14 +83,14 @@ function refreshShapeMode() {
             ? outline
             : outline;
 
-    shapeSet =
-        shapeMode == MODE_MOSAIC
-            ? mosaic
-            : shapeMode == MODE_QUADRILLE
-            ? quadrille
-            : shapeMode == MODE_REAL
-            ? real
-            : null;
+    // shapeSet =
+    //     shapeMode == MODE_MOSAIC
+    //         ? mosaic
+    //         : shapeMode == MODE_QUADRILLE
+    //         ? quadrille
+    //         : shapeMode == MODE_REAL
+    //         ? real
+    //         : null;
 }
 
 refreshShapeMode();
@@ -1003,6 +1003,12 @@ function pColor(type) {
 }
 
 function pShape(type) {
+    const shapeSet =
+        shapeMode == MODE_MOSAIC
+            ? mosaic
+            : shapeMode == MODE_QUADRILLE
+            ? quadrille
+            : real;
     switch (type) {
         case penrose.Pe1:
         case penrose.Pe3:
