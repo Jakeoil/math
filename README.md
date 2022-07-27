@@ -1,7 +1,7 @@
 # The math site.
 The center of this site is the blog. It contains a few javascript items: numbers, circles and a Coylean map example. From here, you can navigate to Penrose and Coylean. 
 
-# Penrose Mosaic
+## Penrose Mosaic
 The thing that makes the mozaic so fantastic is the fact that you can approximate a regular pentagon rather closely within a 6x6 square. By treating these as tiles you can see that the gaps between the corners is another shorter distance.  The sum of the side and this gap can added together to make a larger pentagon. 
 
 The penrose tiles have the fibinacci series and the golden ratio written all over it.
@@ -63,33 +63,44 @@ Fixed expansion 4 and up.
 -   [X] Add the vector paths for the shapes.
 -   [X] Improve the mini grid figure.
 -   [ ] Play with writing text on the canvas.
+
+Node goals:
 -   [ ] Do a rewrite using module.
--   [ ] Make the penrose a module with classes.
-<script type="module" src="app.mjs"></script>
+-   [ ] Make the penrose a module with classes. e.g. <script type="module" src="app.mjs"></script>
+
 -   [ ] Design a theme and sub-theme hierarchy for rendering.
         For example we have graphics. Had core. But can be printer or screen. Maybe some other characteristics.
         Then we have scale. Kind of in between.
 
--   [ ] Now that we have three different kinds of type 3, the 'figure' routine must be integrated better.  As it is, there is an ugly bit of guck in expansion 0
+
+-   [X] Now that we have three different kinds of type 3, the 'figure' routine must be integrated better.  As it is, there is an ugly bit of guck in expansion 0
 Note: getting there, the figure seems easy to add, funky stuff with the types though.
 
 Bounds logic:
 -   [ ] Fix bounds logic so that items that do not create a bounds will not need to return a [0000].  This essentially forces a zero point to be added to the bounds.  The receiver of the bounds should gracefully ignore it.
 -   [ ] create a nice measure routine
 -   [ ] The redraw function which changes canvas dimensions should also compute a new 'base' based on 0,0 or a given base, where the upper left part of the drawing will be contained.
--   [ ] Make bounds logic so it follows the canvas rectangle interface. x,y,len x,len y
+It's probably a better idea to just use translate on the canvas and not change the command.
+
+-   [ ] Make bounds logic so it follows the canvas rectangle interface. x,y,len x,len y (will this buy me anythine?)
 -   [ ] Does it make sense to integrate the central point in bounds?
+  not really, any negative values in the min will tell you how far to move all locs to the right/down.
+  Positive values could be used to move business closer to the margins.
+  g.translate(x,y) may be sensible.
 
 Controls
 -   [ ] Add color picker to the controls
--   [ ] Add cookie so that controls and page defaults remain. Add an option to use them or not.
+-   [X] Add cookie so that controls and page defaults remain. ~~Add an option to use them or not~~
 -   [ ] Add (named) parameters to star, penta and deca to override controls?
 
 
 Menu:
 -   [ ] Make menu more flexible, that is, make a list of pages which will show. Or even a preference.
 
-
+More Modes:
+Ping Pong balls (triacontrhedral surface)
+Groups of type threes seen in dissection.
+Work on Type3 and it's relation to Type1.
 
 
 Color scheme and color scheme rules. The actual colors and strokes and backgrounds. Related to rendering.

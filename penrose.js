@@ -517,23 +517,23 @@ var real = (function () {
      * There is another coordinate system hiding away which is at a right angle
      * to the one described above. Fortunately we don't use that one.
      *
-     *                              u0
+     *                            u0 [s0,-c0]
      *                               *
-     *                  d2 *                   * d3
+     *        [-s2,-c2] d2 *                   * d3 [s2,-c2]
      *
      *
      *
-     *            u4 *                               * u1
+     *  [-s1,-c1] u4 *                               * u1 [s1, -c1]
      *
      *                               o
      *
-     *            d1 *                               * d4
+     *            d1 *                               * d4 [s1, c1]
      *
      *
      *
-     *                  u3 *                   * u2
-     *                                *
-     *                               d0
+     *          [-s2,c2] u3 *                   * u2 [s2, c2]
+     *                               *
+     *                            d0 [s0,c0]
      *
      */
     const SQRT5 = Math.sqrt(5); // 2.236
