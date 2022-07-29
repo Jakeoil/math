@@ -198,6 +198,7 @@ class Wheels {
         );
     }
 }
+
 function makeWheels(pSeed, sSeed, tSeed, dSeed) {
     function pWheelNext(exp) {
         const p = pWheels[exp].w;
@@ -703,12 +704,12 @@ class Real {
         this.boat = shapeWheel(boatUp, boatWon, boatToo);
         this.diamond = shapeWheel(diamondUp, diamondWon, diamondToo);
 
-        [this.pWheels, this.sWheels, this.tWheels, this.dWheels] = makeWheels(
-            pSeed,
-            sSeed,
-            tSeed,
-            dSeed
-        );
+        // [this.pWheels, this.sWheels, this.tWheels, this.dWheels] = makeWheels(
+        //     pSeed,
+        //     sSeed,
+        //     tSeed,
+        //     dSeed
+        // );
         this.wheels = new Wheels(pSeed, sSeed, tSeed, dSeed);
 
         this.key = "real";
@@ -956,12 +957,13 @@ var penrose = (function () {
     const tSeed = [p(0, -8), p(5, -8), p(8, -2)];
     const dSeed = [p(0, -3), p(2, -3), p(3, -1)];
 
-    const [pWheels, sWheels, tWheels, dWheels] = makeWheels(
-        pSeed,
-        sSeed,
-        tSeed,
-        dSeed
-    );
+    // const [pWheels, sWheels, tWheels, dWheels] = makeWheels(
+    //     pSeed,
+    //     sSeed,
+    //     tSeed,
+    //     dSeed
+    // );
+    const wheels = new Wheels(pSeed, sSeed, tSeed, dSeed);
     const Penrose = {};
     Penrose.ORANGE = ORANGE;
 
@@ -992,10 +994,11 @@ var penrose = (function () {
         // tSeed: tSeed,
         // dSeed: dSeed,
 
-        pWheels: pWheels,
-        sWheels: sWheels,
-        tWheels: tWheels,
-        dWheels: dWheels,
+        // pWheels: pWheels,
+        // sWheels: sWheels,
+        // tWheels: tWheels,
+        // dWheels: dWheels,
+        wheels: wheels,
 
         // Moved the shapes to mosaic
 

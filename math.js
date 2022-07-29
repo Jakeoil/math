@@ -53,7 +53,7 @@ const MODE_REAL = "real";
 const MODE_LIST = [MODE_MOSAIC, MODE_QUADRILLE, MODE_REAL];
 
 let shapeMode = MODE_MOSAIC;
-let pWheels, sWheels, tWheels, dWheels;
+//let pWheels, sWheels, tWheels, dWheels;
 let renderShape; // The function that will call figure
 //let shapeSet; // mode's shapeset
 shapeMode = cookie.getShapeMode(MODE_MOSAIC); // cookie
@@ -67,15 +67,15 @@ const eleMode = document.querySelector("#shape-mode");
  */
 function refreshShapeMode() {
     if (eleMode) eleMode.innerHTML = shapeMode;
-    [pWheels, sWheels, tWheels, dWheels] =
-        shapeMode == MODE_REAL
-            ? [real.pWheels, real.sWheels, real.tWheels, real.dWheels]
-            : [
-                  penrose.pWheels,
-                  penrose.sWheels,
-                  penrose.tWheels,
-                  penrose.dWheels,
-              ];
+    // [pWheels, sWheels, tWheels, dWheels] =
+    //     shapeMode == MODE_REAL
+    //         ? [real.pWheels, real.sWheels, real.tWheels, real.dWheels]
+    //         : [
+    //               penrose.pWheels,
+    //               penrose.sWheels,
+    //               penrose.tWheels,
+    //               penrose.dWheels,
+    //           ];
     renderShape =
         shapeMode == MODE_MOSAIC
             ? figure
@@ -1026,6 +1026,10 @@ function pShape(type) {
     return null;
 }
 
+function produceWheels() {
+    return shapeMode == MODE_REAL ? real.wheels : penrose.wheels;
+}
+
 /*******************************************************************************
  * Recursive routine to draw pentagon type objects.
  * P5, P3 and P1  Up versions shown
@@ -1077,9 +1081,13 @@ function penta(fifths, type, isDown, loc, exp) {
         return bounds; // call figure
     }
 
-    const pWheel = pWheels[exp].w;
-    const sWheel = sWheels[exp].w;
+    //const pWheel = pWheels[exp].w;
+    //const sWheel = sWheels[exp].w;
 
+    const ws = produceWheels();
+    console.log(ws);
+    const pWheel = produceWheels().p[exp].w;
+    const sWheel = produceWheels().s[exp].w;
     // Draw the center. Always the BLUE p5
     bounds.expand(penta(0, penrose.Pe5, !isDown, loc, exp - 1));
 
@@ -1164,8 +1172,11 @@ function star(fifths, type, isDown, loc, exp) {
         const shift = norm(fifths + i);
         const angle = tenths(shift, isDown);
         //const pWheel = pWheels[exp].w;
-        const sWheel = sWheels[exp].w;
-        const tWheel = tWheels[exp].w;
+        // const sWheel = sWheels[exp].w;
+        // const tWheel = tWheels[exp].w;
+        const tWheel = produceWheels().t[exp].w;
+        const sWheel = produceWheels().s[exp].w;
+
         if (type.color[i] != null) {
             bounds.expand(
                 penta(
@@ -1211,14 +1222,14 @@ function deca(fifths, isDown, loc, exp) {
     }
 
     // Move the center of the decagon to the real center.
-    let dUp = dWheels[exp].up;
-    let dDown = dWheels[exp].down;
+    let dUp = produceWheels().d[exp].up;
+    let dDown = produceWheels().d[exp].down;
     let dOff = isDown ? dUp[fifths] : dDown[fifths];
     let base = loc.tr(dOff);
-    let pUp = pWheels[exp].up;
-    let pDown = pWheels[exp].down;
-    let sUp = sWheels[exp].up;
-    let sDown = sWheels[exp].down;
+    let pUp = produceWheels().p[exp].up;
+    let pDown = produceWheels().p[exp].down;
+    let sUp = produceWheels().s[exp].up;
+    let sDown = produceWheels().s[exp].down;
     let offs; // Work variable
 
     // The central yellow pentagon
