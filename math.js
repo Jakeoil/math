@@ -1022,6 +1022,7 @@ function pShape(type) {
         case penrose.St5:
             return shapeSet.star;
     }
+
     return null;
 }
 
