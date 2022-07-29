@@ -31,10 +31,10 @@ let starBlue = penrose.BLUE;
 // p3Yellow = "lightgreen";
 // p1Orange = "red";
 // starBlue = "cyan";
-const eleP5Color = document.querySelector("p5-color");
-const eleP3Color = document.querySelector("p3-color");
-const eleP1Color = document.querySelector("p1-color");
-const eleStarColor = document.querySelector("star-color");
+const eleP5Color = document.querySelector("#p5-color");
+const eleP3Color = document.querySelector("#p3-color");
+const eleP1Color = document.querySelector("#p1-color");
+const eleStarColor = document.querySelector("#star-color");
 
 /**
  * Shape-Mode:
@@ -119,7 +119,7 @@ const eleIsDown = document.querySelector("#isDown");
  * Initialization and
  * Events for the three buttons
  */
-eleFifths.innerHTML = `fifths: ${controls.fifths}`;
+if (eleFifths) eleFifths.innerHTML = `fifths: ${controls.fifths}`;
 const clickFifths = function () {
     console.log("clickFifths");
     controls.bumpFifths();
@@ -127,14 +127,14 @@ const clickFifths = function () {
     penroseApp();
 };
 
-eleType.innerHTML = controls.typeName;
+if (eleType) eleType.innerHTML = controls.typeName;
 const clickType = function () {
     controls.bumpType();
     eleType.innerHTML = controls.typeName;
     penroseApp();
 };
 
-eleIsDown.innerHTML = controls.direction;
+if (eleIsDown) eleIsDown.innerHTML = controls.direction;
 const clickIsDown = function () {
     controls.toggleDirection();
     eleIsDown.innerHTML = controls.direction;
@@ -151,7 +151,8 @@ let pages = document.querySelectorAll(".page");
 
 let activePage;
 
-navButtons[activeButtonIndex].click();
+if (navButtons && navButtons[activeButtonIndex])
+    navButtons[activeButtonIndex].click();
 
 function pageClicked(pageId, button) {
     for (let page of pages) {
@@ -1203,6 +1204,7 @@ function star(fifths, type, isDown, loc, exp) {
 
 function deca(fifths, isDown, loc, exp) {
     const bounds = new Bounds();
+    console.log(`deca $bounds`);
     if (exp == 0) {
         return bounds;
     }
@@ -1219,27 +1221,38 @@ function deca(fifths, isDown, loc, exp) {
     let offs; // Work variable
 
     // The central yellow pentagon
-    penta(fifths, penrose.Pe3, isDown, base, exp - 1); //
+    bounds.expand(penta(fifths, penrose.Pe3, isDown, base, exp - 1)); //
 
     // The two diamonds
     offs = isDown ? sDown[norm(1 + fifths)] : sUp[norm(1 + fifths)];
-    star(norm(fifths + 3), penrose.St1, isDown, base.tr(offs), exp - 1); // sd1
+    bounds.expand(
+        star(norm(fifths + 3), penrose.St1, isDown, base.tr(offs), exp - 1)
+    ); // sd1
 
     offs = isDown ? sDown[norm(4 + fifths)] : sUp[norm(4 + fifths)];
-    star(norm(fifths + 2), penrose.St1, isDown, base.tr(offs), exp - 1); // sd4
+    bounds.expand(
+        star(norm(fifths + 2), penrose.St1, isDown, base.tr(offs), exp - 1)
+    ); // sd4
 
     // The two orange pentagons
     offs = isDown ? pUp[norm(3 + fifths)] : pDown[norm(3 + fifths)];
-    penta(norm(fifths + 2), penrose.Pe1, !isDown, base.tr(offs), exp - 1);
+    bounds.expand(
+        penta(norm(fifths + 2), penrose.Pe1, !isDown, base.tr(offs), exp - 1)
+    );
 
     offs = isDown ? pUp[norm(2 + fifths)] : pDown[norm(2 + fifths)];
-    penta(norm(fifths + 3), penrose.Pe1, !isDown, base.tr(offs), exp - 1);
+    bounds.expand(
+        penta(norm(fifths + 3), penrose.Pe1, !isDown, base.tr(offs), exp - 1)
+    );
 
     // And the boat
     offs = isDown
         ? pUp[norm(2 + fifths)].tr(sUp[norm(3 + fifths)])
         : pDown[norm(2 + fifths)].tr(sDown[norm(3 + fifths)]);
-    star(fifths + 0, penrose.St3, !isDown, base.tr(offs), exp - 1);
+    bounds.expand(
+        star(fifths + 0, penrose.St3, !isDown, base.tr(offs), exp - 1)
+    );
+    return bounds;
 }
 
 /****
