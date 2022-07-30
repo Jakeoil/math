@@ -269,11 +269,74 @@ function makeCanvas(canvasId) {
     g = canvas.getContext("2d");
 
     // for makeCanvas only
-    const drawScreen = function () {
+    const drawScreenNew = function () {
         // Initialize screen.
         g.fillStyle = "#ffffff";
         g.fillRect(0, 0, canvas.width, canvas.height);
         g.fillStyle = penrose.ORANGE; // This not needed
+        g.strokeStyle = penrose.OUTLINE;
+        g.lineWidth = 1;
+        scale = 10;
+        // this is a p0 down.
+        let bounds = new Bounds();
+        canvas.width = 0;
+        canvas.height = 0;
+
+        let base = p(0, 0);
+        do {
+            bounds = new Bounds();
+            console.log(`do. id: ${canvasId}, base: ${base}`);
+            console.log(
+                `with canvas: width: ${canvas.width} height: ${canvas.height}`
+            );
+            // bounds.expand(
+            //     canvasId == "p5"
+            //         ? penta(0, penrose.Pe5, true, base, 0)
+            //         : canvasId == "p3"
+            //         ? penta(0, penrose.Pe3, false, base, 0)
+            //         : canvasId == "p1"
+            //         ? penta(0, penrose.Pe1, false, base, 0)
+            //         : canvasId == "s5"
+            //         ? star(0, penrose.St5, false, base, 0)
+            //         : canvasId == "s3"
+            //         ? star(0, penrose.St3, false, base, 0)
+            //         : canvasId == "s1"
+            //         ? star(0, penrose.St1, false, base, 0)
+            //         : null
+            // );
+            switch (canvasId) {
+                case "p5":
+                    bounds.expand(penta(0, penrose.Pe5, true, base, 0));
+                    break;
+                case "p3":
+                    bounds.expand(penta(0, penrose.Pe3, false, base, 0));
+                    break;
+                case "p1":
+                    bounds.expand(penta(0, penrose.Pe1, false, base, 0));
+                    break;
+                case "s5":
+                    bounds.expand(star(0, penrose.St5, false, base, 0));
+                    break;
+                case "s3":
+                    bounds.expand(star(0, penrose.St3, false, base, 0));
+                    break;
+                case "s1":
+                    bounds.expand(star(2, penrose.St1, false, base, 0));
+                    break;
+            }
+            console.log(
+                `bounds: ${bounds}, min: ${bounds.min}, isZero ${bounds.min.isZero}`
+            );
+            base = base.tr(bounds.min.neg);
+            canvas.width = (bounds.maxPoint.x - bounds.minPoint.x) * scale;
+            canvas.height = (bounds.maxPoint.y - bounds.minPoint.y) * scale;
+        } while (!bounds.min.isZero);
+        console.log(`finished: width ${canvas.width} height: ${canvas.height}`);
+    };
+    const drawScreen = function () {
+        // Initialize screen.
+        g.fillStyle = "#ffffff";
+        g.fillRect(0, 0, canvas.width, canvas.height);
         g.strokeStyle = penrose.OUTLINE;
         g.lineWidth = 1;
         scale = 10;
@@ -291,8 +354,6 @@ function makeCanvas(canvasId) {
                 break;
             case "s5":
                 bounds.expand(star(0, penrose.St5, false, new P(4, 4), 0));
-                const adj = adjustBounds(bounds, p(4, 4));
-                console.log(stringify(adj));
                 break;
             case "s3":
                 bounds.expand(star(0, penrose.St3, false, new P(4, 4), 0));
@@ -301,7 +362,6 @@ function makeCanvas(canvasId) {
                 bounds.expand(star(2, penrose.St1, false, new P(1, 2), 0));
                 break;
         }
-
         // Make adjustments based on the bounds of the drawing.
         redraw(bounds, canvas, drawScreen);
     };
@@ -860,6 +920,7 @@ function figure(fill, offset, shape) {
             );
         }
         bounds.addPoint(offset, point);
+        bounds.addPoint(offset, point.tr(p(1, 1)));
     }
     return bounds;
 }
@@ -1078,16 +1139,15 @@ function penta(fifths, type, isDown, loc, exp) {
             bounds.addPoint(loc, loc);
         }
 
+        if (bounds.min.isZero) {
+            console.log(`penta: ${type.name} drawn`);
+        }
         return bounds; // call figure
     }
 
-    //const pWheel = pWheels[exp].w;
-    //const sWheel = sWheels[exp].w;
-
-    const ws = produceWheels();
-    console.log(ws);
-    const pWheel = produceWheels().p[exp].w;
-    const sWheel = produceWheels().s[exp].w;
+    const wheels = produceWheels();
+    const pWheel = wheels.p[exp].w;
+    const sWheel = wheels.s[exp].w;
     // Draw the center. Always the BLUE p5
     bounds.expand(penta(0, penrose.Pe5, !isDown, loc, exp - 1));
 
@@ -1266,27 +1326,3 @@ function deca(fifths, isDown, loc, exp) {
     );
     return bounds;
 }
-
-/****
- * Create a canvas command and width and height
- *
- * @param {*} bounds
- * @param {*} target
- */
-function adjustBounds(bounds, loc) {
-    const adj = {
-        width: bounds.maxPoint.x - bounds.minPoint.x + 1,
-        height: bounds.maxPoint.y - bounds.minPoint.y + 1,
-        offset: loc.tr(bounds.minPoint.neg),
-    };
-    return adj;
-}
-
-// test adjust bounds
-const loc = p(10, 20);
-let bounds = new Bounds();
-bounds.addPoint(loc, p(5, 5));
-bounds.addPoint(loc, p(20, 20));
-let adj = adjustBounds(bounds, loc);
-
-console.log(`bounds: ${bounds}, adj: ${adj}`);

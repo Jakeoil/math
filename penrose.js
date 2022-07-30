@@ -43,7 +43,10 @@ class P {
         return stringify(this);
     }
     equals(b) {
-        this.x == b.x && this.y == b.y;
+        return this.x == b.x && this.y == b.y;
+    }
+    get isZero() {
+        return this.x * this.x + this.y * this.y < 1e-8;
     }
 }
 
@@ -138,6 +141,23 @@ class Bounds {
     get minX() {
         return this.minPoint && this.minPoint.x;
     }
+    get minY() {
+        return this.minPoint && this.minPoint.y;
+    }
+    get maxX() {
+        return this.maxPoint && this.maxPoint.x;
+    }
+    get maxY() {
+        return this.maxPoint && this.maxPoint.y;
+    }
+
+    get min() {
+        return new P(this.minX, this.minY);
+    }
+    get max() {
+        return new P(this.maxX, this.maxY);
+    }
+
     toString() {
         return stringify(this);
     }
