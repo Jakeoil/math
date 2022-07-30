@@ -903,7 +903,11 @@ var mosaic = (function () {
       [0,5],                        [5,5]]
       .map(toP);
 
+    var newPenta = shapeWheel(penta_up.map((point) => point.tr(p(-3, -3))));
+    var newDiamond = shapeWheel();
+
     const Mosaic = {
+        // tr(p(-3, -3))
         penta: [
             penta_up.map((item) => new P(item.x - 3, item.y - 3)),
             penta_up.map((item) => new P(-item.x + 2, -item.y + 2)),
@@ -916,6 +920,7 @@ var mosaic = (function () {
             penta_up.map((item) => new P(item.x - 3, item.y - 3)),
             penta_up.map((item) => new P(-item.x + 2, -item.y + 2)),
         ],
+        // tr(p(-1, -4).hr
         diamond: [
             diamond_up.map((item) => new P(item.x - 1, item.y - 4)),
             diamond_for.map((item) => new P(-item.x + 2, item.y - 4)),
@@ -928,7 +933,7 @@ var mosaic = (function () {
             diamond_too.map((item) => new P(item.x - 4, -item.y - 1)),
             diamond_for.map((item) => new P(item.x - 3, item.y - 4)),
         ],
-        //
+        // tr (p(-4,-4))
         boat: [
             boat_up.map((item) => new P(item.x - 4, item.y - 4)),
             boat_for.map((item) => new P(item.x - 3, -item.y + 1)),
@@ -942,7 +947,7 @@ var mosaic = (function () {
             boat_for.map((item) => new P(-item.x + 2, -item.y + 1)),
         ],
 
-        //--
+        // tr(p(-4,-4))
         star: [
             star_up.map((item) => new P(item.x - 4, item.y - 4)),
             star_up.map((item) => new P(-item.x + 3, -item.y + 3)),

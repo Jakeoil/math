@@ -6,7 +6,7 @@ The thing that makes the mozaic so fantastic is the fact that you can approximat
 
 The penrose tiles have the fibinacci series and the golden ratio written all over it.
 
-# History
+## History
 This site originally consisted of a large page with programmatic canvases of rendering the Six tiles. The first canvas, now called inflation 1 work area, renders compond versions of the six tile with rotations for the four tiles that don't have 5 fold symmetry.
 
 An instance called penrose exposes a table of the six figures with each of the 10 rotations. A primitive function called figure() draws the specified tile in the specified place with the specified orientation. The original names of these figures were P0, P2, P4, star, boat and diamond. The current naming reflexts their symmetry better: 
@@ -77,13 +77,16 @@ Node goals:
 Note: getting there, the figure seems easy to add, funky stuff with the types though.
 
 Bounds logic:
--   [ ] Fix bounds logic so that items that do not create a bounds will not need to return a [0000].  This essentially forces a zero point to be added to the bounds.  The receiver of the bounds should gracefully ignore it.
+-   [X] Fix bounds logic so that items that do not create a bounds will not need to return a [0000].  This essentially forces a zero point to be added to the bounds.  The receiver of the bounds should gracefully ignore it.
 -   [ ] create a nice measure routine
--   [ ] The redraw function which changes canvas dimensions should also compute a new 'base' based on 0,0 or a given base, where the upper left part of the drawing will be contained.
+-   [X] The redraw function which changes canvas dimensions should also compute a new 'base' based on 0,0 or a given base, where the upper left part of the drawing will be contained.
 It's probably a better idea to just use translate on the canvas and not change the command.
+Nope, was able to make a do{while} loop in drawCanvas.
 
--   [ ] Make bounds logic so it follows the canvas rectangle interface. x,y,len x,len y (will this buy me anythine?)
--   [ ] Does it make sense to integrate the central point in bounds?
+-   [X] Make bounds logic so it follows the canvas rectangle interface. x,y,len x,len y (will this buy me anything?)
+Not worth it.
+
+-   [S] Does it make sense to integrate the central point in bounds?
   not really, any negative values in the min will tell you how far to move all locs to the right/down.
   Positive values could be used to move business closer to the margins.
   g.translate(x,y) may be sensible.
