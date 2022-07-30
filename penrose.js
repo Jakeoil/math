@@ -137,6 +137,21 @@ class Bounds {
             this.maxPoint.y = bounds.maxPoint.y;
         }
     }
+
+    /**
+     * Padding should take scale into account
+     * e.g. if scale is 10, make it .1
+     * It takes into account the tightness of the bounds
+     */
+    pad(padding) {
+        this.minPoint.x -= padding;
+        this.minPoint.y -= padding;
+        this.maxPoint.x += padding;
+        this.maxPoint.y += padding;
+        //
+        return this;
+    }
+
     // doesn't check for null.
     get minX() {
         return this.minPoint && this.minPoint.x;
@@ -724,12 +739,6 @@ class Real {
         this.boat = shapeWheel(boatUp, boatWon, boatToo);
         this.diamond = shapeWheel(diamondUp, diamondWon, diamondToo);
 
-        // [this.pWheels, this.sWheels, this.tWheels, this.dWheels] = makeWheels(
-        //     pSeed,
-        //     sSeed,
-        //     tSeed,
-        //     dSeed
-        // );
         this.wheels = new Wheels(pSeed, sSeed, tSeed, dSeed);
 
         this.key = "real";
@@ -977,22 +986,12 @@ var penrose = (function () {
     const tSeed = [p(0, -8), p(5, -8), p(8, -2)];
     const dSeed = [p(0, -3), p(2, -3), p(3, -1)];
 
-    // const [pWheels, sWheels, tWheels, dWheels] = makeWheels(
-    //     pSeed,
-    //     sSeed,
-    //     tSeed,
-    //     dSeed
-    // );
     const wheels = new Wheels(pSeed, sSeed, tSeed, dSeed);
     const Penrose = {};
     Penrose.ORANGE = ORANGE;
 
     // This is the core penrose object.
     return {
-        // ORANGE: "#e46c0a",
-        // BLUE: "#0000ff",
-        // YELLOW: "#ffff00",
-        // BLUE_P: "#00f", // Just making the string different
         ORANGE: ORANGE,
         BLUE: BLUE,
         YELLOW: YELLOW,
@@ -1007,26 +1006,12 @@ var penrose = (function () {
         SHAPE_BOAT: SHAPE_BOAT,
         SHAPE_DIAMOND: SHAPE_DIAMOND,
 
-        // Valid for QUADRILLE and MOSAIC.
-        // Not for real,
-        // pSeed: pSeed,
-        // sSeed: sSeed,
-        // tSeed: tSeed,
-        // dSeed: dSeed,
-
-        // pWheels: pWheels,
-        // sWheels: sWheels,
-        // tWheels: tWheels,
-        // dWheels: dWheels,
         wheels: wheels,
-
-        // Moved the shapes to mosaic
 
         Pe5: {
             name: "Pe5",
             color: [YELLOW, YELLOW, YELLOW, YELLOW, YELLOW],
             twist: [0, 0, 0, 0, 0],
-            //shape: shapes.penta,
             shapeKey: SHAPE_PENTA,
             typeColor: BLUE_P,
             diamond: [],
@@ -1035,7 +1020,6 @@ var penrose = (function () {
             name: "Pe3",
             color: [YELLOW, YELLOW, ORANGE, ORANGE, YELLOW],
             twist: [0, 0, -1, 1, 0],
-            //            shape: shapes.penta,
             shapeKey: SHAPE_PENTA,
             typeColor: YELLOW,
             diamond: [0],
@@ -1044,7 +1028,6 @@ var penrose = (function () {
             name: "Pe1",
             color: [YELLOW, ORANGE, ORANGE, ORANGE, ORANGE],
             twist: [0, -1, 1, -1, 1],
-            //          shape: shapes.penta,
             shapeKey: SHAPE_PENTA,
             //            shapeKey: "penta",
             typeColor: ORANGE,
@@ -1054,21 +1037,18 @@ var penrose = (function () {
         St5: {
             name: "St5: star",
             color: [BLUE, BLUE, BLUE, BLUE, BLUE],
-            //shape: shapes.star,
             shapeKey: SHAPE_STAR,
             typeColor: BLUE,
         },
         St3: {
             name: "St3: boat",
             color: [BLUE, BLUE, null, null, BLUE],
-            //shape: shapes.boat,
             shapeKey: SHAPE_BOAT,
             typeColor: BLUE,
         },
         St1: {
             name: "St1: diamond",
             color: [BLUE, null, null, null, null],
-            //shape: shapes.diamond,
             shapeKey: SHAPE_DIAMOND,
             typeColor: BLUE,
         },

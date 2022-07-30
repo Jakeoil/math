@@ -269,70 +269,6 @@ function makeCanvas(canvasId) {
     g = canvas.getContext("2d");
 
     // for makeCanvas only
-    const drawScreenNew = function () {
-        // Initialize screen.
-        g.fillStyle = "#ffffff";
-        g.fillRect(0, 0, canvas.width, canvas.height);
-        g.fillStyle = penrose.ORANGE; // This not needed
-        g.strokeStyle = penrose.OUTLINE;
-        g.lineWidth = 1;
-        scale = 10;
-        // this is a p0 down.
-        let bounds = new Bounds();
-        canvas.width = 0;
-        canvas.height = 0;
-
-        let base = p(0, 0);
-        do {
-            bounds = new Bounds();
-            console.log(`do. id: ${canvasId}, base: ${base}`);
-            console.log(
-                `with canvas: width: ${canvas.width} height: ${canvas.height}`
-            );
-            // bounds.expand(
-            //     canvasId == "p5"
-            //         ? penta(0, penrose.Pe5, true, base, 0)
-            //         : canvasId == "p3"
-            //         ? penta(0, penrose.Pe3, false, base, 0)
-            //         : canvasId == "p1"
-            //         ? penta(0, penrose.Pe1, false, base, 0)
-            //         : canvasId == "s5"
-            //         ? star(0, penrose.St5, false, base, 0)
-            //         : canvasId == "s3"
-            //         ? star(0, penrose.St3, false, base, 0)
-            //         : canvasId == "s1"
-            //         ? star(0, penrose.St1, false, base, 0)
-            //         : null
-            // );
-            switch (canvasId) {
-                case "p5":
-                    bounds.expand(penta(0, penrose.Pe5, true, base, 0));
-                    break;
-                case "p3":
-                    bounds.expand(penta(0, penrose.Pe3, false, base, 0));
-                    break;
-                case "p1":
-                    bounds.expand(penta(0, penrose.Pe1, false, base, 0));
-                    break;
-                case "s5":
-                    bounds.expand(star(0, penrose.St5, false, base, 0));
-                    break;
-                case "s3":
-                    bounds.expand(star(0, penrose.St3, false, base, 0));
-                    break;
-                case "s1":
-                    bounds.expand(star(2, penrose.St1, false, base, 0));
-                    break;
-            }
-            console.log(
-                `bounds: ${bounds}, min: ${bounds.min}, isZero ${bounds.min.isZero}`
-            );
-            base = base.tr(bounds.min.neg);
-            canvas.width = (bounds.maxPoint.x - bounds.minPoint.x) * scale;
-            canvas.height = (bounds.maxPoint.y - bounds.minPoint.y) * scale;
-        } while (!bounds.min.isZero);
-        console.log(`finished: width ${canvas.width} height: ${canvas.height}`);
-    };
     const drawScreen = function () {
         // Initialize screen.
         g.fillStyle = "#ffffff";
@@ -340,30 +276,33 @@ function makeCanvas(canvasId) {
         g.strokeStyle = penrose.OUTLINE;
         g.lineWidth = 1;
         scale = 10;
-        // this is a p0 down.
-        const bounds = new Bounds();
-        switch (canvasId) {
-            case "p5":
-                bounds.expand(penta(0, penrose.Pe5, true, new P(3, 3), 0));
-                break;
-            case "p3":
-                bounds.expand(penta(0, penrose.Pe3, false, new P(3, 3), 0));
-                break;
-            case "p1":
-                bounds.expand(penta(0, penrose.Pe1, false, new P(3, 3), 0));
-                break;
-            case "s5":
-                bounds.expand(star(0, penrose.St5, false, new P(4, 4), 0));
-                break;
-            case "s3":
-                bounds.expand(star(0, penrose.St3, false, new P(4, 4), 0));
-                break;
-            case "s1":
-                bounds.expand(star(2, penrose.St1, false, new P(1, 2), 0));
-                break;
-        }
-        // Make adjustments based on the bounds of the drawing.
-        redraw(bounds, canvas, drawScreen);
+        let bounds;
+        let width = 0;
+        let height = 0;
+        let base = p(0, 0);
+        do {
+            canvas.width = width;
+            canvas.height = height;
+            bounds = new Bounds();
+            bounds.expand(
+                canvasId == "p5"
+                    ? penta(0, penrose.Pe5, true, base, 0)
+                    : canvasId == "p3"
+                    ? penta(0, penrose.Pe3, false, base, 0)
+                    : canvasId == "p1"
+                    ? penta(0, penrose.Pe1, false, base, 0)
+                    : canvasId == "s5"
+                    ? star(0, penrose.St5, false, base, 0)
+                    : canvasId == "s3"
+                    ? star(0, penrose.St3, false, base, 0)
+                    : canvasId == "s1"
+                    ? star(0, penrose.St1, false, base, 0)
+                    : null
+            );
+            base = base.tr(bounds.min.neg);
+            width = (bounds.maxPoint.x - bounds.minPoint.x) * scale + 1;
+            height = (bounds.maxPoint.y - bounds.minPoint.y) * scale + 1;
+        } while (!bounds.min.isZero);
     };
 
     drawScreen();
