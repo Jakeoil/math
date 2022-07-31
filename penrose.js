@@ -26,6 +26,8 @@ class P {
         return new P(-this.x, -this.y);
     }
     // When reversing mosaics, the reflection is offset by 1
+    // This is due to the rect bases not being in the upper left corner
+    //
     get vrm() {
         return new P(this.x, -1 - this.y);
     }
@@ -355,7 +357,11 @@ function shapeWheel(up, won, too) {
     return [];
 }
 
-function shapeWheelM(up, won, too) {
+/***
+ * shapeWheel M is a little bit stupid.
+ * The only difference is how reflections are done
+ */
+function shapeWheelMosaic(up, won, too) {
     if (up) {
         if (won) {
             return [
@@ -879,180 +885,99 @@ const quadrille = new Quadrille();
 /*******************************************************
  * This is the square tiles model, the Mosaic
  */
-var mosaic = (function () {
-    // prettier-ignore
-    var penta_up = [ [2,0],[3,0],
-               [1,1],[2,1],[3,1],[4,1],
-         [0,2],[1,2],[2,2],[3,2],[4,2],[5,2],
-         [0,3],[1,3],[2,3],[3,3],[4,3],[5,3],
-               [1,4],[2,4],[3,4],[4,4],
-               [1,5],[2,5],[3,5],[4,5]]
-    .map(toP);
 
-    // prettier-ignore
-    var diamond_up =[[0,0],[1,0],
-                     [0,1],[1,1],
-                     [0,2],[1,2],
-                     [0,3],[1,3]]
-    .map(toP);
+class Mosaic {
+    constructor() {
+        // prettier-ignore
+        const penta_up = [[2, 0], [3, 0],
+        [1, 1], [2, 1], [3, 1], [4, 1],
+        [0, 2], [1, 2], [2, 2], [3, 2], [4, 2], [5, 2],
+        [0, 3], [1, 3], [2, 3], [3, 3], [4, 3], [5, 3],
+        [1, 4], [2, 4], [3, 4], [4, 4],
+        [1, 5], [2, 5], [3, 5], [4, 5]].map(toP);
 
-    // prettier-ignore
-    var diamond_too = [[1,0],[2,0],[3,0],[4,0],
-                 [0,1],[1,1],[2,1],[3,1]]
-    .map(toP);
+        // prettier-ignore
+        const diamond_up = [[0, 0], [1, 0],
+        [0, 1], [1, 1],
+        [0, 2], [1, 2],
+        [0, 3], [1, 3]].map(toP);
 
-    // This one should have been called diamond nine.
-    // prettier-ignore
-    var diamond_for = [[0,0],
-                       [0,1],[1,1],
-                             [1,2],[2,2],
-                             [1,3],[2,3],
-                                   [2,4],[3,4],
-                                         [3,5]]
-    .map(toP);
+        // prettier-ignore
+        const diamond_too = [[1, 0], [2, 0], [3, 0], [4, 0],
+        [0, 1], [1, 1], [2, 1], [3, 1]].map(toP);
 
-    // prettier-ignore
-    var star_up =    [[3,0],[4,0],
-                      [3,1],[4,1],
-    [0,2],[1,2],[2,2],[3,2],[4,2],[5,2],[6,2],[7,2],
-          [1,3],[2,3],[3,3],[4,3],[5,3],[6,3],
-                [2,4],[3,4],[4,4],[5,4],
-                [2,5],[3,5],[4,5],[5,5],
-          [1,6],[2,6],            [5,6],[6,6],
-          [1,7],                        [6,7]]
-    .map(toP);
+        // This one should have been called diamond nine.
+        // prettier-ignore
+        const diamond_for = [[0, 0],
+        [0, 1], [1, 1],
+        [1, 2], [2, 2],
+        [1, 3], [2, 3],
+        [2, 4], [3, 4],
+        [3, 5]].map(toP);
 
-    // prettier-ignore
-    var boat_up =      [[3,0],[4,0],
-                      [3,1],[4,1],
-    [0,2],[1,2],[2,2],[3,2],[4,2],[5,2],[6,2],[7,2],
-          [1,3],[2,3],[3,3],[4,3],[5,3],[6,3]]
-    .map(toP);
+        // prettier-ignore
+        const star_up = [[3, 0], [4, 0],
+        [3, 1], [4, 1],
+        [0, 2], [1, 2], [2, 2], [3, 2], [4, 2], [5, 2], [6, 2], [7, 2],
+        [1, 3], [2, 3], [3, 3], [4, 3], [5, 3], [6, 3],
+        [2, 4], [3, 4], [4, 4], [5, 4],
+        [2, 5], [3, 5], [4, 5], [5, 5],
+        [1, 6], [2, 6], [5, 6], [6, 6],
+        [1, 7], [6, 7]].map(toP);
 
-    // prettier-ignore
-    var boat_too = [[0,0],[1,0],
-                  [0,1],[1,1],
-                  [0,2],[1,2],[2,2],[3,2],[4,2],
-                  [0,3],[1,3],[2,3],[3,3],
-                        [1,4],[2,4],
-                        [1,5],[2,5],
-                              [2,6],[3,6],
-                                    [3,7]]
-    .map(toP);
+        // prettier-ignore
+        const boat_up = [[3, 0], [4, 0],
+        [3, 1], [4, 1],
+        [0, 2], [1, 2], [2, 2], [3, 2], [4, 2], [5, 2], [6, 2], [7, 2],
+        [1, 3], [2, 3], [3, 3], [4, 3], [5, 3], [6, 3]].map(toP);
 
-    // prettier-ignore
-    var boat_for =       [[3,0],[4,0],[5,0],[6,0],
-                  [2,1],[3,1],[4,1],[5,1],
-            [1,2],[2,2],[3,2],[4,2],
-            [1,3],[2,3],[3,3],[4,3],
-      [0,4],[1,4],            [4,4],[5,4],
-      [0,5],                        [5,5]]
-      .map(toP);
+        // prettier-ignore
+        const boat_too = [[0, 0], [1, 0],
+        [0, 1], [1, 1],
+        [0, 2], [1, 2], [2, 2], [3, 2], [4, 2],
+        [0, 3], [1, 3], [2, 3], [3, 3],
+        [1, 4], [2, 4],
+        [1, 5], [2, 5],
+        [2, 6], [3, 6],
+        [3, 7]].map(toP);
 
-    const primitives = {
-        penta_up: penta_up.map((pt) => pt.tr(p(-3, -3))),
-        diamond_up: diamond_up.map((pt) => pt.tr(p(-1, -4))),
-        diamond_won: diamond_for.map((pt) => pt.tr(p(-3, -4)).hrm),
-        diamond_too: diamond_too.map((pt) => pt.tr(p(-1, -2))),
-        boat_up: boat_up.map((pt) => pt.tr(p(-4, -4))),
-        boat_won: boat_for.map((pt) => pt.tr(p(-3, -2)).vrm),
-        boat_too: boat_too.map((pt) => pt.tr(p(-1, -4))),
-        star_up: star_up.map((pt) => pt.tr(p(-4, -4))),
-    };
+        // prettier-ignore
+        const boat_for = [[3, 0], [4, 0], [5, 0], [6, 0],
+        [2, 1], [3, 1], [4, 1], [5, 1],
+        [1, 2], [2, 2], [3, 2], [4, 2],
+        [1, 3], [2, 3], [3, 3], [4, 3],
+        [0, 4], [1, 4], [4, 4], [5, 4],
+        [0, 5], [5, 5]].map(toP);
 
-    console.log(
-        `up ${primitives.boat_up} won ${primitives.boat_won} too ${primitives.boat_too}`
-    );
-    const shapeWheels = {
-        penta: shapeWheelM(primitives.penta_up),
-        diamond: shapeWheelM(
+        const primitives = {
+            penta_up: penta_up.map((pt) => pt.tr(p(-3, -3))),
+            diamond_up: diamond_up.map((pt) => pt.tr(p(-1, -4))),
+            diamond_won: diamond_for.map((pt) => pt.tr(p(-3, -4)).hrm),
+            diamond_too: diamond_too.map((pt) => pt.tr(p(-1, -2))),
+            boat_up: boat_up.map((pt) => pt.tr(p(-4, -4))),
+            boat_won: boat_for.map((pt) => pt.tr(p(-3, -2)).vrm),
+            boat_too: boat_too.map((pt) => pt.tr(p(-1, -4))),
+            star_up: star_up.map((pt) => pt.tr(p(-4, -4))),
+        };
+
+        this.penta = shapeWheelMosaic(primitives.penta_up);
+        this.diamond = shapeWheelMosaic(
             primitives.diamond_up,
             primitives.diamond_won,
             primitives.diamond_too
-        ),
-        boat: shapeWheelM(
+        );
+        this.boat = shapeWheelMosaic(
             primitives.boat_up,
             primitives.boat_won,
             primitives.boat_too
-        ),
-        star: shapeWheelM(primitives.star_up),
-    };
+        );
+        this.star = shapeWheelMosaic(primitives.star_up);
 
-    // up tr (p(-4,-4))
-    // for tr (p(-3,-2))
-    // won tr (p(-3,-2)).vr
-    // too tr (p(-1,-4))
+        this.key = "mosaic";
+    }
+}
 
-    const NewMosaic = shapeWheels;
-    const Mosaic = {
-        // tr(p(-3, -3))
-        penta: [
-            penta_up.map((item) => new P(item.x - 3, item.y - 3)),
-            penta_up.map((item) => new P(-item.x + 2, -item.y + 2)),
-            penta_up.map((item) => new P(item.x - 3, item.y - 3)),
-            penta_up.map((item) => new P(-item.x + 2, -item.y + 2)),
-            penta_up.map((item) => new P(item.x - 3, item.y - 3)),
-            penta_up.map((item) => new P(-item.x + 2, -item.y + 2)),
-            penta_up.map((item) => new P(item.x - 3, item.y - 3)),
-            penta_up.map((item) => new P(-item.x + 2, -item.y + 2)),
-            penta_up.map((item) => new P(item.x - 3, item.y - 3)),
-            penta_up.map((item) => new P(-item.x + 2, -item.y + 2)),
-        ],
-        // up tr(p(-1, -4).hr
-        // nein for tr(-3, -4)
-        // won = nein.vr
-        // ate too tr(-4,-1)
-        // too ate.hr
-
-        diamond: [
-            diamond_up.map((item) => new P(item.x - 1, item.y - 4)),
-            diamond_for.map((item) => new P(-item.x + 2, item.y - 4)),
-            diamond_too.map((item) => new P(-item.x + 3, -item.y - 1)),
-            diamond_too.map((item) => new P(-item.x + 3, item.y + 0)),
-            diamond_for.map((item) => new P(-item.x + 2, -item.y + 3)),
-            diamond_up.map((item) => new P(item.x - 1, item.y - 0)),
-            diamond_for.map((item) => new P(item.x - 3, -item.y + 3)),
-            diamond_too.map((item) => new P(item.x - 4, item.y - 0)),
-            diamond_too.map((item) => new P(item.x - 4, -item.y - 1)),
-            diamond_for.map((item) => new P(item.x - 3, item.y - 4)),
-        ],
-        // up tr (p(-4,-4))
-        // for tr (p(-3,-2))
-        // won tr (p(-3,-2)).vr
-        // too tr (p(-1,-4))
-        boat: [
-            boat_up.map((item) => new P(item.x - 4, item.y - 4)),
-            boat_for.map((item) => new P(item.x - 3, -item.y + 1)),
-            boat_too.map((item) => new P(item.x - 1, item.y - 4)),
-            boat_too.map((item) => new P(item.x - 1, -item.y + 3)),
-            boat_for.map((item) => new P(item.x - 3, item.y - 2)),
-            boat_up.map((item) => new P(item.x - 4, -item.y + 3)),
-            boat_for.map((item) => new P(-item.x + 2, item.y - 2)),
-            boat_too.map((item) => new P(-item.x + 0, -item.y + 3)),
-            boat_too.map((item) => new P(-item.x + 0, item.y - 4)),
-            boat_for.map((item) => new P(-item.x + 2, -item.y + 1)),
-        ],
-
-        // tr(p(-4,-4))
-        star: [
-            star_up.map((item) => new P(item.x - 4, item.y - 4)),
-            star_up.map((item) => new P(-item.x + 3, -item.y + 3)),
-            star_up.map((item) => new P(item.x - 4, item.y - 4)),
-            star_up.map((item) => new P(-item.x + 3, -item.y + 3)),
-            star_up.map((item) => new P(item.x - 4, item.y - 4)),
-            star_up.map((item) => new P(-item.x + 3, -item.y + 3)),
-            star_up.map((item) => new P(item.x - 4, item.y - 4)),
-            star_up.map((item) => new P(-item.x + 3, -item.y + 3)),
-            star_up.map((item) => new P(item.x - 4, item.y - 4)),
-            star_up.map((item) => new P(-item.x + 3, -item.y + 3)),
-        ],
-        key: "mosaic",
-    };
-
-    //return Mosaic;
-    return NewMosaic;
-})();
-
+const mosaic = new Mosaic();
 // Build the api
 /**
  * This is stuff that is not specific to the mode or the default
