@@ -978,6 +978,100 @@ class Mosaic {
 }
 
 const mosaic = new Mosaic();
+
+/**
+ * This is stuff that is not specific to the mode or the default
+ */
+class Penrose {
+    constructor() {
+        console.log(`Penrose constructor`);
+        const ORANGE = "#e46c0a";
+        const BLUE = "#0000ff";
+        const YELLOW = "#ffff00";
+        const BLUE_P = "#00f";
+
+        const SHAPE_PENTA = "penta";
+        const SHAPE_STAR = "star";
+        const SHAPE_BOAT = "boat";
+        const SHAPE_DIAMOND = "diamond";
+
+        // These are common to both mosaic and quadrille.
+        // Othogonal vs Real. Integer vs Real proportions.
+        // Integer vs Real shapes.
+        // but also mosaic vs quadrille shapes.
+        // ah, the venn diagrams of it all.
+        const pSeed = [p(0, -6), p(3, -4), p(5, -2)];
+        const sSeed = [p(0, -5), p(3, -5), p(5, -1)];
+        const tSeed = [p(0, -8), p(5, -8), p(8, -2)];
+        const dSeed = [p(0, -3), p(2, -3), p(3, -1)];
+
+        const wheels = new Wheels(pSeed, sSeed, tSeed, dSeed);
+        this.ORANGE = ORANGE;
+        this.BLUE = BLUE;
+        this.YELLOW = YELLOW;
+        this.BLUE_P = BLUE_P; // Just making the string different
+        this.OUTLINE = "#4a7eba";
+
+        this.up = [0, 2, 4, 6, 8]; //
+        this.down = [5, 7, 9, 1, 3];
+
+        this.SHAPE_PENTA = SHAPE_PENTA;
+        this.SHAPE_STAR = SHAPE_STAR;
+        this.SHAPE_BOAT = SHAPE_BOAT;
+        this.SHAPE_DIAMOND = SHAPE_DIAMOND;
+
+        this.wheels = wheels;
+
+        this.Pe5 = {
+            name: "Pe5",
+            color: [YELLOW, YELLOW, YELLOW, YELLOW, YELLOW],
+            twist: [0, 0, 0, 0, 0],
+            shapeKey: SHAPE_PENTA,
+            typeColor: BLUE_P,
+            diamond: [],
+        };
+        this.Pe3 = {
+            name: "Pe3",
+            color: [YELLOW, YELLOW, ORANGE, ORANGE, YELLOW],
+            twist: [0, 0, -1, 1, 0],
+            shapeKey: SHAPE_PENTA,
+            typeColor: YELLOW,
+            diamond: [0],
+        };
+        this.Pe1 = {
+            name: "Pe1",
+            color: [YELLOW, ORANGE, ORANGE, ORANGE, ORANGE],
+            twist: [0, -1, 1, -1, 1],
+            shapeKey: SHAPE_PENTA,
+            //            shapeKey: "penta",
+            typeColor: ORANGE,
+            diaond: [1, 4],
+        };
+        // for stars, the color indicates existence.
+        this.St5 = {
+            name: "St5: star",
+            color: [BLUE, BLUE, BLUE, BLUE, BLUE],
+            shapeKey: SHAPE_STAR,
+            typeColor: BLUE,
+        };
+        this.St3 = {
+            name: "St3: boat",
+            color: [BLUE, BLUE, null, null, BLUE],
+            shapeKey: SHAPE_BOAT,
+            typeColor: BLUE,
+        };
+        this.St1 = {
+            name: "St1: diamond",
+            color: [BLUE, null, null, null, null],
+            shapeKey: SHAPE_DIAMOND,
+            typeColor: BLUE,
+        };
+
+        console.log(`this.pe5: ${this.Pe5}`);
+    }
+}
+const penrose2 = new Penrose();
+// &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 // Build the api
 /**
  * This is stuff that is not specific to the mode or the default
