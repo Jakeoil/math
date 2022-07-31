@@ -22,11 +22,21 @@ class P {
     get hr() {
         return new P(-this.x, this.y);
     }
-    get copy() {
-        return new P(this.x, this.y);
-    }
     get neg() {
         return new P(-this.x, -this.y);
+    }
+    // When reversing mosaics, the reflection is offset by 1
+    get vrm() {
+        return new P(this.x, -1 - this.y);
+    }
+    get hrm() {
+        return new P(-1 - this.x, this.y);
+    }
+    get negm() {
+        return new P(-1 - this.x, -1 - this.y);
+    }
+    get copy() {
+        return new P(this.x, this.y);
     }
     // If used, strictly for offsets
     div(d) {
@@ -56,7 +66,10 @@ class P {
  * rather than an ordered pair
  */
 const toP = (loc) => new P(loc[0], loc[1]);
-const p = (x, y) => new P(x, y);
+//const p = (x, y) => new P(x, y);
+function p(x, y) {
+    return new P(x, y);
+}
 const norm = (n) => ((n % 5) + 5) % 5;
 function tenths(fifths, isDown) {
     return (fifths * 2 + (isDown ? 5 : 0)) % 10;
@@ -337,6 +350,38 @@ function shapeWheel(up, won, too) {
             up.map((item) => item.vr),
             up.map((item) => item.copy),
             up.map((item) => item.vr),
+        ];
+    }
+    return [];
+}
+
+function shapeWheelM(up, won, too) {
+    if (up) {
+        if (won) {
+            return [
+                up.map((item) => item.copy),
+                won.map((item) => item.copy),
+                too.map((item) => item.copy),
+                too.map((item) => item.vrm),
+                won.map((item) => item.vrm),
+                up.map((item) => item.vrm),
+                won.map((item) => item.negm),
+                too.map((item) => item.negm),
+                too.map((item) => item.hrm),
+                won.map((item) => item.hrm),
+            ];
+        }
+        return [
+            up.map((item) => item.copy),
+            up.map((item) => item.vrm),
+            up.map((item) => item.copy),
+            up.map((item) => item.vrm),
+            up.map((item) => item.copy),
+            up.map((item) => item.vrm),
+            up.map((item) => item.copy),
+            up.map((item) => item.vrm),
+            up.map((item) => item.copy),
+            up.map((item) => item.vrm),
         ];
     }
     return [];
@@ -837,36 +882,37 @@ const quadrille = new Quadrille();
 var mosaic = (function () {
     // prettier-ignore
     var penta_up = [ [2,0],[3,0],
-             [1,1],[2,1],[3,1],[4,1],
-       [0,2],[1,2],[2,2],[3,2],[4,2],[5,2],
-       [0,3],[1,3],[2,3],[3,3],[4,3],[5,3],
-             [1,4],[2,4],[3,4],[4,4],
-             [1,5],[2,5],[3,5],[4,5]]
+               [1,1],[2,1],[3,1],[4,1],
+         [0,2],[1,2],[2,2],[3,2],[4,2],[5,2],
+         [0,3],[1,3],[2,3],[3,3],[4,3],[5,3],
+               [1,4],[2,4],[3,4],[4,4],
+               [1,5],[2,5],[3,5],[4,5]]
     .map(toP);
 
     // prettier-ignore
     var diamond_up =[[0,0],[1,0],
-                   [0,1],[1,1],
-                   [0,2],[1,2],
-                   [0,3],[1,3]]
+                     [0,1],[1,1],
+                     [0,2],[1,2],
+                     [0,3],[1,3]]
     .map(toP);
 
     // prettier-ignore
     var diamond_too = [[1,0],[2,0],[3,0],[4,0],
-               [0,1],[1,1],[2,1],[3,1]]
+                 [0,1],[1,1],[2,1],[3,1]]
     .map(toP);
 
+    // This one should have been called diamond nine.
     // prettier-ignore
     var diamond_for = [[0,0],
-                     [0,1],[1,1],
-                           [1,2],[2,2],
-                           [1,3],[2,3],
-                                 [2,4],[3,4],
-                                       [3,5]]
+                       [0,1],[1,1],
+                             [1,2],[2,2],
+                             [1,3],[2,3],
+                                   [2,4],[3,4],
+                                         [3,5]]
     .map(toP);
 
     // prettier-ignore
-    var star_up =      [[3,0],[4,0],
+    var star_up =    [[3,0],[4,0],
                       [3,1],[4,1],
     [0,2],[1,2],[2,2],[3,2],[4,2],[5,2],[6,2],[7,2],
           [1,3],[2,3],[3,3],[4,3],[5,3],[6,3],
@@ -903,9 +949,41 @@ var mosaic = (function () {
       [0,5],                        [5,5]]
       .map(toP);
 
-    var newPenta = shapeWheel(penta_up.map((point) => point.tr(p(-3, -3))));
-    var newDiamond = shapeWheel();
+    const primitives = {
+        penta_up: penta_up.map((pt) => pt.tr(p(-3, -3))),
+        diamond_up: diamond_up.map((pt) => pt.tr(p(-1, -4))),
+        diamond_won: diamond_for.map((pt) => pt.tr(p(-3, -4)).hrm),
+        diamond_too: diamond_too.map((pt) => pt.tr(p(-1, -2))),
+        boat_up: boat_up.map((pt) => pt.tr(p(-4, -4))),
+        boat_won: boat_for.map((pt) => pt.tr(p(-3, -2)).vrm),
+        boat_too: boat_too.map((pt) => pt.tr(p(-1, -4))),
+        star_up: star_up.map((pt) => pt.tr(p(-4, -4))),
+    };
 
+    console.log(
+        `up ${primitives.boat_up} won ${primitives.boat_won} too ${primitives.boat_too}`
+    );
+    const shapeWheels = {
+        penta: shapeWheelM(primitives.penta_up),
+        diamond: shapeWheelM(
+            primitives.diamond_up,
+            primitives.diamond_won,
+            primitives.diamond_too
+        ),
+        boat: shapeWheelM(
+            primitives.boat_up,
+            primitives.boat_won,
+            primitives.boat_too
+        ),
+        star: shapeWheelM(primitives.star_up),
+    };
+
+    // up tr (p(-4,-4))
+    // for tr (p(-3,-2))
+    // won tr (p(-3,-2)).vr
+    // too tr (p(-1,-4))
+
+    const NewMosaic = shapeWheels;
     const Mosaic = {
         // tr(p(-3, -3))
         penta: [
@@ -920,7 +998,12 @@ var mosaic = (function () {
             penta_up.map((item) => new P(item.x - 3, item.y - 3)),
             penta_up.map((item) => new P(-item.x + 2, -item.y + 2)),
         ],
-        // tr(p(-1, -4).hr
+        // up tr(p(-1, -4).hr
+        // nein for tr(-3, -4)
+        // won = nein.vr
+        // ate too tr(-4,-1)
+        // too ate.hr
+
         diamond: [
             diamond_up.map((item) => new P(item.x - 1, item.y - 4)),
             diamond_for.map((item) => new P(-item.x + 2, item.y - 4)),
@@ -933,7 +1016,10 @@ var mosaic = (function () {
             diamond_too.map((item) => new P(item.x - 4, -item.y - 1)),
             diamond_for.map((item) => new P(item.x - 3, item.y - 4)),
         ],
-        // tr (p(-4,-4))
+        // up tr (p(-4,-4))
+        // for tr (p(-3,-2))
+        // won tr (p(-3,-2)).vr
+        // too tr (p(-1,-4))
         boat: [
             boat_up.map((item) => new P(item.x - 4, item.y - 4)),
             boat_for.map((item) => new P(item.x - 3, -item.y + 1)),
@@ -963,14 +1049,15 @@ var mosaic = (function () {
         key: "mosaic",
     };
 
-    return Mosaic;
+    //return Mosaic;
+    return NewMosaic;
 })();
 
 // Build the api
 /**
  * This is stuff that is not specific to the mode or the default
  */
-var penrose = (function () {
+const penrose = (function () {
     const ORANGE = "#e46c0a";
     const BLUE = "#0000ff";
     const YELLOW = "#ffff00";
