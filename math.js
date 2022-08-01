@@ -500,7 +500,6 @@ function drawGridWork(id) {
         g.strokeStyle = penrose.OUTLINE;
         g.lineWidth = 1;
         scale = 10;
-        penrose.scale = scale; // Maybe does not use it.
 
         let y = 5;
         const shapes = [
@@ -517,7 +516,6 @@ function drawGridWork(id) {
             penrose.SHAPE_STAR,
             penrose.SHAPE_BOAT,
         ];
-
         const spacing = 12;
         for (const key of shapeKeys) {
             const shape = getShapeSet(key);
@@ -540,7 +538,6 @@ function drawGridWork(id) {
         for (const shape of qShapes) {
             for (let i = 0; i < 10; i++) {
                 let offset = p((i + 1) * spacing, y);
-                // outline("transparent", offset, shape[i]);
                 outline(p3Yellow + "44", offset, shape[i]);
             }
             y += spacing;
@@ -755,6 +752,9 @@ function drawGeneric3(id) {
 function drawRealWork(id) {
     console.log(`drawRealWork id: ${id}`);
     const canvas = document.querySelector(`#${id} > canvas`);
+    if (!canvas) {
+        return;
+    }
 
     // g is global
     g = canvas.getContext("2d");

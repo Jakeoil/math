@@ -8,20 +8,20 @@
         <link rel="stylesheet" href="math.css" />
     </head>
     <body onload="measureTasks()">
-        <img src="deca.png" align="left" />
+        <img src="deca.png" align="left" style="padding-right: 4px" />
         <p>
             The quadrille and mosaic are examples of discrete tilings. These
             tilings use integers, or at worst, rational numbers (quotients of
-            integers) to determine the placement of corners and lines. The
-            current algorithm was found by doodling pentagons on a quadrille pad
-            (graph paper). The pentagons were not regular pentagons, but the
-            looked kind of close. The consisted of three types of lines and
-            their mirror images with slope of 0, 2/3 (33) and 4 (76). Using the
-            three vectors, one can draw a reasonable facsimile of a regular
-            pentagon. the first three tenths of a circle, they are meant to
-            appoximate the angles, 0 degree, 36 degrees and 72 degrees. From
-            these angles, the other seven values can be derived through changes
-            of sign.
+            integers) to determine the placement of corners and lines. I found
+            the current algorithm by doodling pentagons on a quadrille pad
+            (graph paper) with each 1/4 inch square represented 4 by 4 units.
+            The pentagons were not regular pentagons, but the looked kind of
+            close. The consisted of three types of lines and their mirror images
+            with slope of 0, 2/3 (33) and 4 (76). Using the three vectors, one
+            can draw a reasonable facsimile of a regular pentagon. the first
+            three tenths of a circle, they are meant to appoximate the angles, 0
+            degree, 36 degrees and 72 degrees. From these angles, the other
+            seven values can be derived through changes of sign.
         </p>
         <span align="left">
             <canvas id="quadrille" class="flowtile" align="left"></canvas>

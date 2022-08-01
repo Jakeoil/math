@@ -28,7 +28,7 @@ canvas.apple-ii {
     height: 1000px;
 }
 .pageButton {
-    border: none;
+    border: 1px solid black;
     outline: none;
     background-color: black;
     color: white;
@@ -61,4 +61,8 @@ canvas.apple-ii {
     margin-left: 10px;
     padding-left: 10px;
     overflow: scroll;
+}
+
+iframe {
+    border: none;
 }

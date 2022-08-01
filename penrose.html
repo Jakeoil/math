@@ -42,6 +42,9 @@
 
         <nav id="across">
             <p>
+                <button class="pageButton" onclick="pageClicked('rwork', this)">
+                    Measurements
+                </button>
                 <button class="pageButton" onclick="pageClicked('inf1',this)">
                     Inflation 1 work area
                 </button>
@@ -56,9 +59,6 @@
                 </button>
                 <button class="pageButton" onclick="pageClicked('g3',this)">
                     Generic expansion
-                </button>
-                <button class="pageButton" onclick="pageClicked('rwork', this)">
-                    Real test area
                 </button>
             </p>
         </nav>
@@ -99,8 +99,23 @@
                     <canvas width="3600" height="5000"> expansion </canvas>
                 </div>
                 <div id="rwork" class="page">
-                    <h2>Real work area</h2>
-                    <canvas width="1200" height="1200"></canvas>
+                    <iframe src="measurements.html" width="100%"
+                        >Measurements frame invalid</iframe
+                    >
+                    <script>
+                        // Selecting the iframe element
+                        var iframe = document.querySelector("#rwork iframe");
+                        var div = document.querySelector("#rWork");
+
+                        // Adjusting the iframe height onload event
+                        iframe.onload = function () {
+                            iframe.style.height =
+                                iframe.contentWindow.document.body
+                                    .scrollHeight +
+                                50 +
+                                "px";
+                        };
+                    </script>
                 </div>
             </div>
         </div>
