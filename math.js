@@ -299,6 +299,7 @@ function makeCanvas(canvasId) {
                     ? star(0, penrose.St1, false, base, 0)
                     : null
             );
+            bounds.pad(0.5);
             base = base.tr(bounds.min.neg);
             width = (bounds.maxPoint.x - bounds.minPoint.x) * scale + 1;
             height = (bounds.maxPoint.y - bounds.minPoint.y) * scale + 1;
@@ -318,12 +319,8 @@ function makeCanvas(canvasId) {
  * @param {*} drawFunction
  */
 function redraw(bounds, canvas, drawFunction) {
-    console.log(`redraw`);
     const computedWidth = bounds.maxPoint.x * scale + scale;
     const computedHeight = bounds.maxPoint.y * scale + scale;
-    console.log(
-        `${computedWidth} ${computedHeight} cw: ${canvas.width} ch: ${canvas.height}`
-    );
     if (
         canvas.width != Math.floor(computedWidth) ||
         canvas.height != Math.floor(computedHeight)
@@ -642,7 +639,6 @@ function drawGeneric123(id) {
     }
 
     const drawScreen = function () {
-        console.log("--Pentagon");
         let x = 13;
         let y = 26;
         const bounds = penta(
@@ -669,7 +665,6 @@ function drawGeneric123(id) {
             2
         );
 
-        console.log("--Diamond up 4");
         x = 13;
         y += 55;
         star(
@@ -705,7 +700,6 @@ function drawGeneric123(id) {
  * Let's make it friendlier
  */
 function drawGeneric3(id) {
-    console.log(`drawGeneric3`);
     const canvas = document.querySelector(`#${id} > canvas`);
 
     // g is global
@@ -1062,7 +1056,6 @@ function produceWheels() {
  * @returns
  */
 function penta(fifths, type, isDown, loc, exp) {
-    console.log(`penta type ${type.name}`);
     const bounds = new Bounds();
     fifths = norm(fifths);
     if (exp == 0) {
@@ -1079,9 +1072,6 @@ function penta(fifths, type, isDown, loc, exp) {
             bounds.addPoint(loc, loc);
         }
 
-        if (bounds.min.isZero) {
-            console.log(`penta: ${type.name} drawn`);
-        }
         return bounds; // call figure
     }
 
@@ -1103,10 +1093,6 @@ function penta(fifths, type, isDown, loc, exp) {
             )
         );
 
-        if (!type.diamond) {
-            console.log(`type.diamond ${type.diamond}`);
-            console.log(`type: ${stringify(type)}`);
-        }
         if (type.diamond.includes(i)) {
             bounds.expand(
                 star(
@@ -1220,7 +1206,6 @@ function star(fifths, type, isDown, loc, exp) {
 
 function deca(fifths, isDown, loc, exp) {
     const bounds = new Bounds();
-    console.log(`deca $bounds`);
     if (exp == 0) {
         return bounds;
     }

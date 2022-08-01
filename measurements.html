@@ -8,7 +8,7 @@
         <link rel="stylesheet" href="math.css" />
     </head>
     <body onload="measureTasks()">
-        <img src="deca.png" align="left" style="padding-right: 4px" />
+        <img id="image" src="deca.png" align="left" />
         <p>
             The quadrille and mosaic are examples of discrete tilings. These
             tilings use integers, or at worst, rational numbers (quotients of
@@ -40,6 +40,7 @@
         <script>
             function measureTasks() {
                 drawQuadrille();
+                drawImage();
             }
 
             /***
@@ -70,14 +71,6 @@
                 scale = 3.7;
                 shapeMode = MODE_REAL;
                 renderShape = outline;
-
-                // [pWheels, sWheels, tWheels, dWheels] = [
-                //     real.pWheels,
-                //     real.sWheels,
-                //     real.tWheels,
-                //     real.dWheels,
-                // ];
-
                 let fifths;
                 let isDown;
                 let exp;
@@ -88,7 +81,6 @@
                 isDown = false;
                 base = p(0, 0);
                 exp = 2;
-
                 let bounds = new Bounds();
                 bounds.expand(deca(fifths, isDown, base, exp));
                 base = base.tr(p(bounds.minPoint.x, bounds.minPoint.y).neg);
@@ -97,16 +89,46 @@
 
                 bounds = new Bounds();
                 bounds.expand(deca(fifths, isDown, base, exp));
-                console.log(
-                    `bounds minX: ${bounds.minPoint.x} minY: ${bounds.minPoint.y}`
-                );
-                console.log(`min: ${bounds.min}`);
+                bounds = new Bounds();
+                const img = canvas.toDataURL("img.png");
+            }
+
+            function drawImage() {
+                const canvas = document.createElement("canvas");
+                console.log(`canvas ${canvas}`);
+                canvas.width = 0;
+                canvas.height = 0;
+                let base = p(0, 0);
+                g = canvas.getContext("2d");
+                g.strokeStyle = penrose.OUTLINE;
+                g.lineWidth = 1;
+                scale = 5;
+                shapeMode = MODE_REAL;
+                renderShape = outline;
+                let fifths;
+                let isDown;
+                let exp;
+
+                // Now some decagons
+                fifths = 0;
+                isDown = false;
+                base = p(0, 0);
+                exp = 1;
+                let bounds = new Bounds();
+                bounds.expand(deca(fifths, isDown, base, exp));
+                bounds.pad(1);
+                base = base.tr(p(bounds.minPoint.x, bounds.minPoint.y).neg);
+                canvas.width = (bounds.maxPoint.x - bounds.minPoint.x) * scale;
+                canvas.height = (bounds.maxPoint.y - bounds.minPoint.y) * scale;
 
                 bounds = new Bounds();
-                console.log(`bounds minX: ${bounds.minX} minY: ${bounds.minY}`);
-                console.log(`min: ${bounds.min}`);
+                bounds.expand(deca(fifths, isDown, base, exp));
+                bounds.pad(1);
+                bounds = new Bounds();
                 const img = canvas.toDataURL("img.png");
-                console.log(img);
+                const ele = document.querySelector("#image");
+                console.log(ele.src);
+                ele.src = img;
             }
         </script>
     </body>

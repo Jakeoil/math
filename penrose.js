@@ -154,15 +154,50 @@ class Bounds {
     }
 
     /**
-     * Padding should take scale into account
-     * e.g. if scale is 10, make it .1
+     * Framing adjust the bounds. Positive values increases the bounds and
+     * negative values decreases. The values are scaled.
      * It takes into account the tightness of the bounds
+     * Missing parameters follow css rules.
+     *
+     * The new bounds is mutated, but returned for convenience.
      */
-    pad(padding) {
-        this.minPoint.x -= padding;
-        this.minPoint.y -= padding;
-        this.maxPoint.x += padding;
-        this.maxPoint.y += padding;
+    pad(top, right, bottom, left) {
+        if (!this.minPoint || !this.maxPoint) {
+            this.minPoint = p(0, 0);
+            this.minPoint = p(0, 0);
+        }
+        if (top) {
+            this.minPoint.y -= top;
+            if (right) {
+                this.maxPoint.x += right;
+                if (bottom) {
+                    this.maxPoint.y += bottom;
+                    if (left) {
+                        this.minPoint.x -= left;
+                    } else {
+                        this.minPoint.x -= right;
+                    }
+                } else {
+                    this.maxPoint.y += top;
+                    this.minPoint.x -= right;
+                }
+            } else {
+                this.maxPoint.x += top;
+                this.minPoint.x -= top;
+                this.maxPoint.y += top;
+            }
+        } else {
+            console.log(`error: no parameters`);
+        }
+        // check if we shrank too much
+        const rect = this.maxPoint.tr(this.minPoint.neg);
+        console.log(`rect: ${rect}`);
+        if (rect.x < 0) {
+            this.maxPoint.x = this.minPoint.x;
+        }
+        if (rect.y < 0) {
+            this.maxPoint.y = this.minPoint.y;
+        }
         //
         return this;
     }
@@ -171,8 +206,15 @@ class Bounds {
     get minX() {
         return this.minPoint && this.minPoint.x;
     }
+    set minX(x) {
+        this.minPoint.x = x;
+    }
+
     get minY() {
         return this.minPoint && this.minPoint.y;
+    }
+    set minY(y) {
+        this.minPoint.y = y;
     }
     get maxX() {
         return this.maxPoint && this.maxPoint.x;
@@ -183,16 +225,38 @@ class Bounds {
 
     get min() {
         return new P(this.minX, this.minY);
+        // Oh shit. This is a dumb one.  Synonym for minPoint
+    }
+    set min(point) {
+        this.minPoint = point;
     }
     get max() {
         return new P(this.maxX, this.maxY);
     }
 
+    // toString2() {
+    //     return stringify(this);
+    // }
+
     toString() {
-        return stringify(this);
+        return `min: ${this.minPoint}, max: ${this.maxPoint}`;
     }
 }
 
+function testBounds() {
+    let bounds = new Bounds();
+    let offset = p(10, 10);
+    bounds.addPoint(offset, p(-5, 6));
+    bounds.addPoint(offset, p(0, 50));
+    console.log(`${bounds}`);
+    console.log(`${bounds.pad(1)}`);
+    console.log(`${bounds.pad(1, 2, 3)}`);
+    console.log(`${bounds.pad(1, 2, 3, 4)}`);
+    console.log(`${bounds.pad(-10)}`);
+    console.log(`${bounds.pad(-10)}`);
+    console.log(`${bounds.pad(-10)}`);
+}
+testBounds();
 /**
  * Creates a 10 point wheel out of the first three coordinates (or Ps)
  * Input is up[0], down[3], up[1]
@@ -984,7 +1048,6 @@ const mosaic = new Mosaic();
  */
 class Penrose {
     constructor() {
-        console.log(`Penrose constructor`);
         const ORANGE = "#e46c0a";
         const BLUE = "#0000ff";
         const YELLOW = "#ffff00";
@@ -1066,8 +1129,6 @@ class Penrose {
             shapeKey: SHAPE_DIAMOND,
             typeColor: BLUE,
         };
-
-        console.log(`this.pe5: ${this.Pe5}`);
     }
 }
 const penrose = new Penrose();
