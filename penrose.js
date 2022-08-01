@@ -1045,7 +1045,7 @@ class Penrose {
             shapeKey: SHAPE_PENTA,
             //            shapeKey: "penta",
             typeColor: ORANGE,
-            diaond: [1, 4],
+            diamond: [1, 4],
         };
         // for stars, the color indicates existence.
         this.St5 = {
@@ -1070,13 +1070,13 @@ class Penrose {
         console.log(`this.pe5: ${this.Pe5}`);
     }
 }
-const penrose2 = new Penrose();
+const penrose = new Penrose();
 // &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 // Build the api
 /**
  * This is stuff that is not specific to the mode or the default
  */
-const penrose = (function () {
+const penrose2 = (function () {
     const ORANGE = "#e46c0a";
     const BLUE = "#0000ff";
     const YELLOW = "#ffff00";

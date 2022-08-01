@@ -1062,6 +1062,7 @@ function produceWheels() {
  * @returns
  */
 function penta(fifths, type, isDown, loc, exp) {
+    console.log(`penta type ${type.name}`);
     const bounds = new Bounds();
     fifths = norm(fifths);
     if (exp == 0) {
@@ -1102,6 +1103,10 @@ function penta(fifths, type, isDown, loc, exp) {
             )
         );
 
+        if (!type.diamond) {
+            console.log(`type.diamond ${type.diamond}`);
+            console.log(`type: ${stringify(type)}`);
+        }
         if (type.diamond.includes(i)) {
             bounds.expand(
                 star(
