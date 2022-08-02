@@ -1,5 +1,4 @@
 "use strict";
-
 /**
  * Penrose Mozaic Webapp version 1.
  * Jeff Coyles Penrose type one pattern made out of square tiles of
@@ -7,6 +6,9 @@
  * Requires penrose.js
  *
  * Added Quadrille mode. Shows graph paper version.
+ * Added Real mode.
+ *
+ * Added controls for colors.
  */
 
 /**
@@ -22,19 +24,62 @@ let stroke; // New
  * These global values shall be controllable
  * Set them to the defaults
  */
-let p5Blue = penrose.BLUE_P;
-let p3Yellow = penrose.YELLOW;
-let p1Orange = penrose.ORANGE;
-let starBlue = penrose.BLUE;
+
+/**
+ *
+ * Todo. Use keys instead of actual color values. They _are_ keys.
+ */
+let p5Blue = penrose.BLUE_STAR; // These should be done differently
+let p3Yellow = penrose.YELLOW_PENTA;
+let p1Orange = penrose.ORANGE_PENTA;
+let starBlue = penrose.BLUE_STAR;
 
 // p5Blue = "black";
 // p3Yellow = "lightgreen";
 // p1Orange = "red";
 // starBlue = "cyan";
-const eleP5Color = document.querySelector("#p5-color");
+const eleP5Color = document.querySelector("#p5-color"); //p5-color
 const eleP3Color = document.querySelector("#p3-color");
 const eleP1Color = document.querySelector("#p1-color");
 const eleStarColor = document.querySelector("#star-color");
+
+const refreshColors = function () {
+    console.log(
+        `refreshColors: Pe5: ${p5Blue},Pe3: ${p3Yellow}, Pe1: ${p1Orange}, St: ${starBlue}`
+    );
+    if (eleP5Color) eleP5Color.value = p5Blue;
+    // ...
+};
+refreshColors();
+
+function onColorReset() {
+    // LOAD DEFAULTS
+    p5Blue = penrose.BLUE_STAR;
+    p3Yellow = penrose.YELLOW_PENTA;
+    p1Orange = penrose.ORANGE_PENTA;
+    starBlue = penrose.BLUE_STAR;
+    console.log(`onColorReset`);
+    refreshColors();
+    penroseApp();
+}
+
+const onPe5Change = function (event) {
+    p5Blue = event.value.color;
+    console.log(`Change Pe5 to ${p5Blue}`);
+    console.log(`color: ${p5Blue}`);
+    refreshColors();
+    penroseApp();
+};
+
+if (eleP5Color) eleP5Color.addEventListener("input", onPe5Input);
+console.log(`add event listener`);
+
+function onPe5Input(event) {
+    p5Blue = event.value;
+    console.log(`Input Pe5 to ${p5Blue}`);
+    refreshColors();
+    penroseApp();
+}
 
 /**
  * Shape-Mode:
@@ -423,7 +468,7 @@ function drawSecondInflation(id) {
         g.fillStyle = "#ffffff";
         g.fillRect(0, 0, canvas.width, canvas.height);
 
-        g.fillStyle = penrose.ORANGE;
+        g.fillStyle = penrose.ORANGE_PENTA;
         g.strokeStyle = penrose.OUTLINE;
         g.lineWidth = 1;
         scale = 5;
@@ -744,7 +789,6 @@ function drawGeneric3(id) {
 }
 
 function drawRealWork(id) {
-    console.log(`drawRealWork id: ${id}`);
     const canvas = document.querySelector(`#${id} > canvas`);
     if (!canvas) {
         return;
@@ -985,13 +1029,13 @@ function compare(a, b) {
 
 function pColor(type) {
     switch (type) {
-        case penrose.BLUE:
+        case penrose.BLUE_STAR:
             return starBlue;
-        case penrose.BLUE_P:
+        case penrose.BLUE_PENTA:
             return p5Blue;
-        case penrose.YELLOW:
+        case penrose.YELLOW_PENTA:
             return p3Yellow;
-        case penrose.ORANGE:
+        case penrose.ORANGE_PENTA:
             return p1Orange;
     }
     return null;

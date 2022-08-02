@@ -69,7 +69,7 @@ Node goals:
 -   [ ] Make the penrose a module with classes. e.g. <script type="module" src="app.mjs"></script>
 
 -   [ ] Design a theme and sub-theme hierarchy for rendering.
-        For example we have graphics. Had core. But can be printer or screen. Maybe some other characteristics.
+        For example we have graphics. Hard core. But can be printer or screen. Maybe some other characteristics.
         Then we have scale. Kind of in between.
 
 

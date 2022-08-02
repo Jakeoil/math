@@ -191,7 +191,6 @@ class Bounds {
         }
         // check if we shrank too much
         const rect = this.maxPoint.tr(this.minPoint.neg);
-        console.log(`rect: ${rect}`);
         if (rect.x < 0) {
             this.maxPoint.x = this.minPoint.x;
         }
@@ -256,7 +255,7 @@ function testBounds() {
     console.log(`${bounds.pad(-10)}`);
     console.log(`${bounds.pad(-10)}`);
 }
-testBounds();
+//testBounds();
 /**
  * Creates a 10 point wheel out of the first three coordinates (or Ps)
  * Input is up[0], down[3], up[1]
@@ -1069,10 +1068,10 @@ class Penrose {
         const dSeed = [p(0, -3), p(2, -3), p(3, -1)];
 
         const wheels = new Wheels(pSeed, sSeed, tSeed, dSeed);
-        this.ORANGE = ORANGE;
-        this.BLUE = BLUE;
-        this.YELLOW = YELLOW;
-        this.BLUE_P = BLUE_P; // Just making the string different
+        this.ORANGE_PENTA = ORANGE;
+        this.BLUE_STAR = BLUE;
+        this.YELLOW_PENTA = YELLOW;
+        this.BLUE_PENTA = BLUE_P; // Just making the string different
         this.OUTLINE = "#4a7eba";
 
         this.up = [0, 2, 4, 6, 8]; //
