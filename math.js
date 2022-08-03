@@ -95,7 +95,7 @@ function onPe5Input(event) {
 const MODE_MOSAIC = "mosaic";
 const MODE_QUADRILLE = "quadrille";
 const MODE_REAL = "real";
-const MODE_LIST = [MODE_MOSAIC, MODE_QUADRILLE, MODE_REAL];
+//const MODE_LIST = [MODE_MOSAIC, MODE_QUADRILLE, MODE_REAL];
 
 let shapeMode = MODE_MOSAIC;
 //let pWheels, sWheels, tWheels, dWheels;
@@ -112,30 +112,13 @@ const eleMode = document.querySelector("#shape-mode");
  */
 function refreshShapeMode() {
     if (eleMode) eleMode.innerHTML = shapeMode;
-    // [pWheels, sWheels, tWheels, dWheels] =
-    //     shapeMode == MODE_REAL
-    //         ? [real.pWheels, real.sWheels, real.tWheels, real.dWheels]
-    //         : [
-    //               penrose.pWheels,
-    //               penrose.sWheels,
-    //               penrose.tWheels,
-    //               penrose.dWheels,
-    //           ];
-    renderShape =
-        shapeMode == MODE_MOSAIC
-            ? figure
-            : shapeMode == MODE_QUADRILLE
-            ? outline
-            : outline;
-
-    // shapeSet =
+    renderShape = penrose[shapeMode].renderShape;
+    // renderShape =
     //     shapeMode == MODE_MOSAIC
-    //         ? mosaic
+    //         ? figure
     //         : shapeMode == MODE_QUADRILLE
-    //         ? quadrille
-    //         : shapeMode == MODE_REAL
-    //         ? real
-    //         : null;
+    //         ? outline
+    //         : outline;
 }
 
 refreshShapeMode();
@@ -544,26 +527,20 @@ function drawGridWork(id) {
         scale = 10;
 
         let y = 5;
-        const shapes = [
-            penrose.penta,
-            penrose.diamond,
-            penrose.star,
-            penrose.boat,
-        ];
+        const shapes = [mosaic.penta, mosaic.diamond, mosaic.star, mosaic.boat];
 
         // PENROSE OR GLOBAL
-        const shapeKeys = [
-            penrose.SHAPE_PENTA,
-            penrose.SHAPE_DIAMOND,
-            penrose.SHAPE_STAR,
-            penrose.SHAPE_BOAT,
-        ];
+        //const shapeKeys = [
+        //    penrose.SHAPE_PENTA,
+        //    penrose.SHAPE_DIAMOND,
+        //    penrose.SHAPE_STAR,
+        //    penrose.SHAPE_BOAT,
+        //];
         const spacing = 12;
-        for (const key of shapeKeys) {
-            const shape = getShapeSet(key);
+        for (const shape of shapes) {
             for (let i = 0; i < 10; i++) {
                 let offset = p((i + 1) * spacing, y);
-                fig(p1Orange, offset, shape[i]);
+                mosaic.renderShape(p1Orange, offset, shape[i]);
                 grid(p((i + 1) * spacing, y), 5);
             }
             y += spacing;
@@ -580,7 +557,7 @@ function drawGridWork(id) {
         for (const shape of qShapes) {
             for (let i = 0; i < 10; i++) {
                 let offset = p((i + 1) * spacing, y);
-                outline(p3Yellow + "44", offset, shape[i]);
+                quadrille.renderShape(p3Yellow + "44", offset, shape[i]);
             }
             y += spacing;
         }
@@ -1065,7 +1042,8 @@ function pShape(type) {
 }
 
 function produceWheels() {
-    return shapeMode == MODE_REAL ? real.wheels : penrose.wheels;
+    return penrose[shapeMode].wheels;
+    //return shapeMode == MODE_REAL ? real.wheels : penrose.wheels;
 }
 
 /*******************************************************************************

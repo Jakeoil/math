@@ -630,6 +630,75 @@ function solve(proportions, inputKey, value, targetKey) {
         return newVariables;
     }
 }
+/***
+ * Used by Mosaic figure.
+ * This is the routine that ultimately renders the 'tile'
+ * @param {*} fill One of the colors
+ * @param {*} offset Location in P format
+ * @param {*} shape centered array of 'pixels' centered.
+ * Prerequisites: Globals g and scale
+ */
+function figure(fill, offset, shape) {
+    g.fillStyle = fill; //e.g penrose.ORANGE;
+    g.strokeStyle = penrose.OUTLINE;
+
+    const bounds = new Bounds();
+    for (const point of shape) {
+        g.fillRect(
+            offset.x * scale + point.x * scale,
+            offset.y * scale + point.y * scale,
+            scale,
+            scale
+        );
+        if (scale >= 5) {
+            g.strokeRect(
+                offset.x * scale + point.x * scale,
+                offset.y * scale + point.y * scale,
+                scale,
+                scale
+            );
+        }
+        bounds.addPoint(offset, point);
+        bounds.addPoint(offset, point.tr(p(1, 1)));
+    }
+    return bounds;
+}
+
+/***
+ * Used for quadrille
+ *
+ */
+function outline(fill, offset, shape) {
+    let start = true;
+    const bounds = new Bounds();
+    for (const point of shape) {
+        g.strokeStyle = "#000000";
+        g.fillStyle = fill;
+        g.lineWidth = 1;
+        if (start) {
+            g.beginPath();
+            g.moveTo(
+                (point.x + offset.x) * scale,
+                (point.y + offset.y) * scale
+            );
+            start = false;
+        } else {
+            g.lineTo(
+                (point.x + offset.x) * scale,
+                (point.y + offset.y) * scale
+            );
+        }
+
+        bounds.addPoint(offset, point);
+    }
+    g.closePath();
+    g.stroke();
+    if (fill) {
+        g.fill();
+    }
+
+    return bounds;
+}
 
 class Real {
     constructor() {
@@ -856,6 +925,7 @@ class Real {
         this.wheels = new Wheels(pSeed, sSeed, tSeed, dSeed);
 
         this.key = "real";
+        this.renderShape = outline;
     }
 }
 const real = new Real();
@@ -942,6 +1012,13 @@ class Quadrille {
         this.boat = shapeWheel(boatUp, boatWon, boatToo);
         this.diamond = shapeWheel(diamondUp, diamondWon, diamondToo);
         this.key = "quadrille";
+        this.renderShape = outline;
+        const pSeed = [p(0, -6), p(3, -4), p(5, -2)];
+        const sSeed = [p(0, -5), p(3, -5), p(5, -1)];
+        const tSeed = [p(0, -8), p(5, -8), p(8, -2)];
+        const dSeed = [p(0, -3), p(2, -3), p(3, -1)];
+
+        this.wheels = new Wheels(pSeed, sSeed, tSeed, dSeed);
     }
 }
 const quadrille = new Quadrille();
@@ -1037,6 +1114,14 @@ class Mosaic {
         this.star = shapeWheelMosaic(primitives.star_up);
 
         this.key = "mosaic";
+        this.renderShape = figure;
+
+        const pSeed = [p(0, -6), p(3, -4), p(5, -2)];
+        const sSeed = [p(0, -5), p(3, -5), p(5, -1)];
+        const tSeed = [p(0, -8), p(5, -8), p(8, -2)];
+        const dSeed = [p(0, -3), p(2, -3), p(3, -1)];
+
+        this.wheels = new Wheels(pSeed, sSeed, tSeed, dSeed);
     }
 }
 
@@ -1047,181 +1132,119 @@ const mosaic = new Mosaic();
  */
 class Penrose {
     constructor() {
+        // Default colors
         const ORANGE = "#e46c0a";
         const BLUE = "#0000ff";
         const YELLOW = "#ffff00";
-        const BLUE_P = "#00f";
 
-        const SHAPE_PENTA = "penta";
-        const SHAPE_STAR = "star";
-        const SHAPE_BOAT = "boat";
-        const SHAPE_DIAMOND = "diamond";
+        // const SHAPE_PENTA = "penta";
+        // const SHAPE_STAR = "star";
+        // const SHAPE_BOAT = "boat";
+        // const SHAPE_DIAMOND = "diamond";
 
         // These are common to both mosaic and quadrille.
         // Othogonal vs Real. Integer vs Real proportions.
         // Integer vs Real shapes.
         // but also mosaic vs quadrille shapes.
         // ah, the venn diagrams of it all.
-        const pSeed = [p(0, -6), p(3, -4), p(5, -2)];
-        const sSeed = [p(0, -5), p(3, -5), p(5, -1)];
-        const tSeed = [p(0, -8), p(5, -8), p(8, -2)];
-        const dSeed = [p(0, -3), p(2, -3), p(3, -1)];
 
-        const wheels = new Wheels(pSeed, sSeed, tSeed, dSeed);
-        this.ORANGE_PENTA = ORANGE;
-        this.BLUE_STAR = BLUE;
-        this.YELLOW_PENTA = YELLOW;
-        this.BLUE_PENTA = BLUE_P; // Just making the string different
+        // This should move to mosaic and quadrille!!!
+        // const pSeed = [p(0, -6), p(3, -4), p(5, -2)];
+        // const sSeed = [p(0, -5), p(3, -5), p(5, -1)];
+        // const tSeed = [p(0, -8), p(5, -8), p(8, -2)];
+        // const dSeed = [p(0, -3), p(2, -3), p(3, -1)];
+
+        //const wheels = new Wheels(pSeed, sSeed, tSeed, dSeed);
+
+        this.ORANGE_PENTA = "Pe1";
+        this.BLUE_STAR = "St5";
+        this.YELLOW_PENTA = "Pe3";
+        this.BLUE_PENTA = "Pe5";
+
         this.OUTLINE = "#4a7eba";
 
         this.up = [0, 2, 4, 6, 8]; //
         this.down = [5, 7, 9, 1, 3];
 
-        this.SHAPE_PENTA = SHAPE_PENTA;
-        this.SHAPE_STAR = SHAPE_STAR;
-        this.SHAPE_BOAT = SHAPE_BOAT;
-        this.SHAPE_DIAMOND = SHAPE_DIAMOND;
+        // this.SHAPE_PENTA = SHAPE_PENTA;
+        // this.SHAPE_STAR = SHAPE_STAR;
+        // this.SHAPE_BOAT = SHAPE_BOAT;
+        // this.SHAPE_DIAMOND = SHAPE_DIAMOND;
 
-        this.wheels = wheels;
+        //this.wheels = wheels;
 
         this.Pe5 = {
             name: "Pe5",
-            color: [YELLOW, YELLOW, YELLOW, YELLOW, YELLOW],
+            color: [
+                this.YELLOW_PENTA,
+                this.YELLOW_PENTA,
+                this.YELLOW_PENTA,
+                this.YELLOW_PENTA,
+                this.YELLOW_PENTA,
+            ],
             twist: [0, 0, 0, 0, 0],
-            shapeKey: SHAPE_PENTA,
-            typeColor: BLUE_P,
+            //shapeKey: SHAPE_PENTA,
+            defaultColor: BLUE,
             diamond: [],
         };
         this.Pe3 = {
             name: "Pe3",
-            color: [YELLOW, YELLOW, ORANGE, ORANGE, YELLOW],
+            color: [
+                this.YELLOW_PENTA,
+                this.YELLOW_PENTA,
+                this.ORANGE_PENTA,
+                this.ORANGE_PENTA,
+                this.YELLOW_PENTA,
+            ],
+
             twist: [0, 0, -1, 1, 0],
-            shapeKey: SHAPE_PENTA,
-            typeColor: YELLOW,
+            //shapeKey: SHAPE_PENTA,
+            defaultColor: YELLOW,
             diamond: [0],
         };
         this.Pe1 = {
             name: "Pe1",
-            color: [YELLOW, ORANGE, ORANGE, ORANGE, ORANGE],
+            color: [
+                this.YELLOW_PENTA,
+                this.ORANGE_PENTA,
+                this.ORANGE_PENTA,
+                this.ORANGE_PENTA,
+                this.ORANGE_PENTA,
+            ],
             twist: [0, -1, 1, -1, 1],
-            shapeKey: SHAPE_PENTA,
+            //shapeKey: SHAPE_PENTA,
             //            shapeKey: "penta",
-            typeColor: ORANGE,
+            defaultColor: ORANGE,
             diamond: [1, 4],
         };
         // for stars, the color indicates existence.
         this.St5 = {
             name: "St5: star",
-            color: [BLUE, BLUE, BLUE, BLUE, BLUE],
-            shapeKey: SHAPE_STAR,
-            typeColor: BLUE,
+            color: [
+                this.BLUE_STAR,
+                this.BLUE_STAR,
+                this.BLUE_STAR,
+                this.BLUE_STAR,
+                this.BLUE_STAR,
+            ],
+            //shapeKey: SHAPE_STAR,
+            defaultColor: BLUE,
         };
         this.St3 = {
             name: "St3: boat",
-            color: [BLUE, BLUE, null, null, BLUE],
-            shapeKey: SHAPE_BOAT,
-            typeColor: BLUE,
+            color: [this.BLUE_STAR, this.BLUE_STAR, null, null, this.BLUE_STAR],
+            //shapeKey: SHAPE_BOAT,
+            defaultColor: BLUE,
         };
         this.St1 = {
             name: "St1: diamond",
-            color: [BLUE, null, null, null, null],
-            shapeKey: SHAPE_DIAMOND,
-            typeColor: BLUE,
+            color: [this.BLUE_STAR, null, null, null, null],
+            //shapeKey: SHAPE_DIAMOND,
+            defaultColor: BLUE,
         };
+        this.mosaic = mosaic;
+        this.quadrille = quadrille;
+        this.real = real;
     }
 }
 const penrose = new Penrose();
-// &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-// Build the api
-/**
- * This is stuff that is not specific to the mode or the default
- */
-const penrose2 = (function () {
-    const ORANGE = "#e46c0a";
-    const BLUE = "#0000ff";
-    const YELLOW = "#ffff00";
-    const BLUE_P = "#00f";
-
-    const SHAPE_PENTA = "penta";
-    const SHAPE_STAR = "star";
-    const SHAPE_BOAT = "boat";
-    const SHAPE_DIAMOND = "diamond";
-
-    // These are common to both mosaic and quadrille.
-    // Othogonal vs Real. Integer vs Real proportions.
-    // Integer vs Real shapes.
-    // but also mosaic vs quadrille shapes.
-    // ah, the venn diagrams of it all.
-    const pSeed = [p(0, -6), p(3, -4), p(5, -2)];
-    const sSeed = [p(0, -5), p(3, -5), p(5, -1)];
-    const tSeed = [p(0, -8), p(5, -8), p(8, -2)];
-    const dSeed = [p(0, -3), p(2, -3), p(3, -1)];
-
-    const wheels = new Wheels(pSeed, sSeed, tSeed, dSeed);
-    const Penrose = {};
-    Penrose.ORANGE = ORANGE;
-
-    // This is the core penrose object.
-    return {
-        ORANGE: ORANGE,
-        BLUE: BLUE,
-        YELLOW: YELLOW,
-        BLUE_P: BLUE_P, // Just making the string different
-        OUTLINE: "#4a7eba",
-
-        up: [0, 2, 4, 6, 8], //
-        down: [5, 7, 9, 1, 3],
-
-        SHAPE_PENTA: SHAPE_PENTA,
-        SHAPE_STAR: SHAPE_STAR,
-        SHAPE_BOAT: SHAPE_BOAT,
-        SHAPE_DIAMOND: SHAPE_DIAMOND,
-
-        wheels: wheels,
-
-        Pe5: {
-            name: "Pe5",
-            color: [YELLOW, YELLOW, YELLOW, YELLOW, YELLOW],
-            twist: [0, 0, 0, 0, 0],
-            shapeKey: SHAPE_PENTA,
-            typeColor: BLUE_P,
-            diamond: [],
-        },
-        Pe3: {
-            name: "Pe3",
-            color: [YELLOW, YELLOW, ORANGE, ORANGE, YELLOW],
-            twist: [0, 0, -1, 1, 0],
-            shapeKey: SHAPE_PENTA,
-            typeColor: YELLOW,
-            diamond: [0],
-        },
-        Pe1: {
-            name: "Pe1",
-            color: [YELLOW, ORANGE, ORANGE, ORANGE, ORANGE],
-            twist: [0, -1, 1, -1, 1],
-            shapeKey: SHAPE_PENTA,
-            //            shapeKey: "penta",
-            typeColor: ORANGE,
-            diamond: [1, 4],
-        },
-        // for stars, the color indicates existence.
-        St5: {
-            name: "St5: star",
-            color: [BLUE, BLUE, BLUE, BLUE, BLUE],
-            shapeKey: SHAPE_STAR,
-            typeColor: BLUE,
-        },
-        St3: {
-            name: "St3: boat",
-            color: [BLUE, BLUE, null, null, BLUE],
-            shapeKey: SHAPE_BOAT,
-            typeColor: BLUE,
-        },
-        St1: {
-            name: "St1: diamond",
-            color: [BLUE, null, null, null, null],
-            shapeKey: SHAPE_DIAMOND,
-            typeColor: BLUE,
-        },
-    };
-})();
