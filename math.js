@@ -71,18 +71,47 @@ function onColorReset() {
 }
 
 const onPe5Change = function (event) {
-    p5Blue = event.value.color;
+    p5Blue = event.target.value.color;
     console.log(`Change Pe5 to ${p5Blue}`);
-    console.log(`color: ${p5Blue}`);
+    refreshColors();
+    penroseApp();
+};
+
+const onPe3Change = function (event) {
+    p3Yellow = event.target.value.color;
+    console.log(`Change Pe3 to ${p5Blue}`);
     refreshColors();
     penroseApp();
 };
 
 if (eleP5Color) eleP5Color.addEventListener("input", onPe5Input);
+if (eleP3Color) eleP3Color.addEventListener("input", onPe3Input);
+if (eleP1Color) eleP1Color.addEventListener("input", onPe1Input);
+if (eleStarColor) eleStarColor.addEventListener("input", onStarInput);
 
 function onPe5Input(event) {
-    p5Blue = event.value;
+    p5Blue = event.target.value;
     console.log(`Input Pe5 to ${p5Blue}`);
+    refreshColors();
+    penroseApp();
+}
+function onPe3Input(event) {
+    p3Yellow = event.target.value;
+    console.log(`Input Pe3 to ${p3Yellow}`);
+    refreshColors();
+    penroseApp();
+}
+function onPe1Input(event) {
+    p1Orange = event.target.value;
+    console.log(`Input Pe1 to ${p1Orange}`);
+    refreshColors();
+    penroseApp();
+}
+function onStarInput(event) {
+    starBlue = event.target.value;
+    boatBlue = event.target.value;
+    diamondBlue = event.target.value;
+    console.log(`Input star to ${starBlue}`);
     refreshColors();
     penroseApp();
 }
