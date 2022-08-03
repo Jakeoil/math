@@ -639,6 +639,7 @@ function solve(proportions, inputKey, value, targetKey) {
  * Prerequisites: Globals g and scale
  */
 function figure(fill, offset, shape) {
+    console.log(`We have the global g: ${g}`);
     g.fillStyle = fill; //e.g penrose.ORANGE;
     g.strokeStyle = penrose.OUTLINE;
 
@@ -1160,6 +1161,8 @@ class Penrose {
         this.BLUE_STAR = "St5";
         this.YELLOW_PENTA = "Pe3";
         this.BLUE_PENTA = "Pe5";
+        this.BLUE_BOAT = "St3";
+        this.BLUE_DIAMOND = "St1";
 
         this.OUTLINE = "#4a7eba";
 
@@ -1183,7 +1186,7 @@ class Penrose {
                 this.YELLOW_PENTA,
             ],
             twist: [0, 0, 0, 0, 0],
-            //shapeKey: SHAPE_PENTA,
+            //typeColor: this.BLUE_PENTA,
             defaultColor: BLUE,
             diamond: [],
         };
@@ -1198,7 +1201,7 @@ class Penrose {
             ],
 
             twist: [0, 0, -1, 1, 0],
-            //shapeKey: SHAPE_PENTA,
+            //typeColor: this.YELLOW_PENTA,
             defaultColor: YELLOW,
             diamond: [0],
         };
@@ -1212,6 +1215,7 @@ class Penrose {
                 this.ORANGE_PENTA,
             ],
             twist: [0, -1, 1, -1, 1],
+            //typeColor: this.ORANGE_PENTA,
             //shapeKey: SHAPE_PENTA,
             //            shapeKey: "penta",
             defaultColor: ORANGE,
@@ -1228,18 +1232,21 @@ class Penrose {
                 this.BLUE_STAR,
             ],
             //shapeKey: SHAPE_STAR,
+            //typeColor: this.BLUE_STAR,
             defaultColor: BLUE,
         };
         this.St3 = {
             name: "St3: boat",
             color: [this.BLUE_STAR, this.BLUE_STAR, null, null, this.BLUE_STAR],
             //shapeKey: SHAPE_BOAT,
+            //typeColor: this.BLUE_BOAT,
             defaultColor: BLUE,
         };
         this.St1 = {
             name: "St1: diamond",
             color: [this.BLUE_STAR, null, null, null, null],
             //shapeKey: SHAPE_DIAMOND,
+            //typeColor: this.BLUE_DIAMOND,
             defaultColor: BLUE,
         };
         this.mosaic = mosaic;
