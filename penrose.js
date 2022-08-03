@@ -233,10 +233,6 @@ class Bounds {
         return new P(this.maxX, this.maxY);
     }
 
-    // toString2() {
-    //     return stringify(this);
-    // }
-
     toString() {
         return `min: ${this.minPoint}, max: ${this.maxPoint}`;
     }
@@ -256,6 +252,7 @@ function testBounds() {
     console.log(`${bounds.pad(-10)}`);
 }
 //testBounds();
+
 /**
  * Creates a 10 point wheel out of the first three coordinates (or Ps)
  * Input is up[0], down[3], up[1]
@@ -891,25 +888,21 @@ class Real {
         // It is basically 2 * pgon.r
         const pMag = solve(pgon, "a", 4, "r") * 2;
         const pSeed = makeSeed(pMag);
-        //console.log(`pMag: ${pMag}, ${Real.pSeed}`);
 
         // sSeed is the distance between a pentagon and the near diamond
         // This is pgon.R + pgram.r
         const sMag = solve(pgon, "a", 4, "R") + solve(pgram, "a", 4, "R");
         const sSeed = makeSeed(sMag);
-        //console.log(`sMag: ${sMag}, ${Real.sSeed}`);
 
         // tSeed distance is the centers of two stars with their feet touching
         // So simply (pgram.R + pgram.y) * 2;
         const tMag =
             (solve(pgram, "a", 4, "R") + solve(pgram, "a", 4, "y")) * 2;
         const tSeed = makeSeed(tMag);
-        //console.log(`tMag: ${tMag}, ${Real.tSeed}`);
 
         // dseed is simply pgon 2 * r + R with a set to 4.
         const dMag = solve(pgon, "a", 4, "r");
         const dSeed = makeSeed(dMag);
-        //console.log(`dMag: ${dMag}, ${Real.dSeed}`);
 
         function makeSeed(mag) {
             return [
@@ -1138,25 +1131,6 @@ class Penrose {
         const BLUE = "#0000ff";
         const YELLOW = "#ffff00";
 
-        // const SHAPE_PENTA = "penta";
-        // const SHAPE_STAR = "star";
-        // const SHAPE_BOAT = "boat";
-        // const SHAPE_DIAMOND = "diamond";
-
-        // These are common to both mosaic and quadrille.
-        // Othogonal vs Real. Integer vs Real proportions.
-        // Integer vs Real shapes.
-        // but also mosaic vs quadrille shapes.
-        // ah, the venn diagrams of it all.
-
-        // This should move to mosaic and quadrille!!!
-        // const pSeed = [p(0, -6), p(3, -4), p(5, -2)];
-        // const sSeed = [p(0, -5), p(3, -5), p(5, -1)];
-        // const tSeed = [p(0, -8), p(5, -8), p(8, -2)];
-        // const dSeed = [p(0, -3), p(2, -3), p(3, -1)];
-
-        //const wheels = new Wheels(pSeed, sSeed, tSeed, dSeed);
-
         this.ORANGE_PENTA = "Pe1";
         this.BLUE_STAR = "St5";
         this.YELLOW_PENTA = "Pe3";
@@ -1169,13 +1143,6 @@ class Penrose {
         this.up = [0, 2, 4, 6, 8]; //
         this.down = [5, 7, 9, 1, 3];
 
-        // this.SHAPE_PENTA = SHAPE_PENTA;
-        // this.SHAPE_STAR = SHAPE_STAR;
-        // this.SHAPE_BOAT = SHAPE_BOAT;
-        // this.SHAPE_DIAMOND = SHAPE_DIAMOND;
-
-        //this.wheels = wheels;
-
         this.Pe5 = {
             name: "Pe5",
             color: [
@@ -1186,7 +1153,6 @@ class Penrose {
                 this.YELLOW_PENTA,
             ],
             twist: [0, 0, 0, 0, 0],
-            //typeColor: this.BLUE_PENTA,
             defaultColor: BLUE,
             diamond: [],
         };
@@ -1201,7 +1167,6 @@ class Penrose {
             ],
 
             twist: [0, 0, -1, 1, 0],
-            //typeColor: this.YELLOW_PENTA,
             defaultColor: YELLOW,
             diamond: [0],
         };
@@ -1215,9 +1180,6 @@ class Penrose {
                 this.ORANGE_PENTA,
             ],
             twist: [0, -1, 1, -1, 1],
-            //typeColor: this.ORANGE_PENTA,
-            //shapeKey: SHAPE_PENTA,
-            //            shapeKey: "penta",
             defaultColor: ORANGE,
             diamond: [1, 4],
         };
@@ -1231,22 +1193,16 @@ class Penrose {
                 this.BLUE_STAR,
                 this.BLUE_STAR,
             ],
-            //shapeKey: SHAPE_STAR,
-            //typeColor: this.BLUE_STAR,
             defaultColor: BLUE,
         };
         this.St3 = {
             name: "St3: boat",
             color: [this.BLUE_STAR, this.BLUE_STAR, null, null, this.BLUE_STAR],
-            //shapeKey: SHAPE_BOAT,
-            //typeColor: this.BLUE_BOAT,
             defaultColor: BLUE,
         };
         this.St1 = {
             name: "St1: diamond",
             color: [this.BLUE_STAR, null, null, null, null],
-            //shapeKey: SHAPE_DIAMOND,
-            //typeColor: this.BLUE_DIAMOND,
             defaultColor: BLUE,
         };
         this.mosaic = mosaic;

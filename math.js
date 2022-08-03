@@ -79,7 +79,6 @@ const onPe5Change = function (event) {
 };
 
 if (eleP5Color) eleP5Color.addEventListener("input", onPe5Input);
-console.log(`add event listener`);
 
 function onPe5Input(event) {
     p5Blue = event.value;
@@ -104,11 +103,7 @@ const MODE_QUADRILLE = "quadrille";
 const MODE_REAL = "real";
 const MODE_LIST = [MODE_MOSAIC, MODE_QUADRILLE, MODE_REAL];
 
-let shapeMode = MODE_MOSAIC;
-//let pWheels, sWheels, tWheels, dWheels;
-//let renderShape; // The function that will call figure
-//let shapeSet; // mode's shapeset
-shapeMode = cookie.getShapeMode(MODE_MOSAIC); // cookie
+let shapeMode = cookie.getShapeMode(MODE_MOSAIC); // send default
 const eleMode = document.querySelector("#shape-mode");
 
 /**
@@ -119,14 +114,6 @@ const eleMode = document.querySelector("#shape-mode");
  */
 function refreshShapeMode() {
     if (eleMode) eleMode.innerHTML = shapeMode;
-
-    //renderShape = penrose[shapeMode].renderShape;
-    // renderShape =
-    //     shapeMode == MODE_MOSAIC
-    //         ? figure
-    //         : shapeMode == MODE_QUADRILLE
-    //         ? outline
-    //         : outline;
 }
 
 refreshShapeMode();
@@ -157,7 +144,6 @@ const eleIsDown = document.querySelector("#isDown");
  */
 if (eleFifths) eleFifths.innerHTML = `fifths: ${controls.fifths}`;
 const clickFifths = function () {
-    console.log("clickFifths");
     controls.bumpFifths();
     eleFifths.innerHTML = `fifths: ${controls.fifths}`;
     penroseApp();
@@ -179,12 +165,12 @@ const clickIsDown = function () {
 
 /***
  *  Page Navigation defaults.
- *
  */
 let activeButtonIndex = cookie.getActiveButtonIndex(0);
 let navButtons = document.querySelectorAll(".pageButton");
 let pages = document.querySelectorAll(".page");
 
+// loaded on self click
 let activePage;
 
 if (navButtons && navButtons[activeButtonIndex])
@@ -291,8 +277,7 @@ function penroseApp() {
 }
 
 /******************************************************************************
- * Screen Drawing Routiens
- *
+ * Screen Drawing Routines
  *****************************************************************************/
 
 /***
@@ -303,9 +288,7 @@ function makeCanvas(canvasId) {
     var canvas = document.getElementById(canvasId);
     g = canvas.getContext("2d");
 
-    // for makeCanvas only
     const drawScreen = function () {
-        // Initialize screen.
         g.fillStyle = "#ffffff";
         g.fillRect(0, 0, canvas.width, canvas.height);
         g.strokeStyle = penrose.OUTLINE;
@@ -384,7 +367,6 @@ function drawFirstInflation(id) {
         g.fillStyle = p1Orange;
         g.strokeStyle = penrose.OUTLINE;
         g.lineWidth = 1;
-
         scale = 10;
 
         let x = 8;
@@ -508,7 +490,7 @@ function drawSecondInflation(id) {
 }
 
 /***
- * A lot of cools stuff for computing sizes here
+ * A lot of cool stuff for computing sizes here
  */
 function drawGridWork(id) {
     const UP = false;
@@ -536,13 +518,6 @@ function drawGridWork(id) {
         let y = 5;
         const shapes = [mosaic.penta, mosaic.diamond, mosaic.star, mosaic.boat];
 
-        // PENROSE OR GLOBAL
-        //const shapeKeys = [
-        //    penrose.SHAPE_PENTA,
-        //    penrose.SHAPE_DIAMOND,
-        //    penrose.SHAPE_STAR,
-        //    penrose.SHAPE_BOAT,
-        //];
         const spacing = 12;
         for (const shape of shapes) {
             for (let i = 0; i < 10; i++) {
@@ -774,6 +749,7 @@ function drawGeneric3(id) {
 
 /**
  * This has been removed and replaced by an Iframe.
+ * !!! But it apparently does some scaling used by the Ifram
  * @param {} id
  * @returns
  */
@@ -800,132 +776,6 @@ function drawRealWork(id) {
 /**********************************************************
  * Routines used by penta, star and deca.  Move these closer.
  */
-
-/**
- * The generic figure function is a mess. Let's find a better way.
- * It is too tightly coupled with to controls context.
- * Real is gonna be a big problem.
- * First the shape set.  Next the wheels.
- *
- * Note: this complexity will be fixed with the renderShape function which loads
- * the correct routine into that variable.
- *
- * @param {} fill
- * @param {*} offset
- * @param {*} shape
- * @returns
- */
-// function fig(fill, offset, shape) {
-//     if (!shape) {
-//         let bounds = new Bounds();
-//         bounds.addPoint(offset, offset);
-//         return bounds;
-//     }
-//     switch (shapeMode) {
-//         case MODE_MOSAIC:
-//             return figure(fill, offset, shape);
-//         case MODE_QUADRILLE:
-//             return outline(fill, offset, shape);
-//         case MODE_REAL:
-//             return outline(fill, offset, shape);
-//         default:
-//             let bounds = new Bounds();
-//             bounds.addPoint(offset, offset);
-//             return bounds;
-//     }
-// }
-
-/**
- * Todo, Move this to the shapeMode controls.
- * @param {*} key
- * @returns
- */
-// function getShapeSet(key) {
-//     switch (shapeMode) {
-//         case MODE_MOSAIC:
-//             return mosaic[key];
-//         case MODE_QUADRILLE:
-//             return quadrille[key];
-//         case MODE_REAL:
-//             return real[key];
-//     }
-//     return null;
-// }
-
-/***
- * penrose is a global constant (does it have to be a var?)
- * This is called only from expansion 1
- */
-
-/***
- * Used by Mosaic figure.
- * This is the routine that ultimately renders the 'tile'
- * @param {*} fill One of the colors
- * @param {*} offset Location in P format
- * @param {*} shape centered array of 'pixels' centered.
- * Prerequisites: Globals g and scale
- */
-// function figure(fill, offset, shape) {
-//     g.fillStyle = fill; //e.g penrose.ORANGE;
-//     g.strokeStyle = penrose.OUTLINE;
-
-//     const bounds = new Bounds();
-//     for (const point of shape) {
-//         g.fillRect(
-//             offset.x * scale + point.x * scale,
-//             offset.y * scale + point.y * scale,
-//             scale,
-//             scale
-//         );
-//         if (scale >= 5) {
-//             g.strokeRect(
-//                 offset.x * scale + point.x * scale,
-//                 offset.y * scale + point.y * scale,
-//                 scale,
-//                 scale
-//             );
-//         }
-//         bounds.addPoint(offset, point);
-//         bounds.addPoint(offset, point.tr(p(1, 1)));
-//     }
-//     return bounds;
-// }
-
-/***
- * Used for quadrille
- *
- */
-// function outline(fill, offset, shape) {
-//     let start = true;
-//     const bounds = new Bounds();
-//     for (const point of shape) {
-//         g.strokeStyle = "#000000";
-//         g.fillStyle = fill;
-//         g.lineWidth = 1;
-//         if (start) {
-//             g.beginPath();
-//             g.moveTo(
-//                 (point.x + offset.x) * scale,
-//                 (point.y + offset.y) * scale
-//             );
-//             start = false;
-//         } else {
-//             g.lineTo(
-//                 (point.x + offset.x) * scale,
-//                 (point.y + offset.y) * scale
-//             );
-//         }
-
-//         bounds.addPoint(offset, point);
-//     }
-//     g.closePath();
-//     g.stroke();
-//     if (fill) {
-//         g.fill();
-//     }
-
-//     return bounds;
-// }
 
 /***
  * Draws a nice graph.
@@ -1048,31 +898,7 @@ function pShape(type) {
             return penrose[shapeMode].diamond;
     }
 
-    const shapeSet =
-        shapeMode == MODE_MOSAIC
-            ? mosaic
-            : shapeMode == MODE_QUADRILLE
-            ? quadrille
-            : real;
-    switch (type) {
-        case penrose.Pe1:
-        case penrose.Pe3:
-        case penrose.Pe5:
-            return shapeSet.penta;
-        case penrose.St1:
-            return shapeSet.diamond;
-        case penrose.St3:
-            return shapeSet.boat;
-        case penrose.St5:
-            return shapeSet.star;
-    }
-
     return null;
-}
-
-function produceWheels() {
-    return penrose[shapeMode].wheels;
-    //return shapeMode == MODE_REAL ? real.wheels : penrose.wheels;
 }
 
 /*******************************************************************************
@@ -1126,7 +952,7 @@ function penta(fifths, type, isDown, loc, exp) {
         return bounds; // call figure
     }
 
-    const wheels = produceWheels();
+    const wheels = penrose[shapeMode].wheels;
     const pWheel = wheels.p[exp].w;
     const sWheel = wheels.s[exp].w;
     // Draw the center. Always the BLUE p5
@@ -1212,8 +1038,10 @@ function star(fifths, type, isDown, loc, exp) {
     for (let i = 0; i < 5; i++) {
         const shift = norm(fifths + i);
         const angle = tenths(shift, isDown);
-        const tWheel = produceWheels().t[exp].w;
-        const sWheel = produceWheels().s[exp].w;
+        const wheels = penrose[shapeMode].wheels;
+
+        const tWheel = wheels.t[exp].w;
+        const sWheel = wheels.s[exp].w;
 
         if (type.color[i] != null) {
             bounds.expand(
@@ -1258,15 +1086,17 @@ function deca(fifths, isDown, loc, exp) {
         return bounds;
     }
 
+    const wheels = penrose[shapeMode].wheels;
+
     // Move the center of the decagon to the real center.
-    let dUp = produceWheels().d[exp].up;
-    let dDown = produceWheels().d[exp].down;
+    let dUp = wheels.d[exp].up;
+    let dDown = wheels.d[exp].down;
     let dOff = isDown ? dUp[fifths] : dDown[fifths];
     let base = loc.tr(dOff);
-    let pUp = produceWheels().p[exp].up;
-    let pDown = produceWheels().p[exp].down;
-    let sUp = produceWheels().s[exp].up;
-    let sDown = produceWheels().s[exp].down;
+    let pUp = wheels.p[exp].up;
+    let pDown = wheels.p[exp].down;
+    let sUp = wheels.s[exp].up;
+    let sDown = wheels.s[exp].down;
     let offs; // Work variable
 
     // The central yellow pentagon
