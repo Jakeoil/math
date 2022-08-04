@@ -26,94 +26,85 @@ let stroke; // New
  */
 
 /**
+ * Shape colors control.
+ * Contains a mapping of id to entry,
+ * entry: {ele, color, defaultColor}
  *
- * Todo. Use keys instead of actual color values. They _are_ keys.
  */
-let p5Blue = penrose.Pe5.defaultColor;
-let p3Yellow = penrose.Pe3.defaultColor;
-let p1Orange = penrose.Pe1.defaultColor;
-let starBlue = penrose.St5.defaultColor;
-let boatBlue = penrose.St3.defaultColor;
-let diamondBlue = penrose.St1.defaultColor;
+class ShapeColors {
+    constructor() {
+        this.idList = {
+            "p5-color": { defaultColor: penrose.Pe5.defaultColor },
+            "p3-color": { defaultColor: penrose.Pe3.defaultColor },
+            "p1-color": { defaultColor: penrose.Pe1.defaultColor },
+            "star-color": { defaultColor: penrose.St5.defaultColor },
+            "boat-color": { defaultColor: penrose.St3.defaultColor },
+            "diamond-color": { defaultColor: penrose.St1.defaultColor },
+        };
+        const shapeColorEles = document.querySelectorAll(".shape-color");
+        console.log(shapeColorEles.length);
+        for (const ele of shapeColorEles) {
+            console.log(`found id ${ele.id} in eles`);
+            const entry = this.idList[ele.id];
+            if (entry) {
+                entry.ele = ele;
+                entry.ele.addEventListener("input", onShapeColorsInput);
+                entry.ele.addEventListener("change", onShapeColorsChange);
+                entry.ele.addEventListener("click", onShapeColorsClick);
+            } else {
+                console.log(`Undefined id: ${ele.id} in html`);
+            }
+        }
+        this.reset();
+    }
 
-// p5Blue = "black";
-// p3Yellow = "lightgreen";
-// p1Orange = "red";
-// starBlue = "cyan";
+    /**
+     * Set the elements to the last value received
+     */
+    refresh() {
+        for (const entry of Object.values(this.idList)) {
+            if (entry.ele) entry.ele.value = entry.color;
+        }
+    }
 
-const eleP5Color = document.querySelector("#p5-color"); //p5-color
-const eleP3Color = document.querySelector("#p3-color");
-const eleP1Color = document.querySelector("#p1-color");
-const eleStarColor = document.querySelector("#star-color");
+    /**
+     * Set the elements to their defaults
+     */
+    reset() {
+        for (const entry of Object.values(this.idList)) {
+            entry.color = entry.defaultColor;
+        }
+    }
+}
+const shapeColors = new ShapeColors();
 
-const refreshColors = function () {
-    console.log(
-        `refreshColors: Pe5: ${p5Blue},Pe3: ${p3Yellow}, Pe1: ${p1Orange}, St: ${starBlue}`
-    );
-    if (eleP5Color) eleP5Color.value = p5Blue;
-    if (eleP3Color) eleP3Color.value = p3Yellow;
-    if (eleP1Color) eleP1Color.value = p1Orange;
-    if (eleStarColor) eleStarColor.value = starBlue;
-};
-refreshColors();
+// Set colors to default
+shapeColors.reset();
 
+// Set element values to colors
+shapeColors.refresh();
+
+// The reset button was clicked.
 function onColorReset() {
-    // LOAD DEFAULTS
-    p5Blue = penrose.Pe5.defaultColor;
-    p3Yellow = penrose.Pe3.defaultColor;
-    p1Orange = penrose.Pe1.defaultColor;
-    starBlue = penrose.Pe5.defaultColor;
-    boatBlue = penrose.Pe3.defaultColor;
-    diamondBlue = penrose.Pe1.defaultColor;
-    console.log(`onColorReset`);
-    refreshColors();
+    shapeColors.reset();
+    shapeColors.refresh();
     penroseApp();
 }
 
-const onPe5Change = function (event) {
-    p5Blue = event.target.value.color;
-    console.log(`Change Pe5 to ${p5Blue}`);
-    refreshColors();
-    penroseApp();
-};
-
-const onPe3Change = function (event) {
-    p3Yellow = event.target.value.color;
-    console.log(`Change Pe3 to ${p5Blue}`);
-    refreshColors();
-    penroseApp();
-};
-
-if (eleP5Color) eleP5Color.addEventListener("input", onPe5Input);
-if (eleP3Color) eleP3Color.addEventListener("input", onPe3Input);
-if (eleP1Color) eleP1Color.addEventListener("input", onPe1Input);
-if (eleStarColor) eleStarColor.addEventListener("input", onStarInput);
-
-function onPe5Input(event) {
-    p5Blue = event.target.value;
-    console.log(`Input Pe5 to ${p5Blue}`);
-    refreshColors();
+function onShapeColorsInput(event) {
+    console.log(`input: id: ${event.target.id}, color: ${event.target.value}`);
+    shapeColors.idList[event.target.id].color = event.target.value;
+    shapeColors.refresh();
     penroseApp();
 }
-function onPe3Input(event) {
-    p3Yellow = event.target.value;
-    console.log(`Input Pe3 to ${p3Yellow}`);
-    refreshColors();
+function onShapeColorsChange(event) {
+    console.log(`change: id: ${event.target.id}, color: ${event.target.value}`);
+    shapeColors.idList[event.target.id].color = event.target.value;
+    shapeColors.refresh();
     penroseApp();
 }
-function onPe1Input(event) {
-    p1Orange = event.target.value;
-    console.log(`Input Pe1 to ${p1Orange}`);
-    refreshColors();
-    penroseApp();
-}
-function onStarInput(event) {
-    starBlue = event.target.value;
-    boatBlue = event.target.value;
-    diamondBlue = event.target.value;
-    console.log(`Input star to ${starBlue}`);
-    refreshColors();
-    penroseApp();
+function onShapeColorsClick(event) {
+    console.log(`click: id: ${event.target.id}, color: ${event.target.value}`);
 }
 
 /**
@@ -393,7 +384,7 @@ function drawFirstInflation(id) {
     const drawScreen = function () {
         g.fillStyle = "#ffffff";
         g.fillRect(0, 0, canvas.width, canvas.height);
-        g.fillStyle = p1Orange;
+        //g.fillStyle = p1Orange;
         g.strokeStyle = penrose.OUTLINE;
         g.lineWidth = 1;
         scale = 10;
@@ -539,7 +530,7 @@ function drawGridWork(id) {
         g.fillStyle = "#ffffff";
         g.fillRect(0, 0, canvas.width, canvas.height);
 
-        g.fillStyle = p1Orange;
+        //g.fillStyle = p1Orange;
         g.strokeStyle = penrose.OUTLINE;
         g.lineWidth = 1;
         scale = 10;
@@ -551,7 +542,11 @@ function drawGridWork(id) {
         for (const shape of shapes) {
             for (let i = 0; i < 10; i++) {
                 let offset = p((i + 1) * spacing, y);
-                mosaic.renderShape(p1Orange, offset, shape[i]);
+                mosaic.renderShape(
+                    shapeColors.idList["p1-color"],
+                    offset,
+                    shape[i]
+                );
                 grid(p((i + 1) * spacing, y), 5);
             }
             y += spacing;
@@ -568,7 +563,12 @@ function drawGridWork(id) {
         for (const shape of qShapes) {
             for (let i = 0; i < 10; i++) {
                 let offset = p((i + 1) * spacing, y);
-                quadrille.renderShape(p3Yellow + "44", offset, shape[i]);
+
+                quadrille.renderShape(
+                    shapeColors.idList["p1-color"] + "44",
+                    offset,
+                    shape[i]
+                );
             }
             y += spacing;
         }
@@ -898,17 +898,23 @@ function compare(a, b) {
 function pColor(type) {
     switch (type) {
         case penrose.Pe5:
-            return p5Blue;
+            return shapeColors.idList["p5-color"].color;
+        //return p5Blue;
         case penrose.Pe3:
-            return p3Yellow;
+            return shapeColors.idList["p3-color"].color;
+        //return p3Yellow;
         case penrose.Pe1:
-            return p1Orange;
+            return shapeColors.idList["p1-color"].color;
+        //return p1Orange;
         case penrose.St5:
-            return starBlue;
+            return shapeColors.idList["star-color"].color;
+        //return starBlue;
         case penrose.St3:
-            return boatBlue;
+            return shapeColors.idList["boat-color"].color;
+        //return boatBlue;
         case penrose.St1:
-            return diamondBlue;
+            return shapeColors.idList["diamond-color"].color;
+        //return diamondBlue;
     }
     return null;
 }
