@@ -48,32 +48,12 @@ class ShapeColors {
             const entry = this.idList[ele.id];
             if (entry) {
                 entry.ele = ele;
-                switch (ele.id) {
-                    case "p5-color":
-                        entry.ele.addEventListener("input", onPe5Input);
-                        entry.ele.addEventListener("change", onPe5Change);
-                        break;
-                    case "p3-color":
-                        entry.ele.addEventListener("input", onPe3Input);
-                        entry.ele.addEventListener("change", onPe3Change);
-                        break;
-                    case "p1-color":
-                        entry.ele.addEventListener("input", onPe1Input);
-                        entry.ele.addEventListener("change", onPe1Change);
-                        break;
-                    case "star-color":
-                        entry.ele.addEventListener("input", onSt5Input);
-                        entry.ele.addEventListener("change", onSt5Change);
-                        break;
-                    case "boat-color":
-                        entry.ele.addEventListener("input", onSt3Input);
-                        entry.ele.addEventListener("change", onSt3Change);
-                        break;
-                    case "diamond-color":
-                        entry.ele.addEventListener("input", onSt1Input);
-                        entry.ele.addEventListener("change", onSt1Change);
-                        break;
-                }
+                entry.ele.addEventListener("input", onShapeColorsInput, false);
+                entry.ele.addEventListener(
+                    "change",
+                    onShapeColorsChange,
+                    false
+                );
             } else {
                 console.log(`Undefined id: ${ele.id} in html`);
             }
@@ -118,67 +98,6 @@ function onColorReset() {
 function onShapeColorsInput(event) {
     console.log(`input: id: ${event.target.id}, color: ${event.target.value}`);
     shapeColors.idList[event.target.id].color = event.target.value;
-    shapeColors.refresh();
-    penroseApp();
-}
-
-function onPe5Input(event) {
-    shapeColors.idList["p5-color"].color = event.target.value;
-    shapeColors.refresh();
-    penroseApp();
-}
-function onPe3Input(event) {
-    shapeColors.idList["p3-color"].color = event.target.value;
-    shapeColors.refresh();
-    penroseApp();
-}
-function onPe1Input(event) {
-    shapeColors.idList["p1-color"].color = event.target.value;
-    shapeColors.refresh();
-    penroseApp();
-}
-function onSt5Input(event) {
-    shapeColors.idList["star-color"].color = event.target.value;
-    shapeColors.refresh();
-    penroseApp();
-}
-function onSt3Input(event) {
-    shapeColors.idList["boat-color"].color = event.target.value;
-    shapeColors.refresh();
-    penroseApp();
-}
-function onSt1Input(event) {
-    shapeColors.idList["diamond-color"].color = event.target.value;
-    shapeColors.refresh();
-    penroseApp();
-}
-function onPe5Change(event) {
-    shapeColors.idList["p5-color"].color = event.target.value;
-    shapeColors.refresh();
-    penroseApp();
-}
-function onPe3Change(event) {
-    shapeColors.idList["p3-color"].color = event.target.value;
-    shapeColors.refresh();
-    penroseApp();
-}
-function onPe1Change(event) {
-    shapeColors.idList["p1-color"].color = event.target.value;
-    shapeColors.refresh();
-    penroseApp();
-}
-function onSt5Change(event) {
-    shapeColors.idList["star-color"].color = event.target.value;
-    shapeColors.refresh();
-    penroseApp();
-}
-function onSt3Change(event) {
-    shapeColors.idList["boat-color"].color = event.target.value;
-    shapeColors.refresh();
-    penroseApp();
-}
-function onSt1Change(event) {
-    shapeColors.idList["diamond-color"].color = event.target.value;
     shapeColors.refresh();
     penroseApp();
 }
