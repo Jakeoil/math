@@ -1,6 +1,7 @@
 "use strict";
-import { g } from "./math.js";
+//import { g } from "./math.js";
 export const stringify = JSON.stringify;
+
 /**
  * Orthoganal Penrose program version one.
  * These routines process a scaled grid. They do not control rendering.
@@ -634,8 +635,7 @@ function solve(proportions, inputKey, value, targetKey) {
  * @param {*} shape centered array of 'pixels' centered.
  * Prerequisites: Globals g and scale
  */
-function figure(fill, offset, shape) {
-    console.log(`We have the global g: ${g}`);
+function figure(fill, offset, shape, g, scale) {
     g.fillStyle = fill; //e.g penrose.ORANGE;
     g.strokeStyle = penrose.OUTLINE;
 
@@ -665,7 +665,7 @@ function figure(fill, offset, shape) {
  * Used for quadrille
  *
  */
-function outline(fill, offset, shape) {
+function outline(fill, offset, shape, g, scale) {
     let start = true;
     const bounds = new Bounds();
     for (const point of shape) {
@@ -921,7 +921,7 @@ class Real {
         this.renderShape = outline;
     }
 }
-const real = new Real();
+export const real = new Real();
 
 /*******************************************************
  * This is the path model that would work on graph paper
@@ -1014,7 +1014,7 @@ class Quadrille {
         this.wheels = new Wheels(pSeed, sSeed, tSeed, dSeed);
     }
 }
-const quadrille = new Quadrille();
+export const quadrille = new Quadrille();
 /*******************************************************
  * This is the square tiles model, the Mosaic
  */
@@ -1118,7 +1118,7 @@ class Mosaic {
     }
 }
 
-const mosaic = new Mosaic();
+export const mosaic = new Mosaic();
 
 /**
  * This is stuff that is not specific to the mode or the default

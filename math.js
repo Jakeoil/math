@@ -1,10 +1,11 @@
 "use strict";
 import { p, Bounds } from "./penrose.js";
 import { norm, tenths } from "./penrose.js";
-import { penrose } from "./penrose.js";
+import { penrose, real, quadrille, mosaic } from "./penrose.js";
 import { stringify } from "./penrose.js";
 import { cookie } from "./penrose.js";
 import { Controls } from "./penrose.js";
+
 /**
  * Penrose Mozaic Webapp version 1.
  * Jeff Coyles Penrose type one pattern made out of square tiles of
@@ -20,12 +21,10 @@ import { Controls } from "./penrose.js";
 /**
  * Globals
  */
-// Graphics globals for whole canvas
-export let g;
-
-// These may be controllable
+// The shape context.
+let g;
 let scale;
-let stroke; // New
+
 /**
  * These global values shall be controllable
  * Set them to the defaults
@@ -48,9 +47,7 @@ class ShapeColors {
             "diamond-color": { defaultColor: penrose.St1.defaultColor },
         };
         const shapeColorEles = document.querySelectorAll(".shape-color");
-        console.log(shapeColorEles.length);
         for (const ele of shapeColorEles) {
-            console.log(`found id ${ele.id} in eles`);
             const entry = this.idList[ele.id];
             if (entry) {
                 entry.ele = ele;
@@ -74,7 +71,7 @@ class ShapeColors {
         for (const entry of Object.values(this.idList)) {
             if (entry.ele) entry.ele.value = entry.color;
         }
-        console.log(`refresh: ${stringify(this.idList)}`);
+        //console.log(`refresh: ${stringify(this.idList, null, "  ")}`);
     }
 
     /**
@@ -149,7 +146,7 @@ function refreshShapeMode() {
 
 refreshShapeMode();
 
-const clickMode = function () {
+export const clickMode = function () {
     let new_idx = (MODE_LIST.indexOf(shapeMode) + 1) % MODE_LIST.length;
     shapeMode = MODE_LIST[new_idx];
     cookie.setShapeMode(shapeMode);
@@ -174,21 +171,21 @@ const eleIsDown = document.querySelector("#isDown");
  * Events for the three buttons
  */
 if (eleFifths) eleFifths.innerHTML = `fifths: ${controls.fifths}`;
-const clickFifths = function () {
+export const clickFifths = function () {
     controls.bumpFifths();
     eleFifths.innerHTML = `fifths: ${controls.fifths}`;
     penroseApp();
 };
 
 if (eleType) eleType.innerHTML = controls.typeName;
-const clickType = function () {
+export const clickType = function () {
     controls.bumpType();
     eleType.innerHTML = controls.typeName;
     penroseApp();
 };
 
 if (eleIsDown) eleIsDown.innerHTML = controls.direction;
-const clickIsDown = function () {
+export const clickIsDown = function () {
     controls.toggleDirection();
     eleIsDown.innerHTML = controls.direction;
     penroseApp();
@@ -211,6 +208,7 @@ export function pageClicked(pageId, button) {
     for (let page of pages) {
         page.style.display = "none";
     }
+    console.log(`pageId: ${pageId}, button: ${button.className}`);
     const active_page = document.querySelector(`#${pageId}`);
     active_page.style.display = "block";
 
@@ -292,7 +290,6 @@ export function pageClicked(pageId, button) {
  * Creates listeners for control buttons
  */
 export function penroseApp() {
-    console.log("penrose app ");
     // load the little canvases.
     makeCanvas("p5");
     makeCanvas("p3");
@@ -557,7 +554,9 @@ function drawGridWork(id) {
                 mosaic.renderShape(
                     shapeColors.idList["p1-color"],
                     offset,
-                    shape[i]
+                    shape[i],
+                    g,
+                    scale
                 );
                 grid(p((i + 1) * spacing, y), 5);
             }
@@ -579,7 +578,9 @@ function drawGridWork(id) {
                 quadrille.renderShape(
                     shapeColors.idList["p1-color"] + "44",
                     offset,
-                    shape[i]
+                    shape[i],
+                    g,
+                    scale
                 );
             }
             y += spacing;
@@ -989,7 +990,9 @@ function penta(fifths, type, isDown, loc, exp) {
                 penrose[shapeMode].renderShape(
                     pColor(type),
                     loc,
-                    shapes[tenths(fifths, isDown)]
+                    shapes[tenths(fifths, isDown)],
+                    g,
+                    scale
                 )
             );
         } else {
@@ -1070,7 +1073,9 @@ function star(fifths, type, isDown, loc, exp) {
                 penrose[shapeMode].renderShape(
                     pColor(type),
                     loc,
-                    shapes[tenths(fifths, isDown)]
+                    shapes[tenths(fifths, isDown)],
+                    g,
+                    scale
                 )
             );
         } else {

@@ -10,7 +10,6 @@
         <script></script>
         <script type="module">
             import { penroseApp } from "./math.js";
-            console.log("local script");
             window.addEventListener("load", () => penroseApp(), false);
         </script>
     </head>
@@ -56,15 +55,35 @@
             </p>
             <script type="module">
                 import { pageClicked } from "./math.js";
+                import {
+                    clickType,
+                    clickFifths,
+                    clickIsDown,
+                    clickMode,
+                } from "./math.js";
                 const ids = ["rwork", "inf1", "inf2", "gwork", "g012", "g3"];
                 const eles = document.querySelectorAll(".pageButton");
                 console.log(`${eles.length}`);
+                console.log(`ids: ${ids}`);
                 for (const ele of eles) {
-                    const page = ids.shift;
+                    const page = ids.shift();
+                    console.log(`page: ${page}`);
                     const funct = () => pageClicked(page, ele);
-                    //ele.addEventListener("click", funct, false);
-                    console.log(`ele: ${typeof ele}, `);
+                    ele.addEventListener("click", funct, false);
+                    console.log(`ele class: ${ele.className}, `);
                 }
+                document
+                    .querySelector("#type")
+                    .addEventListener("click", () => clickType(), false);
+                document
+                    .querySelector("#fifths")
+                    .addEventListener("click", () => clickFifths(), false);
+                document
+                    .querySelector("#isDown")
+                    .addEventListener("click", () => clickIsDown(), false);
+                document
+                    .querySelector("#shape-mode")
+                    .addEventListener("click", () => clickMode(), false);
             </script>
         </nav>
         <div id="meat">
