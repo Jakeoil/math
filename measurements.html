@@ -7,7 +7,10 @@
         <title>Measurement</title>
         <link rel="stylesheet" href="math.css" />
     </head>
-    <body onload="measureTasks()">
+    <body>
+        <script type="module">
+            document.addEventListener("load", () => measureTasks(), false);
+        </script>
         <img id="image" src="deca.png" align="left" />
         <p>
             The quadrille and mosaic are examples of discrete tilings. These
@@ -35,14 +38,13 @@
             F[n] + F[n + 1] The simple example is [0, 4]. This is the length of
             the base of pentagon[0].
         </p>
-        <script src="penrose.js"></script>
-        <script src="math.js"></script>
-        <script>
-            function measureTasks() {
+        <script type="module" src="penrose.js"></script>
+        <script type="module" src="math.js"></script>
+        <script type="module">
+            export function measureTasks() {
                 drawQuadrille();
                 drawImage();
             }
-
             /***
              * This does a fake draw to size things up before resizing the
              * canvas and the targets.
@@ -60,7 +62,7 @@
              *
              **/
 
-            function drawQuadrille() {
+            export function drawQuadrille() {
                 const canvas = document.querySelector("#quadrille");
                 canvas.width = 0;
                 canvas.height = 0;
@@ -93,7 +95,7 @@
                 const img = canvas.toDataURL("img.png");
             }
 
-            function drawImage() {
+            export function drawImage() {
                 const canvas = document.createElement("canvas");
                 console.log(`canvas ${canvas}`);
                 canvas.width = 0;

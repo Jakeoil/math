@@ -1,4 +1,10 @@
 "use strict";
+import { p, Bounds } from "./penrose.js";
+import { norm, tenths } from "./penrose.js";
+import { penrose } from "./penrose.js";
+import { stringify } from "./penrose.js";
+import { cookie } from "./penrose.js";
+import { Controls } from "./penrose.js";
 /**
  * Penrose Mozaic Webapp version 1.
  * Jeff Coyles Penrose type one pattern made out of square tiles of
@@ -15,7 +21,7 @@
  * Globals
  */
 // Graphics globals for whole canvas
-let g;
+export let g;
 
 // These may be controllable
 let scale;
@@ -201,7 +207,7 @@ let activePage;
 if (navButtons && navButtons[activeButtonIndex])
     navButtons[activeButtonIndex].click();
 
-function pageClicked(pageId, button) {
+export function pageClicked(pageId, button) {
     for (let page of pages) {
         page.style.display = "none";
     }
@@ -285,7 +291,8 @@ function pageClicked(pageId, button) {
  * Creates all canvases.
  * Creates listeners for control buttons
  */
-function penroseApp() {
+export function penroseApp() {
+    console.log("penrose app ");
     // load the little canvases.
     makeCanvas("p5");
     makeCanvas("p3");

@@ -1,7 +1,6 @@
 "use strict";
-
-const stringify = JSON.stringify;
-
+import { g } from "./math.js";
+export const stringify = JSON.stringify;
 /**
  * Orthoganal Penrose program version one.
  * These routines process a scaled grid. They do not control rendering.
@@ -69,11 +68,11 @@ class P {
  */
 const toP = (loc) => new P(loc[0], loc[1]);
 //const p = (x, y) => new P(x, y);
-function p(x, y) {
+export function p(x, y) {
     return new P(x, y);
 }
-const norm = (n) => ((n % 5) + 5) % 5;
-function tenths(fifths, isDown) {
+export const norm = (n) => ((n % 5) + 5) % 5;
+export function tenths(fifths, isDown) {
     return (fifths * 2 + (isDown ? 5 : 0)) % 10;
 }
 
@@ -83,7 +82,7 @@ function tenths(fifths, isDown) {
  * Only the element drawing function (figure) creates a new bounds and returns
  * either a Bounds with the max min or null max min if nothing got drawn.
  */
-class Bounds {
+export class Bounds {
     constructor() {
         this.maxPoint = null;
         this.minPoint = null;
@@ -458,7 +457,7 @@ function shapeWheelMosaic(up, won, too) {
  * Cannot say whether it was a good idea to cluster them
  * Added cookie handling
  */
-class Controls {
+export class Controls {
     constructor(fifths, typeIndex, isDown) {
         this.fifths = fifths;
         this.typeIndex = typeIndex;
@@ -549,7 +548,7 @@ function deleteCookie(name) {
 }
 
 // The cookie interface
-var cookie = (function () {
+export const cookie = (function () {
     const Cookie = {};
 
     Cookie.getShapeMode = function (sm) {
@@ -1210,4 +1209,4 @@ class Penrose {
         this.real = real;
     }
 }
-const penrose = new Penrose();
+export const penrose = new Penrose();
