@@ -8,9 +8,13 @@
         <link rel="stylesheet" href="math.css" />
         <style></style>
         <script></script>
+        <script type="module">
+            import { penroseApp } from "./math.js";
+            window.addEventListener("load", () => penroseApp(), false);
+        </script>
     </head>
 
-    <body onLoad="penroseApp()">
+    <body>
         <header>
             <h1>Penrose Mosaic</h1>
             <h2>
@@ -42,25 +46,46 @@
 
         <nav id="across">
             <p>
-                <button class="pageButton" onclick="pageClicked('rwork', this)">
-                    Measurements
-                </button>
-                <button class="pageButton" onclick="pageClicked('inf1',this)">
-                    Inflation 1 work area
-                </button>
-                <button class="pageButton" onclick="pageClicked('inf2',this)">
-                    Inflation 2 work area
-                </button>
-                <button class="pageButton" onclick="pageClicked('gwork',this)">
-                    Grid-work test area
-                </button>
-                <button class="pageButton" onclick="pageClicked('g012',this)">
-                    Generic test area
-                </button>
-                <button class="pageButton" onclick="pageClicked('g3',this)">
-                    Generic expansion
-                </button>
+                <button class="pageButton">Measurements</button>
+                <button class="pageButton">Inflation 1 work area</button>
+                <button class="pageButton">Inflation 2 work area</button>
+                <button class="pageButton">Grid-work test area</button>
+                <button class="pageButton">Generic test area</button>
+                <button class="pageButton">Generic expansion</button>
             </p>
+            <script type="module">
+                /**
+                 * This was a real pain
+                 * Line up the clickers
+                 **/
+                import { pageClicked } from "./math.js";
+                import {
+                    clickType,
+                    clickFifths,
+                    clickIsDown,
+                    clickMode,
+                } from "./math.js";
+
+                const ids = ["rwork", "inf1", "inf2", "gwork", "g012", "g3"];
+                const eles = document.querySelectorAll(".pageButton");
+                for (const ele of eles) {
+                    const page = ids.shift();
+                    const funct = () => pageClicked(page, ele);
+                    ele.addEventListener("click", funct, false);
+                }
+                document
+                    .querySelector("#type")
+                    .addEventListener("click", () => clickType(), false);
+                document
+                    .querySelector("#fifths")
+                    .addEventListener("click", () => clickFifths(), false);
+                document
+                    .querySelector("#isDown")
+                    .addEventListener("click", () => clickIsDown(), false);
+                document
+                    .querySelector("#shape-mode")
+                    .addEventListener("click", () => clickMode(), false);
+            </script>
         </nav>
         <div id="meat">
             <div id="controls">
@@ -154,6 +179,8 @@
                         var div = document.querySelector("#rWork");
 
                         // Adjusting the iframe height onload event
+                        // todo: fix the iframe problem where we seem to be
+                        // using some side effect of the rwork element
                         iframe.onload = function () {
                             iframe.style.height =
                                 iframe.contentWindow.document.body
@@ -166,7 +193,7 @@
             </div>
         </div>
 
-        <script src="penrose.js"></script>
-        <script src="math.js"></script>
+        <script type="module" src="penrose.js"></script>
+        <script type="module" src="math.js"></script>
     </body>
 </html>
