@@ -38,7 +38,6 @@
         <script type="module" src="penrose.js"></script>
         <script type="module" src="math.js"></script>
         <script type="module">
-            console.log(`addEventListner`);
             window.addEventListener("load", () => measureTasks(), false);
             /***
              * This does a fake draw to size things up before resizing the
@@ -57,10 +56,9 @@
              *
              **/
             import { Bounds, outline, penrose, p } from "./penrose.js";
-            import { MODE_REAL } from "./math.js";
+            import { MODE_REAL, iface } from "./math.js";
             import { PenroseScreen } from "./penrose-screen.js";
-            //let g;
-            //let scale;
+
             export function measureTasks() {
                 console.log(`drawImage`);
                 drawQuadrille();
@@ -73,13 +71,12 @@
                 canvas.width = 0;
                 canvas.height = 0;
                 let base = p(0, 0);
-                const gg = canvas.getContext("2d");
-                gg.strokeStyle = penrose.OUTLINE;
-                gg.lineWidth = 1;
-                let scales = 3.7;
+                const g = canvas.getContext("2d");
+                g.strokeStyle = penrose.OUTLINE;
+                g.lineWidth = 1;
+                let scale = 3.7;
                 shapeMode = MODE_REAL;
-                let penroseG = new PenroseScreen(gg, scales, shapeMode);
-                const deca = penroseG.deca.bind(penroseG);
+                const { deca } = iface(g, scale, shapeMode);
                 //renderShape = outline;
                 let fifths;
                 let isDown;
@@ -94,9 +91,8 @@
                 let bounds = new Bounds();
                 bounds.expand(deca(fifths, isDown, base, exp));
                 base = base.tr(p(bounds.minPoint.x, bounds.minPoint.y).neg);
-                canvas.width = (bounds.maxPoint.x - bounds.minPoint.x) * scales;
-                canvas.height =
-                    (bounds.maxPoint.y - bounds.minPoint.y) * scales;
+                canvas.width = (bounds.maxPoint.x - bounds.minPoint.x) * scale;
+                canvas.height = (bounds.maxPoint.y - bounds.minPoint.y) * scale;
 
                 bounds = new Bounds();
                 bounds.expand(deca(fifths, isDown, base, exp));
@@ -117,8 +113,8 @@
                 let scale = 5;
                 let shapeMode = MODE_REAL;
                 renderShape = outline;
-                let penroseG = new PenroseScreen(g, scale, shapeMode);
-                const deca = penroseG.deca.bind(penroseG);
+
+                const deca = iface(g, scale, shapeMode);
 
                 let fifths;
                 let isDown;

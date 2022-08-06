@@ -248,6 +248,44 @@ function testBounds() {
 }
 //testBounds();
 
+/***************************************************************  
+ * Discussion of the second expansions penta points.
+ * These are the x and y offset from a center rectangle to an inverted rectangle.
+ * There are five of them. Let's call the x coordinate cos and the y
+           0   36   72  108  144  180
+ * sin =   0,   8,  13,  13,  8,    0   -8 -13 -13 -8  and repeat 0
+ *         0,   3    5    5   3     0   -3  -5  -5 -3      
+ * 
+ * cos = -14, -12,  -4,   4,  12, 14, 12,  4  -4  -12
+ *        -6   -4,  -2,   2,   4,  6   4   2  -2    4 
+ * 
+ * 
+ *       0               *
+ *       4                   *
+ *       8                       *
+ *       12                          *
+ *       13                           *
+ *       14                            *
+ *       13                           *
+ *       12                          *
+ *       8                       *     
+ *       4                   *    
+ *       0               *    
+ *      -4           *
+ *      -8       *
+ *     -12   *
+ *     -13  *
+ *     -14 *  
+ *     -13  *
+ *     -12   *
+ *      -8       *
+ *      -4           *
+ *       0               *    
+ *     
+ * 
+ * 
+ * */
+
 /**
  * Creates a 10 point wheel out of the first three coordinates (or Ps)
  * Input is up[0], down[3], up[1]
