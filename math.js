@@ -1,6 +1,7 @@
 "use strict";
 import { p, Bounds } from "./penrose.js";
-import { norm, tenths } from "./penrose.js";
+import { PenroseScreen } from "./penrose-screen.js";
+//import { norm, tenths } from "./penrose.js";
 import { penrose, real, quadrille, mosaic } from "./penrose.js";
 import { stringify } from "./penrose.js";
 import { cookie } from "./penrose.js";
@@ -22,8 +23,8 @@ import { Controls } from "./penrose.js";
  * Globals
  */
 // The shape context.
-let g;
-let scale;
+//let g;
+//let scale;
 
 /**
  * These global values shall be controllable
@@ -83,7 +84,7 @@ class ShapeColors {
         }
     }
 }
-const shapeColors = new ShapeColors();
+export const shapeColors = new ShapeColors();
 
 // Set colors to default
 shapeColors.reset();
@@ -128,7 +129,7 @@ function onShapeColorsClick(event) {
  */
 const MODE_MOSAIC = "mosaic";
 const MODE_QUADRILLE = "quadrille";
-const MODE_REAL = "real";
+export const MODE_REAL = "real";
 const MODE_LIST = [MODE_MOSAIC, MODE_QUADRILLE, MODE_REAL];
 
 let shapeMode = cookie.getShapeMode(MODE_MOSAIC); // send default
@@ -308,21 +309,31 @@ export function penroseApp() {
 /******************************************************************************
  * Screen Drawing Routines
  *****************************************************************************/
-
+function iface(g, scale, mode) {
+    let screen = new PenroseScreen(g, scale, mode);
+    const penta = screen.penta.bind(screen);
+    const star = screen.star.bind(screen);
+    const deca = screen.deca.bind(screen);
+    const grid = screen.grid.bind(screen);
+    return { penta, star, deca, grid };
+}
 /***
  * Draws a little canvas with a shape.
  * Shape depends on passed in ID.
  */
 function makeCanvas(canvasId) {
     var canvas = document.getElementById(canvasId);
-    g = canvas.getContext("2d");
+    let g = canvas.getContext("2d");
 
     const drawScreen = function () {
         g.fillStyle = "#ffffff";
         g.fillRect(0, 0, canvas.width, canvas.height);
         g.strokeStyle = penrose.OUTLINE;
         g.lineWidth = 1;
-        scale = 10;
+        let scale = 10;
+        let penroseG = new PenroseScreen(g, scale, shapeMode);
+        let penta = penroseG.penta.bind(penroseG);
+        let star = penroseG.star.bind(penroseG);
         let bounds;
         let width = 0;
         let height = 0;
@@ -365,7 +376,7 @@ function makeCanvas(canvasId) {
  * @param {*} canvas
  * @param {*} drawFunction
  */
-function redraw(bounds, canvas, drawFunction) {
+function redraw(bounds, canvas, drawFunction, scale) {
     const computedWidth = bounds.maxPoint.x * scale + scale;
     const computedHeight = bounds.maxPoint.y * scale + scale;
     if (
@@ -388,7 +399,7 @@ function drawFirstInflation(id) {
         console.log("canvasId is null!");
         return;
     }
-    g = canvas.getContext("2d");
+    let g = canvas.getContext("2d");
 
     const drawScreen = function () {
         g.fillStyle = "#ffffff";
@@ -396,8 +407,8 @@ function drawFirstInflation(id) {
         //g.fillStyle = p1Orange;
         g.strokeStyle = penrose.OUTLINE;
         g.lineWidth = 1;
-        scale = 10;
-
+        let scale = 10;
+        const { penta, star } = iface(g, scale, shapeMode);
         let x = 8;
         let y = 9;
         const UP = false;
@@ -445,7 +456,7 @@ function drawFirstInflation(id) {
             bounds.expand(star(i, penrose.St3, DOWN, p(x + i * 25, y), 1));
         }
         // conditional redraw
-        redraw(bounds, canvas, drawScreen);
+        redraw(bounds, canvas, drawScreen, scale);
     };
     drawScreen();
 }
@@ -458,7 +469,7 @@ function drawFirstInflation(id) {
 function drawSecondInflation(id) {
     const canvas = document.querySelector(`#${id} > canvas`);
     // g is global
-    g = canvas.getContext("2d");
+    let g = canvas.getContext("2d");
     drawScreen();
     /**
      *
@@ -472,8 +483,8 @@ function drawSecondInflation(id) {
         g.fillStyle = penrose.ORANGE_PENTA;
         g.strokeStyle = penrose.OUTLINE;
         g.lineWidth = 1;
-        scale = 5;
-
+        let scale = 5;
+        const { star, penta } = iface(g, scale, shapeMode);
         let x = 25;
         let y = 25;
         penta(0, penrose.Pe5, UP, p(x, y), 2);
@@ -527,7 +538,7 @@ function drawGridWork(id) {
 
     const canvas = document.querySelector(`#${id} > canvas`);
 
-    g = canvas.getContext("2d");
+    let g = canvas.getContext("2d");
     //drawScreen(); // We could use a control for this
     drawBig();
 
@@ -542,7 +553,8 @@ function drawGridWork(id) {
         //g.fillStyle = p1Orange;
         g.strokeStyle = penrose.OUTLINE;
         g.lineWidth = 1;
-        scale = 10;
+        let scale = 10;
+        const { star, penta, deca, grid } = iface(g, scale, shapeMode);
 
         let y = 5;
         const shapes = [mosaic.penta, mosaic.diamond, mosaic.star, mosaic.boat];
@@ -650,12 +662,13 @@ function drawGridWork(id) {
 function drawGeneric123(id) {
     const canvas = document.querySelector(`#${id} > canvas`);
     // g is global
-    g = canvas.getContext("2d");
+    let g = canvas.getContext("2d");
     g.fillStyle = "#ffffff";
     g.fillRect(0, 0, canvas.width, canvas.height);
     g.strokeStyle = penrose.OUTLINE;
     g.lineWidth = 1;
-    scale = 10;
+    let scale = 10;
+    const { penta, star, deca } = iface(g, scale, shapeMode);
     penrose.scale = scale; // Maybe does not use it.
 
     function starType(type) {
@@ -749,13 +762,13 @@ function drawGeneric3(id) {
     const canvas = document.querySelector(`#${id} > canvas`);
 
     // g is global
-    g = canvas.getContext("2d");
+    let g = canvas.getContext("2d");
     g.fillStyle = "#ffffff";
     g.fillRect(0, 0, canvas.width, canvas.height);
     g.strokeStyle = penrose.OUTLINE;
     g.lineWidth = 1;
-    scale = 4;
-
+    let scale = 4;
+    const { deca } = iface(g, scale, shapeMode);
     const drawScreen = function () {
         let x = 100;
         let y = 250;
@@ -802,12 +815,13 @@ function drawRealWork(id) {
     }
 
     // g is global
-    g = canvas.getContext("2d");
+    let g = canvas.getContext("2d");
     g.fillStyle = "#ffffff";
     g.fillRect(0, 0, canvas.width, canvas.height);
     g.strokeStyle = penrose.OUTLINE;
     g.lineWidth = 1;
-    scale = 10;
+    let scale = 10;
+    const { star, penta, deca } = iface(g, scale, shapeMode);
 
     const drawScreen = function () {
         //const rShapes = [real.penta];
@@ -822,30 +836,30 @@ function drawRealWork(id) {
 /***
  * Draws a nice graph.
  */
-function grid(offset, size) {
-    g.strokeStyle = penrose.OUTLINE;
-    for (let y = -size; y < size; y++) {
-        for (let x = -size; x < size; x++) {
-            g.strokeRect(
-                offset.x * scale + x * scale,
-                offset.y * scale + y * scale,
-                scale,
-                scale
-            );
-        }
-    }
-    //
-    g.strokeStyle = "#FF0000";
-    g.beginPath();
-    g.moveTo(offset.x * scale, (offset.y - size) * scale);
-    g.lineTo(offset.x * scale, (offset.y + size) * scale);
-    g.stroke();
+// function grid(offset, size) {
+//     g.strokeStyle = penrose.OUTLINE;
+//     for (let y = -size; y < size; y++) {
+//         for (let x = -size; x < size; x++) {
+//             g.strokeRect(
+//                 offset.x * scale + x * scale,
+//                 offset.y * scale + y * scale,
+//                 scale,
+//                 scale
+//             );
+//         }
+//     }
+//     //
+//     g.strokeStyle = "#FF0000";
+//     g.beginPath();
+//     g.moveTo(offset.x * scale, (offset.y - size) * scale);
+//     g.lineTo(offset.x * scale, (offset.y + size) * scale);
+//     g.stroke();
 
-    g.beginPath();
-    g.moveTo((offset.x - size) * scale, offset.y * scale);
-    g.lineTo((offset.x + size) * scale, offset.y * scale);
-    g.stroke();
-}
+//     g.beginPath();
+//     g.moveTo((offset.x - size) * scale, offset.y * scale);
+//     g.lineTo((offset.x + size) * scale, offset.y * scale);
+//     g.stroke();
+// }
 
 /**
  * Have no use for this yet.  Maybe delete
@@ -908,46 +922,8 @@ function compare(a, b) {
     }
 }
 
-function pColor(type) {
-    switch (type) {
-        case penrose.Pe5:
-            return shapeColors.idList["p5-color"].color;
-        //return p5Blue;
-        case penrose.Pe3:
-            return shapeColors.idList["p3-color"].color;
-        //return p3Yellow;
-        case penrose.Pe1:
-            return shapeColors.idList["p1-color"].color;
-        //return p1Orange;
-        case penrose.St5:
-            return shapeColors.idList["star-color"].color;
-        //return starBlue;
-        case penrose.St3:
-            return shapeColors.idList["boat-color"].color;
-        //return boatBlue;
-        case penrose.St1:
-            return shapeColors.idList["diamond-color"].color;
-        //return diamondBlue;
-    }
-    return null;
-}
-
-function pShape(type) {
-    switch (type) {
-        case penrose.Pe5:
-        case penrose.Pe3:
-        case penrose.Pe1:
-            return penrose[shapeMode].penta;
-        case penrose.St5:
-            return penrose[shapeMode].star;
-        case penrose.St3:
-            return penrose[shapeMode].boat;
-        case penrose.St1:
-            return penrose[shapeMode].diamond;
-    }
-
-    return null;
-}
+// &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+//let penroseG = new PenroseG(g, scale, shapeMode);
 
 /*******************************************************************************
  * Recursive routine to draw pentagon type objects.
@@ -980,7 +956,11 @@ function pShape(type) {
  * @param {*} exp Recursive expansion. 0 the primitive.
  * @returns
  */
-function penta(fifths, type, isDown, loc, exp) {
+// function penta(fifths, type, isDown, loc, exp) {
+//     return penroseG.penta(fifths, type, isDown, loc, exp);
+// }
+
+function penta2(fifths, type, isDown, loc, exp) {
     const bounds = new Bounds();
     fifths = norm(fifths);
     if (exp == 0) {
@@ -1035,6 +1015,9 @@ function penta(fifths, type, isDown, loc, exp) {
     return bounds;
 }
 
+// function star(fifths, type, isDown, loc, exp) {
+//     return penroseG.star(fifths, type, isDown, loc, exp);
+// }
 /******************************************************************************
  * S5, S3 and S1  Up versions shown
  *    s5   star
@@ -1062,7 +1045,7 @@ function penta(fifths, type, isDown, loc, exp) {
  * @param {*} exp
  * @returns
  */
-function star(fifths, type, isDown, loc, exp) {
+function star2(fifths, type, isDown, loc, exp) {
     const bounds = new Bounds();
     const name = type.name;
     fifths = norm(fifths);
@@ -1132,7 +1115,11 @@ function star(fifths, type, isDown, loc, exp) {
  *      +--*--+
  */
 
-function deca(fifths, isDown, loc, exp) {
+// export function deca(fifths, isDown, loc, exp) {
+//     return penroseG.deca(fifths, isDown, loc, exp);
+// }
+
+export function deca2(fifths, isDown, loc, exp) {
     const bounds = new Bounds();
     if (exp == 0) {
         return bounds;

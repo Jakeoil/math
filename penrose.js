@@ -72,11 +72,6 @@ const toP = (loc) => new P(loc[0], loc[1]);
 export function p(x, y) {
     return new P(x, y);
 }
-export const norm = (n) => ((n % 5) + 5) % 5;
-export function tenths(fifths, isDown) {
-    return (fifths * 2 + (isDown ? 5 : 0)) % 10;
-}
-
 /**
  * Mutable class
  * This measures and adjusts the bounding rectangle.
@@ -665,7 +660,7 @@ function figure(fill, offset, shape, g, scale) {
  * Used for quadrille
  *
  */
-function outline(fill, offset, shape, g, scale) {
+export function outline(fill, offset, shape, g, scale) {
     let start = true;
     const bounds = new Bounds();
     for (const point of shape) {
