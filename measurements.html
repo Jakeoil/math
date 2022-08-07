@@ -8,6 +8,7 @@
         <link rel="stylesheet" href="math.css" />
     </head>
     <body>
+        <h1>Measurements</h1>
         <img id="image" src="deca.png" align="left" />
         <p>
             The quadrille and mosaic are examples of discrete tilings. These
@@ -35,10 +36,16 @@
             F[n] + F[n + 1] The simple example is [0, 4]. This is the length of
             the base of pentagon[0].
         </p>
+        <p>
+            Everything in the quadrille version so far is based on this base
+            pentagon:
+            <code>
+                const pentaUp = [ [0, -3], [3, -1], [2, 3], [-2, 3], [-3, -1]]
+            </code>
+        </p>
         <script type="module" src="penrose.js"></script>
         <script type="module" src="math.js"></script>
         <script type="module">
-            window.addEventListener("load", () => measureTasks(), false);
             /***
              * This does a fake draw to size things up before resizing the
              * canvas and the targets.
@@ -55,41 +62,39 @@
              * loc : a Point.
              *
              **/
-            import { Bounds, outline, penrose, p } from "./penrose.js";
+            import { p } from "./point.js";
+            import { Bounds, penrose } from "./penrose.js";
+            import { outline } from "./shape-modes.js";
             import { MODE_REAL, iface } from "./math.js";
             import { PenroseScreen } from "./penrose-screen.js";
 
+            window.addEventListener("load", () => measureTasks(), false);
             export function measureTasks() {
                 console.log(`drawImage`);
                 drawQuadrille();
                 drawImage();
             }
-            let shapeMode;
-            let renderShape;
-            export function drawQuadrille() {
+
+            function drawQuadrille() {
                 const canvas = document.querySelector("#quadrille");
                 canvas.width = 0;
                 canvas.height = 0;
-                let base = p(0, 0);
+
                 const g = canvas.getContext("2d");
                 g.strokeStyle = penrose.OUTLINE;
                 g.lineWidth = 1;
-                let scale = 3.7;
-                shapeMode = MODE_REAL;
+                const scale = 3.7;
+                const shapeMode = MODE_REAL;
                 const { deca } = iface(g, scale, shapeMode);
-                //renderShape = outline;
-                let fifths;
-                let isDown;
-                let exp;
 
+                let base = p(0, 0);
+                let fifths = 0;
+                let isDown = false;
+                let exp = 2;
                 // Now some decagons
-
-                fifths = 0;
-                isDown = false;
-                base = p(0, 0);
-                exp = 2;
                 let bounds = new Bounds();
                 bounds.expand(deca(fifths, isDown, base, exp));
+
                 base = base.tr(p(bounds.minPoint.x, bounds.minPoint.y).neg);
                 canvas.width = (bounds.maxPoint.x - bounds.minPoint.x) * scale;
                 canvas.height = (bounds.maxPoint.y - bounds.minPoint.y) * scale;
@@ -100,31 +105,23 @@
                 const img = canvas.toDataURL("img.png");
             }
 
-            export function drawImage() {
-                console.log(`drawImage`);
+            function drawImage() {
                 const canvas = document.createElement("canvas");
-                console.log(`canvas ${canvas}`);
                 canvas.width = 0;
                 canvas.height = 0;
-                let base = p(0, 0);
-                let g = canvas.getContext("2d");
+
+                const g = canvas.getContext("2d");
                 g.strokeStyle = penrose.OUTLINE;
                 g.lineWidth = 1;
-                let scale = 5;
-                let shapeMode = MODE_REAL;
-                renderShape = outline;
-
-                const deca = iface(g, scale, shapeMode);
-
-                let fifths;
-                let isDown;
-                let exp;
+                const scale = 5;
+                const shapeMode = MODE_REAL;
+                const { deca } = iface(g, scale, shapeMode);
 
                 // Now some decagons
-                fifths = 0;
-                isDown = false;
-                base = p(0, 0);
-                exp = 1;
+                let fifths = 0;
+                let isDown = false;
+                let base = p(0, 0);
+                let exp = 1;
                 let bounds = new Bounds();
                 bounds.expand(deca(fifths, isDown, base, exp));
                 bounds.pad(1);

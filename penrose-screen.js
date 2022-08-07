@@ -1,6 +1,7 @@
 import { Bounds } from "./penrose.js";
 import { penrose } from "./penrose.js";
 import { shapeColors } from "./math.js";
+
 const norm = (n) => ((n % 5) + 5) % 5;
 function tenths(fifths, isDown) {
     return (fifths * 2 + (isDown ? 5 : 0)) % 10;
@@ -9,28 +10,23 @@ function pColor(type) {
     switch (type) {
         case penrose.Pe5:
             return shapeColors.idList["p5-color"].color;
-        //return p5Blue;
         case penrose.Pe3:
             return shapeColors.idList["p3-color"].color;
-        //return p3Yellow;
         case penrose.Pe1:
             return shapeColors.idList["p1-color"].color;
-        //return p1Orange;
         case penrose.St5:
             return shapeColors.idList["star-color"].color;
-        //return starBlue;
         case penrose.St3:
             return shapeColors.idList["boat-color"].color;
-        //return boatBlue;
         case penrose.St1:
             return shapeColors.idList["diamond-color"].color;
-        //return diamondBlue;
     }
     return null;
 }
 
 export class PenroseScreen {
     constructor(g, scale, mode) {
+        //console.log(`g ${typeof g} scale ${typeof scale} mode ${typeof mode}`);
         this.g = g;
         this.scale = scale;
         this.mode = mode;
@@ -100,9 +96,10 @@ export class PenroseScreen {
                         this.scale
                     )
                 );
-            } else {
-                bounds.addPoint(loc, loc);
             }
+            // } else {
+            //     bounds.addPoint(loc, loc);
+            // }
 
             return bounds; // call figure
         }
@@ -182,9 +179,10 @@ export class PenroseScreen {
                         this.scale
                     )
                 );
-            } else {
-                bounds.addPoint(loc, loc);
             }
+            // else {
+            //     bounds.addPoint(loc, loc);
+            // }
 
             return bounds;
         }

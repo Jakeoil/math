@@ -1,7 +1,9 @@
 "use strict";
-import { p, Bounds } from "./penrose.js";
+import { p } from "./point.js";
+import { Bounds } from "./penrose.js";
 import { PenroseScreen } from "./penrose-screen.js";
-import { penrose, real, quadrille, mosaic } from "./penrose.js";
+import { penrose } from "./penrose.js";
+import { real, quadrille, mosaic } from "./shape-modes.js";
 import { stringify } from "./penrose.js";
 import { cookie } from "./penrose.js";
 import { Controls } from "./penrose.js";
