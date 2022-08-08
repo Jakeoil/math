@@ -43,10 +43,14 @@ class ShapeColors {
             const entry = this.idList[ele.id];
             if (entry) {
                 entry.ele = ele;
-                entry.ele.addEventListener("input", onShapeColorsInput, false);
+                entry.ele.addEventListener(
+                    "input",
+                    this.onShapeColorsInput.bind(this),
+                    false
+                );
                 entry.ele.addEventListener(
                     "change",
-                    onShapeColorsChange,
+                    this.onShapeColorsChange.bind(this),
                     false
                 );
             } else {
@@ -74,6 +78,24 @@ class ShapeColors {
             entry.color = entry.defaultColor;
         }
     }
+
+    onShapeColorsInput(event) {
+        console.log(
+            `input: id: ${event.target.id}, color: ${event.target.value}`
+        );
+        this.idList[event.target.id].color = event.target.value;
+        this.refresh();
+        penroseApp();
+    }
+
+    onShapeColorsChange(event) {
+        console.log(
+            `change: id: ${event.target.id}, color: ${event.target.value}`
+        );
+        this.idList[event.target.id].color = event.target.value;
+        this.refresh();
+        penroseApp();
+    }
 }
 
 // The reset button was clicked.
@@ -83,28 +105,9 @@ function onColorReset() {
     penroseApp();
 }
 
-function onShapeColorsInput(event) {
-    console.log(`input: id: ${event.target.id}, color: ${event.target.value}`);
-    shapeColors.idList[event.target.id].color = event.target.value;
-    shapeColors.refresh();
-    penroseApp();
-}
-
-function onShapeColorsChange(event) {
-    console.log(`change: id: ${event.target.id}, color: ${event.target.value}`);
-    shapeColors.idList[event.target.id].color = event.target.value;
-    shapeColors.refresh();
-    penroseApp();
-}
-function onShapeColorsClick(event) {
-    console.log(`click: id: ${event.target.id}, color: ${event.target.value}`);
-}
-
 export const shapeColors = new ShapeColors();
-
 // Set colors to default
 shapeColors.reset();
-
 // Set element values to colors
 shapeColors.refresh();
 
