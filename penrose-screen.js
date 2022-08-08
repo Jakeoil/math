@@ -343,15 +343,18 @@ export class PenroseScreen {
         this.g.stroke();
     }
 
-    line(loc, end, g, scale) {
+    line(loc, end) {
         this.g.strokeStyle = "#000000";
+        const currentWidth = this.g.lineWidth;
+        this.g.lineWidth = 2;
         this.g.beginPath();
         this.g.moveTo(loc.x * this.scale, loc.y * this.scale);
         this.g.lineTo(end.x * this.scale, end.y * this.scale);
         this.g.stroke();
+        this.g.lineWidth = currentWidth;
     }
 
-    pentaType3(fifths, type, isDown, loc, exp) {
+    pentaRhomb(fifths, type, isDown, loc, exp) {
         const bounds = new Bounds();
         fifths = norm(fifths);
         if (exp == 0) {
@@ -367,19 +370,30 @@ export class PenroseScreen {
                 if (!type.diamond.includes(i)) {
                     let end = loc.tr(tWheel[tenths(shift, !isDown)]);
                     console.log(`plot ${loc} to  ${end}`);
-                    this.line(loc, end, this.g, this.scale);
+                    this.line(loc, end);
+                }
+                // Now we have split the orange ones with a line.
+                // Find the orange center.
+                const center = loc.tr(pWheel[tenths(shift, isDown)]);
+                const twist = type.twist[i];
+                if (twist != 0) {
+                    const angle = norm(shift + twist);
+                    const start = center.tr(pWheel[tenths(angle, isDown)]);
+                    //this.line(center, start);
+                    const end = start.tr(tWheel[tenths(angle, !isDown)]);
+                    this.line(start, end);
                 }
             }
             return bounds;
         }
 
         ///
-        bounds.expand(this.pentaType3(0, penrose.Pe5, !isDown, loc, exp - 1));
+        bounds.expand(this.pentaRhomb(0, penrose.Pe5, !isDown, loc, exp - 1));
 
         for (let i = 0; i < 5; i++) {
             const shift = norm(fifths + i);
             bounds.expand(
-                this.pentaType3(
+                this.pentaRhomb(
                     norm(shift + type.twist[i]),
                     type.twist[i] == 0 ? penrose.Pe3 : penrose.Pe1,
                     isDown,
@@ -390,7 +404,7 @@ export class PenroseScreen {
 
             if (type.diamond.includes(i)) {
                 bounds.expand(
-                    this.starType3(
+                    this.starRhomb(
                         shift,
                         penrose.St1,
                         !isDown,
@@ -403,7 +417,7 @@ export class PenroseScreen {
         return bounds;
     }
 
-    starType3(fifths, type, isDown, loc, exp) {
+    starRhomb(fifths, type, isDown, loc, exp) {
         const bounds = new Bounds();
         const name = type.name;
         fifths = norm(fifths);
@@ -418,13 +432,15 @@ export class PenroseScreen {
             for (let i = 0; i < 5; i++) {
                 const shift = norm(fifths + i);
                 const angle = tenths(shift, isDown);
-                const end = loc.tr(tWheel[angle]);
-                this.line(loc, end);
+                if (type.color[i] != null) {
+                    const end = loc.tr(tWheel[angle]);
+                    this.line(loc, end);
+                }
             }
             return bounds;
         }
 
-        bounds.expand(this.star(0, penrose.St5, !isDown, loc, exp - 1));
+        bounds.expand(this.starRhomb(0, penrose.St5, !isDown, loc, exp - 1));
 
         for (let i = 0; i < 5; i++) {
             const shift = norm(fifths + i);
@@ -432,7 +448,7 @@ export class PenroseScreen {
 
             if (type.color[i] != null) {
                 bounds.expand(
-                    this.pentaType3(
+                    this.pentaRhomb(
                         norm(shift),
                         penrose.Pe1,
                         !isDown,
@@ -442,7 +458,7 @@ export class PenroseScreen {
                 );
 
                 bounds.expand(
-                    this.starType3(
+                    this.starRhomb(
                         shift,
                         penrose.St3,
                         isDown,
@@ -452,6 +468,91 @@ export class PenroseScreen {
                 );
             }
         }
+        return bounds;
+    }
+    decaRhomb(fifths, isDown, loc, exp) {
+        const bounds = new Bounds();
+        if (exp == 0) {
+            return bounds;
+        }
+
+        const wheels = penrose[this.mode].wheels;
+
+        // Move the center of the decagon to the real center.
+        let dUp = wheels.d[exp].up;
+        let dDown = wheels.d[exp].down;
+        let dOff = isDown ? dUp[fifths] : dDown[fifths];
+        let base = loc.tr(dOff);
+        let pUp = wheels.p[exp].up;
+        let pDown = wheels.p[exp].down;
+        let sUp = wheels.s[exp].up;
+        let sDown = wheels.s[exp].down;
+        let offs; // Work variable
+
+        // The central yellow pentagon
+        bounds.expand(
+            this.pentaRhomb(fifths, penrose.Pe3, isDown, base, exp - 1)
+        ); //
+
+        // The two diamonds
+        offs = isDown ? sDown[norm(1 + fifths)] : sUp[norm(1 + fifths)];
+        bounds.expand(
+            this.starRhomb(
+                norm(fifths + 3),
+                penrose.St1,
+                isDown,
+                base.tr(offs),
+                exp - 1
+            )
+        ); // sd1
+
+        offs = isDown ? sDown[norm(4 + fifths)] : sUp[norm(4 + fifths)];
+        bounds.expand(
+            this.starRhomb(
+                norm(fifths + 2),
+                penrose.St1,
+                isDown,
+                base.tr(offs),
+                exp - 1
+            )
+        ); // sd4
+
+        // The two orange pentagons
+        offs = isDown ? pUp[norm(3 + fifths)] : pDown[norm(3 + fifths)];
+        bounds.expand(
+            this.pentaRhomb(
+                norm(fifths + 2),
+                penrose.Pe1,
+                !isDown,
+                base.tr(offs),
+                exp - 1
+            )
+        );
+
+        offs = isDown ? pUp[norm(2 + fifths)] : pDown[norm(2 + fifths)];
+        bounds.expand(
+            this.pentaRhomb(
+                norm(fifths + 3),
+                penrose.Pe1,
+                !isDown,
+                base.tr(offs),
+                exp - 1
+            )
+        );
+
+        // And the boat
+        offs = isDown
+            ? pUp[norm(2 + fifths)].tr(sUp[norm(3 + fifths)])
+            : pDown[norm(2 + fifths)].tr(sDown[norm(3 + fifths)]);
+        bounds.expand(
+            this.starRhomb(
+                fifths + 0,
+                penrose.St3,
+                !isDown,
+                base.tr(offs),
+                exp - 1
+            )
+        );
         return bounds;
     }
 }

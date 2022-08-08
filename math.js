@@ -316,7 +316,10 @@ export function iface(g, scale, mode) {
     const star = screen.star.bind(screen);
     const deca = screen.deca.bind(screen);
     const grid = screen.grid.bind(screen);
-    return { penta, star, deca, grid };
+    const pentaRhomb = screen.pentaRhomb.bind(screen);
+    const starRhomb = screen.starRhomb.bind(screen);
+    const decaRhomb = screen.decaRhomb.bind(screen);
+    return { penta, star, deca, grid, pentaRhomb, starRhomb, decaRhomb };
 }
 /***
  * Draws a little canvas with a shape.
@@ -407,8 +410,11 @@ function drawFirstInflation(id) {
         g.strokeStyle = penrose.OUTLINE;
         g.lineWidth = 1;
         let scale = 10;
-        const { penta, star } = iface(g, scale, shapeMode);
-        const screen = new PenroseScreen(g, scale, shapeMode);
+        const { penta, star, pentaRhomb, starRhomb } = iface(
+            g,
+            scale,
+            shapeMode
+        );
 
         let x = 8;
         let y = 9;
@@ -416,50 +422,57 @@ function drawFirstInflation(id) {
         const DOWN = true;
         const bounds = new Bounds();
         bounds.expand(penta(0, penrose.Pe5, UP, p(x, y), 1));
-        screen.pentaType3(0, penrose.Pe5, UP, p(x, y), 1);
+        bounds.expand(pentaRhomb(0, penrose.Pe5, UP, p(x, y), 1));
         penta(0, penrose.Pe5, DOWN, p(25, y), 1);
+        pentaRhomb(0, penrose.Pe5, DOWN, p(25, y), 1);
         y += 18;
         for (let i = 0; i < 5; i++) {
             penta(i, penrose.Pe3, UP, p(x + i * 20, y), 1);
+            pentaRhomb(i, penrose.Pe3, UP, p(x + i * 20, y), 1);
         }
         y += 20;
         for (let i = 0; i < 5; i++) {
             penta(i, penrose.Pe3, DOWN, p(x + i * 20, y), 1);
-            screen.pentaType3(i, penrose.Pe3, DOWN, p(x + i * 20, y), 1);
+            pentaRhomb(i, penrose.Pe3, DOWN, p(x + i * 20, y), 1);
         }
         y += 20;
         for (let i = 0; i < 5; i++) {
             penta(i, penrose.Pe1, UP, p(x + i * 20, y), 1);
-            screen.pentaType3(i, penrose.Pe1, UP, p(x + i * 20, y), 1);
+            pentaRhomb(i, penrose.Pe1, UP, p(x + i * 20, y), 1);
         }
         y += 20;
         for (let i = 0; i < 5; i++) {
             penta(i, penrose.Pe1, DOWN, p(x + i * 20, y), 1);
+            pentaRhomb(i, penrose.Pe1, DOWN, p(x + i * 20, y), 1);
         }
         y += 25;
         star(0, penrose.St5, UP, p(15, y), 1);
-        screen.starType3(0, penrose.St5, UP, p(15, y), 1);
+        starRhomb(0, penrose.St5, UP, p(15, y), 1);
         star(0, penrose.St5, DOWN, p(45, y), 1);
-        screen.starType3(0, penrose.St5, DOWN, p(45, y), 1);
+        starRhomb(0, penrose.St5, DOWN, p(45, y), 1);
         x = 10;
         y += 30;
         for (let i = 0; i < 5; i++) {
             star(i, penrose.St1, UP, p(x + i * 20, y), 1);
+            starRhomb(i, penrose.St1, UP, p(x + i * 20, y), 1);
         }
         y += 25;
         for (let i = 0; i < 5; i++) {
             star(i, penrose.St1, DOWN, p(x + i * 20, y), 1);
+            starRhomb(i, penrose.St1, DOWN, p(x + i * 20, y), 1);
         }
 
         x = 15;
         y += 25;
         for (let i = 0; i < 5; i++) {
             star(i, penrose.St3, UP, p(x + i * 25, y), 1);
+            starRhomb(i, penrose.St3, UP, p(x + i * 25, y), 1);
         }
 
         y += 25;
         for (let i = 0; i < 5; i++) {
             bounds.expand(star(i, penrose.St3, DOWN, p(x + i * 25, y), 1));
+            bounds.expand(starRhomb(i, penrose.St3, DOWN, p(x + i * 25, y), 1));
         }
         // conditional redraw
         redraw(bounds, canvas, drawScreen, scale);
@@ -490,12 +503,16 @@ function drawSecondInflation(id) {
         g.strokeStyle = penrose.OUTLINE;
         g.lineWidth = 1;
         let scale = 5;
-        const { star, penta } = iface(g, scale, shapeMode);
-        const screen = new PenroseScreen(g, scale, shapeMode);
+        const { star, penta, pentaRhomb, starRhomb } = iface(
+            g,
+            scale,
+            shapeMode
+        );
+
         let x = 25;
         let y = 25;
         penta(0, penrose.Pe5, UP, p(x, y), 2);
-        screen.pentaType3(0, penrose.Pe5, UP, p(x, y), 2);
+        pentaRhomb(0, penrose.Pe5, UP, p(x, y), 2);
 
         penta(0, penrose.Pe5, DOWN, p(x + 50, y), 2); //
         y += 50;
@@ -517,7 +534,9 @@ function drawSecondInflation(id) {
         }
         y += 60; // one thru four
         star(0, penrose.St5, UP, p(35, y), 2);
+        starRhomb(0, penrose.St5, UP, p(35, y), 2);
         star(0, penrose.St5, DOWN, p(100, y), 2);
+        starRhomb(0, penrose.St5, DOWN, p(100, y), 2);
         y += 74; // one thru four
         x = 35;
         for (let i = 0; i < 5; i++) {
@@ -775,7 +794,7 @@ function drawGeneric3(id) {
     g.strokeStyle = penrose.OUTLINE;
     g.lineWidth = 1;
     let scale = 4;
-    const { deca } = iface(g, scale, shapeMode);
+    const { deca, decaRhomb } = iface(g, scale, shapeMode);
     const drawScreen = function () {
         let x = 100;
         let y = 250;
@@ -786,6 +805,7 @@ function drawGeneric3(id) {
             deca(controls.fifths, controls.isDown, p(50, 50), 2);
             deca(controls.fifths, controls.isDown, p(210, 80), 3);
             deca(controls.fifths, controls.isDown, p(x, y), 6);
+            decaRhomb(controls.fifths, controls.isDown, p(x, y), 6);
         } else {
             console.log(`drawScreen ${controls.typeIndex}`);
             const type = controls.typeList[controls.typeIndex];
