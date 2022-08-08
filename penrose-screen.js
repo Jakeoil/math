@@ -30,7 +30,6 @@ export class PenroseScreen {
         this.g = g;
         this.scale = scale;
         this.mode = mode;
-        console.log(`${this.scale}, ${this.mode}`);
     }
 
     pShape(type) {
@@ -369,7 +368,6 @@ export class PenroseScreen {
                 const shift = norm(fifths + i);
                 if (!type.diamond.includes(i)) {
                     let end = loc.tr(tWheel[tenths(shift, !isDown)]);
-                    console.log(`plot ${loc} to  ${end}`);
                     this.line(loc, end);
                 }
                 // Now we have split the orange ones with a line.

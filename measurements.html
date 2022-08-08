@@ -43,8 +43,11 @@
                 const pentaUp = [ [0, -3], [3, -1], [2, 3], [-2, 3], [-3, -1]]
             </code>
         </p>
+        <!--
+
         <script type="module" src="penrose.js"></script>
         <script type="module" src="math.js"></script>
+        -->
         <script type="module">
             /***
              * This does a fake draw to size things up before resizing the
@@ -70,7 +73,6 @@
 
             window.addEventListener("load", () => measureTasks(), false);
             export function measureTasks() {
-                console.log(`drawImage`);
                 drawQuadrille();
                 drawImage();
             }
@@ -135,7 +137,6 @@
                 bounds = new Bounds();
                 const img = canvas.toDataURL("img.png");
                 const ele = document.querySelector("#image");
-                console.log(ele.src);
                 ele.src = img;
             }
         </script>
