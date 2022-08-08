@@ -1,3 +1,4 @@
+//fimport { stringify } from "./penrose.js";
 /**
  * Orthoganal Penrose program version one.
  * These routines process a scaled grid. They do not control rendering.
@@ -48,7 +49,7 @@ export class P {
         return [this.x, this.y];
     }
     toString() {
-        return stringify(this);
+        return JSON.stringify(this);
     }
     equals(b) {
         return this.x == b.x && this.y == b.y;

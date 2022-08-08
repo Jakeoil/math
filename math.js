@@ -408,6 +408,7 @@ function drawFirstInflation(id) {
         g.lineWidth = 1;
         let scale = 10;
         const { penta, star } = iface(g, scale, shapeMode);
+        const screen = new PenroseScreen(g, scale, shapeMode);
 
         let x = 8;
         let y = 9;
@@ -415,6 +416,7 @@ function drawFirstInflation(id) {
         const DOWN = true;
         const bounds = new Bounds();
         bounds.expand(penta(0, penrose.Pe5, UP, p(x, y), 1));
+        screen.pentaType3(0, penrose.Pe5, UP, p(x, y), 1);
         penta(0, penrose.Pe5, DOWN, p(25, y), 1);
         y += 18;
         for (let i = 0; i < 5; i++) {
@@ -423,10 +425,12 @@ function drawFirstInflation(id) {
         y += 20;
         for (let i = 0; i < 5; i++) {
             penta(i, penrose.Pe3, DOWN, p(x + i * 20, y), 1);
+            screen.pentaType3(i, penrose.Pe3, DOWN, p(x + i * 20, y), 1);
         }
         y += 20;
         for (let i = 0; i < 5; i++) {
             penta(i, penrose.Pe1, UP, p(x + i * 20, y), 1);
+            screen.pentaType3(i, penrose.Pe1, UP, p(x + i * 20, y), 1);
         }
         y += 20;
         for (let i = 0; i < 5; i++) {
@@ -434,7 +438,9 @@ function drawFirstInflation(id) {
         }
         y += 25;
         star(0, penrose.St5, UP, p(15, y), 1);
+        screen.starType3(0, penrose.St5, UP, p(15, y), 1);
         star(0, penrose.St5, DOWN, p(45, y), 1);
+        screen.starType3(0, penrose.St5, DOWN, p(45, y), 1);
         x = 10;
         y += 30;
         for (let i = 0; i < 5; i++) {
@@ -485,9 +491,12 @@ function drawSecondInflation(id) {
         g.lineWidth = 1;
         let scale = 5;
         const { star, penta } = iface(g, scale, shapeMode);
+        const screen = new PenroseScreen(g, scale, shapeMode);
         let x = 25;
         let y = 25;
         penta(0, penrose.Pe5, UP, p(x, y), 2);
+        screen.pentaType3(0, penrose.Pe5, UP, p(x, y), 2);
+
         penta(0, penrose.Pe5, DOWN, p(x + 50, y), 2); //
         y += 50;
         x = 25;

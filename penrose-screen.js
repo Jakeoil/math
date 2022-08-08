@@ -342,4 +342,116 @@ export class PenroseScreen {
         this.g.lineTo((offset.x + size) * this.scale, offset.y * this.scale);
         this.g.stroke();
     }
+
+    line(loc, end, g, scale) {
+        this.g.strokeStyle = "#000000";
+        this.g.beginPath();
+        this.g.moveTo(loc.x * this.scale, loc.y * this.scale);
+        this.g.lineTo(end.x * this.scale, end.y * this.scale);
+        this.g.stroke();
+    }
+
+    pentaType3(fifths, type, isDown, loc, exp) {
+        const bounds = new Bounds();
+        fifths = norm(fifths);
+        if (exp == 0) {
+            return bounds;
+        }
+        const wheels = penrose[this.mode].wheels;
+        const pWheel = wheels.p[exp].w;
+        const sWheel = wheels.s[exp].w;
+        const tWheel = wheels.t[exp].w;
+        if (exp == 1) {
+            for (let i = 0; i < 5; i++) {
+                const shift = norm(fifths + i);
+                if (!type.diamond.includes(i)) {
+                    let end = loc.tr(tWheel[tenths(shift, !isDown)]);
+                    console.log(`plot ${loc} to  ${end}`);
+                    this.line(loc, end, this.g, this.scale);
+                }
+            }
+            return bounds;
+        }
+
+        ///
+        bounds.expand(this.pentaType3(0, penrose.Pe5, !isDown, loc, exp - 1));
+
+        for (let i = 0; i < 5; i++) {
+            const shift = norm(fifths + i);
+            bounds.expand(
+                this.pentaType3(
+                    norm(shift + type.twist[i]),
+                    type.twist[i] == 0 ? penrose.Pe3 : penrose.Pe1,
+                    isDown,
+                    loc.tr(pWheel[tenths(shift, isDown)]),
+                    exp - 1
+                )
+            );
+
+            if (type.diamond.includes(i)) {
+                bounds.expand(
+                    this.starType3(
+                        shift,
+                        penrose.St1,
+                        !isDown,
+                        loc.tr(sWheel[tenths(shift, !isDown)]),
+                        exp - 1
+                    )
+                );
+            }
+        }
+        return bounds;
+    }
+
+    starType3(fifths, type, isDown, loc, exp) {
+        const bounds = new Bounds();
+        const name = type.name;
+        fifths = norm(fifths);
+        if (exp == 0) {
+            return bounds;
+        }
+        const wheels = penrose[this.mode].wheels;
+        const tWheel = wheels.t[exp].w;
+        const sWheel = wheels.s[exp].w;
+        if (exp == 1) {
+            // Draw appropriate part of star
+            for (let i = 0; i < 5; i++) {
+                const shift = norm(fifths + i);
+                const angle = tenths(shift, isDown);
+                const end = loc.tr(tWheel[angle]);
+                this.line(loc, end);
+            }
+            return bounds;
+        }
+
+        bounds.expand(this.star(0, penrose.St5, !isDown, loc, exp - 1));
+
+        for (let i = 0; i < 5; i++) {
+            const shift = norm(fifths + i);
+            const angle = tenths(shift, isDown);
+
+            if (type.color[i] != null) {
+                bounds.expand(
+                    this.pentaType3(
+                        norm(shift),
+                        penrose.Pe1,
+                        !isDown,
+                        loc.tr(sWheel[angle]),
+                        exp - 1
+                    )
+                );
+
+                bounds.expand(
+                    this.starType3(
+                        shift,
+                        penrose.St3,
+                        isDown,
+                        loc.tr(tWheel[angle]),
+                        exp - 1
+                    )
+                );
+            }
+        }
+        return bounds;
+    }
 }
