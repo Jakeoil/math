@@ -57,6 +57,15 @@ class ShapeColors {
                 console.log(`Undefined id: ${ele.id} in html`);
             }
         }
+        const reset_ele = document.querySelector("#color-reset");
+        console.log(`reset-ele: ${reset_ele}`);
+
+        if (reset_ele)
+            reset_ele.addEventListener(
+                "click",
+                this.onColorReset.bind(this),
+                false
+            );
         this.reset();
     }
 
@@ -96,13 +105,12 @@ class ShapeColors {
         this.refresh();
         penroseApp();
     }
-}
-
-// The reset button was clicked.
-function onColorReset() {
-    shapeColors.reset();
-    shapeColors.refresh();
-    penroseApp();
+    // The reset button was clicked.
+    onColorReset() {
+        this.reset();
+        this.refresh();
+        penroseApp();
+    }
 }
 
 export const shapeColors = new ShapeColors();
