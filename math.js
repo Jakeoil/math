@@ -1,125 +1,38 @@
 "use strict";
 import { p } from "./point.js";
-import { Bounds } from "./penrose.js";
+import { Bounds } from "./bounds.js";
 import { PenroseScreen } from "./penrose-screen.js";
 import { penrose } from "./penrose.js";
 import { real, quadrille, mosaic } from "./shape-modes.js";
-import { stringify } from "./penrose.js";
-import { cookie } from "./penrose.js";
-import { Controls } from "./penrose.js";
+console.log(`importing from math.js`);
+
+import { cookie, controls, shapeColors } from "./controls.js";
 
 /**
- * Penrose Mozaic Webapp version 1.
- * Jeff Coyles Penrose type one pattern made out of square tiles of
- * three colors.
- * Requires penrose.js
+ * Penrose Mosaic
  *
- * Added Quadrille mode. Shows graph paper version.
- * Added Real mode.
+ * Jeff Coyle's Penrose page.
+ * Explores Penrose Type 1.
  *
- * Added controls for colors.
- */
-
-/**********************************************************************
- * Shape colors control.
- * Contains a mapping of id to entry,
- * entry: {ele, color, defaultColor}
- * Todo: Move this to a module.
- * But first try to put the onClice and listener logic
+ * The modes.
+ * Introduces the Mosaic. The penrose pattern based on square mosaic tiles.
+ * Introduces the Quadrille. The vector based version of above.
+ * Displays the 'Real' mode. The actual type 1 penrose tiling.
  *
  */
-class ShapeColors {
-    constructor() {
-        this.idList = {
-            "p5-color": { defaultColor: penrose.Pe5.defaultColor },
-            "p3-color": { defaultColor: penrose.Pe3.defaultColor },
-            "p1-color": { defaultColor: penrose.Pe1.defaultColor },
-            "star-color": { defaultColor: penrose.St5.defaultColor },
-            "boat-color": { defaultColor: penrose.St3.defaultColor },
-            "diamond-color": { defaultColor: penrose.St1.defaultColor },
-        };
-        const shapeColorEles = document.querySelectorAll(".shape-color");
-        for (const ele of shapeColorEles) {
-            const entry = this.idList[ele.id];
-            if (entry) {
-                entry.ele = ele;
-                entry.ele.addEventListener(
-                    "input",
-                    this.onShapeColorsInput.bind(this),
-                    false
-                );
-                entry.ele.addEventListener(
-                    "change",
-                    this.onShapeColorsChange.bind(this),
-                    false
-                );
-            } else {
-                console.log(`Undefined id: ${ele.id} in html`);
-            }
-        }
-        const reset_ele = document.querySelector("#color-reset");
-        console.log(`reset-ele: ${reset_ele}`);
 
-        if (reset_ele)
-            reset_ele.addEventListener(
-                "click",
-                this.onColorReset.bind(this),
-                false
-            );
-        this.reset();
-    }
-
-    /**
-     * Set the elements to the last value received
-     */
-    refresh() {
-        for (const entry of Object.values(this.idList)) {
-            if (entry.ele) entry.ele.value = entry.color;
-        }
-        //console.log(`refresh: ${stringify(this.idList, null, "  ")}`);
-    }
-
-    /**
-     * Set the elements to their defaults
-     */
-    reset() {
-        for (const entry of Object.values(this.idList)) {
-            entry.color = entry.defaultColor;
-        }
-    }
-
-    onShapeColorsInput(event) {
-        console.log(
-            `input: id: ${event.target.id}, color: ${event.target.value}`
-        );
-        this.idList[event.target.id].color = event.target.value;
-        this.refresh();
-        penroseApp();
-    }
-
-    onShapeColorsChange(event) {
-        console.log(
-            `change: id: ${event.target.id}, color: ${event.target.value}`
-        );
-        this.idList[event.target.id].color = event.target.value;
-        this.refresh();
-        penroseApp();
-    }
-    // The reset button was clicked.
-    onColorReset() {
-        this.reset();
-        this.refresh();
-        penroseApp();
-    }
-}
-
-export const shapeColors = new ShapeColors();
+/** Initialize from contols in penrose.html */
 // Set colors to default
+console.log(`math shapecolors reset`);
 shapeColors.reset();
 // Set element values to colors
+console.log(`math shapecolors refresh`);
 shapeColors.refresh();
 
-/************** end of shape colors */
+console.log(`math controls reset`);
+controls.reset();
+console.log(`math controls reset reset`);
+controls.refresh();
 
 /**
  * Shape-Mode:
@@ -159,43 +72,6 @@ export const clickMode = function () {
     shapeMode = MODE_LIST[new_idx];
     cookie.setShapeMode(shapeMode);
     refreshShapeMode();
-    penroseApp();
-};
-
-/**
- * This is the default global for the shape and orientation controls
- */
-// Note: cookies are a bitch here. (not so bad)
-const controls = new Controls(0, 0, false);
-
-// Can this be made into a function?
-
-const eleFifths = document.querySelector("#fifths");
-const eleType = document.querySelector("#type");
-const eleIsDown = document.querySelector("#isDown");
-
-/**
- * Initialization and
- * Events for the three buttons
- */
-if (eleFifths) eleFifths.innerHTML = `fifths: ${controls.fifths}`;
-export const clickFifths = function () {
-    controls.bumpFifths();
-    eleFifths.innerHTML = `fifths: ${controls.fifths}`;
-    penroseApp();
-};
-
-if (eleType) eleType.innerHTML = controls.typeName;
-export const clickType = function () {
-    controls.bumpType();
-    eleType.innerHTML = controls.typeName;
-    penroseApp();
-};
-
-if (eleIsDown) eleIsDown.innerHTML = controls.direction;
-export const clickIsDown = function () {
-    controls.toggleDirection();
-    eleIsDown.innerHTML = controls.direction;
     penroseApp();
 };
 
@@ -298,6 +174,7 @@ export function pageClicked(pageId, button) {
  * Creates listeners for control buttons
  */
 export function penroseApp() {
+    console.log(`penroseApp`);
     // load the little canvases.
     makeCanvas("p5");
     makeCanvas("p3");
@@ -707,6 +584,8 @@ function drawGeneric123(id) {
     let scale = 10;
     const { penta, star, deca } = iface(g, scale, shapeMode);
     penrose.scale = scale; // Maybe does not use it.
+
+    console.log(`math shapecolors drawGeneric123`);
 
     function starType(type) {
         switch (controls.typeList[type]) {

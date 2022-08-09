@@ -1,6 +1,6 @@
 import { toP, p } from "./point.js";
 import { shapeWheel, Wheels, shapeWheelMosaic } from "./wheels.js";
-import { Bounds } from "./penrose.js";
+import { Bounds } from "./bounds.js";
 import { penrose } from "./penrose.js";
 /***
  * Used by Mosaic figure.

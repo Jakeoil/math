@@ -58,12 +58,7 @@
                  * Line up the clickers
                  **/
                 import { pageClicked } from "./math.js";
-                import {
-                    clickType,
-                    clickFifths,
-                    clickIsDown,
-                    clickMode,
-                } from "./math.js";
+                import { clickMode } from "./math.js";
 
                 const ids = ["rwork", "inf1", "inf2", "gwork", "g012", "g3"];
                 const eles = document.querySelectorAll(".pageButton");
@@ -72,15 +67,6 @@
                     const funct = () => pageClicked(page, ele);
                     ele.addEventListener("click", funct, false);
                 }
-                document
-                    .querySelector("#type")
-                    .addEventListener("click", () => clickType(), false);
-                document
-                    .querySelector("#fifths")
-                    .addEventListener("click", () => clickFifths(), false);
-                document
-                    .querySelector("#isDown")
-                    .addEventListener("click", () => clickIsDown(), false);
                 document
                     .querySelector("#shape-mode")
                     .addEventListener("click", () => clickMode(), false);
@@ -91,10 +77,10 @@
                 <h3>Controls</h3>
                 <div class="control-group">
                     <h4>Shape type</h4>
-                    <button id="type" onClick="clickType()">Type</button>
+                    <button id="type">Type</button>
                     <h4>Orientation</h4>
-                    <button id="fifths" onClick="clickFifths()">Fifths</button>
-                    <button id="isDown" onClick="clickIsDown()">isDown</button>
+                    <button id="fifths">Fifths</button>
+                    <button id="isDown">isDown</button>
                 </div>
                 <div class="control-group">
                     <h4>Shape mode</h4>
