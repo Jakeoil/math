@@ -4,9 +4,8 @@ import { Bounds } from "./bounds.js";
 import { PenroseScreen } from "./penrose-screen.js";
 import { penrose } from "./penrose.js";
 import { real, quadrille, mosaic } from "./shape-modes.js";
-console.log(`importing from math.js`);
 
-import { cookie, controls, shapeColors } from "./controls.js";
+import { cookie, Controls, ShapeColors } from "./controls.js";
 
 /**
  * Penrose Mosaic
@@ -22,16 +21,13 @@ import { cookie, controls, shapeColors } from "./controls.js";
  */
 
 /** Initialize from contols in penrose.html */
-// Set colors to default
-console.log(`math shapecolors reset`);
+console.log("create instance shapeColors, controls");
+export const shapeColors = new ShapeColors(penroseApp);
 shapeColors.reset();
-// Set element values to colors
-console.log(`math shapecolors refresh`);
 shapeColors.refresh();
 
-console.log(`math controls reset`);
+const controls = new Controls(penroseApp, 0, 0, false);
 controls.reset();
-console.log(`math controls reset reset`);
 controls.refresh();
 
 /**
@@ -175,6 +171,7 @@ export function pageClicked(pageId, button) {
  */
 export function penroseApp() {
     console.log(`penroseApp`);
+
     // load the little canvases.
     makeCanvas("p5");
     makeCanvas("p3");

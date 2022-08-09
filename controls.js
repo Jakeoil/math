@@ -1,11 +1,6 @@
 import { norm } from "./point.js";
 import { penrose } from "./penrose.js";
-import { penroseApp } from "./math.js";
 
-/**
- * Note. In order to make these classes more generic, the app should be in the
- * constructor for the
- */
 class Cookie {
     constructor() {}
     getShapeMode(sm) {
@@ -47,16 +42,18 @@ class Cookie {
 export const cookie = new Cookie();
 
 /**********************************************************************
- * Shape colors control.
+ * Shape colors control for the DOM.
  * Contains a mapping of id to entry,
  * entry: {ele, color, defaultColor}
  * Todo: Move this to a module.
  * But first try to put the onClice and listener logic
  *
  */
-class ShapeColors {
-    constructor() {
+export class ShapeColors {
+    constructor(app) {
         console.log(`ShapeColors constructor`);
+        console.log(document.body);
+        this.app = app;
         this.idList = {
             "p5-color": { defaultColor: penrose.Pe5.defaultColor },
             "p3-color": { defaultColor: penrose.Pe3.defaultColor },
@@ -85,7 +82,6 @@ class ShapeColors {
             }
         }
         const reset_ele = document.querySelector("#color-reset");
-        console.log(`reset-ele: ${reset_ele}`);
 
         if (reset_ele)
             reset_ele.addEventListener(
@@ -103,7 +99,6 @@ class ShapeColors {
         for (const entry of Object.values(this.idList)) {
             if (entry.ele) entry.ele.value = entry.color;
         }
-        //console.log(`refresh: ${stringify(this.idList, null, "  ")}`);
     }
 
     /**
@@ -121,7 +116,7 @@ class ShapeColors {
         );
         this.idList[event.target.id].color = event.target.value;
         this.refresh();
-        penroseApp();
+        this.app();
     }
 
     onShapeColorsChange(event) {
@@ -130,18 +125,15 @@ class ShapeColors {
         );
         this.idList[event.target.id].color = event.target.value;
         this.refresh();
-        penroseApp();
+        this.app();
     }
     // The reset button was clicked.
     onColorReset() {
         this.reset();
         this.refresh();
-        penroseApp();
+        this.app();
     }
 }
-
-console.log(`Create shapeColors and export`);
-export const shapeColors = new ShapeColors();
 
 /**
  * A clustered set of globals
@@ -149,10 +141,10 @@ export const shapeColors = new ShapeColors();
  * Added cookie handling
  */
 export class Controls {
-    constructor(fifths, typeIndex, isDown) {
+    constructor(app, fifths, typeIndex, isDown) {
         console.log(`Controls constructor`);
+        this.app = app;
         this.eleFifths = document.querySelector("#fifths");
-        console.log(`eleFifths: ${this.eleFifths}`);
         if (this.eleFifths)
             this.eleFifths.addEventListener(
                 "click",
@@ -231,29 +223,21 @@ export class Controls {
     clickFifths() {
         this.bumpFifths();
         this.eleFifths.innerHTML = `fifths: ${this.fifths}`;
-        penroseApp();
+        this.app();
     }
 
     clickType() {
         this.bumpType();
         this.eleType.innerHTML = this.typeName;
-        penroseApp();
+        this.app();
     }
 
     clickIsDown() {
         this.toggleDirection();
         this.eleIsDown.innerHTML = this.direction;
-        penroseApp();
+        this.app();
     }
 }
-/**
- * This is the default global for the shape and orientation controls
- */
-// Note: cookies are a bitch here. (not so bad)
-console.log(`create controls and export`);
-export const controls = new Controls(0, 0, false);
-
-// Can this be made into a function?
 
 /**
  * cookie logic from  https://javascript.info/cookie

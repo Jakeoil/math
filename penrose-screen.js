@@ -1,12 +1,14 @@
 import { norm } from "./point.js";
 import { Bounds } from "./bounds.js";
 import { penrose } from "./penrose.js";
-console.log(`importing from penrose-screen`);
-import { shapeColors } from "./controls.js";
+import { shapeColors } from "./math.js";
 
 function tenths(fifths, isDown) {
     return (fifths * 2 + (isDown ? 5 : 0)) % 10;
 }
+
+// This routine depends on an initialized shapeColors instance.
+//
 function pColor(type) {
     switch (type) {
         case penrose.Pe5:
