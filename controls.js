@@ -239,6 +239,38 @@ export class Controls {
     }
 }
 
+const MODE_MOSAIC = "mosaic";
+const MODE_QUADRILLE = "quadrille";
+export const MODE_REAL = "real";
+const MODE_LIST = [MODE_MOSAIC, MODE_QUADRILLE, MODE_REAL];
+
+export class ShapeMode {
+    constructor(app) {
+        this.app = app;
+        this.eleMode = document.querySelector("#shape-mode");
+        this.reset();
+        if (this.eleMode)
+            this.eleMode.addEventListener(
+                "click",
+                this.clickMode.bind(this),
+                false
+            );
+    }
+    refresh() {
+        if (this.eleMode) this.eleMode.innerHTML = this.shapeMode;
+    }
+    reset() {
+        this.shapeMode = cookie.getShapeMode(MODE_MOSAIC);
+    }
+    clickMode() {
+        let new_idx =
+            (MODE_LIST.indexOf(this.shapeMode) + 1) % MODE_LIST.length;
+        this.shapeMode = MODE_LIST[new_idx];
+        cookie.setShapeMode(this.shapeMode);
+        this.refresh();
+        this.app();
+    }
+}
 /**
  * cookie logic from  https://javascript.info/cookie
  * @param {*} name

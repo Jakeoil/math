@@ -5,7 +5,7 @@ import { PenroseScreen } from "./penrose-screen.js";
 import { penrose } from "./penrose.js";
 import { real, quadrille, mosaic } from "./shape-modes.js";
 
-import { cookie, Controls, ShapeColors } from "./controls.js";
+import { cookie, Controls, ShapeColors, ShapeMode } from "./controls.js";
 
 /**
  * Penrose Mosaic
@@ -43,33 +43,33 @@ controls.refresh();
  *
  * Or maybe these should be tied in with PenroseScreen (todo)
  */
-const MODE_MOSAIC = "mosaic";
-const MODE_QUADRILLE = "quadrille";
-export const MODE_REAL = "real";
-const MODE_LIST = [MODE_MOSAIC, MODE_QUADRILLE, MODE_REAL];
+// const MODE_MOSAIC = "mosaic";
+// const MODE_QUADRILLE = "quadrille";
+// export const MODE_REAL = "real";
+// const MODE_LIST = [MODE_MOSAIC, MODE_QUADRILLE, MODE_REAL];
 
-let shapeMode = cookie.getShapeMode(MODE_MOSAIC); // send default
-const eleMode = document.querySelector("#shape-mode");
-
+export const shapeMode = new ShapeMode(penroseApp); //cookie.getShapeMode(MODE_MOSAIC); // send default
+//const eleMode = document.querySelector("#shape-mode");
 /**
  * Changing the shape mode also changes the globals that penta, star and deca
  * use.
  * Todo: penta star and deca also have some crud, for example drawing the
  * figures.
  */
-function refreshShapeMode() {
-    if (eleMode) eleMode.innerHTML = shapeMode;
-}
+shapeMode.refresh();
+// function refreshShapeMode() {
+//     if (eleMode) eleMode.innerHTML = shapeMode;
+// }
 
-refreshShapeMode();
+// refreshShapeMode();
 
-export const clickMode = function () {
-    let new_idx = (MODE_LIST.indexOf(shapeMode) + 1) % MODE_LIST.length;
-    shapeMode = MODE_LIST[new_idx];
-    cookie.setShapeMode(shapeMode);
-    refreshShapeMode();
-    penroseApp();
-};
+// export const clickMode = function () {
+//     let new_idx = (MODE_LIST.indexOf(shapeMode) + 1) % MODE_LIST.length;
+//     shapeMode = MODE_LIST[new_idx];
+//     cookie.setShapeMode(shapeMode);
+//     refreshShapeMode();
+//     penroseApp();
+// };
 
 /***
  *  Page Navigation defaults.
@@ -220,7 +220,7 @@ function makeCanvas(canvasId) {
         g.strokeStyle = penrose.OUTLINE;
         g.lineWidth = 1;
         let scale = 10;
-        const { penta, star } = iface(g, scale, shapeMode);
+        const { penta, star } = iface(g, scale, shapeMode.shapeMode);
         let bounds;
         let width = 0;
         let height = 0;
@@ -298,7 +298,7 @@ function drawFirstInflation(id) {
         const { penta, star, pentaRhomb, starRhomb } = iface(
             g,
             scale,
-            shapeMode
+            shapeMode.shapeMode
         );
 
         let x = 8;
@@ -391,7 +391,7 @@ function drawSecondInflation(id) {
         const { star, penta, pentaRhomb, starRhomb } = iface(
             g,
             scale,
-            shapeMode
+            shapeMode.shapeMode
         );
 
         let x = 25;
@@ -466,7 +466,7 @@ function drawGridWork(id) {
         g.strokeStyle = penrose.OUTLINE;
         g.lineWidth = 1;
         let scale = 10;
-        const { deca, grid } = iface(g, scale, shapeMode);
+        const { deca, grid } = iface(g, scale, shapeMode.shapeMode);
 
         let y = 5;
         const shapes = [mosaic.penta, mosaic.diamond, mosaic.star, mosaic.boat];
@@ -579,7 +579,7 @@ function drawGeneric123(id) {
     g.strokeStyle = penrose.OUTLINE;
     g.lineWidth = 1;
     let scale = 10;
-    const { penta, star, deca } = iface(g, scale, shapeMode);
+    const { penta, star, deca } = iface(g, scale, shapeMode.shapeMode);
     penrose.scale = scale; // Maybe does not use it.
 
     console.log(`math shapecolors drawGeneric123`);
@@ -681,7 +681,7 @@ function drawGeneric3(id) {
     g.strokeStyle = penrose.OUTLINE;
     g.lineWidth = 1;
     let scale = 4;
-    const { deca, decaRhomb } = iface(g, scale, shapeMode);
+    const { deca, decaRhomb } = iface(g, scale, shapeMode.shapeMode);
     const drawScreen = function () {
         let x = 100;
         let y = 250;
@@ -735,7 +735,7 @@ function drawRealWork(id) {
     g.strokeStyle = penrose.OUTLINE;
     g.lineWidth = 1;
     let scale = 10;
-    const { star, penta, deca } = iface(g, scale, shapeMode);
+    const { star, penta, deca } = iface(g, scale, shapeMode.shapeMode);
 
     const drawScreen = function () {
         //const rShapes = [real.penta];

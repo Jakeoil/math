@@ -2,6 +2,7 @@ import { norm } from "./point.js";
 import { Bounds } from "./bounds.js";
 import { penrose } from "./penrose.js";
 import { shapeColors } from "./math.js";
+import { shapeMode } from "./math.js";
 
 function tenths(fifths, isDown) {
     return (fifths * 2 + (isDown ? 5 : 0)) % 10;
@@ -29,7 +30,7 @@ function pColor(type) {
 
 export class PenroseScreen {
     constructor(g, scale, mode) {
-        //console.log(`g ${typeof g} scale ${typeof scale} mode ${typeof mode}`);
+        console.log(`g ${typeof g} scale ${scale} mode ${mode}`);
         this.g = g;
         this.scale = scale;
         this.mode = mode;

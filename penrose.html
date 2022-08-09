@@ -58,7 +58,6 @@
                  * Line up the clickers
                  **/
                 import { pageClicked } from "./math.js";
-                import { clickMode } from "./math.js";
 
                 const ids = ["rwork", "inf1", "inf2", "gwork", "g012", "g3"];
                 const eles = document.querySelectorAll(".pageButton");
@@ -67,9 +66,6 @@
                     const funct = () => pageClicked(page, ele);
                     ele.addEventListener("click", funct, false);
                 }
-                document
-                    .querySelector("#shape-mode")
-                    .addEventListener("click", () => clickMode(), false);
             </script>
         </nav>
         <div id="meat">
@@ -85,7 +81,7 @@
                 </div>
                 <div class="control-group">
                     <h4>Shape mode</h4>
-                    <button id="shape-mode" onClick="clickMode()"></button>
+                    <button id="shape-mode"></button>
                 </div>
                 <div class="control-group">
                     <!-- ColorShapes-->
