@@ -1,7 +1,5 @@
 "use strict";
 import { real, quadrille, mosaic } from "./shape-modes.js";
-import { p, P } from "./point.js";
-
 export const stringify = JSON.stringify;
 
 /**

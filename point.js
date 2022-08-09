@@ -1,9 +1,13 @@
-//fimport { stringify } from "./penrose.js";
+/**
+ * Point and Utilities for convenience
+ */
+export const norm = (n) => ((n % 5) + 5) % 5;
+
 /**
  * Orthoganal Penrose program version one.
  * These routines process a scaled grid. They do not control rendering.
  */
-export class P {
+class P {
     constructor(x, y) {
         this.x = x;
         this.y = y;

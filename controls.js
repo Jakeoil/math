@@ -1,7 +1,11 @@
+import { norm } from "./point.js";
 import { penrose } from "./penrose.js";
 import { penroseApp } from "./math.js";
-const norm = (n) => ((n % 5) + 5) % 5;
 
+/**
+ * Note. In order to make these classes more generic, the app should be in the
+ * constructor for the
+ */
 class Cookie {
     constructor() {}
     getShapeMode(sm) {
@@ -41,47 +45,6 @@ class Cookie {
 }
 // The cookie interface
 export const cookie = new Cookie();
-
-// export const cookie = (function () {
-//     const Cookie = {};
-
-//     Cookie.getShapeMode = function (sm) {
-//         const cookie = getCookie("shape-mode");
-//         if (cookie) {
-//             return cookie;
-//         }
-//         return sm;
-//     };
-//     Cookie.setShapeMode = function (sm) {
-//         setCookie("shape-mode", sm, { "max-age": 3600 });
-//     };
-
-//     Cookie.getActiveButtonIndex = function (index) {
-//         const cookie = getCookie("active-button-index");
-//         if (cookie) {
-//             return cookie;
-//         }
-//         return index;
-//     };
-//     Cookie.setActiveButtonIndex = function (index) {
-//         setCookie("active-button-index", index, { "max-age": 3600 });
-//     };
-
-//     Cookie.getFifths = function (fifths) {
-//         return fifths;
-//     };
-//     Cookie.getIsDown = function (isDown) {
-//         return isDown;
-//     };
-//     Cookie.getTypeIndex = function (index) {
-//         return index;
-//     };
-//     Cookie.setFifths = function (fifths) {};
-//     Cookie.setIsDown = function (isDown) {};
-//     Cookie.setTypeIndex = function (index) {};
-
-//     return Cookie;
-// })();
 
 /**********************************************************************
  * Shape colors control.

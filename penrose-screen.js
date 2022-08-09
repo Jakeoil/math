@@ -1,9 +1,9 @@
+import { norm } from "./point.js";
 import { Bounds } from "./bounds.js";
 import { penrose } from "./penrose.js";
 console.log(`importing from penrose-screen`);
 import { shapeColors } from "./controls.js";
 
-const norm = (n) => ((n % 5) + 5) % 5;
 function tenths(fifths, isDown) {
     return (fifths * 2 + (isDown ? 5 : 0)) % 10;
 }

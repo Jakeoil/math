@@ -1,4 +1,4 @@
-import { P } from "./point.js";
+import { p } from "./point.js";
 /**
  * Mutable class
  * This measures and adjusts the bounding rectangle.
@@ -143,14 +143,14 @@ export class Bounds {
     }
 
     get min() {
-        return new P(this.minX, this.minY);
+        return p(this.minX, this.minY);
         // Oh shit. This is a dumb one.  Synonym for minPoint
     }
     set min(point) {
         this.minPoint = point;
     }
     get max() {
-        return new P(this.maxX, this.maxY);
+        return p(this.maxX, this.maxY);
     }
 
     toString() {
