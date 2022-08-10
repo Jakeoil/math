@@ -357,6 +357,43 @@ export class PenroseScreen {
         this.g.lineWidth = currentWidth;
     }
 
+    rhombus(fill, offset, shape) {
+        let currentStrokeStyle = this.g.strokeStyle;
+        let currentLineWidth = this.g.currentLineWidth;
+        let start = true;
+        const bounds = new Bounds();
+        for (const point of shape) {
+            g.strokeStyle = "#000000";
+            g.fillStyle = fill;
+            g.lineWidth = 3;
+            if (start) {
+                this.g.beginPath();
+                this.g.moveTo(
+                    (point.x + offset.x) * this.scale,
+                    (point.y + offset.y) * this.scale
+                );
+                start = false;
+            } else {
+                this.g.lineTo(
+                    (point.x + offset.x) * this.scale,
+                    (point.y + offset.y) * this.scale
+                );
+            }
+
+            bounds.addPoint(offset, point);
+        }
+
+        this.g.closePath();
+        if (fill) {
+            this.g.fill();
+        }
+        this.g.stroke();
+
+        this.g.strokeStyle = currentStrokeStyle;
+        this.g.currentLineWidth = currentLineWidth;
+        return bounds;
+    }
+
     pentaRhomb(fifths, type, isDown, loc, exp) {
         const bounds = new Bounds();
         fifths = norm(fifths);
@@ -384,6 +421,7 @@ export class PenroseScreen {
                     //this.line(center, start);
                     const end = start.tr(tWheel[tenths(angle, !isDown)]);
                     this.line(start, end);
+                    //this.line(start, loc);
                 }
             }
             return bounds;

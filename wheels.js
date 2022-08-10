@@ -1,3 +1,6 @@
+// Q. why don't I need to import p?
+// A. p the point is not used. In fact, the variable p is used for other things
+
 /***************************************************************  
  * Discussion of the second expansions penta points.
  * These are the x and y offset from a center rectangle to an inverted rectangle.

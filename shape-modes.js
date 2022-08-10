@@ -110,6 +110,34 @@ function solve(proportions, inputKey, value, targetKey) {
     }
 }
 
+function mod10(n) {
+    return n % 10;
+}
+
+function goThick(tWheel) {
+    return [rhThick(0), rhThick(1), rhThick(2)];
+
+    function rhThick(tenth) {
+        const o = p(0, 0);
+        const o1 = o.tr(tWheel[mod10(tenth + 9)]);
+        const o2 = o1.tr(tWheel[mod10(tenth + 1)]);
+        const o3 = o2.tr(tWheel[mod10(tenth + 4)]);
+        return [o, o1, o2, o3];
+    }
+}
+
+function goThin(tWheel) {
+    return [rhThin(0), rhThin(1), rhThin(2)];
+
+    function rhThin(tenth) {
+        const o = p(0, 0);
+        const o1 = o.tr(tWheel[mod10(tenth + 3)]);
+        const o2 = o1.tr(tWheel[mod10(tenth + 7)]);
+        const o3 = o2.tr(tWheel[mod10(tenth + 8)]);
+        return [o, o1, o2, o3];
+    }
+}
+
 class Real {
     constructor() {
         /**
@@ -296,6 +324,7 @@ class Real {
             starDimples[0],
             starDimples[2],
         ];
+
         // pSeed is the distance between two pentagon centers.
         // It is basically 2 * pgon.r
         const pMag = solve(pgon, "a", 4, "r") * 2;
@@ -323,12 +352,22 @@ class Real {
                 unitUp[1].mult(mag),
             ];
         }
+
         this.penta = shapeWheel(pentaUp);
         this.star = shapeWheel(starUp);
         this.boat = shapeWheel(boatUp, boatWon, boatToo);
         this.diamond = shapeWheel(diamondUp, diamondWon, diamondToo);
 
         this.wheels = new Wheels(pSeed, sSeed, tSeed, dSeed);
+        const tWheel = this.wheels.t[1].w;
+        const [thickRhombUp, thickRhombWon, thickRhombToo] = goThick(tWheel);
+        const [thinRhombUp, thinRhombWon, thinRhombToo] = goThin(tWheel);
+        this.thinRhomb = shapeWheel(thinRhombUp, thinRhombWon, thinRhombToo);
+        this.thickRhomb = shapeWheel(
+            thickRhombUp,
+            thickRhombWon,
+            thickRhombToo
+        );
 
         this.key = "real";
         this.renderShape = outline;
@@ -417,14 +456,25 @@ class Quadrille {
         this.star = shapeWheel(starUp);
         this.boat = shapeWheel(boatUp, boatWon, boatToo);
         this.diamond = shapeWheel(diamondUp, diamondWon, diamondToo);
-        this.key = "quadrille";
-        this.renderShape = outline;
+
         const pSeed = [p(0, -6), p(3, -4), p(5, -2)];
         const sSeed = [p(0, -5), p(3, -5), p(5, -1)];
         const tSeed = [p(0, -8), p(5, -8), p(8, -2)];
         const dSeed = [p(0, -3), p(2, -3), p(3, -1)];
 
         this.wheels = new Wheels(pSeed, sSeed, tSeed, dSeed);
+        const tWheel = this.wheels.t[1].w;
+        const [thickRhombUp, thickRhombWon, thickRhombToo] = goThick(tWheel);
+        const [thinRhombUp, thinRhombWon, thinRhombToo] = goThin(tWheel);
+        this.thinRhomb = shapeWheel(thinRhombUp, thinRhombWon, thinRhombToo);
+        this.thickRhomb = shapeWheel(
+            thickRhombUp,
+            thickRhombWon,
+            thickRhombToo
+        );
+
+        this.key = "quadrille";
+        this.renderShape = outline;
     }
 }
 export const quadrille = new Quadrille();
