@@ -578,6 +578,15 @@ class Mosaic {
         const dSeed = [p(0, -3), p(2, -3), p(3, -1)];
 
         this.wheels = new Wheels(pSeed, sSeed, tSeed, dSeed);
+        const tWheel = this.wheels.t[1].w;
+        const [thickRhombUp, thickRhombWon, thickRhombToo] = goThick(tWheel);
+        const [thinRhombUp, thinRhombWon, thinRhombToo] = goThin(tWheel);
+        this.thinRhomb = shapeWheel(thinRhombUp, thinRhombWon, thinRhombToo);
+        this.thickRhomb = shapeWheel(
+            thickRhombUp,
+            thickRhombWon,
+            thickRhombToo
+        );
     }
 }
 

@@ -359,13 +359,13 @@ export class PenroseScreen {
 
     rhombus(fill, offset, shape) {
         let currentStrokeStyle = this.g.strokeStyle;
-        let currentLineWidth = this.g.currentLineWidth;
+        let currentLineWidth = this.g.lineWidth;
         let start = true;
         const bounds = new Bounds();
         for (const point of shape) {
-            g.strokeStyle = "#000000";
-            g.fillStyle = fill;
-            g.lineWidth = 3;
+            this.g.strokeStyle = "#000000";
+            this.g.fillStyle = fill;
+            this.g.lineWidth = 3;
             if (start) {
                 this.g.beginPath();
                 this.g.moveTo(
@@ -390,7 +390,7 @@ export class PenroseScreen {
         this.g.stroke();
 
         this.g.strokeStyle = currentStrokeStyle;
-        this.g.currentLineWidth = currentLineWidth;
+        this.g.lineWidth = currentLineWidth;
         return bounds;
     }
 
@@ -404,7 +404,51 @@ export class PenroseScreen {
         const pWheel = wheels.p[exp].w;
         const sWheel = wheels.s[exp].w;
         const tWheel = wheels.t[exp].w;
+
         if (exp == 1) {
+            const thins = penrose[this.mode].thinRhomb;
+            const thicks = penrose[this.mode].thickRhomb;
+
+            console.log(`start`);
+            for (let i = 0; i < 5; i++) {
+                const shift = norm(fifths + i);
+                switch (type) {
+                    case penrose.Pe5:
+                        const shape = thicks[tenths(shift, isDown)];
+                        this.rhombus(null, loc, shape);
+                        break;
+                    case penrose.Pe3:
+                        console.log(`Pe3 shift: ${shift}`);
+                        switch (i) {
+                            case 0:
+                                const thinR = thins[tenths(shift, isDown)];
+                                this.rhombus(null, loc, thinR);
+
+                            case 1:
+                            case 4:
+                                const shape = thicks[tenths(shift, isDown)];
+                                this.rhombus(null, loc, shape);
+                                break;
+                            default:
+                                break;
+                        }
+                        break;
+                    case penrose.Pe1:
+                        switch (i) {
+                            case 0:
+                                const shape2 = thicks[tenths(shift, isDown)];
+                                this.rhombus(null, loc, shape2);
+                                break;
+                            case 4:
+                            case 1:
+                                const thinR2 = thins[tenths(shift, isDown)];
+                                this.rhombus(null, loc, thinR2);
+                                break;
+                        }
+                }
+            }
+        }
+        if (exp == 1 && exp != 1) {
             for (let i = 0; i < 5; i++) {
                 const shift = norm(fifths + i);
                 if (!type.diamond.includes(i)) {
@@ -467,7 +511,7 @@ export class PenroseScreen {
         const wheels = penrose[this.mode].wheels;
         const tWheel = wheels.t[exp].w;
         const sWheel = wheels.s[exp].w;
-        if (exp == 1) {
+        if (exp == 1 && exp != 1) {
             // Draw appropriate part of star
             for (let i = 0; i < 5; i++) {
                 const shift = norm(fifths + i);
