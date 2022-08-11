@@ -114,7 +114,10 @@ function mod10(n) {
     return n % 10;
 }
 
-function goThick(tWheel) {
+function goThick(wheels) {
+    const tWheel = wheels.t[1].w;
+    const sWheel = wheels.s[1].w;
+
     return [rhThick(0), rhThick(1), rhThick(2)];
 
     function rhThick(tenth) {
@@ -126,7 +129,9 @@ function goThick(tWheel) {
     }
 }
 
-function goThin(tWheel) {
+function goThin(wheels) {
+    const tWheel = wheels.t[1].w;
+    const sWheel = wheels.s[1].w;
     return [rhThin(0), rhThin(1), rhThin(2)];
 
     function rhThin(tenth) {
@@ -359,9 +364,10 @@ class Real {
         this.diamond = shapeWheel(diamondUp, diamondWon, diamondToo);
 
         this.wheels = new Wheels(pSeed, sSeed, tSeed, dSeed);
-        const tWheel = this.wheels.t[1].w;
-        const [thickRhombUp, thickRhombWon, thickRhombToo] = goThick(tWheel);
-        const [thinRhombUp, thinRhombWon, thinRhombToo] = goThin(tWheel);
+        const [thickRhombUp, thickRhombWon, thickRhombToo] = goThick(
+            this.wheels
+        );
+        const [thinRhombUp, thinRhombWon, thinRhombToo] = goThin(this.wheels);
         this.thinRhomb = shapeWheel(thinRhombUp, thinRhombWon, thinRhombToo);
         this.thickRhomb = shapeWheel(
             thickRhombUp,
@@ -463,9 +469,10 @@ class Quadrille {
         const dSeed = [p(0, -3), p(2, -3), p(3, -1)];
 
         this.wheels = new Wheels(pSeed, sSeed, tSeed, dSeed);
-        const tWheel = this.wheels.t[1].w;
-        const [thickRhombUp, thickRhombWon, thickRhombToo] = goThick(tWheel);
-        const [thinRhombUp, thinRhombWon, thinRhombToo] = goThin(tWheel);
+        const [thickRhombUp, thickRhombWon, thickRhombToo] = goThick(
+            this.wheels
+        );
+        const [thinRhombUp, thinRhombWon, thinRhombToo] = goThin(this.wheels);
         this.thinRhomb = shapeWheel(thinRhombUp, thinRhombWon, thinRhombToo);
         this.thickRhomb = shapeWheel(
             thickRhombUp,
@@ -578,9 +585,10 @@ class Mosaic {
         const dSeed = [p(0, -3), p(2, -3), p(3, -1)];
 
         this.wheels = new Wheels(pSeed, sSeed, tSeed, dSeed);
-        const tWheel = this.wheels.t[1].w;
-        const [thickRhombUp, thickRhombWon, thickRhombToo] = goThick(tWheel);
-        const [thinRhombUp, thinRhombWon, thinRhombToo] = goThin(tWheel);
+        const [thickRhombUp, thickRhombWon, thickRhombToo] = goThick(
+            this.wheels
+        );
+        const [thinRhombUp, thinRhombWon, thinRhombToo] = goThin(this.wheels);
         this.thinRhomb = shapeWheel(thinRhombUp, thinRhombWon, thinRhombToo);
         this.thickRhomb = shapeWheel(
             thickRhombUp,
