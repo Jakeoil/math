@@ -556,8 +556,8 @@ function drawGridWork(id) {
         base = p(45, 155);
         exp = 2;
         deca(fifths, isDown, base, exp);
-        decaRhomb(fifths, isDown, base, exp);
         grid(base, 18);
+        decaRhomb(fifths, isDown, base, exp);
     }
 }
 

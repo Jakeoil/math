@@ -345,15 +345,18 @@ export class PenroseScreen {
         this.g.stroke();
     }
 
-    line(loc, end) {
-        this.g.strokeStyle = "#000000";
+    line(loc, end, strokeStyle) {
         const currentWidth = this.g.lineWidth;
-        this.g.lineWidth = 2;
+        const currentStrokeStyle = this.g.strokeStyle;
+        this.g.strokeStyle = strokeStyle ? strokeStyle : "black";
+        this.g.lineWidth = 1;
         this.g.beginPath();
         this.g.moveTo(loc.x * this.scale, loc.y * this.scale);
         this.g.lineTo(end.x * this.scale, end.y * this.scale);
         this.g.stroke();
+
         this.g.lineWidth = currentWidth;
+        this.g.strokeStyle = currentStrokeStyle;
     }
 
     rhombus(fill, offset, shape, strokeStyle) {
@@ -364,7 +367,7 @@ export class PenroseScreen {
         for (const point of shape) {
             this.g.strokeStyle = strokeStyle ? strokeStyle : "black";
             this.g.fillStyle = fill;
-            this.g.lineWidth = 2;
+            this.g.lineWidth = 3;
             if (start) {
                 this.g.beginPath();
                 this.g.moveTo(
@@ -413,18 +416,18 @@ export class PenroseScreen {
                 switch (type) {
                     case penrose.Pe5:
                         const shape = thicks[tenths(shift, isDown)];
-                        this.rhombus(null, loc, shape);
+                        this.rhombus(null, loc, shape, "red");
                         break;
                     case penrose.Pe3:
                         switch (i) {
                             case 0:
                                 const thinR = thins[tenths(shift, isDown)];
-                                this.rhombus(null, loc, thinR);
+                                this.rhombus(null, loc, thinR, "red");
 
                             case 1:
                             case 4:
                                 const shape = thicks[tenths(shift, isDown)];
-                                this.rhombus(null, loc, shape);
+                                this.rhombus(null, loc, shape, "red");
                                 break;
                             default:
                                 break;
@@ -434,12 +437,12 @@ export class PenroseScreen {
                         switch (i) {
                             case 0:
                                 const shape2 = thicks[tenths(shift, isDown)];
-                                this.rhombus(null, loc, shape2);
+                                this.rhombus(null, loc, shape2, "red");
                                 break;
                             case 4:
                             case 1:
                                 const thinR2 = thins[tenths(shift, isDown)];
-                                this.rhombus(null, loc, thinR2);
+                                this.rhombus(null, loc, thinR2, "red");
                                 break;
                         }
                 }
@@ -450,7 +453,7 @@ export class PenroseScreen {
                 const shift = norm(fifths + i);
                 if (!type.diamond.includes(i)) {
                     let end = loc.tr(tWheel[tenths(shift, !isDown)]);
-                    this.line(loc, end);
+                    this.line(loc, end, "cyan");
                 }
                 // Now we have split the orange ones with a line.
                 // Find the orange center.
@@ -461,8 +464,7 @@ export class PenroseScreen {
                     const start = center.tr(pWheel[tenths(angle, isDown)]);
                     //this.line(center, start);
                     const end = start.tr(tWheel[tenths(angle, !isDown)]);
-                    this.line(start, end);
-                    //this.line(start, loc);
+                    this.line(start, end, "cyan");
                 }
             }
             return bounds;
@@ -515,7 +517,7 @@ export class PenroseScreen {
                 const angle = tenths(shift, isDown);
                 if (type.color[i] != null) {
                     const end = loc.tr(tWheel[angle]);
-                    this.line(loc, end);
+                    this.line(loc, end, "cyan");
                 }
             }
             return bounds;
