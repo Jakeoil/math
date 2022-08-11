@@ -30,7 +30,6 @@ function pColor(type) {
 
 export class PenroseScreen {
     constructor(g, scale, mode) {
-        console.log(`g ${typeof g} scale ${scale} mode ${mode}`);
         this.g = g;
         this.scale = scale;
         this.mode = mode;
@@ -409,7 +408,6 @@ export class PenroseScreen {
             const thins = penrose[this.mode].thinRhomb;
             const thicks = penrose[this.mode].thickRhomb;
 
-            console.log(`start`);
             for (let i = 0; i < 5; i++) {
                 const shift = norm(fifths + i);
                 switch (type) {
@@ -418,7 +416,6 @@ export class PenroseScreen {
                         this.rhombus(null, loc, shape);
                         break;
                     case penrose.Pe3:
-                        console.log(`Pe3 shift: ${shift}`);
                         switch (i) {
                             case 0:
                                 const thinR = thins[tenths(shift, isDown)];

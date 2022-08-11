@@ -21,7 +21,6 @@ import { cookie, Controls, ShapeColors, ShapeMode } from "./controls.js";
  */
 
 /** Initialize from contols in penrose.html */
-console.log("create instance shapeColors, controls");
 export const shapeColors = new ShapeColors(penroseApp);
 shapeColors.reset();
 shapeColors.refresh();
@@ -466,7 +465,7 @@ function drawGridWork(id) {
         g.strokeStyle = penrose.OUTLINE;
         g.lineWidth = 1;
         let scale = 10;
-        const { deca, grid } = iface(g, scale, shapeMode.shapeMode);
+        const { deca, decaRhomb, grid } = iface(g, scale, shapeMode.shapeMode);
 
         let y = 5;
         const shapes = [mosaic.penta, mosaic.diamond, mosaic.star, mosaic.boat];
@@ -557,6 +556,7 @@ function drawGridWork(id) {
         base = p(45, 155);
         exp = 2;
         deca(fifths, isDown, base, exp);
+        decaRhomb(fifths, isDown, base, exp);
         grid(base, 18);
     }
 }
@@ -581,8 +581,6 @@ function drawGeneric123(id) {
     let scale = 10;
     const { penta, star, deca } = iface(g, scale, shapeMode.shapeMode);
     penrose.scale = scale; // Maybe does not use it.
-
-    console.log(`math shapecolors drawGeneric123`);
 
     function starType(type) {
         switch (controls.typeList[type]) {

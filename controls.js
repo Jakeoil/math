@@ -51,8 +51,6 @@ export const cookie = new Cookie();
  */
 export class ShapeColors {
     constructor(app) {
-        console.log(`ShapeColors constructor`);
-        console.log(document.body);
         this.app = app;
         this.idList = {
             "p5-color": { defaultColor: penrose.Pe5.defaultColor },
@@ -142,7 +140,6 @@ export class ShapeColors {
  */
 export class Controls {
     constructor(app, fifths, typeIndex, isDown) {
-        console.log(`Controls constructor`);
         this.app = app;
         this.eleFifths = document.querySelector("#fifths");
         if (this.eleFifths)
@@ -154,9 +151,7 @@ export class Controls {
         else console.log(`no eleFifths!`);
 
         this.eleType = document.querySelector("#type");
-        console.log(this.eleType);
         this.eleIsDown = document.querySelector("#isDown");
-        console.log(this.eleIsDown);
 
         if (this.eleType)
             this.eleType.addEventListener(

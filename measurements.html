@@ -6,6 +6,10 @@
         <link rel="shortcut icon" href="deca2.png" />
         <title>Measurement</title>
         <link rel="stylesheet" href="math.css" />
+        <script type="module">
+            import { measureTasks } from "./measurements.js";
+            window.addEventListener("load", measureTasks, false);
+        </script>
     </head>
     <body>
         <h1>Measurements</h1>
@@ -65,82 +69,6 @@
              * loc : a Point.
              *
              **/
-            import { p } from "./point.js";
-            import { penrose } from "./penrose.js";
-            import { Bounds } from "./bounds.js";
-            import { outline } from "./shape-modes.js";
-            import { iface } from "./math.js";
-            import { MODE_REAL } from "./controls.js";
-            import { PenroseScreen } from "./penrose-screen.js";
-
-            window.addEventListener("load", () => measureTasks(), false);
-            export function measureTasks() {
-                drawQuadrille();
-                drawImage();
-            }
-
-            function drawQuadrille() {
-                const canvas = document.querySelector("#quadrille");
-                canvas.width = 0;
-                canvas.height = 0;
-
-                const g = canvas.getContext("2d");
-                g.strokeStyle = penrose.OUTLINE;
-                g.lineWidth = 1;
-                const scale = 3.7;
-                const shapeMode = MODE_REAL;
-                const { deca } = iface(g, scale, shapeMode);
-
-                let base = p(0, 0);
-                let fifths = 0;
-                let isDown = false;
-                let exp = 2;
-                // Now some decagons
-                let bounds = new Bounds();
-                bounds.expand(deca(fifths, isDown, base, exp));
-
-                base = base.tr(p(bounds.minPoint.x, bounds.minPoint.y).neg);
-                canvas.width = (bounds.maxPoint.x - bounds.minPoint.x) * scale;
-                canvas.height = (bounds.maxPoint.y - bounds.minPoint.y) * scale;
-
-                bounds = new Bounds();
-                bounds.expand(deca(fifths, isDown, base, exp));
-                bounds = new Bounds();
-                const img = canvas.toDataURL("img.png");
-            }
-
-            function drawImage() {
-                const canvas = document.createElement("canvas");
-                canvas.width = 0;
-                canvas.height = 0;
-
-                const g = canvas.getContext("2d");
-                g.strokeStyle = penrose.OUTLINE;
-                g.lineWidth = 1;
-                const scale = 5;
-                const shapeMode = MODE_REAL;
-                const { deca } = iface(g, scale, shapeMode);
-
-                // Now some decagons
-                let fifths = 0;
-                let isDown = false;
-                let base = p(0, 0);
-                let exp = 1;
-                let bounds = new Bounds();
-                bounds.expand(deca(fifths, isDown, base, exp));
-                bounds.pad(1);
-                base = base.tr(p(bounds.minPoint.x, bounds.minPoint.y).neg);
-                canvas.width = (bounds.maxPoint.x - bounds.minPoint.x) * scale;
-                canvas.height = (bounds.maxPoint.y - bounds.minPoint.y) * scale;
-
-                bounds = new Bounds();
-                bounds.expand(deca(fifths, isDown, base, exp));
-                bounds.pad(1);
-                bounds = new Bounds();
-                const img = canvas.toDataURL("img.png");
-                const ele = document.querySelector("#image");
-                ele.src = img;
-            }
         </script>
     </body>
 </html>
