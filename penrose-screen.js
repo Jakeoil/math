@@ -356,15 +356,15 @@ export class PenroseScreen {
         this.g.lineWidth = currentWidth;
     }
 
-    rhombus(fill, offset, shape) {
+    rhombus(fill, offset, shape, strokeStyle) {
         let currentStrokeStyle = this.g.strokeStyle;
         let currentLineWidth = this.g.lineWidth;
         let start = true;
         const bounds = new Bounds();
         for (const point of shape) {
-            this.g.strokeStyle = "#000000";
+            this.g.strokeStyle = strokeStyle ? strokeStyle : "black";
             this.g.fillStyle = fill;
-            this.g.lineWidth = 3;
+            this.g.lineWidth = 2;
             if (start) {
                 this.g.beginPath();
                 this.g.moveTo(
