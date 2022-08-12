@@ -382,7 +382,7 @@ export class PenroseScreen {
         for (const point of shape) {
             this.g.strokeStyle = strokeStyle ? strokeStyle : "black";
             this.g.fillStyle = fill;
-            this.g.lineWidth = 3;
+            this.g.lineWidth = 2;
             if (start) {
                 this.g.beginPath();
                 this.g.moveTo(
@@ -431,18 +431,18 @@ export class PenroseScreen {
                 switch (type) {
                     case penrose.Pe5:
                         const shape = thicks[tenths(shift, isDown)];
-                        this.rhombus(null, loc, shape, "red");
+                        this.rhombus(null, loc, shape, "black");
                         break;
                     case penrose.Pe3:
                         switch (i) {
                             case 0:
                                 const thinR = thins[tenths(shift, isDown)];
-                                this.rhombus(null, loc, thinR, "red");
+                                this.rhombus(null, loc, thinR, "black");
 
                             case 1:
                             case 4:
                                 const shape = thicks[tenths(shift, isDown)];
-                                this.rhombus(null, loc, shape, "red");
+                                this.rhombus(null, loc, shape, "black");
                                 break;
                             default:
                                 break;
@@ -452,12 +452,12 @@ export class PenroseScreen {
                         switch (i) {
                             case 0:
                                 const shape2 = thicks[tenths(shift, isDown)];
-                                this.rhombus(null, loc, shape2, "red");
+                                this.rhombus(null, loc, shape2, "black");
                                 break;
                             case 4:
                             case 1:
                                 const thinR2 = thins[tenths(shift, isDown)];
-                                this.rhombus(null, loc, thinR2, "red");
+                                this.rhombus(null, loc, thinR2, "black");
                                 break;
                         }
                 }

@@ -117,12 +117,14 @@ function mod10(n) {
 function goThick(wheels) {
     const tWheel = wheels.t[1].w;
     const sWheel = wheels.s[1].w;
+    const pWheel = wheels.p[1].w;
+    const dWheel = wheels.d[1].w;
 
     return [rhThick(0), rhThick(1), rhThick(2)];
 
     function rhThick(tenth) {
         const o = p(0, 0);
-        const o1 = o.tr(tWheel[mod10(tenth + 9)]);
+        const o1 = o.tr(pWheel[mod10(tenth + 9)]).tr(dWheel[mod10(tenth + 9)]);
         const o2 = o1.tr(tWheel[mod10(tenth + 1)]);
         const o3 = o2.tr(tWheel[mod10(tenth + 4)]);
         return [o, o1, o2, o3];
@@ -132,11 +134,13 @@ function goThick(wheels) {
 function goThin(wheels) {
     const tWheel = wheels.t[1].w;
     const sWheel = wheels.s[1].w;
+    const pWheel = wheels.p[1].w;
+    const dWheel = wheels.d[1].w;
     return [rhThin(0), rhThin(1), rhThin(2)];
 
     function rhThin(tenth) {
         const o = p(0, 0);
-        const o1 = o.tr(tWheel[mod10(tenth + 3)]);
+        const o1 = o.tr(dWheel[mod10(tenth + 3)]).tr(pWheel[mod10(tenth + 3)]);
         const o2 = o1.tr(tWheel[mod10(tenth + 7)]);
         const o3 = o2.tr(tWheel[mod10(tenth + 8)]);
         return [o, o1, o2, o3];
