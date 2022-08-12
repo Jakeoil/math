@@ -147,6 +147,39 @@ function goThin(wheels) {
     }
 }
 
+function goThickReal(wheels) {
+    const tWheel = wheels.t[1].w;
+    const sWheel = wheels.s[1].w;
+    const pWheel = wheels.p[1].w;
+    const dWheel = wheels.d[1].w;
+
+    return [rhThick(0), rhThick(1), rhThick(2)];
+
+    function rhThick(tenth) {
+        const o = p(0, 0);
+        const o1 = o.tr(tWheel[mod10(tenth + 9)]);
+        const o2 = o1.tr(tWheel[mod10(tenth + 1)]);
+        const o3 = o2.tr(tWheel[mod10(tenth + 4)]);
+        return [o, o1, o2, o3];
+    }
+}
+
+function goThinReal(wheels) {
+    const tWheel = wheels.t[1].w;
+    const sWheel = wheels.s[1].w;
+    const pWheel = wheels.p[1].w;
+    const dWheel = wheels.d[1].w;
+    return [rhThin(0), rhThin(1), rhThin(2)];
+
+    function rhThin(tenth) {
+        const o = p(0, 0);
+        const o1 = o.tr(tWheel[mod10(tenth + 3)]);
+        const o2 = o1.tr(tWheel[mod10(tenth + 7)]);
+        const o3 = o2.tr(tWheel[mod10(tenth + 8)]);
+        return [o, o1, o2, o3];
+    }
+}
+
 class Real {
     constructor() {
         /**
@@ -368,10 +401,12 @@ class Real {
         this.diamond = shapeWheel(diamondUp, diamondWon, diamondToo);
 
         this.wheels = new Wheels(pSeed, sSeed, tSeed, dSeed);
-        const [thickRhombUp, thickRhombWon, thickRhombToo] = goThick(
+        const [thickRhombUp, thickRhombWon, thickRhombToo] = goThickReal(
             this.wheels
         );
-        const [thinRhombUp, thinRhombWon, thinRhombToo] = goThin(this.wheels);
+        const [thinRhombUp, thinRhombWon, thinRhombToo] = goThinReal(
+            this.wheels
+        );
         this.thinRhomb = shapeWheel(thinRhombUp, thinRhombWon, thinRhombToo);
         this.thickRhomb = shapeWheel(
             thickRhombUp,
