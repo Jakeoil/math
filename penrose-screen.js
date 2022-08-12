@@ -8,6 +8,21 @@ function tenths(fifths, isDown) {
     return (fifths * 2 + (isDown ? 5 : 0)) % 10;
 }
 
+/**
+ * This is a wrapper around penroseScreen
+ */
+export function iface(g, scale, mode) {
+    let screen = new PenroseScreen(g, scale, mode);
+    const penta = screen.penta.bind(screen);
+    const star = screen.star.bind(screen);
+    const deca = screen.deca.bind(screen);
+    const grid = screen.grid.bind(screen);
+    const pentaRhomb = screen.pentaRhomb.bind(screen);
+    const starRhomb = screen.starRhomb.bind(screen);
+    const decaRhomb = screen.decaRhomb.bind(screen);
+    return { penta, star, deca, grid, pentaRhomb, starRhomb, decaRhomb };
+}
+
 // This routine depends on an initialized shapeColors instance.
 //
 function pColor(type) {

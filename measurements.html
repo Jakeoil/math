@@ -10,6 +10,17 @@
             import { measureTasks } from "./measurements.js";
             window.addEventListener("load", measureTasks, false);
         </script>
+        <style>
+            .wheel table {
+                border: 1px solid black;
+            }
+            .wheel th {
+                border: 1px solid black;
+            }
+            .wheel td {
+                border: 1px solid black;
+            }
+        </style>
     </head>
     <body>
         <h1>Measurements</h1>
@@ -47,28 +58,13 @@
                 const pentaUp = [ [0, -3], [3, -1], [2, 3], [-2, 3], [-3, -1]]
             </code>
         </p>
-        <!--
 
-        <script type="module" src="penrose.js"></script>
-        <script type="module" src="math.js"></script>
-        -->
-        <script type="module">
-            /***
-             * This does a fake draw to size things up before resizing the
-             * canvas and the targets.
-             *
-             * Also, lets look at some globals/input params
-             * Possible parameters
-             *
-             * linewidth, strokeStyle
-             * scale
-             * shapeMode (renderShape comes from this)
-             *
-             *
-             * Postconditions: canvas.width, canvas.height
-             * loc : a Point.
-             *
-             **/
-        </script>
+        <div id="pWheel" class="wheel"></div>
+        <br />
+        <div id="sWheel" class="wheel"></div>
+        <br />
+        <div id="tWheel" class="wheel"></div>
+        <br />
+        <div id="dWheel" class="wheel"></div>
     </body>
 </html>
