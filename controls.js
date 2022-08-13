@@ -234,6 +234,19 @@ export class Controls {
     }
 }
 
+/**
+ * Shape-Mode:
+ *   "mosaic"
+ *      Mosaic tiles
+ *   "quadrille"
+ *      Filled outlines like on graph paper
+ *   "real"
+ *      True five fold real symmetry todo
+ *
+ * Should this be declared in penrose.js
+ *
+ * Or maybe these should be tied in with PenroseScreen (todo)
+ */
 const MODE_MOSAIC = "mosaic";
 const MODE_QUADRILLE = "quadrille";
 export const MODE_REAL = "real";
@@ -251,6 +264,12 @@ export class ShapeMode {
                 false
             );
     }
+    /**
+     * Changing the shape mode also changes the globals that penta, star and
+     * deca use.
+     * Todo: penta star and deca also have some crud, for example drawing the
+     * figures.
+     */
     refresh() {
         if (this.eleMode) this.eleMode.innerHTML = this.shapeMode;
     }
@@ -262,6 +281,55 @@ export class ShapeMode {
             (MODE_LIST.indexOf(this.shapeMode) + 1) % MODE_LIST.length;
         this.shapeMode = MODE_LIST[new_idx];
         cookie.setShapeMode(this.shapeMode);
+        this.refresh();
+        this.app();
+    }
+}
+
+export class Overlays {
+    constructor(app) {
+        this.app = app;
+        this.elePenta = document.querySelector("#penta-ovl");
+        this.eleRhomb = document.querySelector("#rhomb-ovl");
+        console.log(this.elePenta);
+        this.reset();
+        if (this.elePenta) {
+            this.elePenta.addEventListener(
+                "click",
+                this.pentaClicked.bind(this),
+                false
+            );
+        }
+        if (this.eleRhomb) {
+            this.eleRhomb.addEventListener(
+                "click",
+                this.rhombClicked.bind(this),
+                false
+            );
+        }
+    }
+    reset() {
+        this.pentaSelected = true;
+        this.rhombSelected = false;
+    }
+    refresh() {
+        if (this.elePenta) {
+            this.elePenta.checked = this.pentaSelected;
+        }
+        if (this.eleRhomb) {
+            this.eleRhomb.checked = this.rhombSelected;
+        }
+    }
+
+    pentaClicked() {
+        console.log(`pentaClicked ${this.pentaSelected}`);
+        this.pentaSelected = !this.pentaSelected;
+        this.refresh();
+        this.app();
+    }
+    rhombClicked() {
+        console.log(`rhombClicked ${this.rhombSelected}`);
+        this.rhombSelected = !this.rhombSelected;
         this.refresh();
         this.app();
     }

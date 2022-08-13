@@ -5,7 +5,13 @@ import { PenroseScreen } from "./penrose-screen.js";
 import { penrose } from "./penrose.js";
 import { real, quadrille, mosaic } from "./shape-modes.js";
 
-import { cookie, Controls, ShapeColors, ShapeMode } from "./controls.js";
+import {
+    cookie,
+    Controls,
+    ShapeColors,
+    ShapeMode,
+    Overlays,
+} from "./controls.js";
 import { iface } from "./penrose-screen.js";
 
 /**
@@ -30,47 +36,11 @@ const controls = new Controls(penroseApp, 0, 0, false);
 controls.reset();
 controls.refresh();
 
-/**
- * Shape-Mode:
- *   "mosaic"
- *      Mosaic tiles
- *   "quadrille"
- *      Filled outlines like on graph paper
- *   "real"
- *      True five fold real symmetry todo
- *
- * Should this be declared in penrose.js
- *
- * Or maybe these should be tied in with PenroseScreen (todo)
- */
-// const MODE_MOSAIC = "mosaic";
-// const MODE_QUADRILLE = "quadrille";
-// export const MODE_REAL = "real";
-// const MODE_LIST = [MODE_MOSAIC, MODE_QUADRILLE, MODE_REAL];
-
-export const shapeMode = new ShapeMode(penroseApp); //cookie.getShapeMode(MODE_MOSAIC); // send default
-//const eleMode = document.querySelector("#shape-mode");
-/**
- * Changing the shape mode also changes the globals that penta, star and deca
- * use.
- * Todo: penta star and deca also have some crud, for example drawing the
- * figures.
- */
+export const shapeMode = new ShapeMode(penroseApp);
 shapeMode.refresh();
-// function refreshShapeMode() {
-//     if (eleMode) eleMode.innerHTML = shapeMode;
-// }
 
-// refreshShapeMode();
-
-// export const clickMode = function () {
-//     let new_idx = (MODE_LIST.indexOf(shapeMode) + 1) % MODE_LIST.length;
-//     shapeMode = MODE_LIST[new_idx];
-//     cookie.setShapeMode(shapeMode);
-//     refreshShapeMode();
-//     penroseApp();
-// };
-
+console.log(`init overlays`);
+export const overlays = new Overlays(penroseApp);
 /***
  *  Page Navigation defaults.
  */
@@ -210,6 +180,7 @@ function makeCanvas(canvasId) {
         let width = 0;
         let height = 0;
         let base = p(0, 0);
+        let tries = 0;
         do {
             canvas.width = width;
             canvas.height = height;
@@ -233,7 +204,8 @@ function makeCanvas(canvasId) {
             base = base.tr(bounds.min.neg);
             width = (bounds.maxPoint.x - bounds.minPoint.x) * scale + 1;
             height = (bounds.maxPoint.y - bounds.minPoint.y) * scale + 1;
-        } while (!bounds.min.isZero);
+            tries += 1;
+        } while (!bounds.min.isZero && tries < 2);
     };
 
     drawScreen();
@@ -249,6 +221,9 @@ function makeCanvas(canvasId) {
  * @param {*} drawFunction
  */
 function redraw(bounds, canvas, drawFunction, scale) {
+    if (!bounds.maxPoint || !bounds.minPoint) {
+        return;
+    }
     const computedWidth = bounds.maxPoint.x * scale + scale;
     const computedHeight = bounds.maxPoint.y * scale + scale;
     if (

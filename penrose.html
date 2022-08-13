@@ -83,52 +83,77 @@
                     <h4>Shape mode</h4>
                     <button id="shape-mode"></button>
                 </div>
+                <fieldset class="control-group">
+                    <legend>Overlays and flags</legend>
+
+                    <div>
+                        <input
+                            type="checkbox"
+                            id="penta-ovl"
+                            name="penta"
+                            checked
+                        />
+                        <label for="penta">Pentagons and stars</label>
+                    </div>
+
+                    <div>
+                        <input type="checkbox" id="rhomb-ovl" name="rhomb" />
+                        <label for="rhomb">Show Large Rhombi</label>
+                    </div>
+                </fieldset>
+
                 <div class="control-group">
                     <!-- ColorShapes-->
                     <h4 id="color-reset">Colors</h4>
-                    <label for="p5-color">Pe5:</label>
                     <input
                         type="color"
                         id="p5-color"
                         value="#0000ff"
                         class="shape-color"
                         style="border: '50%;height:100px'"
-                    /><br />
-                    <label for="p3-color">Pe3:</label>
+                    />
+                    <label for="p5-color">Pe5:</label>
+                    <br />
                     <input
                         type="color"
                         id="p3-color"
                         value="#e46c0a"
                         class="shape-color"
-                    /><br />
-                    <label for="p1-color">Pe1:</label>
+                    />
+                    <label for="p3-color">Pe3:</label>
+                    <br />
                     <input
                         type="color"
                         id="p1-color"
                         value="#ffff00"
                         class="shape-color"
-                    /><br />
-                    <label for="star-color">Star:</label>
+                    />
+                    <label for="p1-color">Pe1:</label>
+                    <br />
                     <input
                         type="color"
                         id="star-color"
                         value="#0000ff"
                         class="shape-color"
-                    /><br />
-                    <label for="boat-color">Boat:</label>
+                    />
+                    <label for="star-color">Star:</label>
+                    <br />
                     <input
                         type="color"
                         id="boat-color"
                         value="#0000ff"
                         class="shape-color"
-                    /><br />
-                    <label for="diamond-color">Diamond:</label>
+                    />
+                    <label for="boat-color">Boat:</label>
+                    <br />
                     <input
                         type="color"
                         id="diamond-color"
                         value="#0000ff"
                         class="shape-color"
-                    /><br />
+                    />
+                    <label for="diamond-color">Diamond:</label>
+                    <br />
                 </div>
             </div>
             <div id="content">

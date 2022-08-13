@@ -3,6 +3,7 @@ import { Bounds } from "./bounds.js";
 import { penrose } from "./penrose.js";
 import { shapeColors } from "./math.js";
 import { shapeMode } from "./math.js";
+import { overlays } from "./math.js";
 
 function tenths(fifths, isDown) {
     return (fifths * 2 + (isDown ? 5 : 0)) % 10;
@@ -100,6 +101,9 @@ export class PenroseScreen {
      */
     penta(fifths, type, isDown, loc, exp) {
         const bounds = new Bounds();
+        if (!overlays.pentaSelected) {
+            return bounds;
+        }
         fifths = norm(fifths);
         if (exp == 0) {
             let shapes = this.pShape(type);
@@ -182,6 +186,10 @@ export class PenroseScreen {
      */
     star(fifths, type, isDown, loc, exp) {
         const bounds = new Bounds();
+        if (!overlays.pentaSelected) {
+            return bounds;
+        }
+
         const name = type.name;
         fifths = norm(fifths);
         if (exp == 0) {
@@ -260,6 +268,10 @@ export class PenroseScreen {
 
     deca(fifths, isDown, loc, exp) {
         const bounds = new Bounds();
+        if (!overlays.pentaSelected) {
+            return bounds;
+        }
+
         if (exp == 0) {
             return bounds;
         }
@@ -413,6 +425,10 @@ export class PenroseScreen {
 
     pentaRhomb(fifths, type, isDown, loc, exp) {
         const bounds = new Bounds();
+        if (!overlays.rhombSelected) {
+            return bounds;
+        }
+
         fifths = norm(fifths);
         if (exp == 0) {
             return bounds;
@@ -517,6 +533,10 @@ export class PenroseScreen {
 
     starRhomb(fifths, type, isDown, loc, exp) {
         const bounds = new Bounds();
+        if (!overlays.rhombSelected) {
+            return bounds;
+        }
+
         const name = type.name;
         fifths = norm(fifths);
         if (exp == 0) {
@@ -570,6 +590,10 @@ export class PenroseScreen {
     }
     decaRhomb(fifths, isDown, loc, exp) {
         const bounds = new Bounds();
+        if (!overlays.rhombSelected) {
+            return bounds;
+        }
+
         if (exp == 0) {
             return bounds;
         }

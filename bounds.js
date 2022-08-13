@@ -84,7 +84,7 @@ export class Bounds {
     pad(top, right, bottom, left) {
         if (!this.minPoint || !this.maxPoint) {
             this.minPoint = p(0, 0);
-            this.minPoint = p(0, 0);
+            this.maxPoint = p(0, 0);
         }
         if (top) {
             this.minPoint.y -= top;
