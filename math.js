@@ -1,191 +1,46 @@
 "use strict";
-import { p, Bounds } from "./penrose.js";
+import { p } from "./point.js";
+import { Bounds } from "./bounds.js";
 import { PenroseScreen } from "./penrose-screen.js";
-import { penrose, real, quadrille, mosaic } from "./penrose.js";
-import { stringify } from "./penrose.js";
-import { cookie } from "./penrose.js";
-import { Controls } from "./penrose.js";
+import { penrose } from "./penrose.js";
+import { real, quadrille, mosaic } from "./shape-modes.js";
+
+import {
+    cookie,
+    Controls,
+    ShapeColors,
+    ShapeMode,
+    Overlays,
+} from "./controls.js";
+import { iface } from "./penrose-screen.js";
 
 /**
- * Penrose Mozaic Webapp version 1.
- * Jeff Coyles Penrose type one pattern made out of square tiles of
- * three colors.
- * Requires penrose.js
+ * Penrose Mosaic
  *
- * Added Quadrille mode. Shows graph paper version.
- * Added Real mode.
+ * Jeff Coyle's Penrose page.
+ * Explores Penrose Type 1.
  *
- * Added controls for colors.
- */
-
-/**********************************************************************
- * Shape colors control.
- * Contains a mapping of id to entry,
- * entry: {ele, color, defaultColor}
- * Todo: Move this to a module.
- * But first try to put the onClice and listener logic
+ * The modes.
+ * Introduces the Mosaic. The penrose pattern based on square mosaic tiles.
+ * Introduces the Quadrille. The vector based version of above.
+ * Displays the 'Real' mode. The actual type 1 penrose tiling.
  *
  */
-class ShapeColors {
-    constructor() {
-        this.idList = {
-            "p5-color": { defaultColor: penrose.Pe5.defaultColor },
-            "p3-color": { defaultColor: penrose.Pe3.defaultColor },
-            "p1-color": { defaultColor: penrose.Pe1.defaultColor },
-            "star-color": { defaultColor: penrose.St5.defaultColor },
-            "boat-color": { defaultColor: penrose.St3.defaultColor },
-            "diamond-color": { defaultColor: penrose.St1.defaultColor },
-        };
-        const shapeColorEles = document.querySelectorAll(".shape-color");
-        for (const ele of shapeColorEles) {
-            const entry = this.idList[ele.id];
-            if (entry) {
-                entry.ele = ele;
-                entry.ele.addEventListener("input", onShapeColorsInput, false);
-                entry.ele.addEventListener(
-                    "change",
-                    onShapeColorsChange,
-                    false
-                );
-            } else {
-                console.log(`Undefined id: ${ele.id} in html`);
-            }
-        }
-        this.reset();
-    }
 
-    /**
-     * Set the elements to the last value received
-     */
-    refresh() {
-        for (const entry of Object.values(this.idList)) {
-            if (entry.ele) entry.ele.value = entry.color;
-        }
-        //console.log(`refresh: ${stringify(this.idList, null, "  ")}`);
-    }
-
-    /**
-     * Set the elements to their defaults
-     */
-    reset() {
-        for (const entry of Object.values(this.idList)) {
-            entry.color = entry.defaultColor;
-        }
-    }
-}
-
-// The reset button was clicked.
-function onColorReset() {
-    shapeColors.reset();
-    shapeColors.refresh();
-    penroseApp();
-}
-
-function onShapeColorsInput(event) {
-    console.log(`input: id: ${event.target.id}, color: ${event.target.value}`);
-    shapeColors.idList[event.target.id].color = event.target.value;
-    shapeColors.refresh();
-    penroseApp();
-}
-
-function onShapeColorsChange(event) {
-    console.log(`change: id: ${event.target.id}, color: ${event.target.value}`);
-    shapeColors.idList[event.target.id].color = event.target.value;
-    shapeColors.refresh();
-    penroseApp();
-}
-function onShapeColorsClick(event) {
-    console.log(`click: id: ${event.target.id}, color: ${event.target.value}`);
-}
-
-export const shapeColors = new ShapeColors();
-
-// Set colors to default
+/** Initialize from contols in penrose.html */
+export const shapeColors = new ShapeColors(penroseApp);
 shapeColors.reset();
-
-// Set element values to colors
 shapeColors.refresh();
 
-/************** end of shape colors */
+const controls = new Controls(penroseApp, 0, 0, false);
+controls.reset();
+controls.refresh();
 
-/**
- * Shape-Mode:
- *   "mosaic"
- *      Mosaic tiles
- *   "quadrille"
- *      Filled outlines like on graph paper
- *   "real"
- *      True five fold real symmetry todo
- *
- * Should this be declared in penrose.js
- *
- * Or maybe these should be tied in with PenroseScreen (todo)
- */
-const MODE_MOSAIC = "mosaic";
-const MODE_QUADRILLE = "quadrille";
-export const MODE_REAL = "real";
-const MODE_LIST = [MODE_MOSAIC, MODE_QUADRILLE, MODE_REAL];
+export const shapeMode = new ShapeMode(penroseApp);
+shapeMode.refresh();
 
-let shapeMode = cookie.getShapeMode(MODE_MOSAIC); // send default
-const eleMode = document.querySelector("#shape-mode");
-
-/**
- * Changing the shape mode also changes the globals that penta, star and deca
- * use.
- * Todo: penta star and deca also have some crud, for example drawing the
- * figures.
- */
-function refreshShapeMode() {
-    if (eleMode) eleMode.innerHTML = shapeMode;
-}
-
-refreshShapeMode();
-
-export const clickMode = function () {
-    let new_idx = (MODE_LIST.indexOf(shapeMode) + 1) % MODE_LIST.length;
-    shapeMode = MODE_LIST[new_idx];
-    cookie.setShapeMode(shapeMode);
-    refreshShapeMode();
-    penroseApp();
-};
-
-/**
- * This is the default global for the shape and orientation controls
- */
-// Note: cookies are a bitch here. (not so bad)
-const controls = new Controls(0, 0, false);
-
-// Can this be made into a function?
-
-const eleFifths = document.querySelector("#fifths");
-const eleType = document.querySelector("#type");
-const eleIsDown = document.querySelector("#isDown");
-
-/**
- * Initialization and
- * Events for the three buttons
- */
-if (eleFifths) eleFifths.innerHTML = `fifths: ${controls.fifths}`;
-export const clickFifths = function () {
-    controls.bumpFifths();
-    eleFifths.innerHTML = `fifths: ${controls.fifths}`;
-    penroseApp();
-};
-
-if (eleType) eleType.innerHTML = controls.typeName;
-export const clickType = function () {
-    controls.bumpType();
-    eleType.innerHTML = controls.typeName;
-    penroseApp();
-};
-
-if (eleIsDown) eleIsDown.innerHTML = controls.direction;
-export const clickIsDown = function () {
-    controls.toggleDirection();
-    eleIsDown.innerHTML = controls.direction;
-    penroseApp();
-};
-
+console.log(`init overlays`);
+export const overlays = new Overlays(penroseApp);
 /***
  *  Page Navigation defaults.
  */
@@ -285,6 +140,8 @@ export function pageClicked(pageId, button) {
  * Creates listeners for control buttons
  */
 export function penroseApp() {
+    console.log(`penroseApp`);
+
     // load the little canvases.
     makeCanvas("p5");
     makeCanvas("p3");
@@ -304,18 +161,6 @@ export function penroseApp() {
  * Screen Drawing Routines
  *****************************************************************************/
 
-/**
- * This is a wrapper around penroseScreen
- * @returns
- */
-export function iface(g, scale, mode) {
-    let screen = new PenroseScreen(g, scale, mode);
-    const penta = screen.penta.bind(screen);
-    const star = screen.star.bind(screen);
-    const deca = screen.deca.bind(screen);
-    const grid = screen.grid.bind(screen);
-    return { penta, star, deca, grid };
-}
 /***
  * Draws a little canvas with a shape.
  * Shape depends on passed in ID.
@@ -330,11 +175,12 @@ function makeCanvas(canvasId) {
         g.strokeStyle = penrose.OUTLINE;
         g.lineWidth = 1;
         let scale = 10;
-        const { penta, star } = iface(g, scale, shapeMode);
+        const { penta, star } = iface(g, scale, shapeMode.shapeMode);
         let bounds;
         let width = 0;
         let height = 0;
         let base = p(0, 0);
+        let tries = 0;
         do {
             canvas.width = width;
             canvas.height = height;
@@ -358,7 +204,8 @@ function makeCanvas(canvasId) {
             base = base.tr(bounds.min.neg);
             width = (bounds.maxPoint.x - bounds.minPoint.x) * scale + 1;
             height = (bounds.maxPoint.y - bounds.minPoint.y) * scale + 1;
-        } while (!bounds.min.isZero);
+            tries += 1;
+        } while (!bounds.min.isZero && tries < 2);
     };
 
     drawScreen();
@@ -374,6 +221,9 @@ function makeCanvas(canvasId) {
  * @param {*} drawFunction
  */
 function redraw(bounds, canvas, drawFunction, scale) {
+    if (!bounds.maxPoint || !bounds.minPoint) {
+        return;
+    }
     const computedWidth = bounds.maxPoint.x * scale + scale;
     const computedHeight = bounds.maxPoint.y * scale + scale;
     if (
@@ -405,7 +255,11 @@ function drawFirstInflation(id) {
         g.strokeStyle = penrose.OUTLINE;
         g.lineWidth = 1;
         let scale = 10;
-        const { penta, star } = iface(g, scale, shapeMode);
+        const { penta, star, pentaRhomb, starRhomb } = iface(
+            g,
+            scale,
+            shapeMode.shapeMode
+        );
 
         let x = 8;
         let y = 9;
@@ -413,45 +267,57 @@ function drawFirstInflation(id) {
         const DOWN = true;
         const bounds = new Bounds();
         bounds.expand(penta(0, penrose.Pe5, UP, p(x, y), 1));
+        bounds.expand(pentaRhomb(0, penrose.Pe5, UP, p(x, y), 1));
         penta(0, penrose.Pe5, DOWN, p(25, y), 1);
+        pentaRhomb(0, penrose.Pe5, DOWN, p(25, y), 1);
         y += 18;
         for (let i = 0; i < 5; i++) {
             penta(i, penrose.Pe3, UP, p(x + i * 20, y), 1);
+            pentaRhomb(i, penrose.Pe3, UP, p(x + i * 20, y), 1);
         }
         y += 20;
         for (let i = 0; i < 5; i++) {
             penta(i, penrose.Pe3, DOWN, p(x + i * 20, y), 1);
+            pentaRhomb(i, penrose.Pe3, DOWN, p(x + i * 20, y), 1);
         }
         y += 20;
         for (let i = 0; i < 5; i++) {
             penta(i, penrose.Pe1, UP, p(x + i * 20, y), 1);
+            pentaRhomb(i, penrose.Pe1, UP, p(x + i * 20, y), 1);
         }
         y += 20;
         for (let i = 0; i < 5; i++) {
             penta(i, penrose.Pe1, DOWN, p(x + i * 20, y), 1);
+            pentaRhomb(i, penrose.Pe1, DOWN, p(x + i * 20, y), 1);
         }
         y += 25;
         star(0, penrose.St5, UP, p(15, y), 1);
+        starRhomb(0, penrose.St5, UP, p(15, y), 1);
         star(0, penrose.St5, DOWN, p(45, y), 1);
+        starRhomb(0, penrose.St5, DOWN, p(45, y), 1);
         x = 10;
         y += 30;
         for (let i = 0; i < 5; i++) {
             star(i, penrose.St1, UP, p(x + i * 20, y), 1);
+            starRhomb(i, penrose.St1, UP, p(x + i * 20, y), 1);
         }
         y += 25;
         for (let i = 0; i < 5; i++) {
             star(i, penrose.St1, DOWN, p(x + i * 20, y), 1);
+            starRhomb(i, penrose.St1, DOWN, p(x + i * 20, y), 1);
         }
 
         x = 15;
         y += 25;
         for (let i = 0; i < 5; i++) {
             star(i, penrose.St3, UP, p(x + i * 25, y), 1);
+            starRhomb(i, penrose.St3, UP, p(x + i * 25, y), 1);
         }
 
         y += 25;
         for (let i = 0; i < 5; i++) {
             bounds.expand(star(i, penrose.St3, DOWN, p(x + i * 25, y), 1));
+            bounds.expand(starRhomb(i, penrose.St3, DOWN, p(x + i * 25, y), 1));
         }
         // conditional redraw
         redraw(bounds, canvas, drawScreen, scale);
@@ -482,10 +348,17 @@ function drawSecondInflation(id) {
         g.strokeStyle = penrose.OUTLINE;
         g.lineWidth = 1;
         let scale = 5;
-        const { star, penta } = iface(g, scale, shapeMode);
+        const { star, penta, pentaRhomb, starRhomb } = iface(
+            g,
+            scale,
+            shapeMode.shapeMode
+        );
+
         let x = 25;
         let y = 25;
         penta(0, penrose.Pe5, UP, p(x, y), 2);
+        pentaRhomb(0, penrose.Pe5, UP, p(x, y), 2);
+
         penta(0, penrose.Pe5, DOWN, p(x + 50, y), 2); //
         y += 50;
         x = 25;
@@ -506,7 +379,9 @@ function drawSecondInflation(id) {
         }
         y += 60; // one thru four
         star(0, penrose.St5, UP, p(35, y), 2);
+        starRhomb(0, penrose.St5, UP, p(35, y), 2);
         star(0, penrose.St5, DOWN, p(100, y), 2);
+        starRhomb(0, penrose.St5, DOWN, p(100, y), 2);
         y += 74; // one thru four
         x = 35;
         for (let i = 0; i < 5; i++) {
@@ -551,7 +426,7 @@ function drawGridWork(id) {
         g.strokeStyle = penrose.OUTLINE;
         g.lineWidth = 1;
         let scale = 10;
-        const { deca, grid } = iface(g, scale, shapeMode);
+        const { deca, decaRhomb, grid } = iface(g, scale, shapeMode.shapeMode);
 
         let y = 5;
         const shapes = [mosaic.penta, mosaic.diamond, mosaic.star, mosaic.boat];
@@ -643,6 +518,7 @@ function drawGridWork(id) {
         exp = 2;
         deca(fifths, isDown, base, exp);
         grid(base, 18);
+        decaRhomb(fifths, isDown, base, exp);
     }
 }
 
@@ -664,7 +540,7 @@ function drawGeneric123(id) {
     g.strokeStyle = penrose.OUTLINE;
     g.lineWidth = 1;
     let scale = 10;
-    const { penta, star, deca } = iface(g, scale, shapeMode);
+    const { penta, star, deca } = iface(g, scale, shapeMode.shapeMode);
     penrose.scale = scale; // Maybe does not use it.
 
     function starType(type) {
@@ -764,7 +640,7 @@ function drawGeneric3(id) {
     g.strokeStyle = penrose.OUTLINE;
     g.lineWidth = 1;
     let scale = 4;
-    const { deca } = iface(g, scale, shapeMode);
+    const { deca, decaRhomb } = iface(g, scale, shapeMode.shapeMode);
     const drawScreen = function () {
         let x = 100;
         let y = 250;
@@ -775,6 +651,7 @@ function drawGeneric3(id) {
             deca(controls.fifths, controls.isDown, p(50, 50), 2);
             deca(controls.fifths, controls.isDown, p(210, 80), 3);
             deca(controls.fifths, controls.isDown, p(x, y), 6);
+            decaRhomb(controls.fifths, controls.isDown, p(x, y), 6);
         } else {
             console.log(`drawScreen ${controls.typeIndex}`);
             const type = controls.typeList[controls.typeIndex];
@@ -817,7 +694,7 @@ function drawRealWork(id) {
     g.strokeStyle = penrose.OUTLINE;
     g.lineWidth = 1;
     let scale = 10;
-    const { star, penta, deca } = iface(g, scale, shapeMode);
+    const { star, penta, deca } = iface(g, scale, shapeMode.shapeMode);
 
     const drawScreen = function () {
         //const rShapes = [real.penta];

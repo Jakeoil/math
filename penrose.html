@@ -7,10 +7,9 @@
         <title>Penrose Mosaic</title>
         <link rel="stylesheet" href="math.css" />
         <style></style>
-        <script></script>
         <script type="module">
             import { penroseApp } from "./math.js";
-            window.addEventListener("load", () => penroseApp(), false);
+            window.addEventListener("load", penroseApp, false);
         </script>
     </head>
 
@@ -59,12 +58,6 @@
                  * Line up the clickers
                  **/
                 import { pageClicked } from "./math.js";
-                import {
-                    clickType,
-                    clickFifths,
-                    clickIsDown,
-                    clickMode,
-                } from "./math.js";
 
                 const ids = ["rwork", "inf1", "inf2", "gwork", "g012", "g3"];
                 const eles = document.querySelectorAll(".pageButton");
@@ -73,79 +66,94 @@
                     const funct = () => pageClicked(page, ele);
                     ele.addEventListener("click", funct, false);
                 }
-                document
-                    .querySelector("#type")
-                    .addEventListener("click", () => clickType(), false);
-                document
-                    .querySelector("#fifths")
-                    .addEventListener("click", () => clickFifths(), false);
-                document
-                    .querySelector("#isDown")
-                    .addEventListener("click", () => clickIsDown(), false);
-                document
-                    .querySelector("#shape-mode")
-                    .addEventListener("click", () => clickMode(), false);
             </script>
         </nav>
         <div id="meat">
             <div id="controls">
                 <h3>Controls</h3>
                 <div class="control-group">
+                    <!-- Controls -->
                     <h4>Shape type</h4>
-                    <button id="type" onClick="clickType()">Type</button>
+                    <button id="type">Type</button>
                     <h4>Orientation</h4>
-                    <button id="fifths" onClick="clickFifths()">Fifths</button>
-                    <button id="isDown" onClick="clickIsDown()">isDown</button>
+                    <button id="fifths">Fifths</button>
+                    <button id="isDown">isDown</button>
                 </div>
                 <div class="control-group">
                     <h4>Shape mode</h4>
-                    <button id="shape-mode" onClick="clickMode()"></button>
+                    <button id="shape-mode"></button>
                 </div>
+                <fieldset class="control-group">
+                    <legend>Overlays and flags</legend>
+
+                    <div>
+                        <input
+                            type="checkbox"
+                            id="penta-ovl"
+                            name="penta"
+                            checked
+                        />
+                        <label for="penta">Pentagons and stars</label>
+                    </div>
+
+                    <div>
+                        <input type="checkbox" id="rhomb-ovl" name="rhomb" />
+                        <label for="rhomb">Show Large Rhombi</label>
+                    </div>
+                </fieldset>
+
                 <div class="control-group">
-                    <h4 onClick="onColorReset()">Colors</h4>
-                    <label for="p5-color">Pe5:</label>
+                    <!-- ColorShapes-->
+                    <h4 id="color-reset">Colors</h4>
                     <input
                         type="color"
                         id="p5-color"
                         value="#0000ff"
                         class="shape-color"
                         style="border: '50%;height:100px'"
-                    /><br />
-                    <label for="p3-color">Pe3:</label>
+                    />
+                    <label for="p5-color">Pe5:</label>
+                    <br />
                     <input
                         type="color"
                         id="p3-color"
                         value="#e46c0a"
                         class="shape-color"
-                    /><br />
-                    <label for="p1-color">Pe1:</label>
+                    />
+                    <label for="p3-color">Pe3:</label>
+                    <br />
                     <input
                         type="color"
                         id="p1-color"
                         value="#ffff00"
                         class="shape-color"
-                    /><br />
-                    <label for="star-color">Star:</label>
+                    />
+                    <label for="p1-color">Pe1:</label>
+                    <br />
                     <input
                         type="color"
                         id="star-color"
                         value="#0000ff"
                         class="shape-color"
-                    /><br />
-                    <label for="boat-color">Boat:</label>
+                    />
+                    <label for="star-color">Star:</label>
+                    <br />
                     <input
                         type="color"
                         id="boat-color"
                         value="#0000ff"
                         class="shape-color"
-                    /><br />
-                    <label for="diamond-color">Diamond:</label>
+                    />
+                    <label for="boat-color">Boat:</label>
+                    <br />
                     <input
                         type="color"
                         id="diamond-color"
                         value="#0000ff"
                         class="shape-color"
-                    /><br />
+                    />
+                    <label for="diamond-color">Diamond:</label>
+                    <br />
                 </div>
             </div>
             <div id="content">
@@ -192,8 +200,11 @@
                 </div>
             </div>
         </div>
+        <!--
 
         <script type="module" src="penrose.js"></script>
+        <script type="module" src="shape-modes.js"></script>
         <script type="module" src="math.js"></script>
+        -->
     </body>
 </html>

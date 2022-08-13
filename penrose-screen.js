@@ -1,30 +1,45 @@
-import { Bounds } from "./penrose.js";
+import { norm } from "./point.js";
+import { Bounds } from "./bounds.js";
 import { penrose } from "./penrose.js";
 import { shapeColors } from "./math.js";
-const norm = (n) => ((n % 5) + 5) % 5;
+import { shapeMode } from "./math.js";
+import { overlays } from "./math.js";
+
 function tenths(fifths, isDown) {
     return (fifths * 2 + (isDown ? 5 : 0)) % 10;
 }
+
+/**
+ * This is a wrapper around penroseScreen
+ */
+export function iface(g, scale, mode) {
+    let screen = new PenroseScreen(g, scale, mode);
+    const penta = screen.penta.bind(screen);
+    const star = screen.star.bind(screen);
+    const deca = screen.deca.bind(screen);
+    const grid = screen.grid.bind(screen);
+    const pentaRhomb = screen.pentaRhomb.bind(screen);
+    const starRhomb = screen.starRhomb.bind(screen);
+    const decaRhomb = screen.decaRhomb.bind(screen);
+    return { penta, star, deca, grid, pentaRhomb, starRhomb, decaRhomb };
+}
+
+// This routine depends on an initialized shapeColors instance.
+//
 function pColor(type) {
     switch (type) {
         case penrose.Pe5:
             return shapeColors.idList["p5-color"].color;
-        //return p5Blue;
         case penrose.Pe3:
             return shapeColors.idList["p3-color"].color;
-        //return p3Yellow;
         case penrose.Pe1:
             return shapeColors.idList["p1-color"].color;
-        //return p1Orange;
         case penrose.St5:
             return shapeColors.idList["star-color"].color;
-        //return starBlue;
         case penrose.St3:
             return shapeColors.idList["boat-color"].color;
-        //return boatBlue;
         case penrose.St1:
             return shapeColors.idList["diamond-color"].color;
-        //return diamondBlue;
     }
     return null;
 }
@@ -34,7 +49,6 @@ export class PenroseScreen {
         this.g = g;
         this.scale = scale;
         this.mode = mode;
-        console.log(`${this.scale}, ${this.mode}`);
     }
 
     pShape(type) {
@@ -87,6 +101,9 @@ export class PenroseScreen {
      */
     penta(fifths, type, isDown, loc, exp) {
         const bounds = new Bounds();
+        if (!overlays.pentaSelected) {
+            return bounds;
+        }
         fifths = norm(fifths);
         if (exp == 0) {
             let shapes = this.pShape(type);
@@ -100,9 +117,10 @@ export class PenroseScreen {
                         this.scale
                     )
                 );
-            } else {
-                bounds.addPoint(loc, loc);
             }
+            // } else {
+            //     bounds.addPoint(loc, loc);
+            // }
 
             return bounds; // call figure
         }
@@ -168,6 +186,10 @@ export class PenroseScreen {
      */
     star(fifths, type, isDown, loc, exp) {
         const bounds = new Bounds();
+        if (!overlays.pentaSelected) {
+            return bounds;
+        }
+
         const name = type.name;
         fifths = norm(fifths);
         if (exp == 0) {
@@ -182,9 +204,10 @@ export class PenroseScreen {
                         this.scale
                     )
                 );
-            } else {
-                bounds.addPoint(loc, loc);
             }
+            // else {
+            //     bounds.addPoint(loc, loc);
+            // }
 
             return bounds;
         }
@@ -245,6 +268,10 @@ export class PenroseScreen {
 
     deca(fifths, isDown, loc, exp) {
         const bounds = new Bounds();
+        if (!overlays.pentaSelected) {
+            return bounds;
+        }
+
         if (exp == 0) {
             return bounds;
         }
@@ -343,5 +370,311 @@ export class PenroseScreen {
         this.g.moveTo((offset.x - size) * this.scale, offset.y * this.scale);
         this.g.lineTo((offset.x + size) * this.scale, offset.y * this.scale);
         this.g.stroke();
+    }
+
+    line(loc, end, strokeStyle) {
+        const currentWidth = this.g.lineWidth;
+        const currentStrokeStyle = this.g.strokeStyle;
+        this.g.strokeStyle = strokeStyle ? strokeStyle : "black";
+        this.g.lineWidth = 1;
+        this.g.beginPath();
+        this.g.moveTo(loc.x * this.scale, loc.y * this.scale);
+        this.g.lineTo(end.x * this.scale, end.y * this.scale);
+        this.g.stroke();
+
+        this.g.lineWidth = currentWidth;
+        this.g.strokeStyle = currentStrokeStyle;
+    }
+
+    rhombus(fill, offset, shape, strokeStyle) {
+        let currentStrokeStyle = this.g.strokeStyle;
+        let currentLineWidth = this.g.lineWidth;
+        let start = true;
+        const bounds = new Bounds();
+        for (const point of shape) {
+            this.g.strokeStyle = strokeStyle ? strokeStyle : "black";
+            this.g.fillStyle = fill;
+            this.g.lineWidth = 2;
+            if (start) {
+                this.g.beginPath();
+                this.g.moveTo(
+                    (point.x + offset.x) * this.scale,
+                    (point.y + offset.y) * this.scale
+                );
+                start = false;
+            } else {
+                this.g.lineTo(
+                    (point.x + offset.x) * this.scale,
+                    (point.y + offset.y) * this.scale
+                );
+            }
+
+            bounds.addPoint(offset, point);
+        }
+
+        this.g.closePath();
+        if (fill) {
+            this.g.fill();
+        }
+        this.g.stroke();
+
+        this.g.strokeStyle = currentStrokeStyle;
+        this.g.lineWidth = currentLineWidth;
+        return bounds;
+    }
+
+    pentaRhomb(fifths, type, isDown, loc, exp) {
+        const bounds = new Bounds();
+        if (!overlays.rhombSelected) {
+            return bounds;
+        }
+
+        fifths = norm(fifths);
+        if (exp == 0) {
+            return bounds;
+        }
+        const wheels = penrose[this.mode].wheels;
+        const pWheel = wheels.p[exp].w;
+        const sWheel = wheels.s[exp].w;
+        const tWheel = wheels.t[exp].w;
+
+        if (exp == 1) {
+            const thins = penrose[this.mode].thinRhomb;
+            const thicks = penrose[this.mode].thickRhomb;
+
+            for (let i = 0; i < 5; i++) {
+                const shift = norm(fifths + i);
+                switch (type) {
+                    case penrose.Pe5:
+                        const shape = thicks[tenths(shift, isDown)];
+                        this.rhombus(null, loc, shape, "black");
+                        break;
+                    case penrose.Pe3:
+                        switch (i) {
+                            case 0:
+                                const thinR = thins[tenths(shift, isDown)];
+                                this.rhombus(null, loc, thinR, "black");
+
+                            case 1:
+                            case 4:
+                                const shape = thicks[tenths(shift, isDown)];
+                                this.rhombus(null, loc, shape, "black");
+                                break;
+                            default:
+                                break;
+                        }
+                        break;
+                    case penrose.Pe1:
+                        switch (i) {
+                            case 0:
+                                const shape2 = thicks[tenths(shift, isDown)];
+                                this.rhombus(null, loc, shape2, "black");
+                                break;
+                            case 4:
+                            case 1:
+                                const thinR2 = thins[tenths(shift, isDown)];
+                                this.rhombus(null, loc, thinR2, "black");
+                                break;
+                        }
+                }
+            }
+        }
+        if (exp == 1 && exp != 1) {
+            for (let i = 0; i < 5; i++) {
+                const shift = norm(fifths + i);
+                if (!type.diamond.includes(i)) {
+                    let end = loc.tr(tWheel[tenths(shift, !isDown)]);
+                    this.line(loc, end, "cyan");
+                }
+                // Now we have split the orange ones with a line.
+                // Find the orange center.
+                const center = loc.tr(pWheel[tenths(shift, isDown)]);
+                const twist = type.twist[i];
+                if (twist != 0) {
+                    const angle = norm(shift + twist);
+                    const start = center.tr(pWheel[tenths(angle, isDown)]);
+                    //this.line(center, start);
+                    const end = start.tr(tWheel[tenths(angle, !isDown)]);
+                    this.line(start, end, "cyan");
+                }
+            }
+            return bounds;
+        }
+
+        ///
+        bounds.expand(this.pentaRhomb(0, penrose.Pe5, !isDown, loc, exp - 1));
+
+        for (let i = 0; i < 5; i++) {
+            const shift = norm(fifths + i);
+            bounds.expand(
+                this.pentaRhomb(
+                    norm(shift + type.twist[i]),
+                    type.twist[i] == 0 ? penrose.Pe3 : penrose.Pe1,
+                    isDown,
+                    loc.tr(pWheel[tenths(shift, isDown)]),
+                    exp - 1
+                )
+            );
+
+            if (type.diamond.includes(i)) {
+                bounds.expand(
+                    this.starRhomb(
+                        shift,
+                        penrose.St1,
+                        !isDown,
+                        loc.tr(sWheel[tenths(shift, !isDown)]),
+                        exp - 1
+                    )
+                );
+            }
+        }
+        return bounds;
+    }
+
+    starRhomb(fifths, type, isDown, loc, exp) {
+        const bounds = new Bounds();
+        if (!overlays.rhombSelected) {
+            return bounds;
+        }
+
+        const name = type.name;
+        fifths = norm(fifths);
+        if (exp == 0) {
+            return bounds;
+        }
+        const wheels = penrose[this.mode].wheels;
+        const tWheel = wheels.t[exp].w;
+        const sWheel = wheels.s[exp].w;
+        if (exp == 1 && exp != 1) {
+            // Draw appropriate part of star
+            for (let i = 0; i < 5; i++) {
+                const shift = norm(fifths + i);
+                const angle = tenths(shift, isDown);
+                if (type.color[i] != null) {
+                    const end = loc.tr(tWheel[angle]);
+                    this.line(loc, end, "cyan");
+                }
+            }
+            return bounds;
+        }
+
+        bounds.expand(this.starRhomb(0, penrose.St5, !isDown, loc, exp - 1));
+
+        for (let i = 0; i < 5; i++) {
+            const shift = norm(fifths + i);
+            const angle = tenths(shift, isDown);
+
+            if (type.color[i] != null) {
+                bounds.expand(
+                    this.pentaRhomb(
+                        norm(shift),
+                        penrose.Pe1,
+                        !isDown,
+                        loc.tr(sWheel[angle]),
+                        exp - 1
+                    )
+                );
+
+                bounds.expand(
+                    this.starRhomb(
+                        shift,
+                        penrose.St3,
+                        isDown,
+                        loc.tr(tWheel[angle]),
+                        exp - 1
+                    )
+                );
+            }
+        }
+        return bounds;
+    }
+    decaRhomb(fifths, isDown, loc, exp) {
+        const bounds = new Bounds();
+        if (!overlays.rhombSelected) {
+            return bounds;
+        }
+
+        if (exp == 0) {
+            return bounds;
+        }
+
+        const wheels = penrose[this.mode].wheels;
+
+        // Move the center of the decagon to the real center.
+        let dUp = wheels.d[exp].up;
+        let dDown = wheels.d[exp].down;
+        let dOff = isDown ? dUp[fifths] : dDown[fifths];
+        let base = loc.tr(dOff);
+        let pUp = wheels.p[exp].up;
+        let pDown = wheels.p[exp].down;
+        let sUp = wheels.s[exp].up;
+        let sDown = wheels.s[exp].down;
+        let offs; // Work variable
+
+        // The central yellow pentagon
+        bounds.expand(
+            this.pentaRhomb(fifths, penrose.Pe3, isDown, base, exp - 1)
+        ); //
+
+        // The two diamonds
+        offs = isDown ? sDown[norm(1 + fifths)] : sUp[norm(1 + fifths)];
+        bounds.expand(
+            this.starRhomb(
+                norm(fifths + 3),
+                penrose.St1,
+                isDown,
+                base.tr(offs),
+                exp - 1
+            )
+        ); // sd1
+
+        offs = isDown ? sDown[norm(4 + fifths)] : sUp[norm(4 + fifths)];
+        bounds.expand(
+            this.starRhomb(
+                norm(fifths + 2),
+                penrose.St1,
+                isDown,
+                base.tr(offs),
+                exp - 1
+            )
+        ); // sd4
+
+        // The two orange pentagons
+        offs = isDown ? pUp[norm(3 + fifths)] : pDown[norm(3 + fifths)];
+        bounds.expand(
+            this.pentaRhomb(
+                norm(fifths + 2),
+                penrose.Pe1,
+                !isDown,
+                base.tr(offs),
+                exp - 1
+            )
+        );
+
+        offs = isDown ? pUp[norm(2 + fifths)] : pDown[norm(2 + fifths)];
+        bounds.expand(
+            this.pentaRhomb(
+                norm(fifths + 3),
+                penrose.Pe1,
+                !isDown,
+                base.tr(offs),
+                exp - 1
+            )
+        );
+
+        // And the boat
+        offs = isDown
+            ? pUp[norm(2 + fifths)].tr(sUp[norm(3 + fifths)])
+            : pDown[norm(2 + fifths)].tr(sDown[norm(3 + fifths)]);
+        bounds.expand(
+            this.starRhomb(
+                fifths + 0,
+                penrose.St3,
+                !isDown,
+                base.tr(offs),
+                exp - 1
+            )
+        );
+        return bounds;
     }
 }
