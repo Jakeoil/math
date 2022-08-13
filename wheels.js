@@ -1,6 +1,6 @@
 // Q. why don't I need to import p?
 // A. p the point is not used. In fact, the variable p is used for other things
-
+import { p } from "./point.js";
 /***************************************************************  
  * Discussion of the second expansions penta points.
  * These are the x and y offset from a center rectangle to an inverted rectangle.
@@ -134,10 +134,12 @@ function makeWheels(pSeed, sSeed, tSeed, dSeed) {
     }
 
     // Wheel[0] is undefined
-    const pWheels = [null];
-    const sWheels = [null];
-    const tWheels = [null];
-    const dWheels = [null];
+
+    const a = new Wheel(...interpolateWheel(...pSeed));
+    const pWheels = [new Wheel(...interpolateWheel(...pSeed))];
+    const sWheels = [new Wheel(...interpolateWheel(...sSeed))];
+    const tWheels = [new Wheel(...interpolateWheel(...tSeed))];
+    const dWheels = [new Wheel(...interpolateWheel(...dSeed))];
 
     const pWheel1 = new Wheel(...pSeed);
     const sWheel1 = new Wheel(...sSeed);
@@ -237,4 +239,75 @@ export function shapeWheelMosaic(up, won, too) {
         ];
     }
     return [];
+}
+
+export function interpolateWheel(point0, point1, point2) {
+    const { x: a0, y: b0 } = point0;
+    const { x: a1, y: b1 } = point1;
+    const { x: a2, y: b2 } = point2;
+
+    const point9 = point1.hr; // switch x
+    // x9 == -x1;
+    // y9 == y1;
+
+    const point3 = point2.vr;
+    // x3 == x2
+    // y3 == -y2
+
+    //  x9 + x0 + x1 = a0 ; #1
+    //  x0 + x1 + x2 = a1 ; #2
+    //  x1 + x2 + x3 = a2 ; #3
+
+    // Substitute equivalent value -x1 for x9
+    // -x1 + x0 + x1 = a0 ; #1
+    // This equation resolves itself
+    const x0 = a0; // first solution #1
+
+    // x0 + x1 + x2 = a1 ; #2
+    // Substitute equivalent value x2 for x2
+    // x1 + x2 + x2 = a2 ;#3
+
+    // substitute a0 for x0 in eq #2
+    // a0 + x1 + x2 = a1;
+    // x's on the left
+    // (x1 + x2) = (a1 - a0)  ; #2
+    // Substitue above in equation #3
+    // (a1 - a0) + x2 = a2 ; #3
+    // x2 = a2 - (a1 - a0) ; #3
+    const x2 = a2 - a1 + a0; // #3
+
+    // Substitute x0 and x2 in eq 2
+    // x0 + x1 + x2 = a1 ; #2
+    // (a0) + x1 + (a2 - a1 + a0) = a1
+    const x1 = a1 - a0 - (a2 - a1 + a0);
+
+    // y9 + y0 + y1 = b0
+    // y0 + y1 + y2 = b1
+    // y1 + y2 + y3 = b2
+
+    // equivalent y1 for y9
+    // and equivalent -y2 for y3
+    // y1 + y0 + y1 = b0;  #1
+    // y0 + y1 + y2 = b1;  #2
+    // y1 + y2 - y2 = b2;  #3
+
+    // #3 is solved
+    const y1 = b2; //; #3
+    // # equation 2
+    // y0 + b2 + y2 = b1 ;#2
+    // y's on the left
+    // y0 + y2 = b1 - b2 ; #2
+
+    // # equation 1:
+    // y1 + y0 + y1 = b0;  #1
+    // b2 + y0 + b2 = b0;
+    // y's on the left
+    const y0 = b0 - b2 - b2; // #1
+    // back to equation 2:
+    // (b0 - b2 - b2) + y2 = (b1-b2)
+    // y's on the left
+    //const y2 = b1 - b2 - (b0 - b2 - b2);
+    const y2 = b1 - b0 + b2;
+
+    return [p(x0, y0), p(x1, y1), p(x2, y2)];
 }

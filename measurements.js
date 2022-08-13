@@ -5,6 +5,7 @@ import { outline } from "./shape-modes.js";
 import { MODE_REAL } from "./controls.js";
 import { iface } from "./penrose-screen.js";
 import { quadrille } from "./shape-modes.js";
+import { interpolateWheel } from "./wheels.js";
 
 //window.addEventListener("load", () => measureTasks(), false);
 export function measureTasks() {
@@ -84,6 +85,24 @@ function wheelTables() {
     wheelTable("sWheel", quadrille.wheels.s);
     wheelTable("tWheel", quadrille.wheels.t);
     wheelTable("dWheel", quadrille.wheels.d);
+
+    // testInt(quadrille.wheels.p);
+    // testInt(quadrille.wheels.s);
+    // testInt(quadrille.wheels.t);
+    // testInt(quadrille.wheels.d);
+
+    function testInt(wheels) {
+        console.log("test interpolation");
+        for (let i = 6; i > 1; i--) {
+            const input = wheels[i].w;
+            const correct = wheels[i - 1].w;
+            const result = interpolateWheel(...input);
+            const matches = result.every((v, index) =>
+                v.equals(correct[index])
+            );
+            console.log("matches: " + matches);
+        }
+    }
 }
 const caption = {
     pWheel: "P Distance between pentagons",
@@ -102,7 +121,6 @@ function wheelTable(id, wheel) {
     //captionEle.innerHTML(caption[id]);
     tableDiv.appendChild(tableEle);
     tableEle.appendChild(captionEle);
-    console.log(`created tableDiv`);
 
     // heading one.
     const eleH1 = document.createElement("tr");
@@ -138,16 +156,14 @@ function wheelTable(id, wheel) {
 
     tableEle.appendChild(eleH2);
 
-    for (let i = 1; i < 4; i++) {
+    for (let i = 0; i < 7; i++) {
         const eleRow = document.createElement("tr");
         const eleIndex = document.createElement("th");
         eleIndex.innerHTML = i;
 
         eleRow.appendChild(eleIndex);
         const tenths = wheel[i].w;
-        console.log(tenths);
         const insertTd = function (value) {
-            console.log(value);
             const tdEle = document.createElement("td");
             tdEle.innerHTML = `${value.x}, ${value.y}`;
             eleRow.appendChild(tdEle);

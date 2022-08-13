@@ -1,6 +1,11 @@
 import { p, toP } from "./point.js";
 import { Bounds } from "./bounds.js";
-import { shapeWheel, Wheels, shapeWheelMosaic } from "./wheels.js";
+import {
+    shapeWheel,
+    Wheels,
+    shapeWheelMosaic,
+    interpolateWheel,
+} from "./wheels.js";
 import { penrose } from "./penrose.js";
 /***
  * Used by Mosaic figure.
@@ -524,6 +529,7 @@ class Quadrille {
     }
 }
 export const quadrille = new Quadrille();
+
 /*******************************************************
  * This is the square tiles model, the Mosaic
  */
