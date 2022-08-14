@@ -148,7 +148,7 @@ export class Controls {
                 this.clickFifths.bind(this),
                 false
             );
-        else console.log(`no eleFifths!`);
+        //else console.log(`no eleFifths!`);
 
         this.eleType = document.querySelector("#type");
         this.eleIsDown = document.querySelector("#isDown");
@@ -159,7 +159,7 @@ export class Controls {
                 this.clickType.bind(this),
                 false
             );
-        else console.log(`no eleType!`);
+        //else console.log(`no eleType!`);
 
         if (this.eleIsDown)
             this.eleIsDown.addEventListener(
@@ -167,7 +167,7 @@ export class Controls {
                 this.clickIsDown.bind(this),
                 false
             );
-        else console.log(`no eleDown!`);
+        //else console.log(`no eleDown!`);
 
         this.fifths = fifths;
         this.typeIndex = typeIndex;
@@ -291,7 +291,6 @@ export class Overlays {
         this.app = app;
         this.elePenta = document.querySelector("#penta-ovl");
         this.eleRhomb = document.querySelector("#rhomb-ovl");
-        console.log(this.elePenta);
         this.reset();
         if (this.elePenta) {
             this.elePenta.addEventListener(

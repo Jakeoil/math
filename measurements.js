@@ -9,7 +9,6 @@ import { interpolateWheel } from "./wheels.js";
 
 //window.addEventListener("load", () => measureTasks(), false);
 export function measureTasks() {
-    console.log("measureTasks");
     drawQuadrille();
     drawImage();
     wheelTables();
@@ -86,13 +85,12 @@ function wheelTables() {
     wheelTable("tWheel", quadrille.wheels.t);
     wheelTable("dWheel", quadrille.wheels.d);
 
-    // testInt(quadrille.wheels.p);
-    // testInt(quadrille.wheels.s);
-    // testInt(quadrille.wheels.t);
-    // testInt(quadrille.wheels.d);
+    testInt(quadrille.wheels.p);
+    testInt(quadrille.wheels.s);
+    testInt(quadrille.wheels.t);
+    testInt(quadrille.wheels.d);
 
     function testInt(wheels) {
-        console.log("test interpolation");
         for (let i = 6; i > 1; i--) {
             const input = wheels[i].w;
             const correct = wheels[i - 1].w;
@@ -100,7 +98,7 @@ function wheelTables() {
             const matches = result.every((v, index) =>
                 v.equals(correct[index])
             );
-            console.log("matches: " + matches);
+            if (!matches) console.log("Interpolation failed: " + matches);
         }
     }
 }

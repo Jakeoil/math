@@ -1,7 +1,6 @@
 "use strict";
 import { p } from "./point.js";
 import { Bounds } from "./bounds.js";
-import { PenroseScreen } from "./penrose-screen.js";
 import { penrose } from "./penrose.js";
 import { real, quadrille, mosaic } from "./shape-modes.js";
 
@@ -39,11 +38,54 @@ controls.refresh();
 export const shapeMode = new ShapeMode(penroseApp);
 shapeMode.refresh();
 
-console.log(`init overlays`);
 export const overlays = new Overlays(penroseApp);
 /***
  *  Page Navigation defaults.
  */
+class PageNavigation {
+    constructor() {
+        this.activeButtonIndex = cookie.getActiveButtonIndex(0);
+        this.navButtons = document.querySelectorAll(".pageButton");
+        this.pages = document.querySelectorAll(".page");
+        this.activePage = null; // loaded on self click
+        if (this.navButtons && this.navButtons[this.activeButtonIndex]) {
+            this.navButtons[this.activeButtonIndex].click();
+        }
+        const ids = ["rwork", "inf1", "inf2", "gwork", "g012", "g3"];
+        const eles = document.querySelectorAll(".pageButton");
+        for (const ele of eles) {
+            const page = ids.shift();
+            const funct = () => pageClicked(page, ele);
+            ele.addEventListener("click", this.pageClicked.bind(this), false);
+        }
+    }
+
+    reset() {}
+    refresh() {}
+    pageClicked(pageId, button) {
+        for (let page of this.pages) {
+            page.style.display = "none";
+        }
+        console.log(`pageId: ${pageId}, button: ${button.className}`);
+        let active_page = document.querySelector(`#${pageId}`);
+        active_page.style.display = "block";
+
+        for (let index = 0; index < this.navButtons.length; index++) {
+            let navButton = this.navButtons[index];
+            if (navButton === button) {
+                this.activeButtonIndex = index;
+                cookie.setActiveButtonIndex(index);
+                navButton.style.background = "white";
+                navButton.style.color = "black";
+            } else {
+                navButton.style.background = "black";
+                navButton.style.color = "white";
+            }
+        }
+        this.activePage = active_page;
+    }
+}
+
 let activeButtonIndex = cookie.getActiveButtonIndex(0);
 let navButtons = document.querySelectorAll(".pageButton");
 let pages = document.querySelectorAll(".page");

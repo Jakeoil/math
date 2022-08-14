@@ -279,7 +279,8 @@ export function interpolateWheel(point0, point1, point2) {
     // Substitute x0 and x2 in eq 2
     // x0 + x1 + x2 = a1 ; #2
     // (a0) + x1 + (a2 - a1 + a0) = a1
-    const x1 = a1 - a0 - (a2 - a1 + a0);
+    //let x_ = a1 - a0 - (a2 - a1 + a0);
+    const x1 = -a0 - a0 + a1 + a1 - a2;
 
     // y9 + y0 + y1 = b0
     // y0 + y1 + y2 = b1
