@@ -426,6 +426,10 @@ export class PenroseScreen {
 
         fifths = norm(fifths);
         if (exp == 0) {
+            if (overlays.smallRhomb) {
+                console.log(`draw small rhombs`);
+            }
+
             return bounds;
         }
         const wheels = penrose[this.mode].wheels;
@@ -433,7 +437,7 @@ export class PenroseScreen {
         const sWheel = wheels.s[exp].w;
         const tWheel = wheels.t[exp].w;
 
-        if (exp == 1) {
+        if (exp == 1 && !overlays.smallRhomb) {
             const thins = penrose[this.mode].thinRhomb;
             const thicks = penrose[this.mode].thickRhomb;
 
@@ -473,6 +477,8 @@ export class PenroseScreen {
                         }
                 }
             }
+            return bounds;
+            // we rightly should return bounds here
         }
         if (exp == 1 && exp != 1) {
             for (let i = 0; i < 5; i++) {
@@ -540,6 +546,10 @@ export class PenroseScreen {
         const wheels = penrose[this.mode].wheels;
         const tWheel = wheels.t[exp].w;
         const sWheel = wheels.s[exp].w;
+        if (exp == 1 && !overlays.smallRhomb) {
+            return bounds;
+        }
+
         if (exp == 1 && exp != 1) {
             // Draw appropriate part of star
             for (let i = 0; i < 5; i++) {

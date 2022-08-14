@@ -302,6 +302,12 @@ export class Overlays {
         this.app = app;
         this.elePenta = document.querySelector("#penta-ovl");
         this.eleRhomb = document.querySelector("#rhomb-ovl");
+
+        this.radioButtons = document.querySelectorAll("input[name='rhomb']");
+        this.eleLargeRhomb = document.querySelector("large-rhomb");
+        this.eleSmallRhomb = document.querySelector("small-rhomb");
+        /**in progress */
+
         this.reset();
         if (this.elePenta) {
             this.elePenta.addEventListener(
@@ -317,10 +323,19 @@ export class Overlays {
                 false
             );
         }
+
+        for (let button of this.radioButtons) {
+            button.addEventListener(
+                "click",
+                this.rhombSizeClicked.bind(this),
+                false
+            );
+        }
     }
     reset() {
         this.pentaSelected = true;
         this.rhombSelected = false;
+        this.smallRhomb = false;
     }
     refresh() {
         if (this.elePenta) {
@@ -328,6 +343,13 @@ export class Overlays {
         }
         if (this.eleRhomb) {
             this.eleRhomb.checked = this.rhombSelected;
+        }
+        if (this.eleLargeRhomb && this.eleSmallRhomb) {
+            if (this.smallRhomb) {
+                this.eleSmallRhomb.checked = true;
+            } else {
+                this.eleLargeRhomb.checked = true;
+            }
         }
     }
 
@@ -341,6 +363,17 @@ export class Overlays {
         console.log(`rhombClicked ${this.rhombSelected}`);
         this.rhombSelected = !this.rhombSelected;
         this.refresh();
+        this.app();
+    }
+    rhombSizeClicked() {
+        console.log("radio button clicked");
+        for (let button of this.radioButtons) {
+            if (button.checked) {
+                console.log(`value: ${button.value}`);
+                this.smallRhomb = button.id == "small-rhomb";
+                this.refresh();
+            }
+        }
         this.app();
     }
 }

@@ -110,7 +110,7 @@ const pageNavigation = new PageNavigation(penroseApp);
  * Creates listeners for control buttons
  */
 export function penroseApp() {
-    console.log(`penroseApp`);
+    console.log(`penroseApp overlays.smallRhomb = ${overlays.smallRhomb}`);
 
     // load the little canvases.
     makeCanvas("p5");
