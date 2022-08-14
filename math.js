@@ -86,6 +86,14 @@ class PageNavigation {
     }
 }
 
+const ids = ["rwork", "inf1", "inf2", "gwork", "g012", "g3"];
+const eles = document.querySelectorAll(".pageButton");
+for (const ele of eles) {
+    const page = ids.shift();
+    const funct = () => pageClicked(page, ele);
+    ele.addEventListener("click", funct, false);
+}
+
 let activeButtonIndex = cookie.getActiveButtonIndex(0);
 let navButtons = document.querySelectorAll(".pageButton");
 let pages = document.querySelectorAll(".page");
@@ -96,7 +104,7 @@ let activePage;
 if (navButtons && navButtons[activeButtonIndex])
     navButtons[activeButtonIndex].click();
 
-export function pageClicked(pageId, button) {
+function pageClicked(pageId, button) {
     for (let page of pages) {
         page.style.display = "none";
     }
@@ -118,6 +126,11 @@ export function pageClicked(pageId, button) {
     }
     activePage = active_page;
 }
+
+/**
+ * This was a real pain
+ * Line up the clickers
+ **/
 
 // Grab scroll code. todo todo
 (function () {
