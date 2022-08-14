@@ -1,9 +1,7 @@
 import { norm } from "./point.js";
 import { Bounds } from "./bounds.js";
 import { penrose } from "./penrose.js";
-import { shapeColors } from "./math.js";
-import { shapeMode } from "./math.js";
-import { overlays } from "./math.js";
+import { shapeColors, overlays } from "./math.js";
 
 function tenths(fifths, isDown) {
     return (fifths * 2 + (isDown ? 5 : 0)) % 10;
@@ -118,9 +116,6 @@ export class PenroseScreen {
                     )
                 );
             }
-            // } else {
-            //     bounds.addPoint(loc, loc);
-            // }
 
             return bounds; // call figure
         }

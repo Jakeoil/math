@@ -50,28 +50,23 @@
                     ["rwork", "inf1", "inf2", "gwork", "g012", "g3"]
 
                 -->
-                <button class="pageButton">Measurements</button>
-                <button class="pageButton">Inflation 1 work area</button>
-                <button class="pageButton">Inflation 2 work area</button>
-                <button class="pageButton">Grid-work test area</button>
-                <button class="pageButton">Generic test area</button>
-                <button class="pageButton">Generic expansion</button>
+                <button class="pageButton" data-id="rwork">Measurements</button>
+                <button class="pageButton" data-id="inf1">
+                    Inflation 1 work area
+                </button>
+                <button class="pageButton" data-id="inf2">
+                    Inflation 2 work area
+                </button>
+                <button class="pageButton" data-id="gwork">
+                    Grid-work test area
+                </button>
+                <button class="pageButton" data-id="g012">
+                    Generic test area
+                </button>
+                <button class="pageButton" data-id="g3">
+                    Generic expansion
+                </button>
             </p>
-            <script type="module">
-                /**
-                 * This was a real pain
-                 * Line up the clickers
-                 **/
-                // import { pageClicked } from "./math.js";
-
-                // const ids = ["rwork", "inf1", "inf2", "gwork", "g012", "g3"];
-                // const eles = document.querySelectorAll(".pageButton");
-                // for (const ele of eles) {
-                //     const page = ids.shift();
-                //     const funct = () => pageClicked(page, ele);
-                //     ele.addEventListener("click", funct, false);
-                // }
-            </script>
         </nav>
         <div id="meat">
             <div id="controls">

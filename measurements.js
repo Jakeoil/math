@@ -1,11 +1,10 @@
 import { p } from "./point.js";
-import { penrose } from "./penrose.js";
 import { Bounds } from "./bounds.js";
-import { outline } from "./shape-modes.js";
-import { MODE_REAL } from "./controls.js";
-import { iface } from "./penrose-screen.js";
-import { quadrille } from "./shape-modes.js";
 import { interpolateWheel } from "./wheels.js";
+import { penrose } from "./penrose.js";
+import { MODE_REAL } from "./controls.js"; // Now _really_
+import { quadrille } from "./shape-modes.js";
+import { iface } from "./penrose-screen.js";
 
 //window.addEventListener("load", () => measureTasks(), false);
 export function measureTasks() {

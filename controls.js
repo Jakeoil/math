@@ -1,8 +1,22 @@
 import { norm } from "./point.js";
 import { penrose } from "./penrose.js";
 
+/**
+ * !!!
+ * The cookie has string ties to the controls.
+ * It stores some of the control settings statically.
+ * Move it to a new module, but not before coming up with a
+ * consistant interface, for example, a this.cookie method.
+ * or a cookie interface.
+ *
+ * Suggestion. Make a convention that the cookie name has to match the html
+ * element id. But that the value encode and decode must be in the control's
+ * class
+ *
+ */
 class Cookie {
     constructor() {}
+
     getShapeMode(sm) {
         const cookie = getCookie("shape-mode");
         if (cookie) {
@@ -38,16 +52,13 @@ class Cookie {
     setIsDown(isDown) {}
     setTypeIndex(index) {}
 }
-// The cookie interface
-export const cookie = new Cookie();
+// The cookie interface !!! We already found this to be dangerous.
+const cookie = new Cookie();
 
 /**********************************************************************
  * Shape colors control for the DOM.
  * Contains a mapping of id to entry,
  * entry: {ele, color, defaultColor}
- * Todo: Move this to a module.
- * But first try to put the onClice and listener logic
- *
  */
 export class ShapeColors {
     constructor(app) {
@@ -148,7 +159,6 @@ export class Controls {
                 this.clickFifths.bind(this),
                 false
             );
-        //else console.log(`no eleFifths!`);
 
         this.eleType = document.querySelector("#type");
         this.eleIsDown = document.querySelector("#isDown");
@@ -159,7 +169,6 @@ export class Controls {
                 this.clickType.bind(this),
                 false
             );
-        //else console.log(`no eleType!`);
 
         if (this.eleIsDown)
             this.eleIsDown.addEventListener(
@@ -242,10 +251,6 @@ export class Controls {
  *      Filled outlines like on graph paper
  *   "real"
  *      True five fold real symmetry todo
- *
- * Should this be declared in penrose.js
- *
- * Or maybe these should be tied in with PenroseScreen (todo)
  */
 const MODE_MOSAIC = "mosaic";
 const MODE_QUADRILLE = "quadrille";
@@ -273,9 +278,11 @@ export class ShapeMode {
     refresh() {
         if (this.eleMode) this.eleMode.innerHTML = this.shapeMode;
     }
+
     reset() {
         this.shapeMode = cookie.getShapeMode(MODE_MOSAIC);
     }
+
     clickMode() {
         let new_idx =
             (MODE_LIST.indexOf(this.shapeMode) + 1) % MODE_LIST.length;
@@ -286,6 +293,10 @@ export class ShapeMode {
     }
 }
 
+/**
+ * These are a bunch of flags that penroseScreen routines use to paint the
+ * tiles.  Todo add the small and large options for rhombs
+ */
 export class Overlays {
     constructor(app) {
         this.app = app;
@@ -333,6 +344,58 @@ export class Overlays {
         this.app();
     }
 }
+
+/***
+ *  Page Navigation defaults.
+ */
+export class PageNavigation {
+    constructor(app) {
+        this.app = app;
+        this.activeButtonIndex = cookie.getActiveButtonIndex(0);
+        this.navButtons = document.querySelectorAll(".pageButton");
+        this.pages = document.querySelectorAll(".page");
+        this.activePage = null; // loaded on self click
+        const ids = ["rwork", "inf1", "inf2", "gwork", "g012", "g3"];
+        const eles = document.querySelectorAll(".pageButton");
+        for (const ele of eles) {
+            const page = ids.shift();
+            const funct = () => this.pageClicked(page, ele);
+            ele.addEventListener("click", funct, false);
+        }
+
+        if (this.navButtons && this.navButtons[this.activeButtonIndex]) {
+            this.navButtons[this.activeButtonIndex].click();
+        }
+    }
+
+    reset() {}
+    refresh() {}
+
+    pageClicked(pageId, button) {
+        for (let page of this.pages) {
+            page.style.display = "none";
+        }
+        console.log(`pageId: ${pageId}, button: ${button.className}`);
+        let active_page = document.querySelector(`#${pageId}`);
+        active_page.style.display = "block";
+
+        for (let index = 0; index < this.navButtons.length; index++) {
+            let navButton = this.navButtons[index];
+            if (navButton === button) {
+                this.activeButtonIndex = index;
+                cookie.setActiveButtonIndex(index);
+                navButton.style.background = "white";
+                navButton.style.color = "black";
+            } else {
+                navButton.style.background = "black";
+                navButton.style.color = "white";
+            }
+        }
+        this.activePage = active_page;
+        this.app();
+    }
+}
+
 /**
  * cookie logic from  https://javascript.info/cookie
  * @param {*} name

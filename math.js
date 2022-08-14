@@ -5,11 +5,11 @@ import { penrose } from "./penrose.js";
 import { real, quadrille, mosaic } from "./shape-modes.js";
 
 import {
-    cookie,
     Controls,
     ShapeColors,
     ShapeMode,
     Overlays,
+    PageNavigation,
 } from "./controls.js";
 import { iface } from "./penrose-screen.js";
 
@@ -39,93 +39,8 @@ export const shapeMode = new ShapeMode(penroseApp);
 shapeMode.refresh();
 
 export const overlays = new Overlays(penroseApp);
-/***
- *  Page Navigation defaults.
- */
-class PageNavigation {
-    constructor() {
-        this.activeButtonIndex = cookie.getActiveButtonIndex(0);
-        this.navButtons = document.querySelectorAll(".pageButton");
-        this.pages = document.querySelectorAll(".page");
-        this.activePage = null; // loaded on self click
-        if (this.navButtons && this.navButtons[this.activeButtonIndex]) {
-            this.navButtons[this.activeButtonIndex].click();
-        }
-        const ids = ["rwork", "inf1", "inf2", "gwork", "g012", "g3"];
-        const eles = document.querySelectorAll(".pageButton");
-        for (const ele of eles) {
-            const page = ids.shift();
-            const funct = () => pageClicked(page, ele);
-            ele.addEventListener("click", this.pageClicked.bind(this), false);
-        }
-    }
 
-    reset() {}
-    refresh() {}
-    pageClicked(pageId, button) {
-        for (let page of this.pages) {
-            page.style.display = "none";
-        }
-        console.log(`pageId: ${pageId}, button: ${button.className}`);
-        let active_page = document.querySelector(`#${pageId}`);
-        active_page.style.display = "block";
-
-        for (let index = 0; index < this.navButtons.length; index++) {
-            let navButton = this.navButtons[index];
-            if (navButton === button) {
-                this.activeButtonIndex = index;
-                cookie.setActiveButtonIndex(index);
-                navButton.style.background = "white";
-                navButton.style.color = "black";
-            } else {
-                navButton.style.background = "black";
-                navButton.style.color = "white";
-            }
-        }
-        this.activePage = active_page;
-    }
-}
-
-const ids = ["rwork", "inf1", "inf2", "gwork", "g012", "g3"];
-const eles = document.querySelectorAll(".pageButton");
-for (const ele of eles) {
-    const page = ids.shift();
-    const funct = () => pageClicked(page, ele);
-    ele.addEventListener("click", funct, false);
-}
-
-let activeButtonIndex = cookie.getActiveButtonIndex(0);
-let navButtons = document.querySelectorAll(".pageButton");
-let pages = document.querySelectorAll(".page");
-
-// loaded on self click
-let activePage;
-
-if (navButtons && navButtons[activeButtonIndex])
-    navButtons[activeButtonIndex].click();
-
-function pageClicked(pageId, button) {
-    for (let page of pages) {
-        page.style.display = "none";
-    }
-    console.log(`pageId: ${pageId}, button: ${button.className}`);
-    const active_page = document.querySelector(`#${pageId}`);
-    active_page.style.display = "block";
-
-    for (let index = 0; index < navButtons.length; index++) {
-        let navButton = navButtons[index];
-        if (navButton === button) {
-            activeButtonIndex = index;
-            cookie.setActiveButtonIndex(index);
-            navButton.style.background = "white";
-            navButton.style.color = "black";
-        } else {
-            navButton.style.background = "black";
-            navButton.style.color = "white";
-        }
-    }
-    activePage = active_page;
-}
+const pageNavigation = new PageNavigation(penroseApp);
 
 /**
  * This was a real pain
@@ -727,42 +642,4 @@ function drawGeneric3(id) {
         }
     };
     drawScreen();
-}
-
-/**
- * This has been removed and replaced by an Iframe.
- * !!! But it apparently does some scaling used by the Ifram
- * @param {} id
- * @returns
- */
-function drawRealWork(id) {
-    const canvas = document.querySelector(`#${id} > canvas`);
-    if (!canvas) {
-        return;
-    }
-
-    // g is global
-    let g = canvas.getContext("2d");
-    g.fillStyle = "#ffffff";
-    g.fillRect(0, 0, canvas.width, canvas.height);
-    g.strokeStyle = penrose.OUTLINE;
-    g.lineWidth = 1;
-    let scale = 10;
-    const { star, penta, deca } = iface(g, scale, shapeMode.shapeMode);
-
-    const drawScreen = function () {
-        //const rShapes = [real.penta];
-    };
-
-    drawScreen();
-}
-
-function compare(a, b) {
-    for (let i = 0; i < 10; i++) {
-        const aEle = a.list[i];
-        const bEle = b.list[i];
-        if (!aEle.equals(bEle)) {
-            console.log(`angle: ${i}, a: ${aEle}, b: ${bEle}`);
-        }
-    }
 }
