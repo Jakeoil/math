@@ -425,6 +425,12 @@ export class PenroseScreen {
         }
 
         fifths = norm(fifths);
+
+        const wheels = penrose[this.mode].wheels;
+        const pWheel = wheels.p[exp].w;
+        const sWheel = wheels.s[exp].w;
+        const tWheel = wheels.t[exp].w;
+
         if (exp == 0) {
             if (overlays.smallRhomb) {
                 console.log(`draw small rhombs`);
@@ -432,10 +438,6 @@ export class PenroseScreen {
 
             return bounds;
         }
-        const wheels = penrose[this.mode].wheels;
-        const pWheel = wheels.p[exp].w;
-        const sWheel = wheels.s[exp].w;
-        const tWheel = wheels.t[exp].w;
 
         if (exp == 1 && !overlays.smallRhomb) {
             const thins = penrose[this.mode].thinRhomb;

@@ -119,11 +119,11 @@ function mod10(n) {
     return n % 10;
 }
 
-function goThick(wheels) {
-    const tWheel = wheels.t[1].w;
-    const sWheel = wheels.s[1].w;
-    const pWheel = wheels.p[1].w;
-    const dWheel = wheels.d[1].w;
+function goThick(wheels, exp) {
+    const tWheel = wheels.t[exp].w;
+    const sWheel = wheels.s[exp].w;
+    const pWheel = wheels.p[exp].w;
+    const dWheel = wheels.d[exp].w;
 
     return [rhThick(0), rhThick(1), rhThick(2)];
 
@@ -136,11 +136,11 @@ function goThick(wheels) {
     }
 }
 
-function goThin(wheels) {
-    const tWheel = wheels.t[1].w;
-    const sWheel = wheels.s[1].w;
-    const pWheel = wheels.p[1].w;
-    const dWheel = wheels.d[1].w;
+function goThin(wheels, exp) {
+    const tWheel = wheels.t[exp].w;
+    const sWheel = wheels.s[exp].w;
+    const pWheel = wheels.p[exp].w;
+    const dWheel = wheels.d[exp].w;
     return [rhThin(0), rhThin(1), rhThin(2)];
 
     function rhThin(tenth) {
@@ -152,11 +152,11 @@ function goThin(wheels) {
     }
 }
 
-function goThickReal(wheels) {
-    const tWheel = wheels.t[1].w;
-    const sWheel = wheels.s[1].w;
-    const pWheel = wheels.p[1].w;
-    const dWheel = wheels.d[1].w;
+function goThickReal(wheels, exp) {
+    const tWheel = wheels.t[exp].w;
+    const sWheel = wheels.s[exp].w;
+    const pWheel = wheels.p[exp].w;
+    const dWheel = wheels.d[exp].w;
 
     return [rhThick(0), rhThick(1), rhThick(2)];
 
@@ -169,11 +169,11 @@ function goThickReal(wheels) {
     }
 }
 
-function goThinReal(wheels) {
-    const tWheel = wheels.t[1].w;
-    const sWheel = wheels.s[1].w;
-    const pWheel = wheels.p[1].w;
-    const dWheel = wheels.d[1].w;
+function goThinReal(wheels, exp) {
+    const tWheel = wheels.t[exp].w;
+    const sWheel = wheels.s[exp].w;
+    const pWheel = wheels.p[exp].w;
+    const dWheel = wheels.d[exp].w;
     return [rhThin(0), rhThin(1), rhThin(2)];
 
     function rhThin(tenth) {
@@ -420,17 +420,35 @@ class Real {
         this.diamond = shapeWheel(diamondUp, diamondWon, diamondToo);
 
         this.wheels = new Wheels(pSeed, sSeed, tSeed, dSeed);
+
         const [thickRhombUp, thickRhombWon, thickRhombToo] = goThickReal(
-            this.wheels
+            this.wheels,
+            1
         );
         const [thinRhombUp, thinRhombWon, thinRhombToo] = goThinReal(
-            this.wheels
+            this.wheels,
+            1
         );
         this.thinRhomb = shapeWheel(thinRhombUp, thinRhombWon, thinRhombToo);
         this.thickRhomb = shapeWheel(
             thickRhombUp,
             thickRhombWon,
             thickRhombToo
+        );
+
+        const [thickSmallRhombUp, thickSmallRhombWon, thickSmallRhombToo] =
+            goThickReal(this.wheels, 0);
+        const [thinSmallRhombUp, thinSmallRhombWon, thinSmallRhombToo] =
+            goThinReal(this.wheels, 0);
+        this.thinRhombSmall = shapeWheel(
+            thinSmallRhombUp,
+            thinSmallRhombWon,
+            thinSmallRhombToo
+        );
+        this.thickSmallRhomb = shapeWheel(
+            thickSmallRhombUp,
+            thickSmallRhombWon,
+            thickSmallRhombToo
         );
 
         this.key = "real";
@@ -528,14 +546,35 @@ class Quadrille {
 
         this.wheels = new Wheels(pSeed, sSeed, tSeed, dSeed);
         const [thickRhombUp, thickRhombWon, thickRhombToo] = goThick(
-            this.wheels
+            this.wheels,
+            1
         );
-        const [thinRhombUp, thinRhombWon, thinRhombToo] = goThin(this.wheels);
+        const [thinRhombUp, thinRhombWon, thinRhombToo] = goThin(
+            this.wheels,
+            1
+        );
         this.thinRhomb = shapeWheel(thinRhombUp, thinRhombWon, thinRhombToo);
         this.thickRhomb = shapeWheel(
             thickRhombUp,
             thickRhombWon,
             thickRhombToo
+        );
+
+        const [thickSmallRhombUp, thickSmallRhombWon, thickSmallRhombToo] =
+            goThick(this.wheels, 0);
+        const [thinSmallRhombUp, thinSmallRhombWon, thinSmallRhombToo] = goThin(
+            this.wheels,
+            0
+        );
+        this.thinSmallRhomb = shapeWheel(
+            thinSmallRhombUp,
+            thinSmallRhombWon,
+            thinSmallRhombToo
+        );
+        this.thickSmallRhomb = shapeWheel(
+            thickSmallRhombUp,
+            thickSmallRhombWon,
+            thickSmallRhombToo
         );
 
         this.key = "quadrille";
@@ -644,15 +683,36 @@ class Mosaic {
         const dSeed = [p(0, -3), p(2, -3), p(3, -1)];
 
         this.wheels = new Wheels(pSeed, sSeed, tSeed, dSeed);
+
         const [thickRhombUp, thickRhombWon, thickRhombToo] = goThick(
-            this.wheels
+            this.wheels,
+            1
         );
-        const [thinRhombUp, thinRhombWon, thinRhombToo] = goThin(this.wheels);
+        const [thinRhombUp, thinRhombWon, thinRhombToo] = goThin(
+            this.wheels,
+            1
+        );
         this.thinRhomb = shapeWheel(thinRhombUp, thinRhombWon, thinRhombToo);
         this.thickRhomb = shapeWheel(
             thickRhombUp,
             thickRhombWon,
             thickRhombToo
+        );
+        const [thickSmallRhombUp, thickSmallRhombWon, thickSmallRhombToo] =
+            goThick(this.wheels, 0);
+        const [thinSmallRhombUp, thinSmallRhombWon, thinSmallRhombToo] = goThin(
+            this.wheels,
+            0
+        );
+        this.thinSmallRhomb = shapeWheel(
+            thinSmallRhombUp,
+            thinSmallRhombWon,
+            thinSmallRhombToo
+        );
+        this.thickSmallRhomb = shapeWheel(
+            thickSmallRhombUp,
+            thickSmallRhombWon,
+            thickSmallRhombToo
         );
     }
 }
