@@ -17,6 +17,17 @@ import { penrose } from "./penrose.js";
 class Cookie {
     constructor() {}
 
+    get(type, dflt) {
+        const cookie = getCookie(type);
+        if (cookie) {
+            return cookie;
+        }
+        return dflt;
+    }
+    set(type, value) {
+        setCookie(type, value, { "max-age": 3600 });
+    }
+
     getShapeMode(sm) {
         const cookie = getCookie("shape-mode");
         if (cookie) {
@@ -337,6 +348,12 @@ export class Overlays {
         this.pentaSelected = true;
         this.rhombSelected = false;
         this.smallRhomb = false;
+
+        ({
+            pentSelected: this.pentaSelected,
+            rhombSelected: this.rhombSelected,
+            smallRhomb: this.smallRhomb,
+        } = JSON.parse(cookie.get("Overlays", this.toString())));
     }
     refresh() {
         if (this.elePenta) {
@@ -364,6 +381,7 @@ export class Overlays {
                 this.eleSmallRhomb.disabled = true;
             }
         }
+        cookie.set("Overlays", this.toString());
     }
     toString() {
         return JSON.stringify({
@@ -400,7 +418,6 @@ export class Overlays {
 export class PageNavigation {
     constructor(app) {
         this.app = app;
-        this.activeButtonIndex = cookie.getActiveButtonIndex(0);
         this.navButtons = document.querySelectorAll(".pageButton");
         this.pages = document.querySelectorAll(".page");
         this.activePage = null; // loaded on self click
@@ -411,14 +428,19 @@ export class PageNavigation {
             const funct = () => this.pageClicked(page, ele);
             ele.addEventListener("click", funct, false);
         }
-
+        this.reset(); // sets active button index.
         if (this.navButtons && this.navButtons[this.activeButtonIndex]) {
             this.navButtons[this.activeButtonIndex].click();
         }
     }
 
-    reset() {}
-    refresh() {}
+    reset() {
+        this.activeButtonIndex = cookie.getActiveButtonIndex(0);
+    }
+
+    refresh() {
+        cookie.setActiveButtonIndex(this.activeButtonIndex);
+    }
 
     pageClicked(pageId, button) {
         for (let page of this.pages) {
@@ -431,7 +453,7 @@ export class PageNavigation {
             let navButton = this.navButtons[index];
             if (navButton === button) {
                 this.activeButtonIndex = index;
-                cookie.setActiveButtonIndex(index);
+                //cookie.setActiveButtonIndex(index);
                 navButton.style.background = "white";
                 navButton.style.color = "black";
             } else {
@@ -440,7 +462,8 @@ export class PageNavigation {
             }
         }
         this.activePage = active_page;
-        this.app();
+        this.refresh();
+        this.app("PageNavigation");
     }
 }
 

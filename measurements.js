@@ -32,7 +32,9 @@ function drawQuadrille() {
     // Now some decagons
     let bounds = new Bounds();
     bounds.expand(deca(fifths, isDown, base, exp));
-
+    if (bounds.isEmpty) {
+        bounds.addPoint(base, p(0, 0));
+    }
     base = base.tr(p(bounds.minPoint.x, bounds.minPoint.y).neg);
     canvas.width = (bounds.maxPoint.x - bounds.minPoint.x) * scale;
     canvas.height = (bounds.maxPoint.y - bounds.minPoint.y) * scale;

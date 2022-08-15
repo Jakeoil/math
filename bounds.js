@@ -16,7 +16,7 @@ export class Bounds {
      */
     addPoint(offset, point) {
         const logicalPoint = offset.tr(point);
-        if (!this.maxPoint || !this.minPoint) {
+        if (this.isEmpty) {
             this.minPoint = logicalPoint.copy;
             this.maxPoint = logicalPoint.copy;
             return;
@@ -34,6 +34,9 @@ export class Bounds {
         }
     }
 
+    isEmpty() {
+        return !this.maxPoint || !this.minPoint;
+    }
     /**
      * Wrapper function for figure. figure returns a bounds object. This
      * object is integrated (added, mutates) this.
@@ -47,12 +50,12 @@ export class Bounds {
             return;
         }
 
-        if (!bounds.maxPoint || !bounds.minPoint) {
+        if (bounds.isEmpty()) {
             // figure didn't draw anything.
             return;
         }
 
-        if (!this.maxPoint || !this.minPoint) {
+        if (this.isEmpty) {
             // This is the first expansion of this.
             this.minPoint = bounds.minPoint;
             this.maxPoint = bounds.maxPoint;
@@ -82,7 +85,7 @@ export class Bounds {
      * The new bounds is mutated, but returned for convenience.
      */
     pad(top, right, bottom, left) {
-        if (!this.minPoint || !this.maxPoint) {
+        if (this.isEmpty) {
             this.minPoint = p(0, 0);
             this.maxPoint = p(0, 0);
         }

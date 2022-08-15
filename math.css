@@ -66,3 +66,8 @@ canvas.apple-ii {
 iframe {
     border: none;
 }
+
+.control-group legend {
+    /*font-size: 1.17em;*/
+    font-weight: bold;
+}
