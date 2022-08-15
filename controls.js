@@ -308,7 +308,6 @@ export class Overlays {
         this.eleSmallRhomb = document.querySelector("small-rhomb");
         /**in progress */
 
-        this.reset();
         if (this.elePenta) {
             this.elePenta.addEventListener(
                 "click",
@@ -331,6 +330,8 @@ export class Overlays {
                 false
             );
         }
+        this.reset();
+        this.refresh();
     }
     reset() {
         this.pentaSelected = true;
@@ -341,35 +342,50 @@ export class Overlays {
         if (this.elePenta) {
             this.elePenta.checked = this.pentaSelected;
         }
+
         if (this.eleRhomb) {
             this.eleRhomb.checked = this.rhombSelected;
         }
-        if (this.eleLargeRhomb && this.eleSmallRhomb) {
-            if (this.smallRhomb) {
-                this.eleSmallRhomb.checked = true;
-            } else {
-                this.eleLargeRhomb.checked = true;
+
+        // If not rhombSelected, grey out the button.
+        if (this.rhombSelected) {
+            if (this.eleLargeRhomb && this.eleSmallRhomb) {
+                this.eleLargeRhomb.disabled = false;
+                this.eleSmallRhomb.disabled = false;
+                if (this.smallRhomb) {
+                    this.eleSmallRhomb.checked = true;
+                } else {
+                    this.eleLargeRhomb.checked = true;
+                }
+            }
+        } else {
+            if (this.eleLargeRhomb && this.eleSmallRhomb) {
+                this.eleLargeRhomb.disabled = true;
+                this.eleSmallRhomb.disabled = true;
             }
         }
     }
+    toString() {
+        return JSON.stringify({
+            pentaSelected: this.pentaSelected,
+            rhombSelected: this.rhombSelected,
+            smallRhomb: this.smallRhomb,
+        });
+    }
 
     pentaClicked() {
-        console.log(`pentaClicked ${this.pentaSelected}`);
         this.pentaSelected = !this.pentaSelected;
         this.refresh();
         this.app();
     }
     rhombClicked() {
-        console.log(`rhombClicked ${this.rhombSelected}`);
         this.rhombSelected = !this.rhombSelected;
         this.refresh();
         this.app();
     }
     rhombSizeClicked() {
-        console.log("radio button clicked");
         for (let button of this.radioButtons) {
             if (button.checked) {
-                console.log(`value: ${button.value}`);
                 this.smallRhomb = button.id == "small-rhomb";
                 this.refresh();
             }
@@ -408,7 +424,6 @@ export class PageNavigation {
         for (let page of this.pages) {
             page.style.display = "none";
         }
-        console.log(`pageId: ${pageId}, button: ${button.className}`);
         let active_page = document.querySelector(`#${pageId}`);
         active_page.style.display = "block";
 

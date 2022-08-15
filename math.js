@@ -110,7 +110,7 @@ const pageNavigation = new PageNavigation(penroseApp);
  * Creates listeners for control buttons
  */
 export function penroseApp() {
-    console.log(`penroseApp overlays.smallRhomb = ${overlays.smallRhomb}`);
+    console.log(`refresh penroseApp: overlays:${overlays}`);
 
     // load the little canvases.
     makeCanvas("p5");
@@ -120,10 +120,10 @@ export function penroseApp() {
     makeCanvas("s3");
     makeCanvas("s1");
     drawFirstInflation("inf1");
-    drawSecondInflation("inf2");
-    drawGridWork("gwork");
-    drawGeneric123("g012");
-    drawGeneric3("g3");
+    //drawSecondInflation("inf2");
+    //drawGridWork("gwork");
+    //drawGeneric123("g012");
+    //drawGeneric3("g3");
 }
 
 /******************************************************************************

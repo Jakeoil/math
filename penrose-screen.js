@@ -418,6 +418,56 @@ export class PenroseScreen {
         return bounds;
     }
 
+    drawRhombusPattern(fifths, type, isDown, loc, thicks, thins) {
+        console.log(thicks, thins);
+        const bounds = new Bounds();
+        for (let i = 0; i < 5; i++) {
+            const shift = norm(fifths + i);
+            switch (type) {
+                case penrose.Pe5:
+                    const shape = thicks[tenths(shift, isDown)];
+                    bounds.expand(this.rhombus(null, loc, shape, "black"));
+                    break;
+                case penrose.Pe3:
+                    switch (i) {
+                        case 0:
+                            const thinR = thins[tenths(shift, isDown)];
+                            bounds.expand(
+                                this.rhombus(null, loc, thinR, "black")
+                            );
+
+                        case 1:
+                        case 4:
+                            const shape = thicks[tenths(shift, isDown)];
+                            bounds.expand(
+                                this.rhombus(null, loc, shape, "black")
+                            );
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                case penrose.Pe1:
+                    switch (i) {
+                        case 0:
+                            const shape2 = thicks[tenths(shift, isDown)];
+                            bounds.expand(
+                                this.rhombus(null, loc, shape2, "black")
+                            );
+                            break;
+                        case 4:
+                        case 1:
+                            const thinR2 = thins[tenths(shift, isDown)];
+                            bounds.expand(
+                                this.rhombus(null, loc, thinR2, "black")
+                            );
+                            break;
+                    }
+            }
+        }
+        return bounds;
+    }
+
     pentaRhomb(fifths, type, isDown, loc, exp) {
         const bounds = new Bounds();
         if (!overlays.rhombSelected) {
@@ -433,52 +483,27 @@ export class PenroseScreen {
 
         if (exp == 0) {
             if (overlays.smallRhomb) {
-                console.log(`draw small rhombs`);
+                console.log(`Draw small rhombus pattern`);
+                const thins = penrose[this.mode].thinSmallRhomb;
+                const thicks = penrose[this.mode].thickSmallRhomb;
+                this.drawRhombusPattern(
+                    fifths,
+                    type,
+                    isDown,
+                    loc,
+                    thicks,
+                    thins
+                );
             }
 
             return bounds;
         }
 
         if (exp == 1 && !overlays.smallRhomb) {
+            console.log(`Draw large rhombus pattern`);
             const thins = penrose[this.mode].thinRhomb;
             const thicks = penrose[this.mode].thickRhomb;
-
-            for (let i = 0; i < 5; i++) {
-                const shift = norm(fifths + i);
-                switch (type) {
-                    case penrose.Pe5:
-                        const shape = thicks[tenths(shift, isDown)];
-                        this.rhombus(null, loc, shape, "black");
-                        break;
-                    case penrose.Pe3:
-                        switch (i) {
-                            case 0:
-                                const thinR = thins[tenths(shift, isDown)];
-                                this.rhombus(null, loc, thinR, "black");
-
-                            case 1:
-                            case 4:
-                                const shape = thicks[tenths(shift, isDown)];
-                                this.rhombus(null, loc, shape, "black");
-                                break;
-                            default:
-                                break;
-                        }
-                        break;
-                    case penrose.Pe1:
-                        switch (i) {
-                            case 0:
-                                const shape2 = thicks[tenths(shift, isDown)];
-                                this.rhombus(null, loc, shape2, "black");
-                                break;
-                            case 4:
-                            case 1:
-                                const thinR2 = thins[tenths(shift, isDown)];
-                                this.rhombus(null, loc, thinR2, "black");
-                                break;
-                        }
-                }
-            }
+            this.drawRhombusPattern(fifths, type, isDown, loc, thicks, thins);
             return bounds;
             // we rightly should return bounds here
         }
