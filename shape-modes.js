@@ -421,6 +421,7 @@ class Real {
 
         this.wheels = new Wheels(pSeed, sSeed, tSeed, dSeed);
 
+        // Making the real ones.
         const [thickRhombUp, thickRhombWon, thickRhombToo] = goThickReal(
             this.wheels,
             1
@@ -440,7 +441,8 @@ class Real {
             goThickReal(this.wheels, 0);
         const [thinSmallRhombUp, thinSmallRhombWon, thinSmallRhombToo] =
             goThinReal(this.wheels, 0);
-        this.thinRhombSmall = shapeWheel(
+
+        this.thinSmallRhomb = shapeWheel(
             thinSmallRhombUp,
             thinSmallRhombWon,
             thinSmallRhombToo

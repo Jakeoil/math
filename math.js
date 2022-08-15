@@ -120,10 +120,10 @@ export function penroseApp() {
     makeCanvas("s3");
     makeCanvas("s1");
     drawFirstInflation("inf1");
-    //drawSecondInflation("inf2");
-    //drawGridWork("gwork");
-    //drawGeneric123("g012");
-    //drawGeneric3("g3");
+    drawSecondInflation("inf2");
+    drawGridWork("gwork");
+    drawGeneric123("g012");
+    drawGeneric3("g3");
 }
 
 /******************************************************************************

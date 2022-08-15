@@ -135,7 +135,6 @@ function makeWheels(pSeed, sSeed, tSeed, dSeed) {
 
     // Wheel[0] is undefined
 
-    const a = new Wheel(...interpolateWheel(...pSeed));
     const pWheels = [new Wheel(...interpolateWheel(...pSeed))];
     const sWheels = [new Wheel(...interpolateWheel(...sSeed))];
     const tWheels = [new Wheel(...interpolateWheel(...tSeed))];

@@ -419,7 +419,6 @@ export class PenroseScreen {
     }
 
     drawRhombusPattern(fifths, type, isDown, loc, thicks, thins) {
-        console.log(thicks, thins);
         const bounds = new Bounds();
         for (let i = 0; i < 5; i++) {
             const shift = norm(fifths + i);
@@ -483,7 +482,15 @@ export class PenroseScreen {
 
         if (exp == 0) {
             if (overlays.smallRhomb) {
-                console.log(`Draw small rhombus pattern`);
+                // console.log(
+                //     `Draw small rhombus pattern ${JSON.stringify({
+                //         fifths,
+                //         type,
+                //         isDown,
+                //         loc,
+                //         exp,
+                //     })}`
+                // );
                 const thins = penrose[this.mode].thinSmallRhomb;
                 const thicks = penrose[this.mode].thickSmallRhomb;
                 this.drawRhombusPattern(
