@@ -28,8 +28,6 @@ import { iface } from "./penrose-screen.js";
 
 /** Initialize from contols in penrose.html */
 export const shapeColors = new ShapeColors(penroseApp);
-shapeColors.reset();
-shapeColors.refresh();
 
 const controls = new Controls(penroseApp, 0, 0, false);
 controls.reset();
@@ -405,7 +403,7 @@ function drawGridWork(id) {
             for (let i = 0; i < 10; i++) {
                 let offset = p((i + 1) * spacing, y);
                 mosaic.renderShape(
-                    shapeColors.idList["p1-color"],
+                    shapeColors.shapeColors["pe1-color"],
                     offset,
                     shape[i],
                     g,
@@ -429,7 +427,7 @@ function drawGridWork(id) {
                 let offset = p((i + 1) * spacing, y);
 
                 quadrille.renderShape(
-                    shapeColors.idList["p1-color"] + "44",
+                    shapeColors.shapeColors["pe1-color"] + "44",
                     offset,
                     shape[i],
                     g,

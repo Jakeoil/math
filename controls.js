@@ -72,86 +72,108 @@ const cookie = new Cookie();
  * entry: {ele, color, defaultColor}
  */
 export class ShapeColors {
+    defaultMap = {
+        "pe5-color": penrose.Pe5.defaultColor,
+        "pe3-color": penrose.Pe3.defaultColor,
+        "pe1-color": penrose.Pe1.defaultColor,
+        "star-color": penrose.St5.defaultColor,
+        "boat-color": penrose.St3.defaultColor,
+        "diamond-color": penrose.St1.defaultColor,
+    };
     constructor(app) {
         this.app = app;
-        this.idList = {
-            "p5-color": { defaultColor: penrose.Pe5.defaultColor },
-            "p3-color": { defaultColor: penrose.Pe3.defaultColor },
-            "p1-color": { defaultColor: penrose.Pe1.defaultColor },
-            "star-color": { defaultColor: penrose.St5.defaultColor },
-            "boat-color": { defaultColor: penrose.St3.defaultColor },
-            "diamond-color": { defaultColor: penrose.St1.defaultColor },
-        };
-        const shapeColorEles = document.querySelectorAll(".shape-color");
-        for (const ele of shapeColorEles) {
-            const entry = this.idList[ele.id];
+        this.shapeColorEles = document.querySelectorAll(".shape-color");
+        this.reset();
+
+        for (const ele of this.shapeColorEles) {
+            const entry = this.shapeColors[ele.id];
             if (entry) {
-                entry.ele = ele;
-                entry.ele.addEventListener(
+                ele.addEventListener(
                     "input",
                     this.onShapeColorsInput.bind(this),
                     false
                 );
-                entry.ele.addEventListener(
+                ele.addEventListener(
                     "change",
                     this.onShapeColorsChange.bind(this),
                     false
                 );
             } else {
-                console.log(`Undefined id: ${ele.id} in html`);
+                console.log(`unsupported id: ${ele.id} in shape-color class`);
             }
         }
-        const reset_ele = document.querySelector("#color-reset");
+        this.reset_ele = document.querySelector("#color-reset");
 
-        if (reset_ele)
-            reset_ele.addEventListener(
+        if (this.reset_ele)
+            this.reset_ele.addEventListener(
                 "click",
                 this.onColorReset.bind(this),
                 false
             );
-        this.reset();
+        this.refresh();
     }
 
     /**
      * Set the elements to the last value received
      */
     refresh() {
-        for (const entry of Object.values(this.idList)) {
-            if (entry.ele) entry.ele.value = entry.color;
+        for (const ele of this.shapeColorEles) {
+            const color = this.shapeColors[ele.id];
+            if (color) {
+                ele.value = color;
+            }
         }
+        cookie.set("ShapeColors", this.shapeColors.toString());
     }
 
+    toString() {
+        return JSON.stringify(this.shapeColors);
+    }
+    fromString(json) {
+        ({
+            "pe5-color": this.shapeColors["pe5-color"],
+            "pe3-color": this.shapeColors["pe3-color"],
+            "pe1-color": this.shapeColors["pe1-color"],
+            "star-color": this.shapeColors["star-color"],
+            "boat-color": this.shapeColors["boat-color"],
+            "diamond-color": this.shapeColors["diamond-color"],
+        } = JSON.parse(json));
+    }
     /**
      * Set the elements to their defaults
      */
     reset() {
-        for (const entry of Object.values(this.idList)) {
-            entry.color = entry.defaultColor;
-        }
+        const json_default = JSON.stringify(this.defaultMap);
+        this.shapeColors = this.defaultMap;
+
+        //console.log(`json_default: ${json_default}`);
+        const json_cookie = cookie.get("shapeColors", json_default);
+        //console.log(`json_cookie: ${json_cookie}`);
+        this.fromString(json_cookie);
     }
 
     onShapeColorsInput(event) {
         console.log(
             `input: id: ${event.target.id}, color: ${event.target.value}`
         );
-        this.idList[event.target.id].color = event.target.value;
+        this.shapeColors[event.target.id] = event.target.value;
         this.refresh();
-        this.app();
+        this.app("ShapeColors");
     }
 
     onShapeColorsChange(event) {
         console.log(
             `change: id: ${event.target.id}, color: ${event.target.value}`
         );
-        this.idList[event.target.id].color = event.target.value;
+        this.shapeColors[event.target.id] = event.target.value;
         this.refresh();
-        this.app();
+        this.app("ShapeColors");
     }
     // The reset button was clicked.
     onColorReset() {
         this.reset();
         this.refresh();
-        this.app();
+        this.app("ShapeColors");
     }
 }
 
@@ -367,8 +389,8 @@ export class Overlays {
         // If not rhombSelected, grey out the button.
         if (this.rhombSelected) {
             if (this.eleLargeRhomb && this.eleSmallRhomb) {
-                this.eleLargeRhomb.disabled = false;
-                this.eleSmallRhomb.disabled = false;
+                this.eleLargeRhomb.readonly = false;
+                this.eleSmallRhomb.readonly = false;
                 if (this.smallRhomb) {
                     this.eleSmallRhomb.checked = true;
                 } else {
@@ -377,8 +399,8 @@ export class Overlays {
             }
         } else {
             if (this.eleLargeRhomb && this.eleSmallRhomb) {
-                this.eleLargeRhomb.disabled = true;
-                this.eleSmallRhomb.disabled = true;
+                this.eleLargeRhomb.readonly = true;
+                this.eleSmallRhomb.readonly = true;
             }
         }
         cookie.set("Overlays", this.toString());

@@ -27,17 +27,17 @@ export function iface(g, scale, mode) {
 function pColor(type) {
     switch (type) {
         case penrose.Pe5:
-            return shapeColors.idList["p5-color"].color;
+            return shapeColors.shapeColors["pe5-color"];
         case penrose.Pe3:
-            return shapeColors.idList["p3-color"].color;
+            return shapeColors.shapeColors["pe3-color"];
         case penrose.Pe1:
-            return shapeColors.idList["p1-color"].color;
+            return shapeColors.shapeColors["pe1-color"];
         case penrose.St5:
-            return shapeColors.idList["star-color"].color;
+            return shapeColors.shapeColors["star-color"];
         case penrose.St3:
-            return shapeColors.idList["boat-color"].color;
+            return shapeColors.shapeColors["boat-color"];
         case penrose.St1:
-            return shapeColors.idList["diamond-color"].color;
+            return shapeColors.shapeColors["diamond-color"];
     }
     return null;
 }
