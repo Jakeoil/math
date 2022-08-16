@@ -28,6 +28,9 @@ class Cookie {
         setCookie(type, value, { "max-age": 3600 });
     }
 
+    delete(type) {
+        deleteCookie(type);
+    }
     getShapeMode(sm) {
         const cookie = getCookie("shape-mode");
         if (cookie) {
@@ -72,7 +75,7 @@ const cookie = new Cookie();
  * entry: {ele, color, defaultColor}
  */
 export class ShapeColors {
-    defaultMap = {
+    defaultColors = {
         "pe5-color": penrose.Pe5.defaultColor,
         "pe3-color": penrose.Pe3.defaultColor,
         "pe1-color": penrose.Pe1.defaultColor,
@@ -114,6 +117,15 @@ export class ShapeColors {
     }
 
     /**
+     * Set the elements to their defaults
+     */
+    reset() {
+        this.shapeColors = { ...this.defaultColors };
+        const json_cookie = cookie.get(ShapeColors.name, this.toString());
+        this.fromString(json_cookie);
+    }
+
+    /**
      * Set the elements to the last value received
      */
     refresh() {
@@ -123,7 +135,7 @@ export class ShapeColors {
                 ele.value = color;
             }
         }
-        cookie.set("ShapeColors", this.shapeColors.toString());
+        cookie.set(ShapeColors.name, this.toString());
     }
 
     toString() {
@@ -139,41 +151,25 @@ export class ShapeColors {
             "diamond-color": this.shapeColors["diamond-color"],
         } = JSON.parse(jsonString));
     }
-    /**
-     * Set the elements to their defaults
-     */
-    reset() {
-        const json_default = JSON.stringify(this.defaultMap);
-        this.shapeColors = this.defaultMap;
-
-        //console.log(`json_default: ${json_default}`);
-        const json_cookie = cookie.get("shapeColors", json_default);
-        //console.log(`json_cookie: ${json_cookie}`);
-        this.fromString(json_cookie);
-    }
 
     onShapeColorsInput(event) {
-        console.log(
-            `input: id: ${event.target.id}, color: ${event.target.value}`
-        );
         this.shapeColors[event.target.id] = event.target.value;
         this.refresh();
-        this.app("ShapeColors");
+        this.app(ShapeColors.name);
     }
 
     onShapeColorsChange(event) {
-        console.log(
-            `change: id: ${event.target.id}, color: ${event.target.value}`
-        );
         this.shapeColors[event.target.id] = event.target.value;
         this.refresh();
-        this.app("ShapeColors");
+        this.app(ShapeColors.name);
     }
     // The reset button was clicked.
     onColorReset() {
+        cookie.delete(ShapeColors.name);
+        const deletedCookie = cookie.get(ShapeColors.name);
         this.reset();
         this.refresh();
-        this.app("ShapeColors");
+        this.app(ShapeColors.name);
     }
 }
 
@@ -260,19 +256,19 @@ export class Controls {
     clickFifths() {
         this.bumpFifths();
         this.eleFifths.innerHTML = `fifths: ${this.fifths}`;
-        this.app();
+        this.app(Controls.name);
     }
 
     clickType() {
         this.bumpType();
         this.eleType.innerHTML = this.typeName;
-        this.app();
+        this.app(Controls.name);
     }
 
     clickIsDown() {
         this.toggleDirection();
         this.eleIsDown.innerHTML = this.direction;
-        this.app();
+        this.app(Controls.name);
     }
 }
 
@@ -322,7 +318,7 @@ export class ShapeMode {
         this.shapeMode = MODE_LIST[new_idx];
         cookie.setShapeMode(this.shapeMode);
         this.refresh();
-        this.app();
+        this.app(ShapeMode.name);
     }
 }
 
@@ -373,8 +369,8 @@ export class Overlays {
         this.smallRhomb = false;
 
         const dflt = this.toString();
-        const cooki = cookie.get(Overlays.name, dflt);
-        this.fromString(cooki);
+        const cookieJson = cookie.get(Overlays.name, dflt);
+        this.fromString(cookieJson);
     }
     refresh() {
         if (this.elePenta) {
@@ -386,10 +382,10 @@ export class Overlays {
         }
 
         // If not rhombSelected, grey out the button.
+        const ele = document.querySelector("#rhomb-size");
         if (this.rhombSelected) {
+            if (ele) ele.style.display = "block";
             if (this.eleLargeRhomb && this.eleSmallRhomb) {
-                this.eleLargeRhomb.readonly = false;
-                this.eleSmallRhomb.readonly = false;
                 if (this.smallRhomb) {
                     this.eleSmallRhomb.checked = true;
                 } else {
@@ -397,10 +393,7 @@ export class Overlays {
                 }
             }
         } else {
-            if (this.eleLargeRhomb && this.eleSmallRhomb) {
-                this.eleLargeRhomb.readonly = true;
-                this.eleSmallRhomb.readonly = true;
-            }
+            if (ele) ele.style.display = "none";
         }
         cookie.set(Overlays.name, this.toString());
     }
@@ -449,10 +442,13 @@ export class PageNavigation {
         this.navButtons = document.querySelectorAll(".pageButton");
         this.pages = document.querySelectorAll(".page");
         this.activePage = null; // loaded on self click
-        const ids = ["rwork", "inf1", "inf2", "gwork", "g012", "g3"];
+        //const ids = ["rwork", "inf1", "inf2", "gwork", "g012", "g3"];
         const eles = document.querySelectorAll(".pageButton");
         for (const ele of eles) {
-            const page = ids.shift();
+            //const page = ids.shift();
+            // future
+            const page = ele.getAttribute("data-id");
+            //console.log(`page: ${page}, futurePage: ${futurePage}`);
             const funct = () => this.pageClicked(page, ele);
             ele.addEventListener("click", funct, false);
         }
@@ -481,7 +477,6 @@ export class PageNavigation {
             let navButton = this.navButtons[index];
             if (navButton === button) {
                 this.activeButtonIndex = index;
-                //cookie.setActiveButtonIndex(index);
                 navButton.style.background = "white";
                 navButton.style.color = "black";
             } else {

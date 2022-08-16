@@ -108,7 +108,20 @@ const pageNavigation = new PageNavigation(penroseApp);
  * Creates listeners for control buttons
  */
 export function penroseApp(source) {
-    console.log(`refresh penroseApp: ${source}:${overlays}`);
+    switch (source) {
+        case Overlays.name:
+            console.log(
+                `Refresh penroseApp from ${Overlays.name}: ${overlays}`
+            );
+            break;
+        case ShapeColors.name:
+            console.log(
+                `Refresh penroseApp from ${ShapeColors.name}: ${shapeColors}`
+            );
+            break;
+        default:
+            console.log(`Refresh penroseApp from ${source}`);
+    }
 
     // load the little canvases.
     makeCanvas("p5");
@@ -219,7 +232,6 @@ function drawFirstInflation(id) {
     const drawScreen = function () {
         g.fillStyle = "#ffffff";
         g.fillRect(0, 0, canvas.width, canvas.height);
-        //g.fillStyle = p1Orange;
         g.strokeStyle = penrose.OUTLINE;
         g.lineWidth = 1;
         let scale = 10;
@@ -276,7 +288,6 @@ function drawFirstInflation(id) {
             star(i, penrose.St1, DOWN, p(x + i * 20, y), 1);
             starRhomb(i, penrose.St1, DOWN, p(x + i * 20, y), 1);
         }
-
         x = 15;
         y += 25;
         for (let i = 0; i < 5; i++) {
@@ -290,7 +301,6 @@ function drawFirstInflation(id) {
             bounds.expand(starRhomb(i, penrose.St3, DOWN, p(x + i * 25, y), 1));
         }
         // conditional redraw
-        console.log(`bounds before conditional redraw: ${bounds.width}`);
         redraw(bounds, canvas, drawScreen, scale);
     };
     drawScreen();
