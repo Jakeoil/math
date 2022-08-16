@@ -363,6 +363,7 @@ export class Overlays {
                 false
             );
         }
+
         this.reset();
         this.refresh();
     }
@@ -371,7 +372,9 @@ export class Overlays {
         this.rhombSelected = false;
         this.smallRhomb = false;
 
-        this.fromString(cookie.get("Overlays", this.toString()));
+        const dflt = this.toString();
+        const cooki = cookie.get(Overlays.name, dflt);
+        this.fromString(cooki);
     }
     refresh() {
         if (this.elePenta) {
@@ -399,7 +402,7 @@ export class Overlays {
                 this.eleSmallRhomb.readonly = true;
             }
         }
-        cookie.set("Overlays", this.toString());
+        cookie.set(Overlays.name, this.toString());
     }
     toString() {
         return JSON.stringify({
@@ -411,7 +414,7 @@ export class Overlays {
 
     fromString(jsonString) {
         ({
-            pentSelected: this.pentaSelected,
+            pentaSelected: this.pentaSelected,
             rhombSelected: this.rhombSelected,
             smallRhomb: this.smallRhomb,
         } = JSON.parse(jsonString));
@@ -419,12 +422,12 @@ export class Overlays {
     pentaClicked() {
         this.pentaSelected = !this.pentaSelected;
         this.refresh();
-        this.app();
+        this.app(Overlays.name);
     }
     rhombClicked() {
         this.rhombSelected = !this.rhombSelected;
         this.refresh();
-        this.app();
+        this.app(Overlays.name);
     }
     rhombSizeClicked() {
         for (let button of this.radioButtons) {
@@ -433,7 +436,7 @@ export class Overlays {
                 this.refresh();
             }
         }
-        this.app();
+        this.app(Overlays.name);
     }
 }
 

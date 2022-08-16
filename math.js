@@ -188,7 +188,8 @@ function makeCanvas(canvasId) {
  * @param {*} drawFunction
  */
 function redraw(bounds, canvas, drawFunction, scale) {
-    if (!bounds.maxPoint || !bounds.minPoint) {
+    if (bounds.isEmpty) {
+        console.log(`isEmpty`);
         return;
     }
     const computedWidth = bounds.maxPoint.x * scale + scale;
@@ -255,7 +256,9 @@ function drawFirstInflation(id) {
         y += 20;
         for (let i = 0; i < 5; i++) {
             penta(i, penrose.Pe1, DOWN, p(x + i * 20, y), 1);
-            pentaRhomb(i, penrose.Pe1, DOWN, p(x + i * 20, y), 1);
+            bounds.expand(
+                pentaRhomb(i, penrose.Pe1, DOWN, p(x + i * 20, y), 1)
+            );
         }
         y += 25;
         star(0, penrose.St5, UP, p(15, y), 1);
@@ -287,6 +290,7 @@ function drawFirstInflation(id) {
             bounds.expand(starRhomb(i, penrose.St3, DOWN, p(x + i * 25, y), 1));
         }
         // conditional redraw
+        console.log(`bounds before conditional redraw: ${bounds.width}`);
         redraw(bounds, canvas, drawScreen, scale);
     };
     drawScreen();

@@ -493,13 +493,15 @@ export class PenroseScreen {
                 // );
                 const thins = penrose[this.mode].thinSmallRhomb;
                 const thicks = penrose[this.mode].thickSmallRhomb;
-                this.drawRhombusPattern(
-                    fifths,
-                    type,
-                    isDown,
-                    loc,
-                    thicks,
-                    thins
+                bounds.expand(
+                    this.drawRhombusPattern(
+                        fifths,
+                        type,
+                        isDown,
+                        loc,
+                        thicks,
+                        thins
+                    )
                 );
             }
 
@@ -509,30 +511,18 @@ export class PenroseScreen {
         if (exp == 1 && !overlays.smallRhomb) {
             const thins = penrose[this.mode].thinRhomb;
             const thicks = penrose[this.mode].thickRhomb;
-            this.drawRhombusPattern(fifths, type, isDown, loc, thicks, thins);
+            bounds.expand(
+                this.drawRhombusPattern(
+                    fifths,
+                    type,
+                    isDown,
+                    loc,
+                    thicks,
+                    thins
+                )
+            );
             return bounds;
             // we rightly should return bounds here
-        }
-        if (exp == 1 && exp != 1) {
-            for (let i = 0; i < 5; i++) {
-                const shift = norm(fifths + i);
-                if (!type.diamond.includes(i)) {
-                    let end = loc.tr(tWheel[tenths(shift, !isDown)]);
-                    this.line(loc, end, "cyan");
-                }
-                // Now we have split the orange ones with a line.
-                // Find the orange center.
-                const center = loc.tr(pWheel[tenths(shift, isDown)]);
-                const twist = type.twist[i];
-                if (twist != 0) {
-                    const angle = norm(shift + twist);
-                    const start = center.tr(pWheel[tenths(angle, isDown)]);
-                    //this.line(center, start);
-                    const end = start.tr(tWheel[tenths(angle, !isDown)]);
-                    this.line(start, end, "cyan");
-                }
-            }
-            return bounds;
         }
 
         ///
@@ -580,19 +570,6 @@ export class PenroseScreen {
         const tWheel = wheels.t[exp].w;
         const sWheel = wheels.s[exp].w;
         if (exp == 1 && !overlays.smallRhomb) {
-            return bounds;
-        }
-
-        if (exp == 1 && exp != 1) {
-            // Draw appropriate part of star
-            for (let i = 0; i < 5; i++) {
-                const shift = norm(fifths + i);
-                const angle = tenths(shift, isDown);
-                if (type.color[i] != null) {
-                    const end = loc.tr(tWheel[angle]);
-                    this.line(loc, end, "cyan");
-                }
-            }
             return bounds;
         }
 
