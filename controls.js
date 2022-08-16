@@ -102,8 +102,8 @@ export class ShapeColors {
                 console.log(`unsupported id: ${ele.id} in shape-color class`);
             }
         }
-        this.reset_ele = document.querySelector("#color-reset");
 
+        this.reset_ele = document.querySelector("#color-reset");
         if (this.reset_ele)
             this.reset_ele.addEventListener(
                 "click",
@@ -129,7 +129,7 @@ export class ShapeColors {
     toString() {
         return JSON.stringify(this.shapeColors);
     }
-    fromString(json) {
+    fromString(jsonString) {
         ({
             "pe5-color": this.shapeColors["pe5-color"],
             "pe3-color": this.shapeColors["pe3-color"],
@@ -137,7 +137,7 @@ export class ShapeColors {
             "star-color": this.shapeColors["star-color"],
             "boat-color": this.shapeColors["boat-color"],
             "diamond-color": this.shapeColors["diamond-color"],
-        } = JSON.parse(json));
+        } = JSON.parse(jsonString));
     }
     /**
      * Set the elements to their defaults
@@ -371,11 +371,7 @@ export class Overlays {
         this.rhombSelected = false;
         this.smallRhomb = false;
 
-        ({
-            pentSelected: this.pentaSelected,
-            rhombSelected: this.rhombSelected,
-            smallRhomb: this.smallRhomb,
-        } = JSON.parse(cookie.get("Overlays", this.toString())));
+        this.fromString(cookie.get("Overlays", this.toString()));
     }
     refresh() {
         if (this.elePenta) {
@@ -413,6 +409,13 @@ export class Overlays {
         });
     }
 
+    fromString(jsonString) {
+        ({
+            pentSelected: this.pentaSelected,
+            rhombSelected: this.rhombSelected,
+            smallRhomb: this.smallRhomb,
+        } = JSON.parse(jsonString));
+    }
     pentaClicked() {
         this.pentaSelected = !this.pentaSelected;
         this.refresh();

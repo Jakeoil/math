@@ -14,7 +14,7 @@ import {
 import { iface } from "./penrose-screen.js";
 
 /**
- * Penrose Mosaic
+ * Penrose Mosaic and More
  *
  * Jeff Coyle's Penrose page.
  * Explores Penrose Type 1.
@@ -22,8 +22,8 @@ import { iface } from "./penrose-screen.js";
  * The modes.
  * Introduces the Mosaic. The penrose pattern based on square mosaic tiles.
  * Introduces the Quadrille. The vector based version of above.
- * Displays the 'Real' mode. The actual type 1 penrose tiling.
- *
+ * Displays the 'Real' mode. The actual type 1 penrose tiling P1.
+ * Overlay the Rhombs.
  */
 
 /** Initialize from contols in penrose.html */
@@ -107,8 +107,8 @@ const pageNavigation = new PageNavigation(penroseApp);
  * Creates all canvases.
  * Creates listeners for control buttons
  */
-export function penroseApp() {
-    console.log(`refresh penroseApp: overlays:${overlays}`);
+export function penroseApp(source) {
+    console.log(`refresh penroseApp: ${source}:${overlays}`);
 
     // load the little canvases.
     makeCanvas("p5");
@@ -168,11 +168,11 @@ function makeCanvas(canvasId) {
                     : null
             );
             bounds.pad(0.5);
-            base = base.tr(bounds.min.neg);
-            width = (bounds.maxPoint.x - bounds.minPoint.x) * scale + 1;
-            height = (bounds.maxPoint.y - bounds.minPoint.y) * scale + 1;
-            tries += 1;
-        } while (!bounds.min.isZero && tries < 2);
+            base = base.tr(bounds.minPoint.neg);
+            width = (bounds.width - 1) * scale;
+            height = (bounds.height - 1) * scale;
+            tries += 1; // prevention of infinite loop
+        } while (!bounds.minPoint.isZero && tries < 2);
     };
 
     drawScreen();

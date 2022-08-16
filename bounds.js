@@ -34,7 +34,7 @@ export class Bounds {
         }
     }
 
-    isEmpty() {
+    get isEmpty() {
         return !this.maxPoint || !this.minPoint;
     }
     /**
@@ -50,7 +50,7 @@ export class Bounds {
             return;
         }
 
-        if (bounds.isEmpty()) {
+        if (bounds.isEmpty) {
             // figure didn't draw anything.
             return;
         }
@@ -124,36 +124,20 @@ export class Bounds {
         return this;
     }
 
-    // doesn't check for null.
-    get minX() {
-        return this.minPoint && this.minPoint.x;
-    }
-    set minX(x) {
-        this.minPoint.x = x;
+    // compatibility with rect.
+    get x() {
+        return this.isEmpty ? 0 : this.minPoint.x;
     }
 
-    get minY() {
-        return this.minPoint && this.minPoint.y;
-    }
-    set minY(y) {
-        this.minPoint.y = y;
-    }
-    get maxX() {
-        return this.maxPoint && this.maxPoint.x;
-    }
-    get maxY() {
-        return this.maxPoint && this.maxPoint.y;
+    get y() {
+        return this.isEmpty ? 0 : this.minPoint.y;
     }
 
-    get min() {
-        return p(this.minX, this.minY);
-        // Oh shit. This is a dumb one.  Synonym for minPoint
+    get width() {
+        return this.isEmpty ? 0 : this.maxPoint.x + 1 - this.minPoint.x;
     }
-    set min(point) {
-        this.minPoint = point;
-    }
-    get max() {
-        return p(this.maxX, this.maxY);
+    get height() {
+        return this.isEmpty ? 0 : this.maxPoint.y + 1 - this.minPoint.y;
     }
 
     toString() {
@@ -162,11 +146,20 @@ export class Bounds {
 }
 
 function testBounds() {
+    console.log(`testBounds`);
     let bounds = new Bounds();
+    console.log(
+        `${bounds}, width: ${bounds.width}, height: ${bounds.height}, isEmpty: ${bounds.isEmpty}`
+    );
     let offset = p(10, 10);
     bounds.addPoint(offset, p(-5, 6));
+    console.log(
+        `${bounds}, width: ${bounds.width}, height: ${bounds.height}, isEmpty: ${bounds.isEmpty}`
+    );
     bounds.addPoint(offset, p(0, 50));
-    console.log(`${bounds}`);
+    console.log(
+        `${bounds}, width: ${bounds.width}, height: ${bounds.height}, isEmpty: ${bounds.isEmpty}`
+    );
     console.log(`${bounds.pad(1)}`);
     console.log(`${bounds.pad(1, 2, 3)}`);
     console.log(`${bounds.pad(1, 2, 3, 4)}`);

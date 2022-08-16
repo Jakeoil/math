@@ -507,7 +507,6 @@ export class PenroseScreen {
         }
 
         if (exp == 1 && !overlays.smallRhomb) {
-            console.log(`Draw large rhombus pattern`);
             const thins = penrose[this.mode].thinRhomb;
             const thicks = penrose[this.mode].thickRhomb;
             this.drawRhombusPattern(fifths, type, isDown, loc, thicks, thins);
