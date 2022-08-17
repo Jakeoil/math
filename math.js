@@ -119,8 +119,26 @@ export function penroseApp(source) {
                 `Refresh penroseApp from ${ShapeColors.name}: ${shapeColors}`
             );
             break;
+        case PageNavigation.name:
+            console.log(
+                `Refresh penroseApp from ${PageNavigation.name}: ${PageNavigation.name} instance placeholder`
+            );
+            break;
         default:
-            console.log(`Refresh penroseApp from ${source}`);
+            console.log(`->${source.constructor.name}<-`);
+            console.log(`->${Event.name}<-`);
+            const val = source.constructor.name;
+            switch (val) {
+                case Event.name:
+                    console.log(
+                        `Refresh penroseApp from ${source.target.constructor.name}`
+                    );
+                    break;
+                default:
+                    console.log(
+                        `Refresh penroseApp from unsupported ${source}`
+                    );
+            }
     }
 
     // load the little canvases.

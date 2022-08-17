@@ -441,15 +441,12 @@ export class PageNavigation {
         this.app = app;
         this.navButtons = document.querySelectorAll(".pageButton");
         this.pages = document.querySelectorAll(".page");
+
         this.activePage = null; // loaded on self click
-        //const ids = ["rwork", "inf1", "inf2", "gwork", "g012", "g3"];
-        const eles = document.querySelectorAll(".pageButton");
-        for (const ele of eles) {
-            //const page = ids.shift();
-            // future
-            const page = ele.getAttribute("data-id");
-            //console.log(`page: ${page}, futurePage: ${futurePage}`);
-            const funct = () => this.pageClicked(page, ele);
+        this.navEles = document.querySelectorAll(".pageButton");
+        for (const ele of this.navEles) {
+            const pageId = ele.getAttribute("data-id");
+            const funct = () => this.pageClicked(pageId, ele);
             ele.addEventListener("click", funct, false);
         }
         this.reset(); // sets active button index.
@@ -459,13 +456,20 @@ export class PageNavigation {
     }
 
     reset() {
-        this.activeButtonIndex = cookie.getActiveButtonIndex(0);
+        this.activeButtonIndex = cookie.getActiveButtonIndex(1);
     }
 
     refresh() {
         cookie.setActiveButtonIndex(this.activeButtonIndex);
     }
 
+    someRefresh() {
+        const index = this.activeButtonIndex;
+
+        for (let page of this.pages) {
+            page.style.display = "none";
+        }
+    }
     pageClicked(pageId, button) {
         for (let page of this.pages) {
             page.style.display = "none";

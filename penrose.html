@@ -196,7 +196,13 @@
                         // Adjusting the iframe height onload event
                         // todo: fix the iframe problem where we seem to be
                         // using some side effect of the rwork element
-                        iframe.onload = function () {
+                        iframe.onload = function (event) {
+                            console.log(`iframe loaded ${event}`);
+                            const target = event.target;
+                            console.log(`target: ${target}`);
+                            console.log(
+                                `height: ${iframe.contentWindow.document.body.scrollHeight}`
+                            );
                             iframe.style.height =
                                 iframe.contentWindow.document.body
                                     .scrollHeight +
