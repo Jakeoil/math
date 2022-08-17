@@ -201,7 +201,13 @@
                             const target = event.target;
                             console.log(`target: ${target}`);
                             console.log(
-                                `height: ${iframe.contentWindow.document.body.scrollHeight}`
+                                `scrollHeight: ${iframe.contentWindow.document.body.scrollHeight}`
+                            );
+                            console.log(
+                                `clientHeight: ${iframe.contentWindow.document.body.clientHeight}`
+                            );
+                            console.log(
+                                `offsetHeight: ${iframe.contentWindow.document.body.offsetHeight}`
                             );
                             iframe.style.height =
                                 iframe.contentWindow.document.body

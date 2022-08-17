@@ -386,10 +386,10 @@ export class PenroseScreen {
         let currentLineWidth = this.g.lineWidth;
         let start = true;
         const bounds = new Bounds();
+        this.g.strokeStyle = strokeStyle ? strokeStyle : "black";
+        this.g.fillStyle = fill;
+        this.g.lineWidth = this.scale < 5 ? 1 : 2;
         for (const point of shape) {
-            this.g.strokeStyle = strokeStyle ? strokeStyle : "black";
-            this.g.fillStyle = fill;
-            this.g.lineWidth = 2;
             if (start) {
                 this.g.beginPath();
                 this.g.moveTo(

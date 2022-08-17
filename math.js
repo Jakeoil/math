@@ -173,7 +173,11 @@ function makeCanvas(canvasId) {
         g.strokeStyle = penrose.OUTLINE;
         g.lineWidth = 1;
         let scale = 10;
-        const { penta, star } = iface(g, scale, shapeMode.shapeMode);
+        const { penta, star, pentaRhomb, starRhomb } = iface(
+            g,
+            scale,
+            shapeMode.shapeMode
+        );
         let bounds;
         let width = 0;
         let height = 0;
@@ -196,6 +200,21 @@ function makeCanvas(canvasId) {
                     ? star(0, penrose.St3, false, base, 0)
                     : canvasId == "s1"
                     ? star(0, penrose.St1, false, base, 0)
+                    : null
+            );
+            bounds.expand(
+                canvasId == "p5"
+                    ? pentaRhomb(0, penrose.Pe5, true, base, 0)
+                    : canvasId == "p3"
+                    ? pentaRhomb(0, penrose.Pe3, false, base, 0)
+                    : canvasId == "p1"
+                    ? pentaRhomb(0, penrose.Pe1, false, base, 0)
+                    : canvasId == "s5"
+                    ? starRhomb(0, penrose.St5, false, base, 0)
+                    : canvasId == "s3"
+                    ? starRhomb(0, penrose.St3, false, base, 0)
+                    : canvasId == "s1"
+                    ? starRhomb(0, penrose.St1, false, base, 0)
                     : null
             );
             bounds.pad(0.5);
