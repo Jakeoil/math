@@ -249,6 +249,13 @@ export class Controls {
         if (this.eleType) this.eleType.innerHTML = this.typeName;
         if (this.eleIsDown) this.eleIsDown.innerHTML = this.direction;
     }
+    toString() {
+        return JSON.stringify({
+            fifths: this.fifths,
+            type: this.typeName,
+            isDown: this.isDown,
+        });
+    }
     /**
      * Initialization and
      * Events for the three buttons
@@ -335,7 +342,6 @@ export class Overlays {
         this.radioButtons = document.querySelectorAll("input[name='rhomb']");
         this.eleLargeRhomb = document.querySelector("large-rhomb");
         this.eleSmallRhomb = document.querySelector("small-rhomb");
-        /**in progress */
 
         if (this.elePenta) {
             this.elePenta.addEventListener(
@@ -344,6 +350,7 @@ export class Overlays {
                 false
             );
         }
+
         if (this.eleRhomb) {
             this.eleRhomb.addEventListener(
                 "click",
@@ -439,48 +446,36 @@ export class Overlays {
 export class PageNavigation {
     constructor(app) {
         this.app = app;
-        this.navButtons = document.querySelectorAll(".pageButton");
-        this.pages = document.querySelectorAll(".page");
+        this.navButtons = Array.from(document.querySelectorAll(".pageButton"));
+        this.pages = Array.from(document.querySelectorAll(".page"));
+        this.navButtons.forEach((button) =>
+            button.addEventListener("click", this.pageClicked.bind(this), false)
+        );
 
-        this.activePage = null; // loaded on self click
-        this.navEles = document.querySelectorAll(".pageButton");
-        for (const ele of this.navEles) {
-            const pageId = ele.getAttribute("data-id");
-            const funct = () => this.pageClicked(pageId, ele);
-            ele.addEventListener("click", funct, false);
-        }
-        this.reset(); // sets active button index.
-        if (this.navButtons && this.navButtons[this.activeButtonIndex]) {
-            this.navButtons[this.activeButtonIndex].click();
-        }
+        this.reset();
+        this.refresh();
     }
 
     reset() {
-        this.activeButtonIndex = cookie.getActiveButtonIndex(1);
+        this.activeButtonIndex = 1;
+        this.fromString(cookie.get(PageNavigation.name, this.toString()));
     }
 
+    /**
+     * Updates based on this.activeButtonIndex
+     * @returns
+     */
     refresh() {
-        cookie.setActiveButtonIndex(this.activeButtonIndex);
-    }
-
-    someRefresh() {
-        const index = this.activeButtonIndex;
-
-        for (let page of this.pages) {
-            page.style.display = "none";
+        if (!this.navButtons.length) {
+            console.log(`!! Nothing to refresh`);
+            return;
         }
-    }
-    pageClicked(pageId, button) {
-        for (let page of this.pages) {
-            page.style.display = "none";
-        }
-        let active_page = document.querySelector(`#${pageId}`);
-        active_page.style.display = "block";
 
-        for (let index = 0; index < this.navButtons.length; index++) {
-            let navButton = this.navButtons[index];
-            if (navButton === button) {
-                this.activeButtonIndex = index;
+        // Refresh navButtons.
+        const activeNavButton = this.navButtons[this.activeButtonIndex];
+
+        for (const navButton of this.navButtons) {
+            if (navButton === activeNavButton) {
                 navButton.style.background = "white";
                 navButton.style.color = "black";
             } else {
@@ -488,9 +483,36 @@ export class PageNavigation {
                 navButton.style.color = "white";
             }
         }
-        this.activePage = active_page;
+
+        this.pages.forEach((page) => (page.style.display = "none"));
+        const activePageId = activeNavButton.getAttribute("data-id");
+        const activePage = document.querySelector(`#${activePageId}`);
+        activePage.style.display = "block";
+
+        cookie.set(PageNavigation.name, this.toString());
+    }
+
+    toString() {
+        return JSON.stringify({
+            activeButtonIndex: this.activeButtonIndex,
+        });
+    }
+
+    fromString(jsonString) {
+        ({ activeButtonIndex: this.activeButtonIndex } =
+            JSON.parse(jsonString));
+    }
+
+    pageClicked(event) {
+        const pageId = event.target.getAttribute("data-id");
+        const pageIndex = this.navButtons.findIndex(
+            (button) => button.getAttribute("data-id") == pageId
+        );
+        if (pageIndex >= 0) this.activeButtonIndex = pageIndex;
+        else console.log(`No navButtons. Ignore`);
+
         this.refresh();
-        this.app("PageNavigation");
+        this.app(PageNavigation.name);
     }
 }
 

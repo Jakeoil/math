@@ -197,17 +197,8 @@
                         // todo: fix the iframe problem where we seem to be
                         // using some side effect of the rwork element
                         iframe.onload = function (event) {
-                            console.log(`iframe loaded ${event}`);
-                            const target = event.target;
-                            console.log(`target: ${target}`);
                             console.log(
-                                `scrollHeight: ${iframe.contentWindow.document.body.scrollHeight}`
-                            );
-                            console.log(
-                                `clientHeight: ${iframe.contentWindow.document.body.clientHeight}`
-                            );
-                            console.log(
-                                `offsetHeight: ${iframe.contentWindow.document.body.offsetHeight}`
+                                ` iframe loaded, scrollHeight: ${iframe.contentWindow.document.body.scrollHeight}`
                             );
                             iframe.style.height =
                                 iframe.contentWindow.document.body

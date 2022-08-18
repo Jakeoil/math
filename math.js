@@ -39,68 +39,67 @@ shapeMode.refresh();
 export const overlays = new Overlays(penroseApp);
 
 const pageNavigation = new PageNavigation(penroseApp);
-
 /**
  * This was a real pain
  * Line up the clickers
  **/
 
 // Grab scroll code. todo todo
-(function () {
-    /***
-     *
-     * this is an implementation of Wes Bos click & drag scroll algorythm. In
-     * his video, he shows how to do the horizontal scroll. I have implemented
-     * the vertical scroll for those wondering how to make it as well.
-     *  Wes Bos video:
-     *  https://www.youtube.com/watch?v=C9EWifQ5xqA
-     */
+// (function () {
+//     /***
+//      *
+//      * this is an implementation of Wes Bos click & drag scroll algorythm. In
+//      * his video, he shows how to do the horizontal scroll. I have implemented
+//      * the vertical scroll for those wondering how to make it as well.
+//      *  Wes Bos video:
+//      *  https://www.youtube.com/watch?v=C9EWifQ5xqA
+//      */
 
-    let startY;
-    let startX;
-    let scrollLeft;
-    let scrollTop;
-    let isDown;
+//     let startY;
+//     let startX;
+//     let scrollLeft;
+//     let scrollTop;
+//     let isDown;
 
-    function addListeners() {
-        activePage.addEventListener("mousedown", (e) => mouseIsDown(e));
-        activePage.addEventListener("mouseup", (e) => mouseUp(e));
-        activePage.addEventListener("mouseleave", (e) => mouseLeave(e));
-        activePage.addEventListener("mousemove", (e) => mouseMove(e));
-    }
+//     function addListeners() {
+//         activePage.addEventListener("mousedown", (e) => mouseIsDown(e));
+//         activePage.addEventListener("mouseup", (e) => mouseUp(e));
+//         activePage.addEventListener("mouseleave", (e) => mouseLeave(e));
+//         activePage.addEventListener("mousemove", (e) => mouseMove(e));
+//     }
 
-    function mouseIsDown(e) {
-        isDown = true;
-        startY = e.pageY - activePage.offsetTop;
-        startX = e.pageX - activePage.offsetLeft;
-        scrollLeft = activePage.scrollLeft;
-        scrollTop = activePage.scrollTop;
-        console.log(`mouseIsDown: ${activePage.id}`);
-    }
-    function mouseUp(e) {
-        isDown = false;
-        console.log(`mouseUp`);
-    }
-    function mouseLeave(e) {
-        isDown = false;
-        console.log(`mouseLeave`);
-    }
-    function mouseMove(e) {
-        if (isDown) {
-            e.preventDefault();
-            //Move vertcally
-            const y = e.pageY - activePage.offsetTop;
-            const walkY = y - startY;
-            activePage.scrollTop = scrollTop - walkY;
+//     function mouseIsDown(e) {
+//         isDown = true;
+//         startY = e.pageY - activePage.offsetTop;
+//         startX = e.pageX - activePage.offsetLeft;
+//         scrollLeft = activePage.scrollLeft;
+//         scrollTop = activePage.scrollTop;
+//         console.log(`mouseIsDown: ${activePage.id}`);
+//     }
+//     function mouseUp(e) {
+//         isDown = false;
+//         console.log(`mouseUp`);
+//     }
+//     function mouseLeave(e) {
+//         isDown = false;
+//         console.log(`mouseLeave`);
+//     }
+//     function mouseMove(e) {
+//         if (isDown) {
+//             e.preventDefault();
+//             //Move vertcally
+//             const y = e.pageY - activePage.offsetTop;
+//             const walkY = y - startY;
+//             activePage.scrollTop = scrollTop - walkY;
 
-            //Move Horizontally
-            const x = e.pageX - activePage.offsetLeft;
-            const walkX = x - startX;
-            activePage.scrollLeft = scrollLeft - walkX;
-            console.log(`mouseMove`);
-        }
-    }
-})();
+//             //Move Horizontally
+//             const x = e.pageX - activePage.offsetLeft;
+//             const walkX = x - startX;
+//             activePage.scrollLeft = scrollLeft - walkX;
+//             console.log(`mouseMove`);
+//         }
+//     }
+// })();
 
 /******************************************************************************
  * Called when the page loads.
@@ -121,22 +120,24 @@ export function penroseApp(source) {
             break;
         case PageNavigation.name:
             console.log(
-                `Refresh penroseApp from ${PageNavigation.name}: ${PageNavigation.name} instance placeholder`
+                `Refresh penroseApp from ${PageNavigation.name}: ${pageNavigation}`
+            );
+            break;
+        case Controls.name:
+            console.log(
+                `Refresh penroseApp from ${Controls.name}: ${controls}`
             );
             break;
         default:
-            console.log(`->${source.constructor.name}<-`);
-            console.log(`->${Event.name}<-`);
             const val = source.constructor.name;
             switch (val) {
                 case Event.name:
                     console.log(
                         `Refresh penroseApp from ${source.target.constructor.name}`
                     );
-                    break;
                 default:
                     console.log(
-                        `Refresh penroseApp from unsupported ${source}`
+                        `!! Refresh penroseApp from unsupported ${source.target}`
                     );
             }
     }

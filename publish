@@ -13,3 +13,6 @@ cp penrose-screen.js /Volumes/jakeoil.net/public_html/math
 cp shape-modes.js point.js wheels.js /Volumes/jakeoil.net/public_html/math
 cp index.html  /Volumes/jakeoil.net/public_html/math
 cp quadrille3.html /Volumes/jakeoil.net/public_html/math
+cp controls.js /Volumes/jakeoil.net/public_html/math
+cp bounds.js /Volumes/jakeoil.net/public_html/math
+cp measurements.js /Volumes/jakeoil.net/public_html/math
