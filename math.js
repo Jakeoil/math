@@ -260,6 +260,8 @@ function redraw(bounds, canvas, drawFunction, scale) {
  * Sets the globals g and scale
  */
 function drawFirstInflation(id) {
+    const page = document.querySelector(`#${id}`);
+    if (page.style.display == "none") return;
     const canvas = document.querySelector(`#${id} > canvas`);
     if (!canvas) {
         console.log("canvasId is null!");
@@ -268,7 +270,7 @@ function drawFirstInflation(id) {
     let g = canvas.getContext("2d");
 
     const drawScreen = function () {
-        g.fillStyle = "#ffffff";
+        g.fillStyle = "white";
         g.fillRect(0, 0, canvas.width, canvas.height);
         g.strokeStyle = penrose.OUTLINE;
         g.lineWidth = 1;
@@ -350,6 +352,8 @@ function drawFirstInflation(id) {
  *
  */
 function drawSecondInflation(id) {
+    const page = document.querySelector(`#${id}`);
+    if (page.style.display == "none") return;
     const canvas = document.querySelector(`#${id} > canvas`);
     // g is global
     let g = canvas.getContext("2d");
@@ -425,9 +429,8 @@ function drawSecondInflation(id) {
  * A lot of cool stuff for computing sizes here
  */
 function drawGridWork(id) {
-    const UP = false;
-    const DOWN = true;
-
+    const page = document.querySelector(`#${id}`);
+    if (page.style.display == "none") return;
     const canvas = document.querySelector(`#${id} > canvas`);
 
     let g = canvas.getContext("2d");
@@ -438,7 +441,7 @@ function drawGridWork(id) {
      * Draws a few decagons too.
      */
     function drawBig() {
-        g.fillStyle = "#ffffff";
+        g.fillStyle = "white";
         g.fillRect(0, 0, canvas.width, canvas.height);
 
         //g.fillStyle = p1Orange;
@@ -552,6 +555,8 @@ function drawGridWork(id) {
  * @param {} canvasId
  */
 function drawGeneric123(id) {
+    const page = document.querySelector(`#${id}`);
+    if (page.style.display == "none") return;
     const canvas = document.querySelector(`#${id} > canvas`);
     let g = canvas.getContext("2d");
     g.fillStyle = "#ffffff";
@@ -650,6 +655,8 @@ function drawGeneric123(id) {
  * Let's make it friendlier
  */
 function drawGeneric3(id) {
+    const page = document.querySelector(`#${id}`);
+    if (page.style.display == "none") return;
     const canvas = document.querySelector(`#${id} > canvas`);
 
     // g is global

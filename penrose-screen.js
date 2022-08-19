@@ -420,26 +420,27 @@ export class PenroseScreen {
 
     drawRhombusPattern(fifths, type, isDown, loc, thicks, thins) {
         const bounds = new Bounds();
+        const color = pColor(type) + 22;
         for (let i = 0; i < 5; i++) {
             const shift = norm(fifths + i);
             switch (type) {
                 case penrose.Pe5:
                     const shape = thicks[tenths(shift, isDown)];
-                    bounds.expand(this.rhombus(null, loc, shape, "black"));
+                    bounds.expand(this.rhombus(color, loc, shape, "black"));
                     break;
                 case penrose.Pe3:
                     switch (i) {
                         case 0:
                             const thinR = thins[tenths(shift, isDown)];
                             bounds.expand(
-                                this.rhombus(null, loc, thinR, "black")
+                                this.rhombus(color, loc, thinR, "black")
                             );
 
                         case 1:
                         case 4:
                             const shape = thicks[tenths(shift, isDown)];
                             bounds.expand(
-                                this.rhombus(null, loc, shape, "black")
+                                this.rhombus(color, loc, shape, "black")
                             );
                             break;
                         default:
@@ -451,14 +452,14 @@ export class PenroseScreen {
                         case 0:
                             const shape2 = thicks[tenths(shift, isDown)];
                             bounds.expand(
-                                this.rhombus(null, loc, shape2, "black")
+                                this.rhombus(color, loc, shape2, "black")
                             );
                             break;
                         case 4:
                         case 1:
                             const thinR2 = thins[tenths(shift, isDown)];
                             bounds.expand(
-                                this.rhombus(null, loc, thinR2, "black")
+                                this.rhombus(color, loc, thinR2, "black")
                             );
                             break;
                     }
