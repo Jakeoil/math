@@ -381,12 +381,73 @@ export class PenroseScreen {
         this.g.strokeStyle = currentStrokeStyle;
     }
 
+    getGradient(fill, offset, shape, head) {
+        const point0 = shape[0].tr(offset).mult(this.scale);
+        const point1 = shape[2].tr(offset).mult(this.scale);
+        const canvasGradient = this.g.createLinearGradient(
+            point0.x,
+            point0.y,
+            point1.x,
+            point1.y
+        );
+        canvasGradient.addColorStop(0, "#000");
+        canvasGradient.addColorStop(1, fill);
+        return canvasGradient;
+    }
+
     rhombus(fill, offset, shape, strokeStyle) {
+        let gradient = true;
+        let currentStrokeStyle = this.g.strokeStyle;
+        let currentLineWidth = this.g.lineWidth;
+        let currentfillStyle = this.g.fillStyle;
+        let start = true;
+        const bounds = new Bounds();
+        this.g.strokeStyle = strokeStyle ? strokeStyle : "black";
+        if (gradient) {
+            this.g.fillStyle = this.getGradient(fill, offset, shape, true);
+        } else {
+            this.g.fillStyle = fill;
+        }
+
+        this.g.lineWidth = this.scale < 5 ? 1 : 2;
+        for (const point of shape) {
+            if (start) {
+                this.g.beginPath();
+                this.g.moveTo(
+                    (point.x + offset.x) * this.scale,
+                    (point.y + offset.y) * this.scale
+                );
+                start = false;
+            } else {
+                this.g.lineTo(
+                    (point.x + offset.x) * this.scale,
+                    (point.y + offset.y) * this.scale
+                );
+            }
+
+            bounds.addPoint(offset, point);
+        }
+
+        this.g.closePath();
+        if (fill) {
+            this.g.fill();
+        }
+        if (strokeStyle) {
+            this.g.stroke();
+        }
+
+        this.g.strokeStyle = currentStrokeStyle;
+        this.g.lineWidth = currentLineWidth;
+        this.g.fillStyle = currentfillStyle;
+
+        return bounds;
+    }
+    rhombusOld(fill, offset, shape, strokeStyle) {
         let currentStrokeStyle = this.g.strokeStyle;
         let currentLineWidth = this.g.lineWidth;
         let start = true;
         const bounds = new Bounds();
-        this.g.strokeStyle = strokeStyle ? strokeStyle : "black";
+        //this.g.strokeStyle = strokeStyle ? strokeStyle : "black";
         this.g.fillStyle = fill;
         this.g.lineWidth = this.scale < 5 ? 1 : 2;
         for (const point of shape) {
@@ -411,36 +472,48 @@ export class PenroseScreen {
         if (fill) {
             this.g.fill();
         }
-        this.g.stroke();
+        if (strokeStyle) {
+            this.g.stroke();
+        }
 
         this.g.strokeStyle = currentStrokeStyle;
         this.g.lineWidth = currentLineWidth;
         return bounds;
     }
 
+    /**
+     * The color of the rhomb is based on the type.
+     * The string will be seached for the # character. Everything before
+     * # is a modifier.
+     *
+     */
     drawRhombusPattern(fifths, type, isDown, loc, thicks, thins) {
         const bounds = new Bounds();
-        const color = pColor(type) + 22;
+        let gradient = true;
+
+        const fill = pColor(type);
+        //const outline = "#000000";
+        const outline = null;
         for (let i = 0; i < 5; i++) {
             const shift = norm(fifths + i);
             switch (type) {
                 case penrose.Pe5:
                     const shape = thicks[tenths(shift, isDown)];
-                    bounds.expand(this.rhombus(color, loc, shape, "black"));
+                    bounds.expand(this.rhombus(fill, loc, shape, outline));
                     break;
                 case penrose.Pe3:
                     switch (i) {
                         case 0:
                             const thinR = thins[tenths(shift, isDown)];
                             bounds.expand(
-                                this.rhombus(color, loc, thinR, "black")
+                                this.rhombus(fill, loc, thinR, outline)
                             );
 
                         case 1:
                         case 4:
                             const shape = thicks[tenths(shift, isDown)];
                             bounds.expand(
-                                this.rhombus(color, loc, shape, "black")
+                                this.rhombus(fill, loc, shape, outline)
                             );
                             break;
                         default:
@@ -452,14 +525,14 @@ export class PenroseScreen {
                         case 0:
                             const shape2 = thicks[tenths(shift, isDown)];
                             bounds.expand(
-                                this.rhombus(color, loc, shape2, "black")
+                                this.rhombus(fill, loc, shape2, outline)
                             );
                             break;
                         case 4:
                         case 1:
                             const thinR2 = thins[tenths(shift, isDown)];
                             bounds.expand(
-                                this.rhombus(color, loc, thinR2, "black")
+                                this.rhombus(fill, loc, thinR2, outline)
                             );
                             break;
                     }

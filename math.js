@@ -142,7 +142,7 @@ export function penroseApp(source) {
             }
     }
 
-    // load the little canvases.
+    //load the little canvases.
     makeCanvas("p5");
     makeCanvas("p3");
     makeCanvas("p1");
