@@ -505,6 +505,7 @@ function drawGridWork(id) {
         exp = 1;
         deca(fifths, isDown, base, exp);
         grid(base, 10);
+        decaRhomb(fifths, isDown, base, exp);
 
         fifths = 0;
         isDown = false;
@@ -512,6 +513,7 @@ function drawGridWork(id) {
         exp = 2;
         deca(fifths, isDown, base, exp);
         grid(base, 18);
+        decaRhomb(fifths, isDown, base, exp);
 
         fifths = 3;
         isDown = true;
@@ -519,6 +521,7 @@ function drawGridWork(id) {
         exp = 1;
         deca(fifths, isDown, base, exp);
         grid(base, 10);
+        decaRhomb(fifths, isDown, base, exp);
 
         fifths = 3;
         isDown = true;
@@ -526,6 +529,7 @@ function drawGridWork(id) {
         exp = 2;
         deca(fifths, isDown, base, exp);
         grid(base, 18);
+        decaRhomb(fifths, isDown, base, exp);
 
         fifths = 1;
         isDown = false;
@@ -533,6 +537,7 @@ function drawGridWork(id) {
         exp = 1;
         deca(fifths, isDown, base, exp);
         grid(base, 10);
+        decaRhomb(fifths, isDown, base, exp);
 
         fifths = 1;
         isDown = false;
@@ -564,7 +569,11 @@ function drawGeneric123(id) {
     g.strokeStyle = penrose.OUTLINE;
     g.lineWidth = 1;
     let scale = 10;
-    const { penta, star, deca } = iface(g, scale, shapeMode.shapeMode);
+    const { penta, star, deca, pentaRhomb, starRhomb, decaRhomb } = iface(
+        g,
+        scale,
+        shapeMode.shapeMode
+    );
     penrose.scale = scale; // Maybe does not use it.
 
     function starType(type) {
@@ -603,8 +612,24 @@ function drawGeneric123(id) {
             p(x, y),
             0
         );
+        bounds.expand(
+            pentaRhomb(
+                controls.fifths,
+                pentaType(controls.typeIndex),
+                controls.isDown,
+                p(x, y),
+                0
+            )
+        );
         x += 21;
         penta(
+            controls.fifths,
+            pentaType(controls.typeIndex),
+            controls.isDown,
+            p(x, y),
+            1
+        );
+        pentaRhomb(
             controls.fifths,
             pentaType(controls.typeIndex),
             controls.isDown,
@@ -620,9 +645,23 @@ function drawGeneric123(id) {
             2
         );
 
+        pentaRhomb(
+            controls.fifths,
+            pentaType(controls.typeIndex),
+            controls.isDown,
+            p(x, y),
+            2
+        );
         x = 13;
         y += 55;
         star(
+            controls.fifths,
+            starType(controls.typeIndex),
+            controls.isDown,
+            p(x, y),
+            0
+        );
+        starRhomb(
             controls.fifths,
             starType(controls.typeIndex),
             controls.isDown,
@@ -637,8 +676,22 @@ function drawGeneric123(id) {
             p(x, y),
             1
         );
+        starRhomb(
+            controls.fifths,
+            starType(controls.typeIndex),
+            controls.isDown,
+            p(x, y),
+            1
+        );
         x += 54;
         star(
+            controls.fifths,
+            starType(controls.typeIndex),
+            controls.isDown,
+            p(x, y),
+            2
+        );
+        starRhomb(
             controls.fifths,
             starType(controls.typeIndex),
             controls.isDown,

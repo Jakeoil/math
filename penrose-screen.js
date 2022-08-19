@@ -381,7 +381,7 @@ export class PenroseScreen {
         this.g.strokeStyle = currentStrokeStyle;
     }
 
-    getGradient(fill, offset, shape, head) {
+    getGradient(fill, offset, shape, isHeads) {
         const point0 = shape[0].tr(offset).mult(this.scale);
         const point1 = shape[2].tr(offset).mult(this.scale);
         const canvasGradient = this.g.createLinearGradient(
@@ -390,12 +390,13 @@ export class PenroseScreen {
             point1.x,
             point1.y
         );
-        canvasGradient.addColorStop(0, "#000");
+        if (isHeads) canvasGradient.addColorStop(0, "#fff");
+        else canvasGradient.addColorStop(0, "#000");
         canvasGradient.addColorStop(1, fill);
         return canvasGradient;
     }
 
-    rhombus(fill, offset, shape, strokeStyle) {
+    rhombus(fill, offset, shape, strokeStyle, isHeads) {
         let gradient = true;
         let currentStrokeStyle = this.g.strokeStyle;
         let currentLineWidth = this.g.lineWidth;
@@ -404,7 +405,7 @@ export class PenroseScreen {
         const bounds = new Bounds();
         this.g.strokeStyle = strokeStyle ? strokeStyle : "black";
         if (gradient) {
-            this.g.fillStyle = this.getGradient(fill, offset, shape, true);
+            this.g.fillStyle = this.getGradient(fill, offset, shape, isHeads);
         } else {
             this.g.fillStyle = fill;
         }
@@ -487,7 +488,7 @@ export class PenroseScreen {
      * # is a modifier.
      *
      */
-    drawRhombusPattern(fifths, type, isDown, loc, thicks, thins) {
+    drawRhombusPattern(fifths, type, isDown, loc, thicks, thins, isHeads) {
         const bounds = new Bounds();
         let gradient = true;
 
@@ -499,21 +500,23 @@ export class PenroseScreen {
             switch (type) {
                 case penrose.Pe5:
                     const shape = thicks[tenths(shift, isDown)];
-                    bounds.expand(this.rhombus(fill, loc, shape, outline));
+                    bounds.expand(
+                        this.rhombus(fill, loc, shape, outline, isHeads)
+                    );
                     break;
                 case penrose.Pe3:
                     switch (i) {
                         case 0:
                             const thinR = thins[tenths(shift, isDown)];
                             bounds.expand(
-                                this.rhombus(fill, loc, thinR, outline)
+                                this.rhombus(fill, loc, thinR, outline, isHeads)
                             );
 
                         case 1:
                         case 4:
                             const shape = thicks[tenths(shift, isDown)];
                             bounds.expand(
-                                this.rhombus(fill, loc, shape, outline)
+                                this.rhombus(fill, loc, shape, outline, isHeads)
                             );
                             break;
                         default:
@@ -525,14 +528,26 @@ export class PenroseScreen {
                         case 0:
                             const shape2 = thicks[tenths(shift, isDown)];
                             bounds.expand(
-                                this.rhombus(fill, loc, shape2, outline)
+                                this.rhombus(
+                                    fill,
+                                    loc,
+                                    shape2,
+                                    outline,
+                                    isHeads
+                                )
                             );
                             break;
                         case 4:
                         case 1:
                             const thinR2 = thins[tenths(shift, isDown)];
                             bounds.expand(
-                                this.rhombus(fill, loc, thinR2, outline)
+                                this.rhombus(
+                                    fill,
+                                    loc,
+                                    thinR2,
+                                    outline,
+                                    isHeads
+                                )
                             );
                             break;
                     }
@@ -541,7 +556,7 @@ export class PenroseScreen {
         return bounds;
     }
 
-    pentaRhomb(fifths, type, isDown, loc, exp) {
+    pentaRhomb(fifths, type, isDown, loc, exp, isHeads = true) {
         const bounds = new Bounds();
         if (!overlays.rhombSelected) {
             return bounds;
@@ -574,7 +589,8 @@ export class PenroseScreen {
                         isDown,
                         loc,
                         thicks,
-                        thins
+                        thins,
+                        isHeads
                     )
                 );
             }
@@ -592,7 +608,8 @@ export class PenroseScreen {
                     isDown,
                     loc,
                     thicks,
-                    thins
+                    thins,
+                    isHeads
                 )
             );
             return bounds;
@@ -600,7 +617,9 @@ export class PenroseScreen {
         }
 
         ///
-        bounds.expand(this.pentaRhomb(0, penrose.Pe5, !isDown, loc, exp - 1));
+        bounds.expand(
+            this.pentaRhomb(0, penrose.Pe5, !isDown, loc, exp - 1, isHeads)
+        );
 
         for (let i = 0; i < 5; i++) {
             const shift = norm(fifths + i);
@@ -610,7 +629,8 @@ export class PenroseScreen {
                     type.twist[i] == 0 ? penrose.Pe3 : penrose.Pe1,
                     isDown,
                     loc.tr(pWheel[tenths(shift, isDown)]),
-                    exp - 1
+                    exp - 1,
+                    !isHeads
                 )
             );
 
@@ -621,7 +641,8 @@ export class PenroseScreen {
                         penrose.St1,
                         !isDown,
                         loc.tr(sWheel[tenths(shift, !isDown)]),
-                        exp - 1
+                        exp - 1,
+                        isHeads // !!! just a guess
                     )
                 );
             }
@@ -629,7 +650,7 @@ export class PenroseScreen {
         return bounds;
     }
 
-    starRhomb(fifths, type, isDown, loc, exp) {
+    starRhomb(fifths, type, isDown, loc, exp, isHeads) {
         const bounds = new Bounds();
         if (!overlays.rhombSelected) {
             return bounds;
@@ -647,7 +668,10 @@ export class PenroseScreen {
             return bounds;
         }
 
-        bounds.expand(this.starRhomb(0, penrose.St5, !isDown, loc, exp - 1));
+        bounds.expand(
+            this.starRhomb(0, penrose.St5, !isDown, loc, exp - 1),
+            isHeads
+        );
 
         for (let i = 0; i < 5; i++) {
             const shift = norm(fifths + i);
@@ -660,7 +684,8 @@ export class PenroseScreen {
                         penrose.Pe1,
                         !isDown,
                         loc.tr(sWheel[angle]),
-                        exp - 1
+                        exp - 1,
+                        isHeads
                     )
                 );
 
@@ -670,14 +695,15 @@ export class PenroseScreen {
                         penrose.St3,
                         isDown,
                         loc.tr(tWheel[angle]),
-                        exp - 1
+                        exp - 1,
+                        isHeads
                     )
                 );
             }
         }
         return bounds;
     }
-    decaRhomb(fifths, isDown, loc, exp) {
+    decaRhomb(fifths, isDown, loc, exp, isHeads = true) {
         const bounds = new Bounds();
         if (!overlays.rhombSelected) {
             return bounds;
@@ -702,7 +728,7 @@ export class PenroseScreen {
 
         // The central yellow pentagon
         bounds.expand(
-            this.pentaRhomb(fifths, penrose.Pe3, isDown, base, exp - 1)
+            this.pentaRhomb(fifths, penrose.Pe3, isDown, base, exp - 1, isHeads)
         ); //
 
         // The two diamonds
@@ -713,7 +739,8 @@ export class PenroseScreen {
                 penrose.St1,
                 isDown,
                 base.tr(offs),
-                exp - 1
+                exp - 1,
+                isHeads // !!! this is just a guess
             )
         ); // sd1
 
@@ -724,7 +751,8 @@ export class PenroseScreen {
                 penrose.St1,
                 isDown,
                 base.tr(offs),
-                exp - 1
+                exp - 1,
+                isHeads // !!! just a guess
             )
         ); // sd4
 
@@ -736,7 +764,8 @@ export class PenroseScreen {
                 penrose.Pe1,
                 !isDown,
                 base.tr(offs),
-                exp - 1
+                exp - 1,
+                !isHeads
             )
         );
 
@@ -747,7 +776,8 @@ export class PenroseScreen {
                 penrose.Pe1,
                 !isDown,
                 base.tr(offs),
-                exp - 1
+                exp - 1,
+                !isHeads
             )
         );
 
@@ -761,7 +791,8 @@ export class PenroseScreen {
                 penrose.St3,
                 !isDown,
                 base.tr(offs),
-                exp - 1
+                exp - 1,
+                !isHeads
             )
         );
         return bounds;
