@@ -207,15 +207,18 @@ export class Controls {
             );
         //else console.log(`no eleDown!`);
 
+        console.log(`constuctor init fifths ${fifths}`);
         this.fifths = fifths;
         this.typeIndex = typeIndex;
         this.isDown = isDown;
         this.fifths = cookie.getFifths(fifths);
+        console.log(`but cookie say: ${this.fifths}`);
         this.typeIndex = cookie.getTypeIndex(typeIndex);
         this.isDown = cookie.getIsDown(isDown);
     }
     bumpFifths() {
         this.fifths = norm(this.fifths + 1);
+        console.log(`bump fifths to ${this.fifths}`);
         cookie.setFifths(this.fifths);
     }
 
@@ -261,12 +264,15 @@ export class Controls {
      * Events for the three buttons
      */
     clickFifths() {
+        console.log(`click fifths`);
         this.bumpFifths();
+        console.log(`new value ${this.fifths}`);
         this.eleFifths.innerHTML = `fifths: ${this.fifths}`;
         this.app(Controls.name);
     }
 
     clickType() {
+        console.log(`click type`);
         this.bumpType();
         this.eleType.innerHTML = this.typeName;
         this.app(Controls.name);
@@ -549,6 +555,12 @@ export class PageNavigation {
         this.app(PageNavigation.name);
     }
 }
+export const globals = {};
+//export let shapeColors;
+//export let controls;
+//export let shapeMode;
+//export let overlays;
+//export let pageNavigation;
 
 /**
  * cookie logic from  https://javascript.info/cookie

@@ -11,6 +11,14 @@ import {
     Overlays,
     PageNavigation,
 } from "./controls.js";
+// import {
+//     controls,
+//     shapeColors,
+//     shapeMode,
+//     overlays,
+//     pageNavigation,
+// } from "./controls.js";
+import { globals } from "./controls.js";
 import { iface } from "./penrose-screen.js";
 
 /**
@@ -39,12 +47,11 @@ import { iface } from "./penrose-screen.js";
 // export const overlays = new Overlays(penroseApp);
 
 // const pageNavigation = new PageNavigation(penroseApp);
-export let shapeColors;
-let controls;
-export let shapeMode;
-export let overlays;
-
-let pageNavigation;
+// export let shapeColors;
+// let controls;
+// export let shapeMode;
+// export let overlays;
+// let pageNavigation;
 /**
  * This was a real pain
  * Line up the clickers
@@ -116,22 +123,22 @@ export function penroseApp(source) {
     switch (source) {
         case Overlays.name:
             console.log(
-                `Refresh penroseApp from ${Overlays.name}: ${overlays}`
+                `Refresh penroseApp from ${Overlays.name}: ${globals.overlays}`
             );
             break;
         case ShapeColors.name:
             console.log(
-                `Refresh penroseApp from ${ShapeColors.name}: ${shapeColors}`
+                `Refresh penroseApp from ${ShapeColors.name}: ${globals.shapeColors}`
             );
             break;
         case PageNavigation.name:
             console.log(
-                `Refresh penroseApp from ${PageNavigation.name}: ${pageNavigation}`
+                `Refresh penroseApp from ${PageNavigation.name}: ${globals.pageNavigation}`
             );
             break;
         case Controls.name:
             console.log(
-                `Refresh penroseApp from ${Controls.name}: ${controls}`
+                `Refresh penroseApp from ${Controls.name}: ${globals.controls}`
             );
             break;
         default:
@@ -148,18 +155,21 @@ export function penroseApp(source) {
             }
     }
 
-    shapeColors = new ShapeColors(penroseApp);
+    if (!globals.shapeColors) globals.shapeColors = new ShapeColors(penroseApp);
 
-    controls = new Controls(penroseApp, 0, 0, false);
-    controls.reset();
-    controls.refresh();
+    if (!globals.controls) {
+        globals.controls = new Controls(penroseApp, 0, 0, false);
+        globals.controls.reset();
+    }
+    globals.controls.refresh();
 
-    shapeMode = new ShapeMode(penroseApp);
+    if (!globals.shapeMode) globals.shapeMode = new ShapeMode(penroseApp);
     //shapeMode.refresh();
 
-    overlays = new Overlays(penroseApp);
+    if (!globals.overlays) globals.overlays = new Overlays(penroseApp);
 
-    pageNavigation = new PageNavigation(penroseApp);
+    if (!globals.pageNavigation)
+        globals.pageNavigation = new PageNavigation(penroseApp);
 
     //load the little canvases.
     makeCanvas("p5");
@@ -196,7 +206,7 @@ function makeCanvas(canvasId) {
         const { penta, star, pentaRhomb, starRhomb } = iface(
             g,
             scale,
-            shapeMode.shapeMode
+            globals.shapeMode.shapeMode
         );
         let bounds;
         let width = 0;
@@ -297,7 +307,7 @@ function drawFirstInflation(id) {
         const { penta, star, pentaRhomb, starRhomb } = iface(
             g,
             scale,
-            shapeMode.shapeMode
+            globals.shapeMode.shapeMode
         );
 
         let x = 8;
@@ -397,7 +407,7 @@ function drawSecondInflation(id) {
         const { star, penta, pentaRhomb, starRhomb } = iface(
             g,
             scale,
-            shapeMode.shapeMode
+            globals.shapeMode.shapeMode
         );
 
         let x = 25;
@@ -471,7 +481,11 @@ function drawGridWork(id) {
         g.strokeStyle = penrose.OUTLINE;
         g.lineWidth = 1;
         let scale = 10;
-        const { deca, decaRhomb, grid } = iface(g, scale, shapeMode.shapeMode);
+        const { deca, decaRhomb, grid } = iface(
+            g,
+            scale,
+            globals.shapeMode.shapeMode
+        );
 
         let y = 5;
         const shapes = [mosaic.penta, mosaic.diamond, mosaic.star, mosaic.boat];
@@ -481,7 +495,7 @@ function drawGridWork(id) {
             for (let i = 0; i < 10; i++) {
                 let offset = p((i + 1) * spacing, y);
                 mosaic.renderShape(
-                    shapeColors.shapeColors["pe1-color"],
+                    globals.shapeColors.shapeColors["pe1-color"],
                     offset,
                     shape[i],
                     g,
@@ -505,7 +519,7 @@ function drawGridWork(id) {
                 let offset = p((i + 1) * spacing, y);
 
                 quadrille.renderShape(
-                    shapeColors.shapeColors["pe1-color"] + "44",
+                    globals.shapeColors.shapeColors["pe1-color"] + "44",
                     offset,
                     shape[i],
                     g,
@@ -595,12 +609,12 @@ function drawGeneric123(id) {
     const { penta, star, deca, pentaRhomb, starRhomb, decaRhomb } = iface(
         g,
         scale,
-        shapeMode.shapeMode
+        globals.shapeMode.shapeMode
     );
     penrose.scale = scale; // Maybe does not use it.
 
     function starType(type) {
-        switch (controls.typeList[type]) {
+        switch (globals.controls.typeList[type]) {
             case penrose.Pe1:
                 return penrose.St1;
             case penrose.Pe3:
@@ -608,12 +622,12 @@ function drawGeneric123(id) {
             case penrose.Pe5:
                 return penrose.St5;
             default:
-                return controls.typeList[type];
+                return globals.controls.typeList[type];
         }
     }
 
     function pentaType(type) {
-        switch (controls.typeList[type]) {
+        switch (globals.controls.typeList[type]) {
             case penrose.St1:
                 return penrose.Pe1;
             case penrose.St3:
@@ -621,11 +635,12 @@ function drawGeneric123(id) {
             case penrose.St5:
                 return penrose.Pe5;
             default:
-                return controls.typeList[type];
+                return globals.controls.typeList[type];
         }
     }
 
     const drawScreen = function () {
+        const controls = globals.controls;
         let x = 13;
         let y = 26;
         const bounds = penta(
@@ -742,8 +757,9 @@ function drawGeneric3(id) {
     g.strokeStyle = penrose.OUTLINE;
     g.lineWidth = 1;
     let scale = 4;
-    const { deca, decaRhomb } = iface(g, scale, shapeMode.shapeMode);
+    const { deca, decaRhomb } = iface(g, scale, globals.shapeMode.shapeMode);
     const drawScreen = function () {
+        const controls = globals.controls;
         let x = 100;
         let y = 250;
 

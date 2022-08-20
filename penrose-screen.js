@@ -1,8 +1,9 @@
 import { norm } from "./point.js";
 import { Bounds } from "./bounds.js";
 import { penrose } from "./penrose.js";
-import { shapeColors, overlays } from "./math.js";
+import { globals } from "./controls.js";
 
+//const { overlays } = globals;
 function tenths(fifths, isDown) {
     return (fifths * 2 + (isDown ? 5 : 0)) % 10;
 }
@@ -25,7 +26,8 @@ export function iface(g, scale, mode) {
 // This routine depends on an initialized shapeColors instance.
 //
 function pColor(type) {
-    if (shapeColors) {
+    if (globals.shapeColors) {
+        const shapeColors = globals.shapeColors;
         switch (type) {
             case penrose.Pe5:
                 return shapeColors.shapeColors["pe5-color"];
@@ -102,7 +104,7 @@ export class PenroseScreen {
     penta(fifths, type, isDown, loc, exp) {
         const bounds = new Bounds();
 
-        if (overlays && !overlays.pentaSelected) {
+        if (globals.overlays && !globals.overlays.pentaSelected) {
             return bounds;
         }
 
@@ -188,7 +190,7 @@ export class PenroseScreen {
      */
     star(fifths, type, isDown, loc, exp) {
         const bounds = new Bounds();
-        if (overlays && !overlays.pentaSelected) {
+        if (globals.overlays && !globals.overlays.pentaSelected) {
             return bounds;
         }
 
@@ -270,7 +272,7 @@ export class PenroseScreen {
 
     deca(fifths, isDown, loc, exp) {
         const bounds = new Bounds();
-        if (overlays && !overlays.pentaSelected) {
+        if (globals.overlays && !globals.overlays.pentaSelected) {
             return bounds;
         }
 
@@ -564,8 +566,9 @@ export class PenroseScreen {
     }
 
     pentaRhomb(fifths, type, isDown, loc, exp, isHeads = true) {
+        const overlays = globals.overlays;
         const bounds = new Bounds();
-        if (!overlays.rhombSelected) {
+        if (!globals.overlays.rhombSelected) {
             return bounds;
         }
 
@@ -605,7 +608,7 @@ export class PenroseScreen {
             return bounds;
         }
 
-        if (exp == 1 && !overlays.smallRhomb) {
+        if (exp == 1 && !globals.overlays.smallRhomb) {
             const thins = penrose[this.mode].thinRhomb;
             const thicks = penrose[this.mode].thickRhomb;
             bounds.expand(
@@ -658,8 +661,9 @@ export class PenroseScreen {
     }
 
     starRhomb(fifths, type, isDown, loc, exp, isHeads) {
+        const overlays = globals.overlays;
         const bounds = new Bounds();
-        if (!overlays.rhombSelected) {
+        if (!globals.overlays.rhombSelected) {
             return bounds;
         }
 
@@ -712,7 +716,7 @@ export class PenroseScreen {
     }
     decaRhomb(fifths, isDown, loc, exp, isHeads = true) {
         const bounds = new Bounds();
-        if (!overlays.rhombSelected) {
+        if (!globals.overlays.rhombSelected) {
             return bounds;
         }
 
