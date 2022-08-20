@@ -102,6 +102,7 @@ export class PenroseScreen {
         if (!overlays.pentaSelected) {
             return bounds;
         }
+
         fifths = norm(fifths);
         if (exp == 0) {
             let shapes = this.pShape(type);
@@ -137,6 +138,8 @@ export class PenroseScreen {
                     exp - 1
                 )
             );
+
+            // !!! change this to a function of twist.
 
             if (type.diamond.includes(i)) {
                 bounds.expand(

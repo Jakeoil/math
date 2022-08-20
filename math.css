@@ -71,3 +71,12 @@ iframe {
     /*font-size: 1.17em;*/
     font-weight: bold;
 }
+.wheel table {
+    border: 1px solid black;
+}
+.wheel th {
+    border: 1px solid black;
+}
+.wheel td {
+    border: 1px solid black;
+}

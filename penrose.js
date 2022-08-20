@@ -25,7 +25,7 @@ class Penrose {
         this.down = [5, 7, 9, 1, 3];
 
         this.Pe5 = {
-            name: "Pe5",
+            name: this.BLUE_PENTA,
             color: [
                 this.YELLOW_PENTA,
                 this.YELLOW_PENTA,
@@ -38,7 +38,7 @@ class Penrose {
             diamond: [],
         };
         this.Pe3 = {
-            name: "Pe3",
+            name: this.YELLOW_PENTA,
             color: [
                 this.YELLOW_PENTA,
                 this.YELLOW_PENTA,
@@ -52,7 +52,7 @@ class Penrose {
             diamond: [0],
         };
         this.Pe1 = {
-            name: "Pe1",
+            name: this.ORANGE_PENTA,
             color: [
                 this.YELLOW_PENTA,
                 this.ORANGE_PENTA,
@@ -66,7 +66,7 @@ class Penrose {
         };
         // for stars, the color indicates existence.
         this.St5 = {
-            name: "St5: star",
+            name: this.BLUE_STAR,
             color: [
                 this.BLUE_STAR,
                 this.BLUE_STAR,
@@ -77,12 +77,12 @@ class Penrose {
             defaultColor: BLUE,
         };
         this.St3 = {
-            name: "St3: boat",
+            name: this.BLUE_BOAT,
             color: [this.BLUE_STAR, this.BLUE_STAR, null, null, this.BLUE_STAR],
             defaultColor: BLUE,
         };
         this.St1 = {
-            name: "St1: diamond",
+            name: this.BLUE_DIAMOND,
             color: [this.BLUE_STAR, null, null, null, null],
             defaultColor: BLUE,
         };
