@@ -158,7 +158,6 @@ export function penroseApp(source) {
     //shapeMode.refresh();
 
     overlays = new Overlays(penroseApp);
-    console.log(`overlays ${overlays}`);
 
     pageNavigation = new PageNavigation(penroseApp);
 
@@ -382,6 +381,10 @@ function drawSecondInflation(id) {
      *
      */
     function drawScreen() {
+        console.log(`g-test`);
+        let fill = "rgb(10, 10, 10)";
+        g.fillStyle = fill;
+        console.log(g.fillStyle);
         const UP = false;
         const DOWN = true;
         g.fillStyle = "#ffffff";

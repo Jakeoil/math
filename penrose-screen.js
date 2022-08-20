@@ -142,8 +142,9 @@ export class PenroseScreen {
                 )
             );
 
-            // !!! change this to a function of twist.
-
+            // 0 or 1-4.
+            // This is the most logically confounding rendering.
+            // the penrose boat
             if (type.diamond.includes(i)) {
                 bounds.expand(
                     this.star(
