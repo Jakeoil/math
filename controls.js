@@ -445,6 +445,35 @@ export class Overlays {
     }
 }
 
+/**
+ * no fill   (null)
+ * solid fill with passed color (#hhhhhh)
+ * gradient fill with passed color (#hhhhhh)
+ * Color darkened according to angle. (heads origin is high)
+ *
+ * Independant of color
+ */
+export class rhombusStyle {
+    constructor(app) {
+        this.eleFillStyle = document.querySelector("#rhomb-fill");
+        // none, color, gradiant.
+        this.eleStrokeStyle = document.querySelector("#stroke-style");
+    }
+    reset() {}
+    toString() {
+        return JSON.stringify({
+            // Name: values
+        });
+    }
+    fromString(jsonString) {
+        ({
+            //Name: target values
+        } = JSON.parse(jsonString));
+    }
+    refresh() {}
+
+    onStyleClicked() {}
+}
 /***
  *  Page Navigation defaults.
  */

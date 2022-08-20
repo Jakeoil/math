@@ -7,6 +7,7 @@ import { quadrille } from "./shape-modes.js";
 import { iface } from "./penrose-screen.js";
 
 //window.addEventListener("load", () => measureTasks(), false);
+export let overlays;
 export function measureTasks() {
     drawQuadrille();
     drawImage();

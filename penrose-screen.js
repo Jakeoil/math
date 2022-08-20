@@ -25,21 +25,23 @@ export function iface(g, scale, mode) {
 // This routine depends on an initialized shapeColors instance.
 //
 function pColor(type) {
-    switch (type) {
-        case penrose.Pe5:
-            return shapeColors.shapeColors["pe5-color"];
-        case penrose.Pe3:
-            return shapeColors.shapeColors["pe3-color"];
-        case penrose.Pe1:
-            return shapeColors.shapeColors["pe1-color"];
-        case penrose.St5:
-            return shapeColors.shapeColors["star-color"];
-        case penrose.St3:
-            return shapeColors.shapeColors["boat-color"];
-        case penrose.St1:
-            return shapeColors.shapeColors["diamond-color"];
-    }
-    return null;
+    if (shapeColors) {
+        switch (type) {
+            case penrose.Pe5:
+                return shapeColors.shapeColors["pe5-color"];
+            case penrose.Pe3:
+                return shapeColors.shapeColors["pe3-color"];
+            case penrose.Pe1:
+                return shapeColors.shapeColors["pe1-color"];
+            case penrose.St5:
+                return shapeColors.shapeColors["star-color"];
+            case penrose.St3:
+                return shapeColors.shapeColors["boat-color"];
+            case penrose.St1:
+                return shapeColors.shapeColors["diamond-color"];
+        }
+        return null;
+    } else return type.defaultColor;
 }
 
 export class PenroseScreen {
@@ -99,7 +101,8 @@ export class PenroseScreen {
      */
     penta(fifths, type, isDown, loc, exp) {
         const bounds = new Bounds();
-        if (!overlays.pentaSelected) {
+
+        if (overlays && !overlays.pentaSelected) {
             return bounds;
         }
 
@@ -184,7 +187,7 @@ export class PenroseScreen {
      */
     star(fifths, type, isDown, loc, exp) {
         const bounds = new Bounds();
-        if (!overlays.pentaSelected) {
+        if (overlays && !overlays.pentaSelected) {
             return bounds;
         }
 
@@ -266,7 +269,7 @@ export class PenroseScreen {
 
     deca(fifths, isDown, loc, exp) {
         const bounds = new Bounds();
-        if (!overlays.pentaSelected) {
+        if (overlays && !overlays.pentaSelected) {
             return bounds;
         }
 

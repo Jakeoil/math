@@ -18,6 +18,7 @@ class Penrose {
         this.BLUE_PENTA = "Pe5";
         this.BLUE_BOAT = "St3";
         this.BLUE_DIAMOND = "St1";
+        this.DECAGON = "Deca";
 
         this.OUTLINE = "#4a7eba";
 
@@ -85,6 +86,9 @@ class Penrose {
             name: this.BLUE_DIAMOND,
             color: [this.BLUE_STAR, null, null, null, null],
             defaultColor: BLUE,
+        };
+        this.Deca = {
+            name: this.DECAGON,
         };
         this.mosaic = mosaic;
         this.quadrille = quadrille;

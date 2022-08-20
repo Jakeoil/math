@@ -27,18 +27,24 @@ import { iface } from "./penrose-screen.js";
  */
 
 /** Initialize from contols in penrose.html */
-export const shapeColors = new ShapeColors(penroseApp);
+// export const shapeColors = new ShapeColors(penroseApp);
 
-const controls = new Controls(penroseApp, 0, 0, false);
-controls.reset();
-controls.refresh();
+// const controls = new Controls(penroseApp, 0, 0, false);
+// controls.reset();
+// controls.refresh();
 
-export const shapeMode = new ShapeMode(penroseApp);
-shapeMode.refresh();
+// export const shapeMode = new ShapeMode(penroseApp);
+// shapeMode.refresh();
 
-export const overlays = new Overlays(penroseApp);
+// export const overlays = new Overlays(penroseApp);
 
-const pageNavigation = new PageNavigation(penroseApp);
+// const pageNavigation = new PageNavigation(penroseApp);
+export let shapeColors;
+let controls;
+export let shapeMode;
+export let overlays;
+
+let pageNavigation;
 /**
  * This was a real pain
  * Line up the clickers
@@ -141,6 +147,20 @@ export function penroseApp(source) {
                     );
             }
     }
+
+    shapeColors = new ShapeColors(penroseApp);
+
+    controls = new Controls(penroseApp, 0, 0, false);
+    controls.reset();
+    controls.refresh();
+
+    shapeMode = new ShapeMode(penroseApp);
+    //shapeMode.refresh();
+
+    overlays = new Overlays(penroseApp);
+    console.log(`overlays ${overlays}`);
+
+    pageNavigation = new PageNavigation(penroseApp);
 
     //load the little canvases.
     makeCanvas("p5");
