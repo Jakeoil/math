@@ -399,9 +399,15 @@ export class PenroseScreen {
             point1.x,
             point1.y
         );
-        if (isHeads) canvasGradient.addColorStop(0, "#fff");
-        else canvasGradient.addColorStop(0, "#000");
-        canvasGradient.addColorStop(1, fill);
+        if (isHeads) {
+            canvasGradient.addColorStop(0, "#fff");
+            canvasGradient.addColorStop(2 / 3, fill);
+            canvasGradient.addColorStop(1, fill);
+        } else {
+            canvasGradient.addColorStop(0, "#000");
+            canvasGradient.addColorStop(2 / 3, fill);
+            canvasGradient.addColorStop(1, fill);
+        }
         return canvasGradient;
     }
 

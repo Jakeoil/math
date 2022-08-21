@@ -11,13 +11,6 @@ import {
     Overlays,
     PageNavigation,
 } from "./controls.js";
-// import {
-//     controls,
-//     shapeColors,
-//     shapeMode,
-//     overlays,
-//     pageNavigation,
-// } from "./controls.js";
 import { globals } from "./controls.js";
 import { iface } from "./penrose-screen.js";
 
@@ -34,85 +27,10 @@ import { iface } from "./penrose-screen.js";
  * Overlay the Rhombs.
  */
 
-/** Initialize from contols in penrose.html */
-// export const shapeColors = new ShapeColors(penroseApp);
-
-// const controls = new Controls(penroseApp, 0, 0, false);
-// controls.reset();
-// controls.refresh();
-
-// export const shapeMode = new ShapeMode(penroseApp);
-// shapeMode.refresh();
-
-// export const overlays = new Overlays(penroseApp);
-
-// const pageNavigation = new PageNavigation(penroseApp);
-// export let shapeColors;
-// let controls;
-// export let shapeMode;
-// export let overlays;
-// let pageNavigation;
 /**
  * This was a real pain
  * Line up the clickers
  **/
-
-// Grab scroll code. todo todo
-// (function () {
-//     /***
-//      *
-//      * this is an implementation of Wes Bos click & drag scroll algorythm. In
-//      * his video, he shows how to do the horizontal scroll. I have implemented
-//      * the vertical scroll for those wondering how to make it as well.
-//      *  Wes Bos video:
-//      *  https://www.youtube.com/watch?v=C9EWifQ5xqA
-//      */
-
-//     let startY;
-//     let startX;
-//     let scrollLeft;
-//     let scrollTop;
-//     let isDown;
-
-//     function addListeners() {
-//         activePage.addEventListener("mousedown", (e) => mouseIsDown(e));
-//         activePage.addEventListener("mouseup", (e) => mouseUp(e));
-//         activePage.addEventListener("mouseleave", (e) => mouseLeave(e));
-//         activePage.addEventListener("mousemove", (e) => mouseMove(e));
-//     }
-
-//     function mouseIsDown(e) {
-//         isDown = true;
-//         startY = e.pageY - activePage.offsetTop;
-//         startX = e.pageX - activePage.offsetLeft;
-//         scrollLeft = activePage.scrollLeft;
-//         scrollTop = activePage.scrollTop;
-//         console.log(`mouseIsDown: ${activePage.id}`);
-//     }
-//     function mouseUp(e) {
-//         isDown = false;
-//         console.log(`mouseUp`);
-//     }
-//     function mouseLeave(e) {
-//         isDown = false;
-//         console.log(`mouseLeave`);
-//     }
-//     function mouseMove(e) {
-//         if (isDown) {
-//             e.preventDefault();
-//             //Move vertcally
-//             const y = e.pageY - activePage.offsetTop;
-//             const walkY = y - startY;
-//             activePage.scrollTop = scrollTop - walkY;
-
-//             //Move Horizontally
-//             const x = e.pageX - activePage.offsetLeft;
-//             const walkX = x - startX;
-//             activePage.scrollLeft = scrollLeft - walkX;
-//             console.log(`mouseMove`);
-//         }
-//     }
-// })();
 
 /******************************************************************************
  * Called when the page loads.
@@ -120,41 +38,6 @@ import { iface } from "./penrose-screen.js";
  * Creates listeners for control buttons
  */
 export function penroseApp(source) {
-    switch (source) {
-        case Overlays.name:
-            console.log(
-                `Refresh penroseApp from ${Overlays.name}: ${globals.overlays}`
-            );
-            break;
-        case ShapeColors.name:
-            console.log(
-                `Refresh penroseApp from ${ShapeColors.name}: ${globals.shapeColors}`
-            );
-            break;
-        case PageNavigation.name:
-            console.log(
-                `Refresh penroseApp from ${PageNavigation.name}: ${globals.pageNavigation}`
-            );
-            break;
-        case Controls.name:
-            console.log(
-                `Refresh penroseApp from ${Controls.name}: ${globals.controls}`
-            );
-            break;
-        default:
-            const val = source.constructor.name;
-            switch (val) {
-                case Event.name:
-                    console.log(
-                        `Refresh penroseApp from ${source.target.constructor.name}`
-                    );
-                default:
-                    console.log(
-                        `!! Refresh penroseApp from unsupported ${source.target}`
-                    );
-            }
-    }
-
     if (!globals.shapeColors) globals.shapeColors = new ShapeColors(penroseApp);
 
     if (!globals.controls) {
@@ -164,7 +47,6 @@ export function penroseApp(source) {
     globals.controls.refresh();
 
     if (!globals.shapeMode) globals.shapeMode = new ShapeMode(penroseApp);
-    //shapeMode.refresh();
 
     if (!globals.overlays) globals.overlays = new Overlays(penroseApp);
 

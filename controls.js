@@ -207,7 +207,6 @@ export class Controls {
             );
         //else console.log(`no eleDown!`);
 
-        console.log(`constuctor init fifths ${fifths}`);
         this.fifths = fifths;
         this.typeIndex = typeIndex;
         this.isDown = isDown;
@@ -310,6 +309,7 @@ export class ShapeMode {
                 this.clickMode.bind(this),
                 false
             );
+        this.refresh();
     }
     /**
      * Changing the shape mode also changes the globals that penta, star and
@@ -322,7 +322,7 @@ export class ShapeMode {
     }
 
     reset() {
-        this.shapeMode = cookie.getShapeMode(MODE_MOSAIC);
+        this.shapeMode = cookie.getShapeMode(MODE_REAL);
     }
 
     clickMode() {
@@ -556,11 +556,43 @@ export class PageNavigation {
     }
 }
 export const globals = {};
-//export let shapeColors;
-//export let controls;
-//export let shapeMode;
-//export let overlays;
-//export let pageNavigation;
+
+export function logRefresh(source) {
+    switch (source) {
+        case Overlays.name:
+            console.log(
+                `Refresh penroseApp from ${Overlays.name}: ${globals.overlays}`
+            );
+            break;
+        case ShapeColors.name:
+            console.log(
+                `Refresh penroseApp from ${ShapeColors.name}: ${globals.shapeColors}`
+            );
+            break;
+        case PageNavigation.name:
+            console.log(
+                `Refresh penroseApp from ${PageNavigation.name}: ${globals.pageNavigation}`
+            );
+            break;
+        case Controls.name:
+            console.log(
+                `Refresh penroseApp from ${Controls.name}: ${globals.controls}`
+            );
+            break;
+        default:
+            const val = source.constructor.name;
+            switch (val) {
+                case Event.name:
+                    console.log(
+                        `Refresh penroseApp from ${source.target.constructor.name}`
+                    );
+                default:
+                    console.log(
+                        `!! Refresh penroseApp from unsupported ${source.target}`
+                    );
+            }
+    }
+}
 
 /**
  * cookie logic from  https://javascript.info/cookie
