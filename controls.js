@@ -324,7 +324,11 @@ export class ShapeMode {
     reset() {
         this.shapeMode = cookie.getShapeMode(MODE_REAL);
     }
-
+    toString() {
+        return JSON.stringify({
+            shapeMode: this.shapeMode,
+        });
+    }
     clickMode() {
         let new_idx =
             (MODE_LIST.indexOf(this.shapeMode) + 1) % MODE_LIST.length;
@@ -555,8 +559,10 @@ export class PageNavigation {
         this.app(PageNavigation.name);
     }
 }
-export const globals = {};
 
+/********************************
+ * Convenience routines
+ ********************************/
 export function logRefresh(source) {
     switch (source) {
         case Overlays.name:
@@ -579,6 +585,10 @@ export function logRefresh(source) {
                 `Refresh penroseApp from ${Controls.name}: ${globals.controls}`
             );
             break;
+        case ShapeMode.name:
+            console.log(
+                `Refresh penroseApp from ${ShapeMode.name}: ${globals.shapeMode}`
+            );
         default:
             const val = source.constructor.name;
             switch (val) {
@@ -588,12 +598,25 @@ export function logRefresh(source) {
                     );
                 default:
                     console.log(
-                        `!! Refresh penroseApp from unsupported ${source.target}`
+                        `!! Refresh penroseApp from unsupported ${source}`
                     );
             }
     }
 }
+export const globals = {};
 
+export function initControls(app) {
+    if (!globals.shapeColors) globals.shapeColors = new ShapeColors(app);
+
+    if (!globals.controls) globals.controls = new Controls(app, 0, 0, false);
+
+    if (!globals.shapeMode) globals.shapeMode = new ShapeMode(app);
+
+    if (!globals.overlays) globals.overlays = new Overlays(app);
+
+    if (!globals.pageNavigation)
+        globals.pageNavigation = new PageNavigation(app);
+}
 /**
  * cookie logic from  https://javascript.info/cookie
  * @param {*} name

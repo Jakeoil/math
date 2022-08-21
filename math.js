@@ -4,13 +4,7 @@ import { Bounds } from "./bounds.js";
 import { penrose } from "./penrose.js";
 import { real, quadrille, mosaic } from "./shape-modes.js";
 
-import {
-    Controls,
-    ShapeColors,
-    ShapeMode,
-    Overlays,
-    PageNavigation,
-} from "./controls.js";
+import { initControls, logRefresh } from "./controls.js";
 import { globals } from "./controls.js";
 import { iface } from "./penrose-screen.js";
 
@@ -38,21 +32,8 @@ import { iface } from "./penrose-screen.js";
  * Creates listeners for control buttons
  */
 export function penroseApp(source) {
-    if (!globals.shapeColors) globals.shapeColors = new ShapeColors(penroseApp);
-
-    if (!globals.controls) {
-        globals.controls = new Controls(penroseApp, 0, 0, false);
-        globals.controls.reset();
-    }
-    globals.controls.refresh();
-
-    if (!globals.shapeMode) globals.shapeMode = new ShapeMode(penroseApp);
-
-    if (!globals.overlays) globals.overlays = new Overlays(penroseApp);
-
-    if (!globals.pageNavigation)
-        globals.pageNavigation = new PageNavigation(penroseApp);
-
+    logRefresh(source);
+    initControls(penroseApp);
     //load the little canvases.
     makeCanvas("p5");
     makeCanvas("p3");
@@ -76,7 +57,8 @@ export function penroseApp(source) {
  * Shape depends on passed in ID.
  */
 function makeCanvas(canvasId) {
-    var canvas = document.getElementById(canvasId);
+    const { shapeMode } = globals;
+    const canvas = document.getElementById(canvasId);
     let g = canvas.getContext("2d");
 
     const drawScreen = function () {
@@ -88,7 +70,7 @@ function makeCanvas(canvasId) {
         const { penta, star, pentaRhomb, starRhomb } = iface(
             g,
             scale,
-            globals.shapeMode.shapeMode
+            shapeMode.shapeMode
         );
         let bounds;
         let width = 0;
@@ -178,6 +160,7 @@ function drawFirstInflation(id) {
         console.log("canvasId is null!");
         return;
     }
+    const { shapeMode } = globals;
     let g = canvas.getContext("2d");
 
     const drawScreen = function () {
@@ -189,7 +172,7 @@ function drawFirstInflation(id) {
         const { penta, star, pentaRhomb, starRhomb } = iface(
             g,
             scale,
-            globals.shapeMode.shapeMode
+            shapeMode.shapeMode
         );
 
         let x = 8;
@@ -268,6 +251,8 @@ function drawSecondInflation(id) {
     const canvas = document.querySelector(`#${id} > canvas`);
     // g is global
     let g = canvas.getContext("2d");
+    const { shapeMode } = globals;
+
     drawScreen();
     /**
      *
@@ -289,7 +274,7 @@ function drawSecondInflation(id) {
         const { star, penta, pentaRhomb, starRhomb } = iface(
             g,
             scale,
-            globals.shapeMode.shapeMode
+            shapeMode.shapeMode
         );
 
         let x = 25;
@@ -349,6 +334,8 @@ function drawGridWork(id) {
     const canvas = document.querySelector(`#${id} > canvas`);
 
     let g = canvas.getContext("2d");
+    const { shapeMode, shapeColors } = globals;
+
     drawBig();
 
     /**
@@ -363,11 +350,7 @@ function drawGridWork(id) {
         g.strokeStyle = penrose.OUTLINE;
         g.lineWidth = 1;
         let scale = 10;
-        const { deca, decaRhomb, grid } = iface(
-            g,
-            scale,
-            globals.shapeMode.shapeMode
-        );
+        const { deca, decaRhomb, grid } = iface(g, scale, shapeMode.shapeMode);
 
         let y = 5;
         const shapes = [mosaic.penta, mosaic.diamond, mosaic.star, mosaic.boat];
@@ -377,7 +360,7 @@ function drawGridWork(id) {
             for (let i = 0; i < 10; i++) {
                 let offset = p((i + 1) * spacing, y);
                 mosaic.renderShape(
-                    globals.shapeColors.shapeColors["pe1-color"],
+                    shapeColors.shapeColors["pe1-color"],
                     offset,
                     shape[i],
                     g,
@@ -401,7 +384,7 @@ function drawGridWork(id) {
                 let offset = p((i + 1) * spacing, y);
 
                 quadrille.renderShape(
-                    globals.shapeColors.shapeColors["pe1-color"] + "44",
+                    shapeColors.shapeColors["pe1-color"] + "44",
                     offset,
                     shape[i],
                     g,
@@ -482,7 +465,9 @@ function drawGeneric123(id) {
     const page = document.querySelector(`#${id}`);
     if (page.style.display == "none") return;
     const canvas = document.querySelector(`#${id} > canvas`);
+    const { shapeMode, controls } = globals;
     let g = canvas.getContext("2d");
+
     g.fillStyle = "#ffffff";
     g.fillRect(0, 0, canvas.width, canvas.height);
     g.strokeStyle = penrose.OUTLINE;
@@ -491,12 +476,12 @@ function drawGeneric123(id) {
     const { penta, star, deca, pentaRhomb, starRhomb, decaRhomb } = iface(
         g,
         scale,
-        globals.shapeMode.shapeMode
+        shapeMode.shapeMode
     );
     penrose.scale = scale; // Maybe does not use it.
 
     function starType(type) {
-        switch (globals.controls.typeList[type]) {
+        switch (controls.typeList[type]) {
             case penrose.Pe1:
                 return penrose.St1;
             case penrose.Pe3:
@@ -504,12 +489,12 @@ function drawGeneric123(id) {
             case penrose.Pe5:
                 return penrose.St5;
             default:
-                return globals.controls.typeList[type];
+                return controls.typeList[type];
         }
     }
 
     function pentaType(type) {
-        switch (globals.controls.typeList[type]) {
+        switch (controls.typeList[type]) {
             case penrose.St1:
                 return penrose.Pe1;
             case penrose.St3:
@@ -517,12 +502,11 @@ function drawGeneric123(id) {
             case penrose.St5:
                 return penrose.Pe5;
             default:
-                return globals.controls.typeList[type];
+                return controls.typeList[type];
         }
     }
 
     const drawScreen = function () {
-        const controls = globals.controls;
         let x = 13;
         let y = 26;
         const bounds = penta(
@@ -632,6 +616,7 @@ function drawGeneric3(id) {
     if (page.style.display == "none") return;
     const canvas = document.querySelector(`#${id} > canvas`);
 
+    const { shapeMode, controls } = globals;
     // g is global
     let g = canvas.getContext("2d");
     g.fillStyle = "#ffffff";
@@ -639,9 +624,8 @@ function drawGeneric3(id) {
     g.strokeStyle = penrose.OUTLINE;
     g.lineWidth = 1;
     let scale = 4;
-    const { deca, decaRhomb } = iface(g, scale, globals.shapeMode.shapeMode);
+    const { deca, decaRhomb } = iface(g, scale, shapeMode.shapeMode);
     const drawScreen = function () {
-        const controls = globals.controls;
         let x = 100;
         let y = 250;
 
