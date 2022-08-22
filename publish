@@ -3,16 +3,22 @@ cp penrose.js /Volumes/jakeoil.net/public_html/math
 cp penrose.html /Volumes/jakeoil.net/public_html/math
 cp blog.html /Volumes/jakeoil.net/public_html/math
 cp coylean.html /Volumes/jakeoil.net/public_html/math
+echo 5 of 20 copied
 cp coylean.js /Volumes/jakeoil.net/public_html/math
 cp math.css /Volumes/jakeoil.net/public_html/math
 cp deca.png /Volumes/jakeoil.net/public_html/math
 cp deca2.png /Volumes/jakeoil.net/public_html/math
 cp map-icon.png /Volumes/jakeoil.net/public_html/math
+echo 10 copied
 cp measurements.html /Volumes/jakeoil.net/public_html/math
 cp penrose-screen.js /Volumes/jakeoil.net/public_html/math
 cp shape-modes.js point.js wheels.js /Volumes/jakeoil.net/public_html/math
 cp index.html  /Volumes/jakeoil.net/public_html/math
 cp quadrille3.html /Volumes/jakeoil.net/public_html/math
+echo 15 copied
 cp controls.js /Volumes/jakeoil.net/public_html/math
 cp bounds.js /Volumes/jakeoil.net/public_html/math
-cp measurements.js /Volumes/jakeoil.net/public_html/math
+cp rhombohedra.html /Volumes/jakeoil.net/public_html/math
+cp rhombohedra.js /Volumes/jakeoil.net/public_html/math
+cp scrolling.js /Volumes/jakeoil.net/public_html/math
+echo complete

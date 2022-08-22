@@ -416,10 +416,12 @@ export class PenroseScreen {
     }
 
     rhombus(fill, offset, shape, strokeStyle, isHeads) {
-        let gradient = true;
+        const { rhombStyle } = globals;
         let currentStrokeStyle = this.g.strokeStyle;
         let currentLineWidth = this.g.lineWidth;
         let currentfillStyle = this.g.fillStyle;
+
+        let gradient = rhombStyle.fill == rhombStyle.GRADIENT;
         let start = true;
         const bounds = new Bounds();
         this.g.strokeStyle = strokeStyle ? strokeStyle : "black";
@@ -428,7 +430,6 @@ export class PenroseScreen {
         } else {
             this.g.fillStyle = fill;
         }
-
         this.g.lineWidth = this.scale < 5 ? 1 : 2;
         for (const point of shape) {
             if (start) {
@@ -449,10 +450,10 @@ export class PenroseScreen {
         }
 
         this.g.closePath();
-        if (fill) {
+        if (rhombStyle.fill != rhombStyle.NONE) {
             this.g.fill();
         }
-        if (strokeStyle) {
+        if (rhombStyle.stroke != rhombStyle.NONE) {
             this.g.stroke();
         }
 
@@ -591,15 +592,6 @@ export class PenroseScreen {
 
         if (exp == 0) {
             if (overlays.smallRhomb) {
-                // console.log(
-                //     `Draw small rhombus pattern ${JSON.stringify({
-                //         fifths,
-                //         type,
-                //         isDown,
-                //         loc,
-                //         exp,
-                //     })}`
-                // );
                 const thins = penrose[this.mode].thinSmallRhomb;
                 const thicks = penrose[this.mode].thickSmallRhomb;
                 bounds.expand(

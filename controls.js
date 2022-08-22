@@ -463,26 +463,68 @@ export class Overlays {
  *
  * Independant of color
  */
-export class rhombusStyle {
+export class RhombStyle {
+    SOLID = "solid";
+    NONE = "none";
+    GRADIENT = "gradient";
+
     constructor(app) {
-        this.eleFillStyle = document.querySelector("#rhomb-fill");
+        this.app = app;
+        this.eleFill = document.querySelector("#rhomb-fill");
+        console.log(this.eleFill);
         // none, color, gradiant.
-        this.eleStrokeStyle = document.querySelector("#stroke-style");
+        this.eleStroke = document.querySelector("#rhomb-stroke");
+        this.eleFill.addEventListener(
+            "change",
+            this.onFillChanged.bind(this),
+            false
+        );
+        this.eleStroke.addEventListener(
+            "change",
+            this.onStrokeChanged.bind(this),
+            false
+        );
+        this.reset();
+        this.refresh();
     }
-    reset() {}
+    reset() {
+        this.fill = this.SOLID;
+        this.stroke = this.SOLID;
+        this.fromString(cookie.get(RhombStyle.name, this.toString()));
+    }
     toString() {
         return JSON.stringify({
-            // Name: values
+            fill: this.fill,
+            stroke: this.stroke,
         });
     }
     fromString(jsonString) {
-        ({
-            //Name: target values
-        } = JSON.parse(jsonString));
+        console.log(jsonString);
+        ({ fill: this.fill, stroke: this.stroke } = JSON.parse(jsonString));
     }
-    refresh() {}
+    refresh() {
+        let eleSelectedOption = document.querySelector(
+            `#rhomb-fill > option[value="${this.fill}"]`
+        );
+        if (eleSelectedOption) eleSelectedOption.selected = true;
+        eleSelectedOption = document.querySelector(
+            `#rhomb-stroke > option[value="${this.stroke}"]`
+        );
+        if (eleSelectedOption) eleSelectedOption.selected = true;
 
-    onStyleClicked() {}
+        cookie.set(RhombStyle.name, this.toString(this));
+    }
+
+    onFillChanged(event) {
+        this.fill = event.target.value;
+        this.refresh();
+        this.app(RhombStyle.name);
+    }
+    onStrokeChanged(event) {
+        this.stroke = event.target.value;
+        this.refresh();
+        this.app(RhombStyle.name);
+    }
 }
 /***
  *  Page Navigation defaults.
@@ -570,6 +612,11 @@ export function logRefresh(source) {
                 `Refresh penroseApp from ${Overlays.name}: ${globals.overlays}`
             );
             break;
+        case RhombStyle.name:
+            console.log(
+                `Refresh penroseApp from ${RhombStyle.name}: ${globals.rhombStyle}`
+            );
+            break;
         case ShapeColors.name:
             console.log(
                 `Refresh penroseApp from ${ShapeColors.name}: ${globals.shapeColors}`
@@ -613,6 +660,7 @@ export function initControls(app) {
     if (!globals.shapeMode) globals.shapeMode = new ShapeMode(app);
 
     if (!globals.overlays) globals.overlays = new Overlays(app);
+    if (!globals.rhombStyle) globals.rhombStyle = new RhombStyle(app);
 
     if (!globals.pageNavigation)
         globals.pageNavigation = new PageNavigation(app);
