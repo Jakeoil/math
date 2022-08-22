@@ -347,6 +347,7 @@ export class Overlays {
     constructor(app) {
         this.app = app;
         this.elePenta = document.querySelector("#penta-ovl");
+        this.eleTree = document.querySelector("#tree-penta");
         this.eleRhomb = document.querySelector("#rhomb-ovl");
 
         this.eleRhombSizeField = document.querySelector("#rhomb-size");
@@ -358,6 +359,13 @@ export class Overlays {
             this.elePenta.addEventListener(
                 "click",
                 this.pentaClicked.bind(this),
+                false
+            );
+        }
+        if (this.eleTree) {
+            this.eleTree.addEventListener(
+                "click",
+                this.treeClicked.bind(this),
                 false
             );
         }
@@ -383,6 +391,7 @@ export class Overlays {
     }
     reset() {
         this.pentaSelected = true;
+        this.treeSelected = false;
         this.rhombSelected = false;
         this.smallRhomb = false;
 
@@ -393,6 +402,9 @@ export class Overlays {
     refresh() {
         if (this.elePenta) {
             this.elePenta.checked = this.pentaSelected;
+        }
+        if (this.eleTree) {
+            this.eleTree.checked = this.treeSelected;
         }
 
         if (this.eleRhomb) {
@@ -420,6 +432,7 @@ export class Overlays {
     toString() {
         return JSON.stringify({
             pentaSelected: this.pentaSelected,
+            treeSelected: this.treeSelected,
             rhombSelected: this.rhombSelected,
             smallRhomb: this.smallRhomb,
         });
@@ -428,12 +441,18 @@ export class Overlays {
     fromString(jsonString) {
         ({
             pentaSelected: this.pentaSelected,
+            treeSelected: this.treeSelected,
             rhombSelected: this.rhombSelected,
             smallRhomb: this.smallRhomb,
         } = JSON.parse(jsonString));
     }
     pentaClicked() {
         this.pentaSelected = !this.pentaSelected;
+        this.refresh();
+        this.app(Overlays.name);
+    }
+    treeClicked() {
+        this.treeSelected = !this.treeSelected;
         this.refresh();
         this.app(Overlays.name);
     }
