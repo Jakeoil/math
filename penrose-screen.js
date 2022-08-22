@@ -8,6 +8,51 @@ function tenths(fifths, isDown) {
     return (fifths * 2 + (isDown ? 5 : 0)) % 10;
 }
 
+function hexToRGB(h) {
+    let r = 0,
+        g = 0,
+        b = 0;
+
+    // 3 digits
+    if (h.length == 4) {
+        r = "0x" + h[1] + h[1];
+        g = "0x" + h[2] + h[2];
+        b = "0x" + h[3] + h[3];
+
+        // 6 digits
+    } else if (h.length == 7) {
+        r = "0x" + h[1] + h[2];
+        g = "0x" + h[3] + h[4];
+        b = "0x" + h[5] + h[6];
+    }
+    const command = `rgb(${r},${g},${b})`;
+    console.log(`command: ${command}`);
+
+    return [r, g, b];
+}
+
+function mix(start, end, frac) {
+    if (frac < 0) frac = 0;
+    if (frac > 1) frac = 1;
+    const rgbStart = hexToRGB(start);
+    const rgbEnd = hexToRGB(end);
+    const [r, g, b] = rgbStart.map(
+        (item, index) => item * (1 - frac) + rgbEnd[index] * frac
+    );
+    const command = `rgb(${r},${g},${b})`;
+    console.log(`mix: ${command}`);
+    return command;
+}
+
+function testMix() {
+    mix("#000", "#ff6600", 0);
+    mix("#000", "#ff6600", 0.1);
+    mix("#000", "#ff6600", 0.25);
+    mix("#000", "#ff6600", 0.5);
+    mix("#000", "#ff6600", 0.75);
+    mix("#000", "#ff6600", 1.0);
+}
+testMix();
 /**
  * This is a wrapper around penroseScreen
  */
@@ -248,10 +293,10 @@ export class PenroseScreen {
      * The up version.
      *
      *      + x    x +
-     *     x o  ,   o x
-     *    * x   o  x   *
-     *    .    +    .
-     *      +--*--+
+     *     x o      o x
+     *    *  x  o  x   *
+     *     .    +    .
+     *       +--*--+
      */
 
     deca(fifths, isDown, loc, exp) {
@@ -383,11 +428,14 @@ export class PenroseScreen {
         if (isHeads) {
             canvasGradient.addColorStop(0, "#fff");
             canvasGradient.addColorStop(2 / 3, fill);
-            canvasGradient.addColorStop(1, fill);
+            // color stop 1 has to be 1/3 of the way to "#000"
+            const endColor = mix(fill, "#000", 1 / 3);
+            canvasGradient.addColorStop(1, endColor);
         } else {
             canvasGradient.addColorStop(0, "#000");
             canvasGradient.addColorStop(2 / 3, fill);
-            canvasGradient.addColorStop(1, fill);
+            const endColor = mix(fill, "#fff", 1 / 3);
+            canvasGradient.addColorStop(1, endColor);
         }
         return canvasGradient;
     }
