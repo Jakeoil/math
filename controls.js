@@ -341,7 +341,15 @@ export class ShapeMode {
 
 /**
  * These are a bunch of flags that penroseScreen routines use to paint the
- * tiles.  Todo add the small and large options for rhombs
+ * tiles.
+ * P1 based
+ * Pentagons and stars
+ * Tree
+ *
+ * P3 based
+ * Rhombs
+ * Ammann bars
+ * large and small
  */
 export class Overlays {
     constructor(app) {
@@ -349,7 +357,8 @@ export class Overlays {
         this.elePenta = document.querySelector("#penta-ovl");
         this.eleTree = document.querySelector("#tree-penta");
         this.eleRhomb = document.querySelector("#rhomb-ovl");
-
+        this.eleAmmann = document.querySelector("#ammann");
+        // This controls the size of both Rhomb and Ammann
         this.eleRhombSizeField = document.querySelector("#rhomb-size");
         this.radioButtons = document.querySelectorAll("input[name='rhomb']");
         this.eleLargeRhomb = document.querySelector("#large-rhomb");
@@ -378,6 +387,14 @@ export class Overlays {
             );
         }
 
+        if (this.eleAmmann) {
+            this.eleAmmann.addEventListener(
+                "click",
+                this.ammannClicked.bind(this),
+                false
+            );
+        }
+
         for (let button of this.radioButtons) {
             button.addEventListener(
                 "click",
@@ -393,10 +410,10 @@ export class Overlays {
         this.pentaSelected = true;
         this.treeSelected = false;
         this.rhombSelected = false;
+        this.ammannSelected = false;
         this.smallRhomb = false;
 
-        const dflt = this.toString();
-        const cookieJson = cookie.get(Overlays.name, dflt);
+        const cookieJson = cookie.get(Overlays.name, this.toString());
         this.fromString(cookieJson);
     }
     refresh() {
@@ -411,22 +428,27 @@ export class Overlays {
             this.eleRhomb.checked = this.rhombSelected;
         }
 
-        // If not rhombSelected, grey out the button.
-        if (this.rhombSelected) {
-            if (this.eleRhombSizeField)
-                this.eleRhombSizeField.style.display = "block";
+        if (this.eleAmmann) {
+            this.eleAmmann.checked = this.ammannSelected;
+        }
 
-            if (this.eleLargeRhomb && this.eleSmallRhomb) {
+        if (
+            this.eleRhombSizeField &&
+            this.eleSmallRhomb &&
+            this.eleLargeRhomb
+        ) {
+            if (this.rhombSelected || this.ammannSelected) {
+                this.eleRhombSizeField.style.display = "block";
                 if (this.smallRhomb) {
                     this.eleSmallRhomb.checked = true;
                 } else {
                     this.eleLargeRhomb.checked = true;
                 }
-            }
-        } else {
-            if (this.eleRhombSizeField)
+            } else {
                 this.eleRhombSizeField.style.display = "none";
+            }
         }
+
         cookie.set(Overlays.name, this.toString());
     }
     toString() {
@@ -434,6 +456,7 @@ export class Overlays {
             pentaSelected: this.pentaSelected,
             treeSelected: this.treeSelected,
             rhombSelected: this.rhombSelected,
+            ammannSelected: this.ammannSelected,
             smallRhomb: this.smallRhomb,
         });
     }
@@ -443,6 +466,7 @@ export class Overlays {
             pentaSelected: this.pentaSelected,
             treeSelected: this.treeSelected,
             rhombSelected: this.rhombSelected,
+            ammannSelected: this.ammannSelected,
             smallRhomb: this.smallRhomb,
         } = JSON.parse(jsonString));
     }
@@ -458,6 +482,11 @@ export class Overlays {
     }
     rhombClicked() {
         this.rhombSelected = !this.rhombSelected;
+        this.refresh();
+        this.app(Overlays.name);
+    }
+    ammannClicked() {
+        this.ammannSelected = !this.ammannSelected;
         this.refresh();
         this.app(Overlays.name);
     }
