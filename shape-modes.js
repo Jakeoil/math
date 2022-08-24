@@ -430,8 +430,10 @@ class Real {
             this.wheels,
             1
         );
-        this.thinRhomb = shapeWheel(thinRhombUp, thinRhombWon, thinRhombToo);
-        this.thickRhomb = shapeWheel(
+        this.thinRhomb = {};
+        this.thickRhomb = {};
+        this.thinRhomb[1] = shapeWheel(thinRhombUp, thinRhombWon, thinRhombToo);
+        this.thickRhomb[1] = shapeWheel(
             thickRhombUp,
             thickRhombWon,
             thickRhombToo
@@ -442,12 +444,12 @@ class Real {
         const [thinSmallRhombUp, thinSmallRhombWon, thinSmallRhombToo] =
             goThinReal(this.wheels, 0);
 
-        this.thinSmallRhomb = shapeWheel(
+        this.thinRhomb[0] = shapeWheel(
             thinSmallRhombUp,
             thinSmallRhombWon,
             thinSmallRhombToo
         );
-        this.thickSmallRhomb = shapeWheel(
+        this.thickRhomb[0] = shapeWheel(
             thickSmallRhombUp,
             thickSmallRhombWon,
             thickSmallRhombToo

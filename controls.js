@@ -211,7 +211,6 @@ export class Controls {
         this.typeIndex = typeIndex;
         this.isDown = isDown;
         this.fifths = cookie.getFifths(fifths);
-        console.log(`but cookie say: ${this.fifths}`);
         this.typeIndex = cookie.getTypeIndex(typeIndex);
         this.isDown = cookie.getIsDown(isDown);
     }
@@ -519,7 +518,6 @@ export class RhombStyle {
     constructor(app) {
         this.app = app;
         this.eleFill = document.querySelector("#rhomb-fill");
-        console.log(this.eleFill);
         // none, color, gradiant.
         this.eleStroke = document.querySelector("#rhomb-stroke");
         this.eleFill.addEventListener(
@@ -547,7 +545,6 @@ export class RhombStyle {
         });
     }
     fromString(jsonString) {
-        console.log(jsonString);
         ({ fill: this.fill, stroke: this.stroke } = JSON.parse(jsonString));
     }
     refresh() {
@@ -653,65 +650,69 @@ export class PageNavigation {
 /********************************
  * Convenience routines
  ********************************/
-export function logRefresh(source) {
+export function logRefresh(app, source) {
     switch (source) {
         case Overlays.name:
             console.log(
-                `Refresh penroseApp from ${Overlays.name}: ${globals.overlays}`
+                `Refresh ${app.name} from ${Overlays.name}: ${globals.overlays}`
             );
             break;
         case RhombStyle.name:
             console.log(
-                `Refresh penroseApp from ${RhombStyle.name}: ${globals.rhombStyle}`
+                `Refresh ${app.name} from ${RhombStyle.name}: ${globals.rhombStyle}`
             );
             break;
         case ShapeColors.name:
             console.log(
-                `Refresh penroseApp from ${ShapeColors.name}: ${globals.shapeColors}`
+                `Refresh ${app.name} from ${ShapeColors.name}: ${globals.shapeColors}`
             );
             break;
         case PageNavigation.name:
             console.log(
-                `Refresh penroseApp from ${PageNavigation.name}: ${globals.pageNavigation}`
+                `Refresh ${app.name} from ${PageNavigation.name}: ${globals.pageNavigation}`
             );
             break;
         case Controls.name:
             console.log(
-                `Refresh penroseApp from ${Controls.name}: ${globals.controls}`
+                `Refresh ${app.name} from ${Controls.name}: ${globals.controls}`
             );
             break;
         case ShapeMode.name:
             console.log(
-                `Refresh penroseApp from ${ShapeMode.name}: ${globals.shapeMode}`
+                `Refresh ${app.name} from ${ShapeMode.name}: ${globals.shapeMode}`
             );
         default:
             const val = source.constructor.name;
             switch (val) {
                 case Event.name:
                     console.log(
-                        `Refresh penroseApp from ${source.target.constructor.name}`
+                        `Refresh ${app.name} from ${source.target.constructor.name}`
                     );
                 default:
-                    console.log(
-                        `!! Refresh penroseApp from unsupported ${source}`
-                    );
+                    console.log(`Refresh ${app.name} from ${source}`);
             }
     }
 }
+
+export const measureTask = {};
+export function initMeasureTaskControls(app) {}
 export const globals = {};
 
 export function initControls(app) {
-    if (!globals.shapeColors) globals.shapeColors = new ShapeColors(app);
+    if (app.name == "penroseApp") {
+        if (!globals.shapeColors) globals.shapeColors = new ShapeColors(app);
 
-    if (!globals.controls) globals.controls = new Controls(app, 0, 0, false);
+        if (!globals.controls)
+            globals.controls = new Controls(app, 0, 0, false);
 
-    if (!globals.shapeMode) globals.shapeMode = new ShapeMode(app);
+        if (!globals.shapeMode) globals.shapeMode = new ShapeMode(app);
 
-    if (!globals.overlays) globals.overlays = new Overlays(app);
-    if (!globals.rhombStyle) globals.rhombStyle = new RhombStyle(app);
+        if (!globals.overlays) globals.overlays = new Overlays(app);
+        if (!globals.rhombStyle) globals.rhombStyle = new RhombStyle(app);
 
-    if (!globals.pageNavigation)
-        globals.pageNavigation = new PageNavigation(app);
+        if (!globals.pageNavigation)
+            globals.pageNavigation = new PageNavigation(app);
+    }
 }
 /**
  * cookie logic from  https://javascript.info/cookie

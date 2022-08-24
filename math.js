@@ -32,7 +32,7 @@ import { iface } from "./penrose-screen.js";
  * Creates listeners for control buttons
  */
 export function penroseApp(source) {
-    logRefresh(source);
+    logRefresh(penroseApp, source);
     initControls(penroseApp);
     //load the little canvases.
     makeCanvas("p5");

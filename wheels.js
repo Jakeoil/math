@@ -204,6 +204,7 @@ export function shapeWheel(up, won, too) {
     return [];
 }
 
+function makeShapeWheels() {}
 /***
  * shapeWheel M is a little bit stupid.
  * The only difference is how reflections are done
@@ -238,6 +239,25 @@ export function shapeWheelMosaic(up, won, too) {
         ];
     }
     return [];
+}
+
+export function interpolateShape(up, won, too) {
+    const a0 = up.foreach((it) => it.x);
+    const b0 = up.foreach((it) => it.y);
+    const a1 = won.foreach((it) => it.x);
+    const b1 = won.foreach((it) => it.y);
+    const a2 = too.foreach((it) => it.x);
+    const b2 = too.foreach((it) => it.y);
+}
+
+export function nextWheel(point0, point1, point2) {
+    const point9 = point1.hr; // switch x
+    const point3 = point2.vr;
+    return [
+        point9.tr(point0).tr(point1),
+        point0.tr(point1).tr(point2),
+        point1.tr(point2).tr(point3),
+    ];
 }
 
 export function interpolateWheel(point0, point1, point2) {

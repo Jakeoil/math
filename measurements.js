@@ -5,10 +5,13 @@ import { penrose } from "./penrose.js";
 import { MODE_REAL } from "./controls.js"; // Now _really_
 import { quadrille } from "./shape-modes.js";
 import { iface } from "./penrose-screen.js";
+import { globals } from "./controls.js";
+import { initControls, logRefresh } from "./controls.js";
 
-//window.addEventListener("load", () => measureTasks(), false);
-export let overlays;
-export function measureTasks() {
+window.addEventListener("load", measureTasks, false);
+export function measureTasks(source) {
+    logRefresh(measureTasks, source);
+    initControls(measureTasks);
     drawQuadrille();
     drawImage();
     wheelTables();
@@ -59,6 +62,7 @@ function drawImage() {
     const { deca } = iface(g, scale, shapeMode);
 
     // Now some decagons
+
     let fifths = 0;
     let isDown = false;
     let base = p(0, 0);

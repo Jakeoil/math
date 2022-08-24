@@ -3,9 +3,38 @@ import { Bounds } from "./bounds.js";
 import { penrose } from "./penrose.js";
 import { globals } from "./controls.js";
 
+class Angle {
+    slicee = [0, 1, 2, 3, 4, 0, 1, 2, 3];
+    constructor(fifths, isDown) {
+        this.fifths = fifths;
+        this.down = isDown;
+    }
+    get cw() {
+        return new Angle(fifths == 5 ? 0 : this.fifths + 1, this.isDown);
+    }
+    get ccw() {
+        return new Angle(fifths ? 5 : this.fifths - 1, this.isDown);
+    }
+    inv(angle) {
+        return new Angle(this.fifths, !this.isDown);
+    }
+    tenths(angle) {
+        return (this.fifths * 2 + (this.isDown ? 5 : 0)) % 10;
+    }
+}
+function fList(fifth) {
+    return slicee.slice(0, 5);
+}
+
 function tenths(fifths, isDown) {
     return (fifths * 2 + (isDown ? 5 : 0)) % 10;
 }
+
+/***
+ * Thanks to:
+ * https://css-tricks.com/converting-color-spaces-in-javascript/
+ *
+ */
 
 function hexToRGB(h) {
     let r = 0,
@@ -218,6 +247,7 @@ export class PenroseScreen {
         }
         return bounds;
     }
+
     /*************************************************************************
      * S5, S3 and S1  Up versions shown
      *    s5   star
@@ -275,6 +305,171 @@ export class PenroseScreen {
             this.star(0, penrose.St5, !isDown, loc, exp - 1, isHeads)
         );
 
+        for (let i = 0; i < 5; i++) {
+            const shift = norm(fifths + i);
+            const angle = tenths(shift, isDown);
+            const locPenta = loc.tr(sWheel[angle]);
+            const locBoat = loc.tr(tWheel[angle]);
+
+            if (type.color[i] != null) {
+                bounds.expand(
+                    this.penta(
+                        shift,
+                        penrose.Pe1,
+                        !isDown,
+                        locPenta,
+                        exp - 1,
+                        isHeads
+                    )
+                );
+
+                bounds.expand(
+                    this.star(
+                        shift,
+                        penrose.St3,
+                        isDown,
+                        locBoat,
+                        exp - 1,
+                        isHeads
+                    )
+                );
+
+                if (overlays && overlays.treeSelected) {
+                    this.line(loc, locPenta, "red");
+                    this.line(loc, locBoat, "blue");
+                }
+            }
+        }
+        return bounds;
+    }
+
+    drawPentaPattern() {}
+
+    /**&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+     * This will revamp and combine penta and pentaRhomb
+     * The inputs are streamlined
+     *
+     */
+    pentaNew({ type, angle, isHeads = true, loc, exp, options }) {
+        let { overlays } = globals;
+        ({ overlays } = options); // some version of apply
+        const bounds = new Bounds();
+
+        fifths = norm(fifths);
+        if (exp == 0) {
+            if (!overlays || overlays.pentaSelected) {
+                let shapes = this.pShape(type);
+                if (shapes) {
+                    bounds.expand(
+                        penrose[this.mode].renderShape(
+                            pColor(type),
+                            loc,
+                            shapes[tenths(fifths, isDown)],
+                            this.g,
+                            this.scale
+                        )
+                    );
+                }
+            }
+
+            return bounds; // call figure
+        }
+
+        const wheels = penrose[this.mode].wheels;
+        const pWheel = wheels.p[exp].w;
+        const sWheel = wheels.s[exp].w;
+
+        bounds.expand(
+            this.penta(0, penrose.Pe5, !isDown, loc, exp - 1),
+            isHeads
+        );
+
+        for (let i = 0; i < 5; i++) {
+            const shift = norm(fifths + i);
+            const angle = tenths(shift, isDown);
+            const locPenta = loc.tr(pWheel[angle]);
+            const locDiamond = loc.tr(sWheel[tenths(shift, !isDown)]);
+            bounds.expand(
+                this.penta(
+                    norm(shift + type.twist[i]),
+                    type.twist[i] == 0 ? penrose.Pe3 : penrose.Pe1,
+                    isDown,
+                    locPenta,
+                    exp - 1,
+                    !isHeads
+                )
+            );
+
+            if (type.diamond.includes(i)) {
+                bounds.expand(
+                    this.star(
+                        shift,
+                        penrose.St1,
+                        !isDown,
+                        locDiamond,
+                        exp - 1,
+                        isHeads
+                    )
+                );
+                if (overlays && overlays.treeSelected)
+                    this.line(loc, locDiamond, "red");
+            }
+            if (overlays && overlays.treeSelected)
+                this.line(loc, locPenta, "black");
+        }
+        return bounds;
+    }
+
+    /**&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& */
+    starNew({ angle, type, loc, exp, isHeads = true, options }) {
+        const { overlays } = Object.assign(globals, options);
+        const bounds = new Bounds();
+
+        if (exp == 0) {
+            let shapes = this.pShape(type);
+            if (shapes) {
+                if (!overlays || overlays.pentaSelected)
+                    bounds.expand(
+                        penrose[this.mode].renderShape(
+                            pColor(type),
+                            loc,
+                            shapes[angle.tenths],
+                            this.g,
+                            this.scale
+                        )
+                    );
+            }
+            return bounds;
+        }
+
+        const wheels = penrose[this.mode].wheels;
+        const tWheel = wheels.t[exp].w;
+        const sWheel = wheels.s[exp].w;
+
+        bounds.expand(
+            this.star({
+                angle: new Angle(0, !angle.isDown),
+                type: penrose.St5,
+                loc,
+                exp: exp - 1,
+                isHeads,
+            })
+        );
+
+        for (shift of shifts(fifths)) {
+            const ang = shift.tenths;
+            if (type.color[i] != null) {
+                bounds.expand(
+                    this.pentaNew({
+                        fifths: shift.inv,
+                        loc: locPenta,
+                        exp: exp - 1,
+                        isHeads,
+                    })
+                );
+                bounds.expand(thisStarNew({}));
+            }
+        }
         for (let i = 0; i < 5; i++) {
             const shift = norm(fifths + i);
             const angle = tenths(shift, isDown);
@@ -579,35 +774,41 @@ export class PenroseScreen {
      * # is a modifier.
      *
      */
-    drawRhombusPattern(fifths, type, isDown, loc, thicks, thins, isHeads) {
+    drawRhombusPattern(fifths, type, isDown, loc, exp, isHeads) {
         const bounds = new Bounds();
         let gradient = true;
-
+        const thins = penrose[this.mode].thinRhomb[exp];
+        const thicks = penrose[this.mode].thickRhomb[exp];
         const fill = pColor(type);
-        //const outline = "#000000";
         const outline = null;
         for (let i = 0; i < 5; i++) {
             const shift = norm(fifths + i);
             switch (type) {
                 case penrose.Pe5:
-                    const shape = thicks[tenths(shift, isDown)];
+                    const thick5 = thicks[tenths(shift, isDown)];
                     bounds.expand(
-                        this.rhombus(fill, loc, shape, outline, isHeads)
+                        this.rhombus(fill, loc, thick5, outline, isHeads)
                     );
                     break;
                 case penrose.Pe3:
                     switch (i) {
                         case 0:
-                            const thinR = thins[tenths(shift, isDown)];
+                            const thin3 = thins[tenths(shift, isDown)];
                             bounds.expand(
-                                this.rhombus(fill, loc, thinR, outline, isHeads)
+                                this.rhombus(fill, loc, thin3, outline, isHeads)
                             );
-
+                        // no break here
                         case 1:
                         case 4:
-                            const shape = thicks[tenths(shift, isDown)];
+                            const thick3 = thicks[tenths(shift, isDown)];
                             bounds.expand(
-                                this.rhombus(fill, loc, shape, outline, isHeads)
+                                this.rhombus(
+                                    fill,
+                                    loc,
+                                    thick3,
+                                    outline,
+                                    isHeads
+                                )
                             );
                             break;
                         default:
@@ -647,6 +848,20 @@ export class PenroseScreen {
         return bounds;
     }
 
+    drawAmmannPattern(fifths, type, isDown, loc, thicks, thins, isHeads) {
+        const bounds = new Bounds();
+        const shift = norm(fifths + i);
+        switch (type) {
+            case penrose.Pe5:
+                break;
+            case penrose.Pe3:
+                break;
+            case penrose.Pe1:
+                break;
+        }
+
+        return bounds;
+    }
     pentaRhomb(fifths, type, isDown, loc, exp, isHeads = true) {
         const { overlays } = globals;
         const bounds = new Bounds();
@@ -658,16 +873,15 @@ export class PenroseScreen {
 
         if (exp == 0) {
             if (overlays.smallRhomb) {
-                const thins = penrose[this.mode].thinSmallRhomb;
-                const thicks = penrose[this.mode].thickSmallRhomb;
+                //const thins = penrose[this.mode].thinRhomb[exp];
+                //const thicks = penrose[this.mode].thickRhomb[exp];
                 bounds.expand(
                     this.drawRhombusPattern(
                         fifths,
                         type,
                         isDown,
                         loc,
-                        thicks,
-                        thins,
+                        exp,
                         isHeads
                     )
                 );
@@ -677,18 +891,10 @@ export class PenroseScreen {
         }
 
         if (exp == 1 && !overlays.smallRhomb) {
-            const thins = penrose[this.mode].thinRhomb;
-            const thicks = penrose[this.mode].thickRhomb;
+            const thins = penrose[this.mode].thinRhomb[exp];
+            const thicks = penrose[this.mode].thickRhomb[exp];
             bounds.expand(
-                this.drawRhombusPattern(
-                    fifths,
-                    type,
-                    isDown,
-                    loc,
-                    thicks,
-                    thins,
-                    isHeads
-                )
+                this.drawRhombusPattern(fifths, type, isDown, loc, exp, isHeads)
             );
             return bounds;
         }
