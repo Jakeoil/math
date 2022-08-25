@@ -411,6 +411,7 @@ export class Overlays {
         this.rhombSelected = false;
         this.ammannSelected = false;
         this.smallRhomb = false;
+        this.genRhomb = 1;
 
         const cookieJson = cookie.get(Overlays.name, this.toString());
         this.fromString(cookieJson);
@@ -457,6 +458,7 @@ export class Overlays {
             rhombSelected: this.rhombSelected,
             ammannSelected: this.ammannSelected,
             smallRhomb: this.smallRhomb,
+            genRhomb: this.genRhomb,
         });
     }
 
@@ -467,6 +469,7 @@ export class Overlays {
             rhombSelected: this.rhombSelected,
             ammannSelected: this.ammannSelected,
             smallRhomb: this.smallRhomb,
+            genRhomb: this.genRhomb,
         } = JSON.parse(jsonString));
     }
     pentaClicked() {
@@ -495,6 +498,7 @@ export class Overlays {
         for (let button of this.radioButtons) {
             if (button.checked) {
                 this.smallRhomb = button.id == "small-rhomb";
+                this.genRhomb = button.id == "small-rhomb" ? 0 : 1;
             }
         }
         this.refresh();

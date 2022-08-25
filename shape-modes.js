@@ -119,6 +119,12 @@ function mod10(n) {
     return n % 10;
 }
 
+/**
+ * This is the one for quadrille
+ * @param {} wheels
+ * @param {*} exp
+ * @returns
+ */
 function goThick(wheels, exp) {
     const tWheel = wheels.t[exp].w;
     const sWheel = wheels.s[exp].w;
@@ -152,6 +158,12 @@ function goThin(wheels, exp) {
     }
 }
 
+/**
+ * This one belongs in real
+ * @param {*} wheels
+ * @param {*} exp
+ * @returns
+ */
 function goThickReal(wheels, exp) {
     const tWheel = wheels.t[exp].w;
     const sWheel = wheels.s[exp].w;
@@ -655,8 +667,10 @@ class Quadrille {
             this.wheels,
             1
         );
-        this.thinRhomb = shapeWheel(thinRhombUp, thinRhombWon, thinRhombToo);
-        this.thickRhomb = shapeWheel(
+        this.thinRhomb = {};
+        this.thinRhomb[1] = shapeWheel(thinRhombUp, thinRhombWon, thinRhombToo);
+        this.thickRhomb = {};
+        this.thickRhomb[1] = shapeWheel(
             thickRhombUp,
             thickRhombWon,
             thickRhombToo
@@ -668,12 +682,12 @@ class Quadrille {
             this.wheels,
             0
         );
-        this.thinSmallRhomb = shapeWheel(
+        this.thinRhomb[0] = shapeWheel(
             thinSmallRhombUp,
             thinSmallRhombWon,
             thinSmallRhombToo
         );
-        this.thickSmallRhomb = shapeWheel(
+        this.thickRhomb[0] = shapeWheel(
             thickSmallRhombUp,
             thickSmallRhombWon,
             thickSmallRhombToo
@@ -794,8 +808,10 @@ class Mosaic {
             this.wheels,
             1
         );
-        this.thinRhomb = shapeWheel(thinRhombUp, thinRhombWon, thinRhombToo);
-        this.thickRhomb = shapeWheel(
+        this.thinRhomb = {};
+        this.thickRhomb = {};
+        this.thinRhomb[1] = shapeWheel(thinRhombUp, thinRhombWon, thinRhombToo);
+        this.thickRhomb[1] = shapeWheel(
             thickRhombUp,
             thickRhombWon,
             thickRhombToo
@@ -806,12 +822,12 @@ class Mosaic {
             this.wheels,
             0
         );
-        this.thinSmallRhomb = shapeWheel(
+        this.thinRhomb[0] = shapeWheel(
             thinSmallRhombUp,
             thinSmallRhombWon,
             thinSmallRhombToo
         );
-        this.thickSmallRhomb = shapeWheel(
+        this.thickRhomb[0] = shapeWheel(
             thickSmallRhombUp,
             thickSmallRhombWon,
             thickSmallRhombToo

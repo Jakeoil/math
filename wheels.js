@@ -250,6 +250,13 @@ export function interpolateShape(up, won, too) {
     const b2 = too.foreach((it) => it.y);
 }
 
+/**
+ * Produces the next seed from the current seed.
+ * @param {*} point0
+ * @param {*} point1
+ * @param {*} point2
+ * @returns
+ */
 export function nextWheel(point0, point1, point2) {
     const point9 = point1.hr; // switch x
     const point3 = point2.vr;
@@ -260,6 +267,13 @@ export function nextWheel(point0, point1, point2) {
     ];
 }
 
+/**
+ * Produced the previous seed from the current seed
+ * @param {} point0
+ * @param {*} point1
+ * @param {*} point2
+ * @returns
+ */
 export function interpolateWheel(point0, point1, point2) {
     const { x: a0, y: b0 } = point0;
     const { x: a1, y: b1 } = point1;

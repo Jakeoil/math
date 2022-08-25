@@ -15,6 +15,7 @@ export function measureTasks(source) {
     drawQuadrille();
     drawImage();
     wheelTables();
+    shapeWheelTests();
 }
 
 function drawQuadrille() {
@@ -176,4 +177,12 @@ function wheelTable(id, wheel) {
         tenths.forEach(insertTd);
         tableEle.appendChild(eleRow);
     }
+}
+
+function shapeWheelTests() {
+    // First find the quadrille rhombuses.
+    const thickRhomb = quadrille.thickRhomb[0];
+    const thickBigRhomb = quadrille.thickRhomb[1];
+
+    //console.log(thickRhomb);
 }
