@@ -24,4 +24,12 @@ cp scrolling.js /Volumes/jakeoil.net/public_html/math
 echo . . .
 #mkdir /Volumes/jakeoil.net/public_html/math/controls
 cp controls/shape-colors.js /Volumes/jakeoil.net/public_html/math/controls
+cp controls/overlays.js /Volumes/jakeoil.net/public_html/math/controls
+
+cp controls/page-navigation.js /Volumes/jakeoil.net/public_html/math/controls
+cp controls/controls.js /Volumes/jakeoil.net/public_html/math/controls
+cp controls/rhomb-style.js /Volumes/jakeoil.net/public_html/math/controls
+cp controls/shape-mode.js /Volumes/jakeoil.net/public_html/math/controls
+cp controls/penta-style.js /Volumes/jakeoil.net/public_html/math/controls
+
 echo complete

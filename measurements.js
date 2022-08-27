@@ -2,7 +2,7 @@ import { p } from "./point.js";
 import { Bounds } from "./bounds.js";
 import { interpolateWheel, successorPoint } from "./wheels.js";
 import { penrose } from "./penrose.js";
-import { MODE_REAL } from "./controls.js"; // Now _really_
+import { MODE_REAL } from "./controls/shape-mode.js"; // Now _really_
 import { quadrille } from "./shape-modes.js";
 import { iface } from "./penrose-screen.js";
 import { globals } from "./controls.js";
