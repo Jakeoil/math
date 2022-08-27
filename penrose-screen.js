@@ -761,6 +761,8 @@ export class PenroseScreen {
         this.g.strokeStyle = strokeStyle ? strokeStyle : "black";
         if (gradient) {
             this.g.fillStyle = this.getGradient(fill, offset, shape, isHeads);
+        } else if (rhombStyle.fill == rhombStyle.TRANSPARENT) {
+            this.g.fillStyle = fill + "40"; //
         } else {
             this.g.fillStyle = fill;
         }

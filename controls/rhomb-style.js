@@ -11,6 +11,7 @@ export class RhombStyle {
     SOLID = "solid";
     NONE = "none";
     GRADIENT = "gradient";
+    TRANSPARENT = "transparent";
 
     constructor(app) {
         this.app = app;

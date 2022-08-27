@@ -6,6 +6,7 @@ import { PageNavigation } from "./controls/page-navigation.js";
 import { RhombStyle } from "./controls/rhomb-style.js";
 import { ShapeMode } from "./controls/shape-mode.js";
 import { Controls } from "./controls/controls.js";
+import { PentaStyle } from "./controls/penta-style.js";
 /**
  * !!!
  * The cookie has string ties to the controls.
@@ -89,6 +90,11 @@ export function logRefresh(app, source) {
                 `Refresh ${app.name} from ${RhombStyle.name}: ${globals.rhombStyle}`
             );
             break;
+        case PentaStyle.name:
+            console.log(
+                `Refresh ${app.name} from ${PentaStyle.name}: ${globals.pentaStyle}`
+            );
+            break;
         case ShapeColors.name:
             console.log(
                 `Refresh ${app.name} from ${ShapeColors.name}: ${globals.shapeColors}`
@@ -136,6 +142,7 @@ export function initControls(app) {
 
         if (!globals.overlays) globals.overlays = new Overlays(app);
         if (!globals.rhombStyle) globals.rhombStyle = new RhombStyle(app);
+        if (!globals.pentaStyle) globals.pentaStyle = new PentaStyle(app);
 
         if (!globals.pageNavigation)
             globals.pageNavigation = new PageNavigation(app);
