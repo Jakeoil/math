@@ -227,6 +227,7 @@ export class PenroseScreen {
     penta(fifths, type, isDown, loc, exp, isHeads = true) {
         const { overlays } = globals;
         const bounds = new Bounds();
+        const delayQueue = [];
 
         fifths = norm(fifths);
         if (exp == 0) {
@@ -285,11 +286,14 @@ export class PenroseScreen {
                     )
                 );
                 if (overlays && overlays.treeSelected)
-                    this.line(loc, locDiamond, "red");
+                    delayQueue.push(() => this.line(loc, locDiamond, "red"));
+                //this.line(loc, locDiamond, "red");
             }
             if (overlays && overlays.treeSelected)
-                this.line(loc, locPenta, "black");
+                delayQueue.push(() => this.line(loc, locPenta, "black"));
+            //this.line(loc, locPenta, "black");
         }
+        delayQueue.forEach((f) => f());
         return bounds;
     }
 
@@ -323,6 +327,7 @@ export class PenroseScreen {
     star(fifths, type, isDown, loc, exp, isHeads = true) {
         const { overlays } = globals;
         const bounds = new Bounds();
+        const delayQueue = [];
 
         fifths = norm(fifths);
         if (exp == 0) {
@@ -380,11 +385,14 @@ export class PenroseScreen {
                 );
 
                 if (overlays && overlays.treeSelected) {
-                    this.line(loc, locPenta, "red");
-                    this.line(loc, locBoat, "blue");
+                    delayQueue.push(() => this.line(loc, locPenta, "red"));
+                    delayQueue.push(() => this.line(loc, locBoat, "blue"));
+                    //this.line(loc, locPenta, "red");
+                    //this.line(loc, locBoat, "blue");
                 }
             }
         }
+        delayQueue.forEach((f) => bounds.expand(f()));
         return bounds;
     }
 
@@ -689,6 +697,7 @@ export class PenroseScreen {
     }
 
     line(loc, end, strokeStyle) {
+        const bounds = new Bounds();
         const currentWidth = this.g.lineWidth;
         const currentStrokeStyle = this.g.strokeStyle;
         this.g.strokeStyle = strokeStyle ? strokeStyle : "black";
@@ -696,10 +705,12 @@ export class PenroseScreen {
         this.g.beginPath();
         this.g.moveTo(loc.x * this.scale, loc.y * this.scale);
         this.g.lineTo(end.x * this.scale, end.y * this.scale);
+        bounds.addPoint(loc, end);
         this.g.stroke();
 
         this.g.lineWidth = currentWidth;
         this.g.strokeStyle = currentStrokeStyle;
+        return bounds;
     }
 
     getGradient(fill, offset, shape, isHeads) {

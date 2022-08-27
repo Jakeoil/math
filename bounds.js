@@ -46,7 +46,7 @@ export class Bounds {
     expand(bounds) {
         if (!bounds) {
             // Figure returned null?
-            console.log(TAG, "expand: Figure returned null?");
+            console.log("expand: Figure returned null?");
             return;
         }
 

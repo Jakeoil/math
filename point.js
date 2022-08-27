@@ -7,46 +7,46 @@ export const norm = (n) => ((n % 5) + 5) % 5;
  * Orthoganal Penrose program version one.
  * These routines process a scaled grid. They do not control rendering.
  */
-class P {
+class Point {
     constructor(x, y) {
         this.x = x;
         this.y = y;
     }
     // translate
     tr(v) {
-        return new P(this.x + v.x, this.y + v.y);
+        return new Point(this.x + v.x, this.y + v.y);
     }
     // Vertical and Horizontal reflection
     get vr() {
-        return new P(this.x, -this.y);
+        return new Point(this.x, -this.y);
     }
     get hr() {
-        return new P(-this.x, this.y);
+        return new Point(-this.x, this.y);
     }
     get neg() {
-        return new P(-this.x, -this.y);
+        return new Point(-this.x, -this.y);
     }
     // When reversing mosaics, the reflection is offset by 1
     // This is due to the rect bases not being in the upper left corner
     //
     get vrm() {
-        return new P(this.x, -1 - this.y);
+        return new Point(this.x, -1 - this.y);
     }
     get hrm() {
-        return new P(-1 - this.x, this.y);
+        return new Point(-1 - this.x, this.y);
     }
     get negm() {
-        return new P(-1 - this.x, -1 - this.y);
+        return new Point(-1 - this.x, -1 - this.y);
     }
     get copy() {
-        return new P(this.x, this.y);
+        return new Point(this.x, this.y);
     }
     // If used, strictly for offsets
     div(d) {
-        return new P(this.x / d, this.y / d);
+        return new Point(this.x / d, this.y / d);
     }
     mult(m) {
-        return new P(this.x * m, this.y * m);
+        return new Point(this.x * m, this.y * m);
     }
     // Not used?
     get toLoc() {
@@ -69,10 +69,10 @@ class P {
  * rather than an ordered pair
  */
 export function toP(loc) {
-    return new P(loc[0], loc[1]);
+    return new Point(loc[0], loc[1]);
 }
 //export const toP = (loc) => new P(loc[0], loc[1]);
 //const p = (x, y) => new P(x, y);
 export function p(x, y) {
-    return new P(x, y);
+    return new Point(x, y);
 }
