@@ -216,21 +216,21 @@ export class PenroseScreen {
      *   *   *     *   *     *   o     o   *     *   *
      *
      *
-     * @param {*} fifths
-     * @param {*} type
-     *   This object contains the tables necessary for construction.
-     * @param {*} isDown
-     * @param {*} loc target of the center of the object on the canvas
-     * @param {*} exp Recursive expansion. 0 the primitive.
-     * @returns
+     * @param {0|1|2|3|4} fifths - angle cw from upright
+     * @param {penrose.type} type - only Pe<1|3|5> types considered
+     * @param {boolean} isDown - inverted if true
+     * @param {Point} loc - center of figure
+     * @param {number} gen - generation number. Recursively decrements to 0 (or  value specified by control)
+     * @param {boolean} heads - Computed aspect of group. Convex or concave
+     * @returns {Bounds} - Rectangle describing space taken by shape
      */
-    penta(fifths, type, isDown, loc, exp, isHeads = true) {
+    penta(fifths, type, isDown, loc, gen, isHeads = true) {
         const { overlays } = globals;
         const bounds = new Bounds();
         const delayQueue = [];
 
         fifths = norm(fifths);
-        if (exp == 0) {
+        if (gen == 0) {
             if (!overlays || overlays.pentaSelected) {
                 let shapes = this.pShape(type);
                 if (shapes) {
@@ -250,11 +250,11 @@ export class PenroseScreen {
         }
 
         const wheels = penrose[this.mode].wheels;
-        const pWheel = wheels.p[exp].w;
-        const sWheel = wheels.s[exp].w;
+        const pWheel = wheels.p[gen].w;
+        const sWheel = wheels.s[gen].w;
 
         bounds.expand(
-            this.penta(0, penrose.Pe5, !isDown, loc, exp - 1),
+            this.penta(0, penrose.Pe5, !isDown, loc, gen - 1),
             isHeads
         );
 
@@ -269,7 +269,7 @@ export class PenroseScreen {
                     type.twist[i] == 0 ? penrose.Pe3 : penrose.Pe1,
                     isDown,
                     locPenta,
-                    exp - 1,
+                    gen - 1,
                     !isHeads
                 )
             );
@@ -281,18 +281,17 @@ export class PenroseScreen {
                         penrose.St1,
                         !isDown,
                         locDiamond,
-                        exp - 1,
+                        gen - 1,
                         isHeads
                     )
                 );
                 if (overlays && overlays.treeSelected)
                     delayQueue.push(() => this.line(loc, locDiamond, "red"));
-                //this.line(loc, locDiamond, "red");
             }
             if (overlays && overlays.treeSelected)
                 delayQueue.push(() => this.line(loc, locPenta, "black"));
-            //this.line(loc, locPenta, "black");
         }
+        // This is kind of fruitless unless the functions are added to bounds.
         delayQueue.forEach((f) => f());
         return bounds;
     }
@@ -317,20 +316,21 @@ export class PenroseScreen {
      *     .         .  *      .         .      *  .
      *                           *     *
      *
-     * @param {*} fifths 0 to 5. Angle from direction.
-     * @param {*} type  S5 S3 S1
-     * @param {*} isDown
-     * @param {*} loc
-     * @param {*} exp
-     * @returns
+     * @param {0|1|2|3|4} fifths - angle cw from upright
+     * @param {penrose.type} type - only St<1|3|5> types considered
+     * @param {boolean} isDown - inverted if true
+     * @param {Point} loc - center of figure
+     * @param {number} gen - generation number. Recursively decrements to 0 (or  value specified by control)
+     * @param {boolean} heads - Computed aspect of group. Convex or concave
+     * @returns {Bounds} - Rectangle describing space taken by shape
      */
-    star(fifths, type, isDown, loc, exp, isHeads = true) {
+    star(fifths, type, isDown, loc, gen, isHeads = true) {
         const { overlays } = globals;
         const bounds = new Bounds();
         const delayQueue = [];
 
         fifths = norm(fifths);
-        if (exp == 0) {
+        if (gen == 0) {
             let shapes = this.pShape(type);
             if (shapes) {
                 if (!overlays || overlays.pentaSelected)
@@ -348,11 +348,11 @@ export class PenroseScreen {
         }
 
         const wheels = penrose[this.mode].wheels;
-        const tWheel = wheels.t[exp].w;
-        const sWheel = wheels.s[exp].w;
+        const tWheel = wheels.t[gen].w;
+        const sWheel = wheels.s[gen].w;
 
         bounds.expand(
-            this.star(0, penrose.St5, !isDown, loc, exp - 1, isHeads)
+            this.star(0, penrose.St5, !isDown, loc, gen - 1, isHeads)
         );
 
         for (let i = 0; i < 5; i++) {
@@ -368,7 +368,7 @@ export class PenroseScreen {
                         penrose.Pe1,
                         !isDown,
                         locPenta,
-                        exp - 1,
+                        gen - 1,
                         isHeads
                     )
                 );
@@ -379,7 +379,7 @@ export class PenroseScreen {
                         penrose.St3,
                         isDown,
                         locBoat,
-                        exp - 1,
+                        gen - 1,
                         isHeads
                     )
                 );
@@ -387,8 +387,6 @@ export class PenroseScreen {
                 if (overlays && overlays.treeSelected) {
                     delayQueue.push(() => this.line(loc, locPenta, "red"));
                     delayQueue.push(() => this.line(loc, locBoat, "blue"));
-                    //this.line(loc, locPenta, "red");
-                    //this.line(loc, locBoat, "blue");
                 }
             }
         }
@@ -396,20 +394,18 @@ export class PenroseScreen {
         return bounds;
     }
 
-    drawPentaPattern() {}
-
     /**&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
      * This will revamp and combine penta and pentaRhomb
      * The inputs are streamlined
      *
      */
-    pentaNew({ type, angle, isHeads = true, loc, exp, options }) {
+    pentaNew({ type, angle, isHeads = true, loc, gen, options }) {
         let { overlays } = globals;
         ({ overlays } = options); // some version of apply
         const bounds = new Bounds();
 
         fifths = norm(fifths);
-        if (exp == 0) {
+        if (gen == 0) {
             if (!overlays || overlays.pentaSelected) {
                 let shapes = this.pShape(type);
                 if (shapes) {
@@ -429,11 +425,11 @@ export class PenroseScreen {
         }
 
         const wheels = penrose[this.mode].wheels;
-        const pWheel = wheels.p[exp].w;
-        const sWheel = wheels.s[exp].w;
+        const pWheel = wheels.p[gen].w;
+        const sWheel = wheels.s[gen].w;
 
         bounds.expand(
-            this.penta(0, penrose.Pe5, !isDown, loc, exp - 1),
+            this.penta(0, penrose.Pe5, !isDown, loc, gen - 1),
             isHeads
         );
 
@@ -448,7 +444,7 @@ export class PenroseScreen {
                     type.twist[i] == 0 ? penrose.Pe3 : penrose.Pe1,
                     isDown,
                     locPenta,
-                    exp - 1,
+                    gen - 1,
                     !isHeads
                 )
             );
@@ -460,7 +456,7 @@ export class PenroseScreen {
                         penrose.St1,
                         !isDown,
                         locDiamond,
-                        exp - 1,
+                        gen - 1,
                         isHeads
                     )
                 );
@@ -563,47 +559,48 @@ export class PenroseScreen {
 
     /**
      * Decagon is a type unto itself.
+     *      * The up version.
      *
-     * @param {*} fifths
-     * @param {*} isDown
-     * @param {*} loc
-     * @param {*} exp
-     * @returns
-     *
-     * The up version.
-     *
-     *      + x    x +
-     *     x o      o x
-     *    *  x  o  x   *
+     *       + x x +
+     *     x o     o x
+     *    *  x  o  x  *
      *     .    +    .
      *       +--*--+
+     *
+     * @param {0|1|2|3|4} fifths - angle cw from upright
+     * @param {boolean} isDown - inverted if true
+     * @param {Point} loc - center of figure
+     * @param {number} gen - generation number. Recursively decrements to 0 (or  value specified by control)
+     * @param {boolean} heads - Computed aspect of group. Convex or concave
+     * @returns {Bounds} - Rectangle describing space taken by shape
+     * *
      */
 
-    deca(fifths, isDown, loc, exp, isHeads = true) {
+    deca(fifths, isDown, loc, gen, isHeads = true) {
         const { overlays } = globals;
         const bounds = new Bounds();
-        if (exp == 0) {
+        if (gen == 0) {
             return bounds;
         }
 
         const wheels = penrose[this.mode].wheels;
 
         // Move the center of the decagon to the real center.
-        let dUp = wheels.d[exp].up;
-        let dDown = wheels.d[exp].down;
+        let dUp = wheels.d[gen].up;
+        let dDown = wheels.d[gen].down;
         let dOff = isDown ? dUp[fifths] : dDown[fifths];
         let base = loc.tr(dOff);
-        let pUp = wheels.p[exp].up;
-        let pDown = wheels.p[exp].down;
-        let sUp = wheels.s[exp].up;
-        let sDown = wheels.s[exp].down;
+
         let offs; // Work variable
 
         // The central yellow pentagon
         bounds.expand(
-            this.penta(fifths, penrose.Pe3, isDown, base, exp - 1),
+            this.penta(fifths, penrose.Pe3, isDown, base, gen - 1),
             isHeads
         ); //
+
+        const sUp = wheels.s[gen].up;
+        const sDown = wheels.s[gen].down;
 
         // The two diamonds
         offs = isDown ? sDown[norm(1 + fifths)] : sUp[norm(1 + fifths)];
@@ -613,7 +610,7 @@ export class PenroseScreen {
                 penrose.St1,
                 isDown,
                 base.tr(offs),
-                exp - 1,
+                gen - 1,
                 isHeads
             )
         ); // sd1
@@ -625,10 +622,13 @@ export class PenroseScreen {
                 penrose.St1,
                 isDown,
                 base.tr(offs),
-                exp - 1,
+                gen - 1,
                 isHeads
             )
         ); // sd4
+
+        const pUp = wheels.p[gen].up;
+        const pDown = wheels.p[gen].down;
 
         // The two orange pentagons
         offs = isDown ? pUp[norm(3 + fifths)] : pDown[norm(3 + fifths)];
@@ -638,7 +638,7 @@ export class PenroseScreen {
                 penrose.Pe1,
                 !isDown,
                 base.tr(offs),
-                exp - 1,
+                gen - 1,
                 !isHeads
             )
         );
@@ -650,7 +650,7 @@ export class PenroseScreen {
                 penrose.Pe1,
                 !isDown,
                 base.tr(offs),
-                exp - 1,
+                gen - 1,
                 !isHeads
             )
         );
@@ -665,13 +665,20 @@ export class PenroseScreen {
                 penrose.St3,
                 !isDown,
                 base.tr(offs),
-                exp - 1,
+                gen - 1,
                 !isHeads
             )
         );
         return bounds;
     }
+
+    /**
+     * Draw a 2 size x 2 size grid matching the scale
+     * @param {point} offset - Point indicating center of grid
+     * @param {*} size
+     */
     grid(offset, size) {
+        const bounds = new Bounds();
         this.g.strokeStyle = penrose.OUTLINE;
         for (let y = -size; y < size; y++) {
             for (let x = -size; x < size; x++) {
@@ -694,6 +701,10 @@ export class PenroseScreen {
         this.g.moveTo((offset.x - size) * this.scale, offset.y * this.scale);
         this.g.lineTo((offset.x + size) * this.scale, offset.y * this.scale);
         this.g.stroke();
+
+        bounds.addPoint(offset, p(-size, -size));
+        bounds.addPoint(offset, p(size, size));
+        return bounds;
     }
 
     line(loc, end, strokeStyle) {
@@ -705,6 +716,7 @@ export class PenroseScreen {
         this.g.beginPath();
         this.g.moveTo(loc.x * this.scale, loc.y * this.scale);
         this.g.lineTo(end.x * this.scale, end.y * this.scale);
+        bounds.addPoint(loc, loc);
         bounds.addPoint(loc, end);
         this.g.stroke();
 
@@ -829,12 +841,19 @@ export class PenroseScreen {
      * The string will be seached for the # character. Everything before
      * # is a modifier.
      *
+     * @param {*} fifths
+     * @param {*} type
+     * @param {*} isDown
+     * @param {*} loc
+     * @param {*} gen
+     * @param {*} isHeads
+     * @returns
      */
-    drawRhombusPattern(fifths, type, isDown, loc, exp, isHeads) {
+    drawRhombusPattern(fifths, type, isDown, loc, gen, isHeads) {
         const bounds = new Bounds();
         let gradient = true;
-        const thins = penrose[this.mode].thinRhomb[exp];
-        const thicks = penrose[this.mode].thickRhomb[exp];
+        const thins = penrose[this.mode].thinRhomb[gen];
+        const thicks = penrose[this.mode].thickRhomb[gen];
         const fill = pColor(type);
         const outline = null;
         for (let i = 0; i < 5; i++) {
@@ -918,7 +937,7 @@ export class PenroseScreen {
 
         return bounds;
     }
-    pentaRhomb(fifths, type, isDown, loc, exp, isHeads = true) {
+    pentaRhomb(fifths, type, isDown, loc, gen, isHeads = true) {
         const { overlays } = globals;
         const bounds = new Bounds();
         if (!overlays.rhombSelected) {
@@ -927,7 +946,7 @@ export class PenroseScreen {
 
         fifths = norm(fifths);
 
-        if (exp == 0) {
+        if (gen == 0) {
             if (overlays.smallRhomb) {
                 //const thins = penrose[this.mode].thinRhomb[exp];
                 //const thicks = penrose[this.mode].thickRhomb[exp];
@@ -937,7 +956,7 @@ export class PenroseScreen {
                         type,
                         isDown,
                         loc,
-                        exp,
+                        gen,
                         isHeads
                     )
                 );
@@ -946,20 +965,20 @@ export class PenroseScreen {
             return bounds;
         }
 
-        if (exp == 1 && !overlays.smallRhomb) {
-            const thins = penrose[this.mode].thinRhomb[exp];
-            const thicks = penrose[this.mode].thickRhomb[exp];
+        if (gen == 1 && !overlays.smallRhomb) {
+            const thins = penrose[this.mode].thinRhomb[gen];
+            const thicks = penrose[this.mode].thickRhomb[gen];
             bounds.expand(
-                this.drawRhombusPattern(fifths, type, isDown, loc, exp, isHeads)
+                this.drawRhombusPattern(fifths, type, isDown, loc, gen, isHeads)
             );
             return bounds;
         }
         const wheels = penrose[this.mode].wheels;
-        const pWheel = wheels.p[exp].w;
-        const sWheel = wheels.s[exp].w;
+        const pWheel = wheels.p[gen].w;
+        const sWheel = wheels.s[gen].w;
 
         bounds.expand(
-            this.pentaRhomb(0, penrose.Pe5, !isDown, loc, exp - 1, isHeads)
+            this.pentaRhomb(0, penrose.Pe5, !isDown, loc, gen - 1, isHeads)
         );
 
         for (let i = 0; i < 5; i++) {
@@ -973,7 +992,7 @@ export class PenroseScreen {
                     type.twist[i] == 0 ? penrose.Pe3 : penrose.Pe1,
                     isDown,
                     locPenta,
-                    exp - 1,
+                    gen - 1,
                     !isHeads
                 )
             );
@@ -985,7 +1004,7 @@ export class PenroseScreen {
                         penrose.St1,
                         !isDown,
                         locDiamond,
-                        exp - 1,
+                        gen - 1,
                         isHeads // !!! just a guess
                     )
                 );
@@ -994,7 +1013,7 @@ export class PenroseScreen {
         return bounds;
     }
 
-    starRhomb(fifths, type, isDown, loc, exp, isHeads) {
+    starRhomb(fifths, type, isDown, loc, gen, isHeads) {
         const { overlays } = globals;
         const bounds = new Bounds();
         if (!overlays.rhombSelected) {
@@ -1002,20 +1021,20 @@ export class PenroseScreen {
         }
 
         fifths = norm(fifths);
-        if (exp == 0) {
+        if (gen == 0) {
             return bounds;
         }
 
         const wheels = penrose[this.mode].wheels;
-        const tWheel = wheels.t[exp].w;
-        const sWheel = wheels.s[exp].w;
+        const tWheel = wheels.t[gen].w;
+        const sWheel = wheels.s[gen].w;
 
-        if (exp == 1 && !overlays.smallRhomb) {
+        if (gen == 1 && !overlays.smallRhomb) {
             return bounds;
         }
 
         bounds.expand(
-            this.starRhomb(0, penrose.St5, !isDown, loc, exp - 1, isHeads),
+            this.starRhomb(0, penrose.St5, !isDown, loc, gen - 1, isHeads),
             isHeads
         );
 
@@ -1032,7 +1051,7 @@ export class PenroseScreen {
                         penrose.Pe1,
                         !isDown,
                         locPenta,
-                        exp - 1,
+                        gen - 1,
                         isHeads
                     )
                 );
@@ -1043,7 +1062,7 @@ export class PenroseScreen {
                         penrose.St3,
                         isDown,
                         locBoat,
-                        exp - 1,
+                        gen - 1,
                         isHeads
                     )
                 );
@@ -1051,33 +1070,33 @@ export class PenroseScreen {
         }
         return bounds;
     }
-    decaRhomb(fifths, isDown, loc, exp, isHeads = true) {
+    decaRhomb(fifths, isDown, loc, gen, isHeads = true) {
         const { overlays } = globals;
         const bounds = new Bounds();
         if (!overlays.rhombSelected) {
             return bounds;
         }
 
-        if (exp == 0) {
+        if (gen == 0) {
             return bounds;
         }
 
         const wheels = penrose[this.mode].wheels;
 
         // Move the center of the decagon to the real center.
-        let dUp = wheels.d[exp].up;
-        let dDown = wheels.d[exp].down;
+        let dUp = wheels.d[gen].up;
+        let dDown = wheels.d[gen].down;
         let dOff = isDown ? dUp[fifths] : dDown[fifths];
         let base = loc.tr(dOff);
-        let pUp = wheels.p[exp].up;
-        let pDown = wheels.p[exp].down;
-        let sUp = wheels.s[exp].up;
-        let sDown = wheels.s[exp].down;
+        let pUp = wheels.p[gen].up;
+        let pDown = wheels.p[gen].down;
+        let sUp = wheels.s[gen].up;
+        let sDown = wheels.s[gen].down;
         let offs; // Work variable
 
         // The central yellow pentagon
         bounds.expand(
-            this.pentaRhomb(fifths, penrose.Pe3, isDown, base, exp - 1, isHeads)
+            this.pentaRhomb(fifths, penrose.Pe3, isDown, base, gen - 1, isHeads)
         ); //
 
         // The two diamonds
@@ -1088,7 +1107,7 @@ export class PenroseScreen {
                 penrose.St1,
                 isDown,
                 base.tr(offs),
-                exp - 1,
+                gen - 1,
                 isHeads // !!! this is just a guess
             )
         ); // sd1
@@ -1100,7 +1119,7 @@ export class PenroseScreen {
                 penrose.St1,
                 isDown,
                 base.tr(offs),
-                exp - 1,
+                gen - 1,
                 isHeads // !!! just a guess
             )
         ); // sd4
@@ -1113,7 +1132,7 @@ export class PenroseScreen {
                 penrose.Pe1,
                 !isDown,
                 base.tr(offs),
-                exp - 1,
+                gen - 1,
                 !isHeads
             )
         );
@@ -1125,7 +1144,7 @@ export class PenroseScreen {
                 penrose.Pe1,
                 !isDown,
                 base.tr(offs),
-                exp - 1,
+                gen - 1,
                 !isHeads
             )
         );
@@ -1140,7 +1159,7 @@ export class PenroseScreen {
                 penrose.St3,
                 !isDown,
                 base.tr(offs),
-                exp - 1,
+                gen - 1,
                 !isHeads
             )
         );
