@@ -21,4 +21,7 @@ cp bounds.js /Volumes/jakeoil.net/public_html/math
 cp rhombohedra.html /Volumes/jakeoil.net/public_html/math
 cp rhombohedra.js /Volumes/jakeoil.net/public_html/math
 cp scrolling.js /Volumes/jakeoil.net/public_html/math
+echo . . .
+#mkdir /Volumes/jakeoil.net/public_html/math/controls
+cp controls/shape-colors.js /Volumes/jakeoil.net/public_html/math/controls
 echo complete
