@@ -3,29 +3,45 @@ import { Bounds } from "./bounds.js";
 import { penrose } from "./penrose.js";
 import { globals } from "./controls.js";
 
+/**
+ * There are 5 angles measured in Fifths and their inverses.
+ *
+ *
+ */
 class Angle {
     slicee = [0, 1, 2, 3, 4, 0, 1, 2, 3];
     constructor(fifths, isDown) {
         this.fifths = fifths;
         this.down = isDown;
     }
+    // The clockwise operation
     get cw() {
         return new Angle(fifths == 5 ? 0 : this.fifths + 1, this.isDown);
     }
+    // The counter-clockwise operation
     get ccw() {
         return new Angle(fifths ? 5 : this.fifths - 1, this.isDown);
     }
+    // Reverse the direction.
     inv(angle) {
         return new Angle(this.fifths, !this.isDown);
     }
+    // Convert to tenths. Vectors (pstd) are stored in tenths
     tenths(angle) {
         return (this.fifths * 2 + (this.isDown ? 5 : 0)) % 10;
     }
 }
+
+/***
+ * Some iterator thing that does not look useful at this moment
+ */
 function fList(fifth) {
     return slicee.slice(0, 5);
 }
 
+/**
+ * Deprecated
+ */
 function tenths(fifths, isDown) {
     return (fifths * 2 + (isDown ? 5 : 0)) % 10;
 }
@@ -34,8 +50,8 @@ function tenths(fifths, isDown) {
  * Thanks to:
  * https://css-tricks.com/converting-color-spaces-in-javascript/
  *
+ * Converts #rgb and #rrggbb formats
  */
-
 function hexToRGB(h) {
     let r = 0,
         g = 0,
@@ -61,12 +77,15 @@ function hexToRGB(h) {
 
 /**
  * Create an rgb command merging the two colors
+ *
  * @param {*} start
  * @param {*} end
- * @param {*} frac
- * @returns
+ * @param {*} frac  Value from 0 to 1
+ * @returns ccs command string
+ *
+ * todo!!! implement opacity. It is a fraction from 0 (transparent) to 1.
  */
-function mix(start, end, frac) {
+function mix(start, end, frac, opacity) {
     if (frac < 0) frac = 0;
     if (frac > 1) frac = 1;
     const rgbStart = hexToRGB(start);
@@ -86,9 +105,11 @@ function testMix() {
     mix("#000", "#ff6600", 0.75);
     mix("#000", "#ff6600", 1.0);
 }
+
 testMix();
 /**
  * This is a wrapper around penroseScreen
+ * Just creates the screen with some aliases.
  */
 export function iface(g, scale, mode) {
     let screen = new PenroseScreen(g, scale, mode);
@@ -102,8 +123,15 @@ export function iface(g, scale, mode) {
     return { penta, star, deca, grid, pentaRhomb, starRhomb, decaRhomb };
 }
 
-// This routine depends on an initialized shapeColors instance.
-//
+/**
+ * This routine depends on an initialized shapeColors instance.
+ *
+ *
+ * @param {*} type
+ * @returns
+ *
+ * The initial test was done due to shapeColors missing
+ */
 function pColor(type) {
     const { shapeColors } = globals;
     if (shapeColors) {
@@ -125,6 +153,16 @@ function pColor(type) {
     } else return type.defaultColor;
 }
 
+/**
+ * Represents a rendering screen
+ *
+ * @param {RenderingContext} g - canvas rendering context
+ * @param {number} scale - multiplication factor for rendering points.
+ * @param (Real|Quadrille|Mosaic|Typographic) - Rendering style of figures.
+ *
+ * Mosaic may be removed since it is unique to Quadrille
+ *
+ */
 export class PenroseScreen {
     constructor(g, scale, mode) {
         this.g = g;
@@ -132,6 +170,13 @@ export class PenroseScreen {
         this.mode = mode;
     }
 
+    /**
+     * Gets the figure for the type.
+     *
+     * @param {penrose.type} type
+     * @param {Shapes} penta
+     * @returns penta|star|boat|diamond Point array
+     */
     pShape(type) {
         switch (type) {
             case penrose.Pe5:

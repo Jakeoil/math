@@ -257,8 +257,8 @@ export function interpolateShape(up, won, too) {
  * @param {*} point2
  * @returns
  */
-export function nextWheel(point0, point1, point2) {
-    const point9 = point1.hr; // switch x
+export function successorPoint(point0, point1, point2) {
+    const point9 = point1.hr; // switch
     const point3 = point2.vr;
     return [
         point9.tr(point0).tr(point1),
@@ -267,6 +267,19 @@ export function nextWheel(point0, point1, point2) {
     ];
 }
 
+export function predecessorPoint(point0, point1, point2) {
+    const { x: a0, y: b0 } = point0;
+    const { x: a1, y: b1 } = point1;
+    const { x: a2, y: b2 } = point2;
+    const x0 = a0;
+    const x1 = -a0 - a0 + a1 + a1 - a2;
+    const x2 = a2 - a1 + a0;
+
+    const y0 = b0 - b2 - b2;
+    const y1 = b2; //; #3
+    const y2 = b1 - b0 + b2;
+    return [p(x0, y0), p(x1, y1), p(x2, y2)];
+}
 /**
  * Produced the previous seed from the current seed
  * @param {} point0

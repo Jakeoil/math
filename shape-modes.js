@@ -659,6 +659,7 @@ class Quadrille {
         const dSeed = [p(0, -3), p(2, -3), p(3, -1)];
 
         this.wheels = new Wheels(pSeed, sSeed, tSeed, dSeed);
+
         const [thickRhombUp, thickRhombWon, thickRhombToo] = goThick(
             this.wheels,
             1
@@ -799,6 +800,9 @@ class Mosaic {
         const dSeed = [p(0, -3), p(2, -3), p(3, -1)];
 
         this.wheels = new Wheels(pSeed, sSeed, tSeed, dSeed);
+
+        this.thickRhombSeed = [];
+        this.thickRhombSeed[1] = goThick(this.wheels, 1);
 
         const [thickRhombUp, thickRhombWon, thickRhombToo] = goThick(
             this.wheels,
