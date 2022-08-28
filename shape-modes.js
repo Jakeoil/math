@@ -499,7 +499,7 @@ class Real {
         );
 
         this.key = "real";
-        this.renderShape = outline;
+        //this.renderShape = outline;
     }
 }
 export const real = new Real();
@@ -728,7 +728,7 @@ class Quadrille {
         );
 
         this.key = "quadrille";
-        this.renderShape = outline;
+        //this.renderShape = outline;
     }
 }
 export const quadrille = new Quadrille();
@@ -825,7 +825,7 @@ class Mosaic {
         this.star = shapeWheelMosaic(primitives.star_up);
 
         this.key = "mosaic";
-        this.renderShape = figure;
+        //this.renderShape = figure;
 
         const pSeed = [p(0, -6), p(3, -4), p(5, -2)];
         const sSeed = [p(0, -5), p(3, -5), p(5, -1)];

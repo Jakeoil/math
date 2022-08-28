@@ -350,7 +350,11 @@ function drawGridWork(id) {
         g.strokeStyle = penrose.OUTLINE;
         g.lineWidth = 1;
         let scale = 10;
-        const { deca, decaRhomb, grid } = iface(g, scale, shapeMode.shapeMode);
+        const { deca, decaRhomb, grid, figure, outline } = iface(
+            g,
+            scale,
+            shapeMode.shapeMode
+        );
 
         let y = 5;
         const shapes = [mosaic.penta, mosaic.diamond, mosaic.star, mosaic.boat];
@@ -359,7 +363,7 @@ function drawGridWork(id) {
         for (const shape of shapes) {
             for (let i = 0; i < 10; i++) {
                 let offset = p((i + 1) * spacing, y);
-                mosaic.renderShape(
+                figure(
                     shapeColors.shapeColors["pe1-color"],
                     offset,
                     shape[i],
@@ -383,7 +387,7 @@ function drawGridWork(id) {
             for (let i = 0; i < 10; i++) {
                 let offset = p((i + 1) * spacing, y);
 
-                quadrille.renderShape(
+                outline(
                     shapeColors.shapeColors["pe1-color"] + "44",
                     offset,
                     shape[i],

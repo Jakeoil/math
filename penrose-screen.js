@@ -121,7 +121,19 @@ export function iface(g, scale, mode) {
     const pentaRhomb = screen.pentaRhomb.bind(screen);
     const starRhomb = screen.starRhomb.bind(screen);
     const decaRhomb = screen.decaRhomb.bind(screen);
-    return { penta, star, deca, grid, pentaRhomb, starRhomb, decaRhomb };
+    const figure = screen.figure.bind(screen);
+    const outline = screen.outline.bind(screen);
+    return {
+        penta,
+        star,
+        deca,
+        grid,
+        pentaRhomb,
+        starRhomb,
+        decaRhomb,
+        figure,
+        outline,
+    };
 }
 
 /**
