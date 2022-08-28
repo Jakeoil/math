@@ -1,5 +1,3 @@
-import { norm } from "./point.js";
-import { penrose } from "./penrose.js";
 import { ShapeColors } from "./controls/shape-colors.js";
 import { Overlays } from "./controls/overlays.js";
 import { PageNavigation } from "./controls/page-navigation.js";
@@ -128,7 +126,7 @@ export function logRefresh(app, source) {
 }
 
 export const measureTask = {};
-export function initMeasureTaskControls(app) {}
+export const measureTaskGlobals = {};
 export const globals = {};
 
 export function initControls(app) {
@@ -146,6 +144,9 @@ export function initControls(app) {
 
         if (!globals.pageNavigation)
             globals.pageNavigation = new PageNavigation(app);
+    } else {
+        if (!measureTaskGlobals.shapeMode)
+            measureTaskGlobals.shapeMode = new ShapeMode(app);
     }
 }
 /**

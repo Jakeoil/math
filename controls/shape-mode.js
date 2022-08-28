@@ -8,12 +8,16 @@ import { cookie } from "../controls.js";
  *   "real"
  *      True five fold real symmetry todo
  */
-const MODE_MOSAIC = "mosaic";
-const MODE_QUADRILLE = "quadrille";
-export const MODE_REAL = "real";
-const MODE_LIST = [MODE_MOSAIC, MODE_QUADRILLE, MODE_REAL];
+// const MODE_MOSAIC = "mosaic";
+// const MODE_QUADRILLE = "quadrille";
+// export const MODE_REAL = "real";
+// const MODE_LIST = [MODE_MOSAIC, MODE_QUADRILLE, MODE_REAL];
 
 export class ShapeMode {
+    MODE_MOSAIC = "mosaic";
+    MODE_QUADRILLE = "quadrille";
+    MODE_REAL = "real";
+    MODE_LIST = [this.MODE_MOSAIC, this.MODE_QUADRILLE, this.MODE_REAL];
     constructor(app) {
         this.app = app;
         this.eleMode = document.querySelector("#shape-mode");
@@ -37,7 +41,7 @@ export class ShapeMode {
     }
 
     reset() {
-        this.shapeMode = cookie.getShapeMode(MODE_REAL);
+        this.shapeMode = cookie.getShapeMode(this.MODE_REAL);
     }
     toString() {
         return JSON.stringify({
@@ -46,8 +50,9 @@ export class ShapeMode {
     }
     clickMode() {
         let new_idx =
-            (MODE_LIST.indexOf(this.shapeMode) + 1) % MODE_LIST.length;
-        this.shapeMode = MODE_LIST[new_idx];
+            (this.MODE_LIST.indexOf(this.shapeMode) + 1) %
+            this.MODE_LIST.length;
+        this.shapeMode = this.MODE_LIST[new_idx];
         cookie.setShapeMode(this.shapeMode);
         this.refresh();
         this.app(ShapeMode.name);

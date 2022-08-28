@@ -2,10 +2,10 @@ import { p } from "./point.js";
 import { Bounds } from "./bounds.js";
 import { interpolateWheel, successorPoint } from "./wheels.js";
 import { penrose } from "./penrose.js";
-import { MODE_REAL } from "./controls/shape-mode.js"; // Now _really_
+//import { MODE_REAL } from "./controls/shape-mode.js"; // Now _really_
 import { quadrille } from "./shape-modes.js";
 import { iface } from "./penrose-screen.js";
-import { globals } from "./controls.js";
+import { measureTaskGlobals } from "./controls.js";
 import { initControls, logRefresh } from "./controls.js";
 
 window.addEventListener("load", measureTasks, false);
@@ -22,13 +22,12 @@ function drawQuadrille() {
     const canvas = document.querySelector("#quadrille");
     canvas.width = 0;
     canvas.height = 0;
-
+    const { shapeMode } = measureTaskGlobals;
     const g = canvas.getContext("2d");
     g.strokeStyle = penrose.OUTLINE;
     g.lineWidth = 1;
     const scale = 3.7;
-    const shapeMode = MODE_REAL;
-    const { deca } = iface(g, scale, shapeMode);
+    const { deca } = iface(g, scale, measureTaskGlobals.shapeMode.MODE_REAL);
 
     let base = p(0, 0);
     let fifths = 0;
@@ -59,8 +58,9 @@ function drawImage() {
     g.strokeStyle = penrose.OUTLINE;
     g.lineWidth = 1;
     const scale = 5;
-    const shapeMode = MODE_REAL;
-    const { deca } = iface(g, scale, shapeMode);
+    // Stupid way to get the globals.
+    const { shapeMode } = measureTaskGlobals;
+    const { deca } = iface(g, scale, shapeMode.MODE_REAL);
 
     // Now some decagons
 
@@ -195,9 +195,9 @@ function makeShapesSeedSuccessor(shapesSeed) {
             shapesSeedSuccessor[1][i],
             shapesSeedSuccessor[2][i],
         ] = [sPoint0, sPoint1, sPoint2];
-        console.log(
-            `${point0}${point1}${point2} ==> ${sPoint0}${sPoint0}${sPoint0}`
-        );
+        // console.log(
+        //     `${point0}${point1}${point2} ==> ${sPoint0}${sPoint0}${sPoint0}`
+        // );
     }
     return shapesSeedSuccessor;
 }
@@ -210,10 +210,4 @@ function shapeWheelTests() {
     // The angle arrays
     let shapesSeed = thickRhomb.slice(0, 3);
     const shapesSeedSuccessor = makeShapesSeedSuccessor(shapesSeed);
-    console.log(`shapesSeed 0`);
-    console.log(shapesSeed);
-    console.log(`tested successor 1`);
-    console.log(thickBigRhomb.slice(0, 3));
-    console.log(`shapesSeedSuccessor 1`);
-    console.log(shapesSeedSuccessor);
 }

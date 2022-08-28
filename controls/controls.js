@@ -1,5 +1,7 @@
 import { cookie } from "../controls.js";
 import { penrose } from "../penrose.js";
+import { norm } from "../point.js";
+
 /**
  * A clustered set of globals
  * Cannot say whether it was a good idea to cluster them

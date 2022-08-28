@@ -1,4 +1,4 @@
-import { norm } from "./point.js";
+import { norm, p } from "./point.js";
 import { Bounds } from "./bounds.js";
 import { penrose } from "./penrose.js";
 import { globals } from "./controls.js";
@@ -669,6 +669,106 @@ export class PenroseScreen {
                 !isHeads
             )
         );
+        return bounds;
+    }
+
+    /***
+     * Used by Mosaic figure.
+     * This is the routine that ultimately renders the 'tile'
+     * @param {*} fill One of the colors
+     * @param {*} offset Location in P format
+     * @param {*} shape centered array of 'pixels' centered.
+     * Prerequisites: Globals g and scale
+     */
+    figure(fill, offset, shape) {
+        const { pentaStyle } = globals;
+        let currentStrokeStyle = this.g.strokeStyle;
+        let currentLineWidth = this.g.lineWidth;
+        let currentfillStyle = this.g.fillStyle;
+        this.g.fillStyle = fill; //e.g penrose.ORANGE;
+        this.g.strokeStyle = penrose.OUTLINE;
+
+        const bounds = new Bounds();
+        for (const point of shape) {
+            this.g.fillRect(
+                offset.x * this.scale + point.x * this.scale,
+                offset.y * this.scale + point.y * this.scale,
+                this.scale,
+                this.scale
+            );
+            if (this.scale >= 5) {
+                g.strokeRect(
+                    offset.x * this.scale + point.x * this.scale,
+                    offset.y * this.scale + point.y * this.scale,
+                    this.scale,
+                    this.scale
+                );
+            }
+            bounds.addPoint(offset, point);
+            bounds.addPoint(offset, point.tr(p(1, 1)));
+        }
+
+        this.g.strokeStyle = currentStrokeStyle;
+        this.g.lineWidth = currentLineWidth;
+        this.g.fillStyle = currentfillStyle;
+
+        return bounds;
+    }
+
+    /***
+     * Used for quadrille
+     *
+     */
+    outline(fill, offset, shape) {
+        const { pentaStyle } = globals;
+        let currentStrokeStyle = this.g.strokeStyle;
+        let currentLineWidth = this.g.lineWidth;
+        let currentfillStyle = this.g.fillStyle;
+
+        let start = true;
+        const bounds = new Bounds();
+        for (const point of shape) {
+            this.g.strokeStyle = "#000000";
+            this.g.fillStyle = fill;
+            this.g.lineWidth = 1;
+            if (start) {
+                g.beginPath();
+                g.moveTo(
+                    (point.x + offset.x) * this.scale,
+                    (point.y + offset.y) * this.scale
+                );
+                start = false;
+            } else {
+                g.lineTo(
+                    (point.x + offset.x) * this.scale,
+                    (point.y + offset.y) * this.scale
+                );
+            }
+
+            bounds.addPoint(offset, point);
+        }
+        g.closePath();
+        g.stroke();
+
+        // switch (pentaStyle.fill) {
+        //     case pentaStyle.SOLID:
+        //         console.log("solid");
+        //         break;
+        //     case pentaStyle.NONE:
+        //         console.log("none");
+        //         break;
+        //     case pentaStyle.TRANSPARENT:
+        //         console.log("transparent");
+        //         break;
+        // }
+
+        if (fill) {
+            this.g.fill();
+        }
+        this.g.strokeStyle = currentStrokeStyle;
+        this.g.lineWidth = currentLineWidth;
+        this.g.fillStyle = currentfillStyle;
+
         return bounds;
     }
 

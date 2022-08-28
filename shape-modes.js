@@ -6,6 +6,7 @@ import {
     shapeWheelMosaic,
     interpolateWheel,
 } from "./wheels.js";
+import { globals } from "./controls.js";
 import { penrose } from "./penrose.js";
 /***
  * Used by Mosaic figure.
@@ -16,6 +17,10 @@ import { penrose } from "./penrose.js";
  * Prerequisites: Globals g and scale
  */
 function figure(fill, offset, shape, g, scale) {
+    const { pentaStyle } = globals;
+    let currentStrokeStyle = g.strokeStyle;
+    let currentLineWidth = g.lineWidth;
+    let currentfillStyle = g.fillStyle;
     g.fillStyle = fill; //e.g penrose.ORANGE;
     g.strokeStyle = penrose.OUTLINE;
 
@@ -38,6 +43,11 @@ function figure(fill, offset, shape, g, scale) {
         bounds.addPoint(offset, point);
         bounds.addPoint(offset, point.tr(p(1, 1)));
     }
+
+    g.strokeStyle = currentStrokeStyle;
+    g.lineWidth = currentLineWidth;
+    g.fillStyle = currentfillStyle;
+
     return bounds;
 }
 
@@ -46,6 +56,11 @@ function figure(fill, offset, shape, g, scale) {
  *
  */
 export function outline(fill, offset, shape, g, scale) {
+    const { pentaStyle } = globals;
+    let currentStrokeStyle = g.strokeStyle;
+    let currentLineWidth = g.lineWidth;
+    let currentfillStyle = g.fillStyle;
+
     let start = true;
     const bounds = new Bounds();
     for (const point of shape) {
@@ -70,9 +85,25 @@ export function outline(fill, offset, shape, g, scale) {
     }
     g.closePath();
     g.stroke();
+
+    // switch (pentaStyle.fill) {
+    //     case pentaStyle.SOLID:
+    //         console.log("solid");
+    //         break;
+    //     case pentaStyle.NONE:
+    //         console.log("none");
+    //         break;
+    //     case pentaStyle.TRANSPARENT:
+    //         console.log("transparent");
+    //         break;
+    // }
+
     if (fill) {
         g.fill();
     }
+    g.strokeStyle = currentStrokeStyle;
+    g.lineWidth = currentLineWidth;
+    g.fillStyle = currentfillStyle;
 
     return bounds;
 }
@@ -568,6 +599,8 @@ class Typographic {
             "  |. _|    ",
             "  |_|      ",
         ];
+
+        this.key = "typographic";
     }
 }
 
