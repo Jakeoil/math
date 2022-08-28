@@ -2,6 +2,7 @@ import { norm, p } from "./point.js";
 import { Bounds } from "./bounds.js";
 import { penrose } from "./penrose.js";
 import { globals } from "./controls.js";
+import { mosaic, quadrille } from "./shape-modes.js";
 
 /**
  * There are 5 angles measured in Fifths and their inverses.
@@ -176,6 +177,8 @@ export class PenroseScreen {
      * @param {penrose.type} type
      * @param {Shapes} penta
      * @returns penta|star|boat|diamond Point array
+     *
+     * Mode quadrille being phased out.
      */
     pShape(type) {
         switch (type) {
@@ -191,6 +194,61 @@ export class PenroseScreen {
                 return penrose[this.mode].diamond;
         }
         return null;
+    }
+
+    /**
+     * This is the overlay.penta version
+     * @param {penrose.type} type
+     * @returns
+     */
+    mShape(type) {
+        if (this.mode != quadrille.key) {
+            return null; // !! there may be some recourse for real.
+        }
+        switch (type) {
+            case penrose.Pe5:
+            case penrose.Pe3:
+            case penrose.Pe1:
+                return penrose[mosaic.key].penta;
+            case penrose.St5:
+                return penrose[mosaic.key].star;
+            case penrose.St3:
+                return penrose[mosaic.key].boat;
+            case penrose.St1:
+                return penrose[mosaic.key].diamond;
+        }
+        return null;
+    }
+
+    drawPentaPattern(fifths, type, isDown, loc, gen, isHeads) {
+        const { overlays } = globals;
+        const bounds = new Bounds();
+        if (!overlays || overlays.pentaSelected) {
+            let shapes = this.pShape(type);
+            if (shapes) {
+                bounds.expand(
+                    this.outline(
+                        pColor(type),
+                        loc,
+                        shapes[tenths(fifths, isDown)]
+                    )
+                );
+            }
+        }
+
+        if (overlays && overlays.mosaicSelected) {
+            let shapes = this.mShape(type);
+            if (shapes) {
+                bounds.expand(
+                    this.figure(
+                        pColor(type),
+                        loc,
+                        shapes[tenths(fifths, isDown)]
+                    )
+                );
+            }
+        }
+        return bounds; // call figure
     }
 
     /**************************************************************************
@@ -231,22 +289,10 @@ export class PenroseScreen {
 
         fifths = norm(fifths);
         if (gen == 0) {
-            if (!overlays || overlays.pentaSelected) {
-                let shapes = this.pShape(type);
-                if (shapes) {
-                    bounds.expand(
-                        penrose[this.mode].renderShape(
-                            pColor(type),
-                            loc,
-                            shapes[tenths(fifths, isDown)],
-                            this.g,
-                            this.scale
-                        )
-                    );
-                }
-            }
-
-            return bounds; // call figure
+            bounds.expand(
+                this.drawPentaPattern(fifths, type, isDown, loc, gen, isHeads)
+            );
+            return bounds;
         }
 
         const wheels = penrose[this.mode].wheels;
@@ -331,19 +377,9 @@ export class PenroseScreen {
 
         fifths = norm(fifths);
         if (gen == 0) {
-            let shapes = this.pShape(type);
-            if (shapes) {
-                if (!overlays || overlays.pentaSelected)
-                    bounds.expand(
-                        penrose[this.mode].renderShape(
-                            pColor(type),
-                            loc,
-                            shapes[tenths(fifths, isDown)],
-                            this.g,
-                            this.scale
-                        )
-                    );
-            }
+            bounds.expand(
+                this.drawPentaPattern(fifths, type, isDown, loc, gen, isHeads)
+            );
             return bounds;
         }
 
@@ -682,35 +718,36 @@ export class PenroseScreen {
      */
     figure(fill, offset, shape) {
         const { pentaStyle } = globals;
-        let currentStrokeStyle = this.g.strokeStyle;
-        let currentLineWidth = this.g.lineWidth;
-        let currentfillStyle = this.g.fillStyle;
-        this.g.fillStyle = fill; //e.g penrose.ORANGE;
-        this.g.strokeStyle = penrose.OUTLINE;
+        const { g, scale } = this;
+        let currentStrokeStyle = g.strokeStyle;
+        let currentLineWidth = g.lineWidth;
+        let currentfillStyle = g.fillStyle;
+        g.fillStyle = fill; //e.g penrose.ORANGE;
+        g.strokeStyle = penrose.OUTLINE;
 
         const bounds = new Bounds();
         for (const point of shape) {
-            this.g.fillRect(
-                offset.x * this.scale + point.x * this.scale,
-                offset.y * this.scale + point.y * this.scale,
-                this.scale,
-                this.scale
+            g.fillRect(
+                offset.x * scale + point.x * scale,
+                offset.y * scale + point.y * scale,
+                scale,
+                scale
             );
-            if (this.scale >= 5) {
+            if (scale >= 5) {
                 g.strokeRect(
-                    offset.x * this.scale + point.x * this.scale,
-                    offset.y * this.scale + point.y * this.scale,
-                    this.scale,
-                    this.scale
+                    offset.x * scale + point.x * scale,
+                    offset.y * scale + point.y * scale,
+                    scale,
+                    scale
                 );
             }
             bounds.addPoint(offset, point);
             bounds.addPoint(offset, point.tr(p(1, 1)));
         }
 
-        this.g.strokeStyle = currentStrokeStyle;
-        this.g.lineWidth = currentLineWidth;
-        this.g.fillStyle = currentfillStyle;
+        g.strokeStyle = currentStrokeStyle;
+        g.lineWidth = currentLineWidth;
+        g.fillStyle = currentfillStyle;
 
         return bounds;
     }
@@ -721,27 +758,28 @@ export class PenroseScreen {
      */
     outline(fill, offset, shape) {
         const { pentaStyle } = globals;
-        let currentStrokeStyle = this.g.strokeStyle;
-        let currentLineWidth = this.g.lineWidth;
-        let currentfillStyle = this.g.fillStyle;
+        const { g, scale } = this;
+        let currentStrokeStyle = g.strokeStyle;
+        let currentLineWidth = g.lineWidth;
+        let currentfillStyle = g.fillStyle;
 
         let start = true;
         const bounds = new Bounds();
         for (const point of shape) {
-            this.g.strokeStyle = "#000000";
-            this.g.fillStyle = fill;
-            this.g.lineWidth = 1;
+            g.strokeStyle = "#000000";
+            g.fillStyle = fill;
+            g.lineWidth = 1;
             if (start) {
                 g.beginPath();
                 g.moveTo(
-                    (point.x + offset.x) * this.scale,
-                    (point.y + offset.y) * this.scale
+                    (point.x + offset.x) * scale,
+                    (point.y + offset.y) * scale
                 );
                 start = false;
             } else {
                 g.lineTo(
-                    (point.x + offset.x) * this.scale,
-                    (point.y + offset.y) * this.scale
+                    (point.x + offset.x) * scale,
+                    (point.y + offset.y) * scale
                 );
             }
 
@@ -763,11 +801,11 @@ export class PenroseScreen {
         // }
 
         if (fill) {
-            this.g.fill();
+            g.fill();
         }
-        this.g.strokeStyle = currentStrokeStyle;
-        this.g.lineWidth = currentLineWidth;
-        this.g.fillStyle = currentfillStyle;
+        g.strokeStyle = currentStrokeStyle;
+        g.lineWidth = currentLineWidth;
+        g.fillStyle = currentfillStyle;
 
         return bounds;
     }
@@ -779,28 +817,29 @@ export class PenroseScreen {
      */
     grid(offset, size) {
         const bounds = new Bounds();
-        this.g.strokeStyle = penrose.OUTLINE;
+        const { g, scale } = this;
+        g.strokeStyle = penrose.OUTLINE;
         for (let y = -size; y < size; y++) {
             for (let x = -size; x < size; x++) {
-                this.g.strokeRect(
-                    offset.x * this.scale + x * this.scale,
-                    offset.y * this.scale + y * this.scale,
-                    this.scale,
-                    this.scale
+                g.strokeRect(
+                    offset.x * scale + x * scale,
+                    offset.y * scale + y * scale,
+                    scale,
+                    scale
                 );
             }
         }
         //
-        this.g.strokeStyle = "#FF0000";
-        this.g.beginPath();
-        this.g.moveTo(offset.x * this.scale, (offset.y - size) * this.scale);
-        this.g.lineTo(offset.x * this.scale, (offset.y + size) * this.scale);
-        this.g.stroke();
+        g.strokeStyle = "#FF0000";
+        g.beginPath();
+        g.moveTo(offset.x * scale, (offset.y - size) * scale);
+        g.lineTo(offset.x * scale, (offset.y + size) * scale);
+        g.stroke();
 
-        this.g.beginPath();
-        this.g.moveTo((offset.x - size) * this.scale, offset.y * this.scale);
-        this.g.lineTo((offset.x + size) * this.scale, offset.y * this.scale);
-        this.g.stroke();
+        g.beginPath();
+        g.moveTo((offset.x - size) * scale, offset.y * scale);
+        g.lineTo((offset.x + size) * scale, offset.y * scale);
+        g.stroke();
 
         bounds.addPoint(offset, p(-size, -size));
         bounds.addPoint(offset, p(size, size));
@@ -808,27 +847,31 @@ export class PenroseScreen {
     }
 
     line(loc, end, strokeStyle) {
+        const { g, scale } = this;
+
         const bounds = new Bounds();
-        const currentWidth = this.g.lineWidth;
-        const currentStrokeStyle = this.g.strokeStyle;
-        this.g.strokeStyle = strokeStyle ? strokeStyle : "black";
-        this.g.lineWidth = 1;
-        this.g.beginPath();
-        this.g.moveTo(loc.x * this.scale, loc.y * this.scale);
-        this.g.lineTo(end.x * this.scale, end.y * this.scale);
+        const currentWidth = g.lineWidth;
+        const currentStrokeStyle = g.strokeStyle;
+        g.strokeStyle = strokeStyle ? strokeStyle : "black";
+        g.lineWidth = 1;
+        g.beginPath();
+        g.moveTo(loc.x * scale, loc.y * scale);
+        g.lineTo(end.x * scale, end.y * scale);
         bounds.addPoint(loc, loc);
         bounds.addPoint(loc, end);
-        this.g.stroke();
+        g.stroke();
 
-        this.g.lineWidth = currentWidth;
-        this.g.strokeStyle = currentStrokeStyle;
+        g.lineWidth = currentWidth;
+        g.strokeStyle = currentStrokeStyle;
         return bounds;
     }
 
     getGradient(fill, offset, shape, isHeads) {
-        const point0 = shape[0].tr(offset).mult(this.scale);
-        const point1 = shape[2].tr(offset).mult(this.scale);
-        const canvasGradient = this.g.createLinearGradient(
+        const { g, scale } = this;
+
+        const point0 = shape[0].tr(offset).mult(scale);
+        const point1 = shape[2].tr(offset).mult(scale);
+        const canvasGradient = g.createLinearGradient(
             point0.x,
             point0.y,
             point1.x,
@@ -850,91 +893,96 @@ export class PenroseScreen {
     }
 
     rhombus(fill, offset, shape, strokeStyle, isHeads) {
+        const { g, scale } = this;
         const { rhombStyle } = globals;
-        let currentStrokeStyle = this.g.strokeStyle;
-        let currentLineWidth = this.g.lineWidth;
-        let currentfillStyle = this.g.fillStyle;
+        let currentStrokeStyle = g.strokeStyle;
+        let currentLineWidth = g.lineWidth;
+        let currentfillStyle = g.fillStyle;
 
         let gradient = rhombStyle.fill == rhombStyle.GRADIENT;
         let start = true;
         const bounds = new Bounds();
-        this.g.strokeStyle = strokeStyle ? strokeStyle : "black";
+        g.strokeStyle = strokeStyle ? strokeStyle : "black";
         if (gradient) {
-            this.g.fillStyle = this.getGradient(fill, offset, shape, isHeads);
+            g.fillStyle = this.getGradient(fill, offset, shape, isHeads);
         } else if (rhombStyle.fill == rhombStyle.TRANSPARENT) {
-            this.g.fillStyle = fill + "40"; //
+            g.fillStyle = fill + "40"; //
         } else {
-            this.g.fillStyle = fill;
+            g.fillStyle = fill;
         }
-        this.g.lineWidth = this.scale < 5 ? 1 : 2;
+        g.lineWidth = scale < 5 ? 1 : 2;
         for (const point of shape) {
             if (start) {
-                this.g.beginPath();
-                this.g.moveTo(
-                    (point.x + offset.x) * this.scale,
-                    (point.y + offset.y) * this.scale
+                g.beginPath();
+                g.moveTo(
+                    (point.x + offset.x) * scale,
+                    (point.y + offset.y) * scale
                 );
                 start = false;
             } else {
-                this.g.lineTo(
-                    (point.x + offset.x) * this.scale,
-                    (point.y + offset.y) * this.scale
+                g.lineTo(
+                    (point.x + offset.x) * scale,
+                    (point.y + offset.y) * scale
                 );
             }
 
             bounds.addPoint(offset, point);
         }
 
-        this.g.closePath();
+        g.closePath();
         if (rhombStyle.fill != rhombStyle.NONE) {
-            this.g.fill();
+            g.fill();
         }
         if (rhombStyle.stroke != rhombStyle.NONE) {
-            this.g.stroke();
+            g.stroke();
         }
 
-        this.g.strokeStyle = currentStrokeStyle;
-        this.g.lineWidth = currentLineWidth;
-        this.g.fillStyle = currentfillStyle;
+        g.strokeStyle = currentStrokeStyle;
+        g.lineWidth = currentLineWidth;
+        g.fillStyle = currentfillStyle;
 
         return bounds;
     }
+
+    // !!! please remove
     rhombusOld(fill, offset, shape, strokeStyle) {
-        let currentStrokeStyle = this.g.strokeStyle;
-        let currentLineWidth = this.g.lineWidth;
+        const { g, scale } = this;
+
+        let currentStrokeStyle = g.strokeStyle;
+        let currentLineWidth = g.lineWidth;
         let start = true;
         const bounds = new Bounds();
-        //this.g.strokeStyle = strokeStyle ? strokeStyle : "black";
-        this.g.fillStyle = fill;
-        this.g.lineWidth = this.scale < 5 ? 1 : 2;
+        //g.strokeStyle = strokeStyle ? strokeStyle : "black";
+        g.fillStyle = fill;
+        g.lineWidth = scale < 5 ? 1 : 2;
         for (const point of shape) {
             if (start) {
-                this.g.beginPath();
-                this.g.moveTo(
-                    (point.x + offset.x) * this.scale,
-                    (point.y + offset.y) * this.scale
+                g.beginPath();
+                g.moveTo(
+                    (point.x + offset.x) * scale,
+                    (point.y + offset.y) * scale
                 );
                 start = false;
             } else {
-                this.g.lineTo(
-                    (point.x + offset.x) * this.scale,
-                    (point.y + offset.y) * this.scale
+                g.lineTo(
+                    (point.x + offset.x) * scale,
+                    (point.y + offset.y) * scale
                 );
             }
 
             bounds.addPoint(offset, point);
         }
 
-        this.g.closePath();
+        g.closePath();
         if (fill) {
-            this.g.fill();
+            g.fill();
         }
         if (strokeStyle) {
-            this.g.stroke();
+            g.stroke();
         }
 
-        this.g.strokeStyle = currentStrokeStyle;
-        this.g.lineWidth = currentLineWidth;
+        g.strokeStyle = currentStrokeStyle;
+        g.lineWidth = currentLineWidth;
         return bounds;
     }
 

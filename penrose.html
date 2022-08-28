@@ -88,20 +88,23 @@
                 </fieldset>
                 <fieldset class="control-group">
                     <legend>Overlays and flags</legend>
-                    <div>
-                        <input
-                            type="checkbox"
-                            id="penta-ovl"
-                            name="penta"
-                            checked
-                        />
-                        <label for="penta">Pentagons and stars</label>
+                    <fieldset>
+                        <legend>Pentagons</legend>
+                        <input type="checkbox" id="penta-ovl" checked />
+                        <label for="penta-ovl">Outlined</label>
+                        <br />
+                        <input type="checkbox" id="mosaic-penta" />
+                        <label for="tree-penta">Mosaic</label>
                         <br />
                         <input type="checkbox" id="tree-penta" />
                         <label for="tree-penta">Tree</label>
-                    </div>
+                        <!--
+                    
+                    </fieldset>
 
-                    <div>
+                    <fieldset>
+                 -->
+                        <legend>Rhombs</legend>
                         <input type="checkbox" id="rhomb-ovl" name="rhomb" />
                         <label for="rhomb">Rhombi</label>
                         <br />
@@ -114,7 +117,7 @@
                             <input type="radio" name="rhomb" id="small-rhomb" />
                             <label for="small-rhomb">Small</label>
                         </div>
-                    </div>
+                    </fieldset>
                 </fieldset>
                 <fieldset class="control-group">
                     <legend>Penta styles</legend>
@@ -236,9 +239,9 @@
                         // todo: fix the iframe problem where we seem to be
                         // using some side effect of the rwork element
                         iframe.onload = function (event) {
-                            console.log(
-                                ` iframe loaded, scrollHeight: ${iframe.contentWindow.document.body.scrollHeight}`
-                            );
+                            // console.log(
+                            //     ` iframe loaded, scrollHeight: ${iframe.contentWindow.document.body.scrollHeight}`
+                            // );
                             iframe.style.height =
                                 iframe.contentWindow.document.body
                                     .scrollHeight +

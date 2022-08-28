@@ -16,6 +16,7 @@ export class Overlays {
     constructor(app) {
         this.app = app;
         this.elePenta = document.querySelector("#penta-ovl");
+        this.eleMosaic = document.querySelector("#mosaic-penta");
         this.eleTree = document.querySelector("#tree-penta");
         this.eleRhomb = document.querySelector("#rhomb-ovl");
         this.eleAmmann = document.querySelector("#ammann");
@@ -29,6 +30,13 @@ export class Overlays {
             this.elePenta.addEventListener(
                 "click",
                 this.pentaClicked.bind(this),
+                false
+            );
+        }
+        if (this.eleMosaic) {
+            this.eleMosaic.addEventListener(
+                "click",
+                this.mosaicClicked.bind(this),
                 false
             );
         }
@@ -69,6 +77,7 @@ export class Overlays {
     }
     reset() {
         this.pentaSelected = true;
+        this.mosaicSelected = false;
         this.treeSelected = false;
         this.rhombSelected = false;
         this.ammannSelected = false;
@@ -81,6 +90,9 @@ export class Overlays {
     refresh() {
         if (this.elePenta) {
             this.elePenta.checked = this.pentaSelected;
+        }
+        if (this.eleMosaic) {
+            this.eleMosaic.checked = this.mosaicSelected;
         }
         if (this.eleTree) {
             this.eleTree.checked = this.treeSelected;
@@ -116,6 +128,7 @@ export class Overlays {
     toString() {
         return JSON.stringify({
             pentaSelected: this.pentaSelected,
+            mosaicSelected: this.mosaicSelected,
             treeSelected: this.treeSelected,
             rhombSelected: this.rhombSelected,
             ammannSelected: this.ammannSelected,
@@ -127,6 +140,7 @@ export class Overlays {
     fromString(jsonString) {
         ({
             pentaSelected: this.pentaSelected,
+            mosaicSelected: this.mosaicSelected,
             treeSelected: this.treeSelected,
             rhombSelected: this.rhombSelected,
             ammannSelected: this.ammannSelected,
@@ -136,6 +150,11 @@ export class Overlays {
     }
     pentaClicked() {
         this.pentaSelected = !this.pentaSelected;
+        this.refresh();
+        this.app(Overlays.name);
+    }
+    mosaicClicked() {
+        this.mosaicSelected = !this.mosaicSelected;
         this.refresh();
         this.app(Overlays.name);
     }
