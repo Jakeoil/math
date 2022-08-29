@@ -211,7 +211,7 @@ export class PenroseScreen {
     /**
      * This is the overlay.penta version
      * @param {penrose.type} type
-     * @returns
+     * @returns the mosaic shape wheel
      */
     mShape(type) {
         if (this.mode != quadrille.key) {
@@ -774,13 +774,23 @@ export class PenroseScreen {
         let currentStrokeStyle = g.strokeStyle;
         let currentLineWidth = g.lineWidth;
         let currentfillStyle = g.fillStyle;
+        console.log(`pentaStyle: ${pentaStyle}`);
 
         let start = true;
+        if (!pentaStyle || pentaStyle.stroke == pentaStyle.SOLID) {
+            console.log(`strokestyle set`);
+            g.strokeStyle = "#000000";
+            g.lineWidth = 1;
+        }
+
+        if (!pentaStyle || pentaStyle.fill == pentaStyle.SOLID) {
+            g.fillStyle = fill;
+        } else if (pentaStyle && pentaStyle.fill == pentaStyle.TRANSPARENT) {
+            g.fillStyle = fill + "80";
+        }
+
         const bounds = new Bounds();
         for (const point of shape) {
-            g.strokeStyle = "#000000";
-            g.fillStyle = fill;
-            g.lineWidth = 1;
             if (start) {
                 g.beginPath();
                 g.moveTo(
@@ -798,21 +808,12 @@ export class PenroseScreen {
             bounds.addPoint(offset, point);
         }
         g.closePath();
-        g.stroke();
+        if (!pentaStyle || pentaStyle.stroke != pentaStyle.NONE) {
+            g.stroke();
+        }
 
-        // switch (pentaStyle.fill) {
-        //     case pentaStyle.SOLID:
-        //         console.log("solid");
-        //         break;
-        //     case pentaStyle.NONE:
-        //         console.log("none");
-        //         break;
-        //     case pentaStyle.TRANSPARENT:
-        //         console.log("transparent");
-        //         break;
-        // }
-
-        if (fill) {
+        // fill by default
+        if (!pentaStyle || pentaStyle.fill != pentaStyle.NONE) {
             g.fill();
         }
         g.strokeStyle = currentStrokeStyle;
