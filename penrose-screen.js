@@ -4,6 +4,9 @@ import { penrose } from "./penrose.js";
 import { globals } from "./controls.js";
 import { mosaic, quadrille } from "./shape-modes.js";
 
+const SQRT5 = Math.sqrt(5); // 2.236
+const PHI = (SQRT5 + 1) / 2; // 1.618
+
 /**
  * There are 5 angles measured in Fifths and their inverses.
  *
@@ -774,11 +777,9 @@ export class PenroseScreen {
         let currentStrokeStyle = g.strokeStyle;
         let currentLineWidth = g.lineWidth;
         let currentfillStyle = g.fillStyle;
-        console.log(`pentaStyle: ${pentaStyle}`);
 
         let start = true;
         if (!pentaStyle || pentaStyle.stroke == pentaStyle.SOLID) {
-            console.log(`strokestyle set`);
             g.strokeStyle = "#000000";
             g.lineWidth = 1;
         }
@@ -905,6 +906,75 @@ export class PenroseScreen {
         return canvasGradient;
     }
 
+    /**
+     * Draw the ammann segments
+     * They will be drawn naively for the quadrille case.
+     *
+     * @param {*} offset - absolute location
+     * @param {*} shape - shape consisting of 4 points
+     */
+    ammannSegments(offset, shape, thick) {
+        const bounds = new Bounds();
+        const nl = [shape[0], shape[3]];
+        const nr = [shape[0], shape[1]];
+        const fl = [shape[3], shape[2]];
+        const fr = [shape[1], shape[2]];
+        const segmentPoints = [];
+        if (thick) {
+            segmentPoints.push(this.ammannTarget(fl, PHI - 1 / 4));
+            segmentPoints.push(this.ammannTarget(fr, PHI / 2));
+            segmentPoints.push(this.ammannTarget(nr, PHI - 1 / (2 * PHI)));
+            segmentPoints.push(this.ammannTarget(nl, PHI - 1 / (2 * PHI)));
+            segmentPoints.push(this.ammannTarget(fl, PHI / 2));
+            segmentPoints.push(this.ammannTarget(fr, PHI - 1 / 4));
+            // Six points, symmetric
+            // if size of segment is phi.
+            // on fl an drl
+            // The further of:
+            // (1/4)/phi : 1-((1/4)/Phi
+            // next one goes through los
+            // to 1/2 : 1/2
+            // The third one is
+            // the further of:
+            //(1 / (2 * phi)) / phi and 1 - (1 / (2 * phi))
+        } else {
+            segmentPoints.push(this.ammannTarget(fl, 1 / 4));
+            segmentPoints.push(this.ammannTarget(nl, PHI - 1 / (2 * PHI)));
+            segmentPoints.push(this.ammannTarget(fl, PHI / 2));
+            segmentPoints.push(this.ammannTarget(fr, PHI / 2));
+            segmentPoints.push(this.ammannTarget(nr, PHI - 1 / (2 * PHI)));
+            segmentPoints.push(this.ammannTarget(fr, 1 / 4));
+            // also six points symmetric
+            // on the closer side of the far.
+            // (1/4)/phi : 1-((1/4)/Phi
+            // on the further side of the near.
+            //
+            //(1 / (2 * phi)) / phi and 1 - (1 / (2 * phi))
+            // across to
+        }
+
+        for (let i = 0; i < segmentPoints.length - 1; i++) {
+            this.line(
+                offset.tr(segmentPoints[i]),
+                offset.tr(segmentPoints[i + 1]),
+                "red"
+            );
+        }
+
+        return bounds;
+    }
+
+    /**
+     *
+     * @param {Point[2]} segment
+     * @param {number between 0 and PHI} offset
+     * @returns point along segment proportional to offset
+     */
+    ammannTarget(segment, offset) {
+        const abs = segment[1].tr(segment[0].neg);
+        return segment[0].tr(abs.mult(offset / PHI));
+    }
+
     rhombus(fill, offset, shape, strokeStyle, isHeads) {
         const { g, scale } = this;
         const { rhombStyle } = globals;
@@ -957,48 +1027,6 @@ export class PenroseScreen {
         return bounds;
     }
 
-    // !!! please remove
-    rhombusOld(fill, offset, shape, strokeStyle) {
-        const { g, scale } = this;
-
-        let currentStrokeStyle = g.strokeStyle;
-        let currentLineWidth = g.lineWidth;
-        let start = true;
-        const bounds = new Bounds();
-        //g.strokeStyle = strokeStyle ? strokeStyle : "black";
-        g.fillStyle = fill;
-        g.lineWidth = scale < 5 ? 1 : 2;
-        for (const point of shape) {
-            if (start) {
-                g.beginPath();
-                g.moveTo(
-                    (point.x + offset.x) * scale,
-                    (point.y + offset.y) * scale
-                );
-                start = false;
-            } else {
-                g.lineTo(
-                    (point.x + offset.x) * scale,
-                    (point.y + offset.y) * scale
-                );
-            }
-
-            bounds.addPoint(offset, point);
-        }
-
-        g.closePath();
-        if (fill) {
-            g.fill();
-        }
-        if (strokeStyle) {
-            g.stroke();
-        }
-
-        g.strokeStyle = currentStrokeStyle;
-        g.lineWidth = currentLineWidth;
-        return bounds;
-    }
-
     /**
      * The color of the rhomb is based on the type.
      * The string will be seached for the # character. Everything before
@@ -1014,6 +1042,8 @@ export class PenroseScreen {
      */
     drawRhombusPattern(fifths, type, isDown, loc, gen, isHeads) {
         const bounds = new Bounds();
+        const { overlays } = globals;
+        const { ammannSelected } = overlays;
         let gradient = true;
         const thins = penrose[this.mode].thinRhomb[gen];
         const thicks = penrose[this.mode].thickRhomb[gen];
@@ -1027,6 +1057,9 @@ export class PenroseScreen {
                     bounds.expand(
                         this.rhombus(fill, loc, thick5, outline, isHeads)
                     );
+                    if (ammannSelected) {
+                        bounds.expand(this.ammannSegments(loc, thick5, true));
+                    }
                     break;
                 case penrose.Pe3:
                     switch (i) {
@@ -1035,6 +1068,11 @@ export class PenroseScreen {
                             bounds.expand(
                                 this.rhombus(fill, loc, thin3, outline, isHeads)
                             );
+                            if (ammannSelected) {
+                                bounds.expand(
+                                    this.ammannSegments(loc, thin3, false)
+                                );
+                            }
                         // no break here
                         case 1:
                         case 4:
@@ -1048,6 +1086,11 @@ export class PenroseScreen {
                                     isHeads
                                 )
                             );
+                            if (ammannSelected) {
+                                bounds.expand(
+                                    this.ammannSegments(loc, thick3, true)
+                                );
+                            }
                             break;
                         default:
                             break;
@@ -1056,16 +1099,22 @@ export class PenroseScreen {
                 case penrose.Pe1:
                     switch (i) {
                         case 0:
-                            const shape2 = thicks[tenths(shift, isDown)];
+                            const thick2 = thicks[tenths(shift, isDown)];
                             bounds.expand(
                                 this.rhombus(
                                     fill,
                                     loc,
-                                    shape2,
+                                    thick2,
                                     outline,
                                     isHeads
                                 )
                             );
+                            if (ammannSelected) {
+                                bounds.expand(
+                                    this.ammannSegments(loc, thick2, true)
+                                );
+                            }
+
                             break;
                         case 4:
                         case 1:
@@ -1079,6 +1128,11 @@ export class PenroseScreen {
                                     isHeads
                                 )
                             );
+                            if (ammannSelected) {
+                                bounds.expand(
+                                    this.ammannSegments(loc, thinR2, false)
+                                );
+                            }
                             break;
                     }
             }

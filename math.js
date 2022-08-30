@@ -77,32 +77,33 @@ function makeCanvas(canvasId) {
         let height = 0;
         let base = p(0, 0);
         let tries = 0;
+        let gen = 0;
         do {
             canvas.width = width;
             canvas.height = height;
             bounds = new Bounds();
             bounds.expand(
                 canvasId == "p5"
-                    ? penta(0, penrose.Pe5, true, base, 0)
+                    ? penta(0, penrose.Pe5, true, base, gen)
                     : canvasId == "p3"
-                    ? penta(0, penrose.Pe3, false, base, 0)
+                    ? penta(0, penrose.Pe3, false, base, gen)
                     : canvasId == "p1"
-                    ? penta(0, penrose.Pe1, false, base, 0)
+                    ? penta(0, penrose.Pe1, false, base, gen)
                     : canvasId == "s5"
-                    ? star(0, penrose.St5, false, base, 0)
+                    ? star(0, penrose.St5, false, base, gen)
                     : canvasId == "s3"
-                    ? star(0, penrose.St3, false, base, 0)
+                    ? star(0, penrose.St3, false, base, gen)
                     : canvasId == "s1"
-                    ? star(0, penrose.St1, false, base, 0)
+                    ? star(0, penrose.St1, false, base, gen)
                     : null
             );
             bounds.expand(
                 canvasId == "p5"
-                    ? pentaRhomb(0, penrose.Pe5, true, base, 0)
+                    ? pentaRhomb(0, penrose.Pe5, true, base, 1)
                     : canvasId == "p3"
-                    ? pentaRhomb(0, penrose.Pe3, false, base, 0)
+                    ? pentaRhomb(0, penrose.Pe3, false, base, 1)
                     : canvasId == "p1"
-                    ? pentaRhomb(0, penrose.Pe1, false, base, 0)
+                    ? pentaRhomb(0, penrose.Pe1, false, base, 1)
                     : canvasId == "s5"
                     ? starRhomb(0, penrose.St5, false, base, 0)
                     : canvasId == "s3"
@@ -149,7 +150,7 @@ function redraw(bounds, canvas, drawFunction, scale) {
 }
 
 /**
- * The first expansion draws penta(1) and star(1) varients
+ * The first expansion draws penta(1) and star(1) variants
  * Sets the globals g and scale
  */
 function drawFirstInflation(id) {

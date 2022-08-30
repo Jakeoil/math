@@ -47,6 +47,7 @@ export class Bounds {
         if (!bounds) {
             // Figure returned null?
             console.log("expand: Figure returned null?");
+            console.log(bounds.toString);
             return;
         }
 
