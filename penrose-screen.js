@@ -26,6 +26,9 @@ class Angle {
     get ccw() {
         return new Angle(fifths ? 5 : this.fifths - 1, this.isDown);
     }
+    rot(n) {
+        return new Angle(norm(this.fifths + n), isDown);
+    }
     // Reverse the direction.
     inv(angle) {
         return new Angle(this.fifths, !this.isDown);
@@ -450,28 +453,38 @@ export class PenroseScreen {
      * The inputs are streamlined
      *
      */
+    drawPentaPatternNew({ type, angle, loc, gen, isHeads, options }) {
+        const { overlays } = globals; // don't forget the options
+        const bounds = new Bounds();
+        if (overlays.pentaSelected) {
+            let shapes = this.pShape(type);
+            if (shapes) {
+                bounds.expand(
+                    this.outline(pColor(type), loc, shapes[angle.tenths])
+                );
+            }
+        }
+
+        if (overlays.mosaicSelected) {
+            let shapes = this.mShape(type);
+            if (shapes) {
+                bounds.expand(
+                    this.figure(pColor(type), loc, shapes[angle.tenths])
+                );
+            }
+        }
+        return bounds; // call figure
+    }
+
     pentaNew({ type, angle, isHeads = true, loc, gen, options }) {
         let { overlays } = globals;
         ({ overlays } = options); // some version of apply
         const bounds = new Bounds();
 
-        fifths = norm(fifths);
         if (gen == 0) {
-            if (!overlays || overlays.pentaSelected) {
-                let shapes = this.pShape(type);
-                if (shapes) {
-                    bounds.expand(
-                        penrose[this.mode].renderShape(
-                            pColor(type),
-                            loc,
-                            shapes[tenths(fifths, isDown)],
-                            this.g,
-                            this.scale
-                        )
-                    );
-                }
-            }
-
+            bounds.expand(
+                drawPentaPatternNew({ type, angle, loc, gen, options })
+            );
             return bounds; // call figure
         }
 
@@ -480,36 +493,38 @@ export class PenroseScreen {
         const sWheel = wheels.s[gen].w;
 
         bounds.expand(
-            this.penta(0, penrose.Pe5, !isDown, loc, gen - 1),
-            isHeads
+            this.penta({
+                angle: angle.inv,
+                type: penrose.Pe5,
+                loc,
+                isHeads,
+                gen: gen - 1,
+            })
         );
 
         for (let i = 0; i < 5; i++) {
-            const shift = norm(fifths + i);
-            const angle = tenths(shift, isDown);
-            const locPenta = loc.tr(pWheel[angle]);
-            const locDiamond = loc.tr(sWheel[tenths(shift, !isDown)]);
+            const shift = angle.rot(i);
+            const locPenta = loc.tr(pWheel[shift.tenths]);
+            const locDiamond = loc.tr(sWheel[shift.inv.tenths]);
             bounds.expand(
-                this.penta(
-                    norm(shift + type.twist[i]),
-                    type.twist[i] == 0 ? penrose.Pe3 : penrose.Pe1,
-                    isDown,
-                    locPenta,
-                    gen - 1,
-                    !isHeads
-                )
+                this.penta({
+                    angle: shift.rot(type.twist(i)),
+                    type: type.twist[i] == 0 ? penrose.Pe3 : penrose.Pe1,
+                    loc: locPenta,
+                    gen: gen - 1,
+                    isHeads: !isHeads,
+                })
             );
 
             if (type.diamond.includes(i)) {
                 bounds.expand(
-                    this.star(
-                        shift,
-                        penrose.St1,
-                        !isDown,
-                        locDiamond,
-                        gen - 1,
-                        isHeads
-                    )
+                    this.star({
+                        angle: shift.inv,
+                        type: penrose.St1,
+                        loc: locDiamond,
+                        gen: gen - 1,
+                        isHeads,
+                    })
                 );
                 if (overlays && overlays.treeSelected)
                     this.line(loc, locDiamond, "red");
@@ -521,90 +536,64 @@ export class PenroseScreen {
     }
 
     /**&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& */
-    starNew({ angle, type, loc, exp, isHeads = true, options }) {
+    starNew({ angle, type, loc, gen, isHeads = true, options }) {
         const { overlays } = Object.assign(globals, options);
         const bounds = new Bounds();
 
-        if (exp == 0) {
-            let shapes = this.pShape(type);
-            if (shapes) {
-                if (!overlays || overlays.pentaSelected)
-                    bounds.expand(
-                        penrose[this.mode].renderShape(
-                            pColor(type),
-                            loc,
-                            shapes[angle.tenths],
-                            this.g,
-                            this.scale
-                        )
-                    );
-            }
-            return bounds;
+        if (gen == 0) {
+            bounds.expand(
+                drawPentaPatternNew({ type, angle, loc, gen, options })
+            );
+
+            return bounds; // call figure
         }
 
         const wheels = penrose[this.mode].wheels;
-        const tWheel = wheels.t[exp].w;
-        const sWheel = wheels.s[exp].w;
+        const tWheel = wheels.t[gen].w;
+        const sWheel = wheels.s[gen].w;
 
         bounds.expand(
             this.star({
-                angle: new Angle(0, !angle.isDown),
+                angle: angle.inv,
                 type: penrose.St5,
                 loc,
-                exp: exp - 1,
+                gen: gen - 1,
                 isHeads,
             })
         );
 
-        for (shift of shifts(fifths)) {
-            const ang = shift.tenths;
+        for (let i = 0; i < 5; i++) {
+            shift = angle.rot(i);
+
+            const locPenta = loc.tr(sWheel[angle.tenths]);
+            const locBoat = loc.tr(tWheel[angle.tenths]);
+
             if (type.color[i] != null) {
                 bounds.expand(
                     this.pentaNew({
-                        fifths: shift.inv,
+                        angle: shift.inv,
+                        type: penrose.Pe1,
                         loc: locPenta,
-                        exp: exp - 1,
+                        exp: gen - 1,
                         isHeads,
                     })
                 );
-                bounds.expand(thisStarNew({}));
-            }
-        }
-        for (let i = 0; i < 5; i++) {
-            const shift = norm(fifths + i);
-            const angle = tenths(shift, isDown);
-            const locPenta = loc.tr(sWheel[angle]);
-            const locBoat = loc.tr(tWheel[angle]);
-
-            if (type.color[i] != null) {
                 bounds.expand(
-                    this.penta(
-                        shift,
-                        penrose.Pe1,
-                        !isDown,
-                        locPenta,
-                        exp - 1,
-                        isHeads
-                    )
+                    this.StarNew({
+                        angle: shift,
+                        type: penrose.St3,
+                        loc: locBoat,
+                        exp: gen - 1,
+                        isHeads,
+                    })
                 );
-
-                bounds.expand(
-                    this.star(
-                        shift,
-                        penrose.St3,
-                        isDown,
-                        locBoat,
-                        exp - 1,
-                        isHeads
-                    )
-                );
-
                 if (overlays && overlays.treeSelected) {
                     this.line(loc, locPenta, "red");
                     this.line(loc, locBoat, "blue");
                 }
             }
         }
+
         return bounds;
     }
 
