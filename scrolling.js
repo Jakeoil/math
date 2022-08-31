@@ -9,49 +9,54 @@
 //      *  Wes Bos video:
 //      *  https://www.youtube.com/watch?v=C9EWifQ5xqA
 //      */
+export class Scrolling {
+    constructor(activePage) {
+        this.activePage = activePage;
+        this.startY = null;
+        this.startX = null;
+        this.scrollLeft = null;
+        this.scrollTop = null;
+        this.isDown = null;
+        activePage.addEventListener("mousedown", this.mouseIsDown.bind(this));
+        activePage.addEventListener("mouseup", this.mouseUp.bind(this));
+        activePage.addEventListener("mouseleave", this.mouseLeave.bind(this));
+        activePage.addEventListener("mousemove", this.mouseMove.bind(this));
+    }
 
-//     let startY;
-//     let startX;
-//     let scrollLeft;
-//     let scrollTop;
-//     let isDown;
+    mouseIsDown(e) {
+        this.isDown = true;
+        this.startY = e.pageY - this.activePage.offsetTop;
+        this.startX = e.pageX - this.activePage.offsetLeft;
+        this.scrollLeft = this.activePage.scrollLeft;
+        this.scrollTop = this.activePage.scrollTop;
+        console.log(this);
+        console.log(`mouseIsDown: ${this.activePage.id}`);
+    }
+    mouseUp(e) {
+        this.isDown = false;
+        console.log(`mouseUp`);
+    }
+    mouseLeave(e) {
+        this.isDown = false;
+        console.log(`mouseLeave`);
+    }
+    mouseMove(e) {
+        if (this.isDown) {
+            e.preventDefault();
+            //Move vertcally
+            const y = e.pageY - this.activePage.offsetTop;
+            const walkY = y - this.startY;
+            console.log(
+                `scrollTop ${this.activePage.scrollTop} offsetTop ${this.activePage.offsetTop}`
+            );
+            this.activePage.scrollTop = this.scrollTop - walkY;
+            console.log(y, walkY);
 
-//     function addListeners() {
-//         activePage.addEventListener("mousedown", (e) => mouseIsDown(e));
-//         activePage.addEventListener("mouseup", (e) => mouseUp(e));
-//         activePage.addEventListener("mouseleave", (e) => mouseLeave(e));
-//         activePage.addEventListener("mousemove", (e) => mouseMove(e));
-//     }
-
-//     function mouseIsDown(e) {
-//         isDown = true;
-//         startY = e.pageY - activePage.offsetTop;
-//         startX = e.pageX - activePage.offsetLeft;
-//         scrollLeft = activePage.scrollLeft;
-//         scrollTop = activePage.scrollTop;
-//         console.log(`mouseIsDown: ${activePage.id}`);
-//     }
-//     function mouseUp(e) {
-//         isDown = false;
-//         console.log(`mouseUp`);
-//     }
-//     function mouseLeave(e) {
-//         isDown = false;
-//         console.log(`mouseLeave`);
-//     }
-//     function mouseMove(e) {
-//         if (isDown) {
-//             e.preventDefault();
-//             //Move vertcally
-//             const y = e.pageY - activePage.offsetTop;
-//             const walkY = y - startY;
-//             activePage.scrollTop = scrollTop - walkY;
-
-//             //Move Horizontally
-//             const x = e.pageX - activePage.offsetLeft;
-//             const walkX = x - startX;
-//             activePage.scrollLeft = scrollLeft - walkX;
-//             console.log(`mouseMove`);
-//         }
-//     }
-// })();
+            //Move Horizontally
+            const x = e.pageX - this.activePage.offsetLeft;
+            const walkX = x - this.startX;
+            this.activePage.scrollLeft = this.scrollLeft - walkX;
+            console.log(`mouseMove`);
+        }
+    }
+}

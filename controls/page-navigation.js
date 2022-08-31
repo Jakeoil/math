@@ -46,8 +46,8 @@ export class PageNavigation {
 
         this.pages.forEach((page) => (page.style.display = "none"));
         const activePageId = activeNavButton.getAttribute("data-id");
-        const activePage = document.querySelector(`#${activePageId}`);
-        activePage.style.display = "block";
+        this.activePage = document.querySelector(`#${activePageId}`);
+        this.activePage.style.display = "block";
 
         cookie.set(PageNavigation.name, this.toString());
     }

@@ -7,6 +7,8 @@ import { real, quadrille, mosaic } from "./shape-modes.js";
 import { initControls, logRefresh } from "./controls.js";
 import { globals } from "./controls.js";
 import { iface } from "./penrose-screen.js";
+import { PenroseScreen } from "./penrose-screen.js";
+import { Scrolling } from "./scrolling.js";
 
 /**
  * Penrose Mosaic and More
@@ -34,6 +36,10 @@ import { iface } from "./penrose-screen.js";
 export function penroseApp(source) {
     logRefresh(penroseApp, source);
     initControls(penroseApp);
+
+    //let { pageNavigation } = globals;
+    //const ap = pageNavigation.activePage;
+    //const scr = new Scrolling(ap);
     //load the little canvases.
     makeCanvas("p5");
     makeCanvas("p3");
@@ -62,7 +68,7 @@ function makeCanvas(canvasId) {
     let g = canvas.getContext("2d");
 
     const drawScreen = function () {
-        g.fillStyle = "#ffffff";
+        g.fillStyle = "transparent"; //"#ffffff";
         g.fillRect(0, 0, canvas.width, canvas.height);
         g.strokeStyle = penrose.OUTLINE;
         g.lineWidth = 1;
@@ -72,11 +78,15 @@ function makeCanvas(canvasId) {
             scale,
             shapeMode.shapeMode
         );
+
         let bounds;
         let width = 0;
         let height = 0;
         let base = p(0, 0);
+
         let tries = 0;
+
+        // Just for test.
         let gen = 0;
         do {
             canvas.width = width;
@@ -99,17 +109,17 @@ function makeCanvas(canvasId) {
             );
             bounds.expand(
                 canvasId == "p5"
-                    ? pentaRhomb(0, penrose.Pe5, true, base, 1)
+                    ? pentaRhomb(0, penrose.Pe5, true, base, gen)
                     : canvasId == "p3"
-                    ? pentaRhomb(0, penrose.Pe3, false, base, 1)
+                    ? pentaRhomb(0, penrose.Pe3, false, base, gen)
                     : canvasId == "p1"
-                    ? pentaRhomb(0, penrose.Pe1, false, base, 1)
+                    ? pentaRhomb(0, penrose.Pe1, false, base, gen)
                     : canvasId == "s5"
-                    ? starRhomb(0, penrose.St5, false, base, 0)
+                    ? starRhomb(0, penrose.St5, false, base, gen)
                     : canvasId == "s3"
-                    ? starRhomb(0, penrose.St3, false, base, 0)
+                    ? starRhomb(0, penrose.St3, false, base, gen)
                     : canvasId == "s1"
-                    ? starRhomb(0, penrose.St1, false, base, 0)
+                    ? starRhomb(0, penrose.St1, false, base, gen)
                     : null
             );
             bounds.pad(0.5);
