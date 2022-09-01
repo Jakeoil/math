@@ -482,7 +482,8 @@ function drawGeneric123(id) {
     const canvas = document.querySelector(`#${id} > canvas`);
     const { shapeMode, controls } = globals;
     let g = canvas.getContext("2d");
-
+    canvas.width = 2000;
+    canvas.height = 2000;
     g.fillStyle = "#ffffff";
     g.fillRect(0, 0, canvas.width, canvas.height);
     g.strokeStyle = penrose.OUTLINE;
@@ -520,15 +521,17 @@ function drawGeneric123(id) {
                 pentaRhomb(controls.fifths, type, controls.isDown, p(x, y), 1);
                 x += 34;
                 penta(controls.fifths, type, controls.isDown, p(x, y), 2);
-
                 pentaRhomb(controls.fifths, type, controls.isDown, p(x, y), 2);
-                x = 13;
-                y += 55;
+                x = 73;
+                y += 100;
+                penta(controls.fifths, type, controls.isDown, p(x, y), 3);
+                pentaRhomb(controls.fifths, type, controls.isDown, p(x, y), 3);
 
                 break;
             case penrose.St1:
             case penrose.St3:
             case penrose.St5:
+                y += 10;
                 star(controls.fifths, type, controls.isDown, p(x, y), 0);
                 starRhomb(controls.fifths, type, controls.isDown, p(x, y), 0);
                 x += 21;
@@ -537,17 +540,26 @@ function drawGeneric123(id) {
                 x += 54;
                 star(controls.fifths, type, controls.isDown, p(x, y), 2);
                 starRhomb(controls.fifths, type, controls.isDown, p(x, y), 2);
+                x = 93;
+                y += 130;
+                star(controls.fifths, type, controls.isDown, p(x, y), 3);
+                starRhomb(controls.fifths, type, controls.isDown, p(x, y), 3);
 
                 break;
             case penrose.Deca:
-                deca(controls.fifths, controls.isDown, p(x, y), 0);
-                decaRhomb(controls.fifths, controls.isDown, p(x, y), 0);
-                x += 21;
                 deca(controls.fifths, controls.isDown, p(x, y), 1);
                 decaRhomb(controls.fifths, controls.isDown, p(x, y), 1);
-                x += 54;
+                x += 31;
                 deca(controls.fifths, controls.isDown, p(x, y), 2);
                 decaRhomb(controls.fifths, controls.isDown, p(x, y), 2);
+                x += 64;
+                y += 30;
+                deca(controls.fifths, controls.isDown, p(x, y), 3);
+                decaRhomb(controls.fifths, controls.isDown, p(x, y), 3);
+                y += 170;
+                x += 30;
+                deca(controls.fifths, controls.isDown, p(x, y), 4);
+                decaRhomb(controls.fifths, controls.isDown, p(x, y), 4);
                 break;
         }
     };
