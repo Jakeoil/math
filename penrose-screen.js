@@ -1032,7 +1032,7 @@ export class PenroseScreen {
     drawRhombusPattern(fifths, type, isDown, loc, gen, isHeads) {
         const bounds = new Bounds();
         const { overlays } = globals;
-        const { ammannSelected } = overlays;
+        const { ammannSelected, rhombSelected } = overlays;
         let gradient = true;
         const thins = penrose[this.mode].thinRhomb[gen];
         const thicks = penrose[this.mode].thickRhomb[gen];
@@ -1043,9 +1043,11 @@ export class PenroseScreen {
             switch (type) {
                 case penrose.Pe5:
                     const thick5 = thicks[tenths(shift, isDown)];
-                    bounds.expand(
-                        this.rhombus(fill, loc, thick5, outline, isHeads)
-                    );
+                    if (rhombSelected) {
+                        bounds.expand(
+                            this.rhombus(fill, loc, thick5, outline, isHeads)
+                        );
+                    }
                     if (ammannSelected) {
                         bounds.expand(this.ammannSegments(loc, thick5, true));
                     }
@@ -1054,9 +1056,17 @@ export class PenroseScreen {
                     switch (i) {
                         case 0:
                             const thin3 = thins[tenths(shift, isDown)];
-                            bounds.expand(
-                                this.rhombus(fill, loc, thin3, outline, isHeads)
-                            );
+                            if (rhombSelected) {
+                                bounds.expand(
+                                    this.rhombus(
+                                        fill,
+                                        loc,
+                                        thin3,
+                                        outline,
+                                        isHeads
+                                    )
+                                );
+                            }
                             if (ammannSelected) {
                                 bounds.expand(
                                     this.ammannSegments(loc, thin3, false)
@@ -1066,15 +1076,17 @@ export class PenroseScreen {
                         case 1:
                         case 4:
                             const thick3 = thicks[tenths(shift, isDown)];
-                            bounds.expand(
-                                this.rhombus(
-                                    fill,
-                                    loc,
-                                    thick3,
-                                    outline,
-                                    isHeads
-                                )
-                            );
+                            if (rhombSelected) {
+                                bounds.expand(
+                                    this.rhombus(
+                                        fill,
+                                        loc,
+                                        thick3,
+                                        outline,
+                                        isHeads
+                                    )
+                                );
+                            }
                             if (ammannSelected) {
                                 bounds.expand(
                                     this.ammannSegments(loc, thick3, true)
@@ -1089,15 +1101,17 @@ export class PenroseScreen {
                     switch (i) {
                         case 0:
                             const thick2 = thicks[tenths(shift, isDown)];
-                            bounds.expand(
-                                this.rhombus(
-                                    fill,
-                                    loc,
-                                    thick2,
-                                    outline,
-                                    isHeads
-                                )
-                            );
+                            if (rhombSelected) {
+                                bounds.expand(
+                                    this.rhombus(
+                                        fill,
+                                        loc,
+                                        thick2,
+                                        outline,
+                                        isHeads
+                                    )
+                                );
+                            }
                             if (ammannSelected) {
                                 bounds.expand(
                                     this.ammannSegments(loc, thick2, true)
@@ -1108,15 +1122,17 @@ export class PenroseScreen {
                         case 4:
                         case 1:
                             const thinR2 = thins[tenths(shift, isDown)];
-                            bounds.expand(
-                                this.rhombus(
-                                    fill,
-                                    loc,
-                                    thinR2,
-                                    outline,
-                                    isHeads
-                                )
-                            );
+                            if (rhombSelected) {
+                                bounds.expand(
+                                    this.rhombus(
+                                        fill,
+                                        loc,
+                                        thinR2,
+                                        outline,
+                                        isHeads
+                                    )
+                                );
+                            }
                             if (ammannSelected) {
                                 bounds.expand(
                                     this.ammannSegments(loc, thinR2, false)
@@ -1146,16 +1162,14 @@ export class PenroseScreen {
     pentaRhomb(fifths, type, isDown, loc, gen, isHeads = true) {
         const { overlays } = globals;
         const bounds = new Bounds();
-        if (!overlays.rhombSelected) {
-            return bounds;
-        }
+        //if (!overlays.rhombSelected ) {
+        //    return bounds;
+        //}
 
         fifths = norm(fifths);
 
         if (gen == 0) {
             if (overlays.smallRhomb) {
-                //const thins = penrose[this.mode].thinRhomb[exp];
-                //const thicks = penrose[this.mode].thickRhomb[exp];
                 bounds.expand(
                     this.drawRhombusPattern(
                         fifths,
@@ -1172,8 +1186,6 @@ export class PenroseScreen {
         }
 
         if (gen == 1 && !overlays.smallRhomb) {
-            const thins = penrose[this.mode].thinRhomb[gen];
-            const thicks = penrose[this.mode].thickRhomb[gen];
             bounds.expand(
                 this.drawRhombusPattern(fifths, type, isDown, loc, gen, isHeads)
             );
@@ -1222,22 +1234,38 @@ export class PenroseScreen {
     starRhomb(fifths, type, isDown, loc, gen, isHeads) {
         const { overlays } = globals;
         const bounds = new Bounds();
-        if (!overlays.rhombSelected) {
+        //if (!overlays.rhombSelected) {
+        //    return bounds;
+        //}
+
+        fifths = norm(fifths);
+
+        if (gen == 0) {
+            if (overlays.smallRhomb) {
+                bounds.expand(
+                    this.drawRhombusPattern(
+                        fifths,
+                        type,
+                        isDown,
+                        loc,
+                        gen,
+                        isHeads
+                    )
+                );
+            }
             return bounds;
         }
 
-        fifths = norm(fifths);
-        if (gen == 0) {
+        if (gen == 1 && !overlays.smallRhomb) {
+            bounds.expand(
+                this.drawRhombusPattern(fifths, type, isDown, loc, gen, isHeads)
+            );
             return bounds;
         }
 
         const wheels = penrose[this.mode].wheels;
         const tWheel = wheels.t[gen].w;
         const sWheel = wheels.s[gen].w;
-
-        if (gen == 1 && !overlays.smallRhomb) {
-            return bounds;
-        }
 
         bounds.expand(
             this.starRhomb(0, penrose.St5, !isDown, loc, gen - 1, isHeads),
@@ -1279,9 +1307,9 @@ export class PenroseScreen {
     decaRhomb(fifths, isDown, loc, gen, isHeads = true) {
         const { overlays } = globals;
         const bounds = new Bounds();
-        if (!overlays.rhombSelected) {
-            return bounds;
-        }
+        //if (!overlays.rhombSelected) {
+        //    return bounds;
+        //}
 
         if (gen == 0) {
             return bounds;
