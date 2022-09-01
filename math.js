@@ -493,130 +493,63 @@ function drawGeneric123(id) {
         scale,
         shapeMode.shapeMode
     );
-    penrose.scale = scale; // Maybe does not use it.
-
-    function starType(type) {
-        switch (controls.typeList[type]) {
-            case penrose.Pe1:
-                return penrose.St1;
-            case penrose.Pe3:
-                return penrose.St3;
-            case penrose.Pe5:
-                return penrose.St5;
-            default:
-                return controls.typeList[type];
-        }
-    }
-
-    function pentaType(type) {
-        switch (controls.typeList[type]) {
-            case penrose.St1:
-                return penrose.Pe1;
-            case penrose.St3:
-                return penrose.Pe3;
-            case penrose.St5:
-                return penrose.Pe5;
-            default:
-                return controls.typeList[type];
-        }
-    }
 
     const drawScreen = function () {
         let x = 13;
         let y = 26;
-        const bounds = penta(
-            controls.fifths,
-            pentaType(controls.typeIndex),
-            controls.isDown,
-            p(x, y),
-            0
-        );
-        bounds.expand(
-            pentaRhomb(
-                controls.fifths,
-                pentaType(controls.typeIndex),
-                controls.isDown,
-                p(x, y),
-                0
-            )
-        );
-        x += 21;
-        penta(
-            controls.fifths,
-            pentaType(controls.typeIndex),
-            controls.isDown,
-            p(x, y),
-            1
-        );
-        pentaRhomb(
-            controls.fifths,
-            pentaType(controls.typeIndex),
-            controls.isDown,
-            p(x, y),
-            1
-        );
-        x += 34;
-        penta(
-            controls.fifths,
-            pentaType(controls.typeIndex),
-            controls.isDown,
-            p(x, y),
-            2
-        );
+        const bounds = new Bounds();
+        const type = controls.typeList[controls.typeIndex];
+        switch (type) {
+            case penrose.Pe1:
+            case penrose.Pe3:
+            case penrose.Pe5:
+                bounds.expand(
+                    penta(controls.fifths, type, controls.isDown, p(x, y), 0)
+                );
+                bounds.expand(
+                    pentaRhomb(
+                        controls.fifths,
+                        type,
+                        controls.isDown,
+                        p(x, y),
+                        0
+                    )
+                );
+                x += 21;
+                penta(controls.fifths, type, controls.isDown, p(x, y), 1);
+                pentaRhomb(controls.fifths, type, controls.isDown, p(x, y), 1);
+                x += 34;
+                penta(controls.fifths, type, controls.isDown, p(x, y), 2);
 
-        pentaRhomb(
-            controls.fifths,
-            pentaType(controls.typeIndex),
-            controls.isDown,
-            p(x, y),
-            2
-        );
-        x = 13;
-        y += 55;
-        star(
-            controls.fifths,
-            starType(controls.typeIndex),
-            controls.isDown,
-            p(x, y),
-            0
-        );
-        starRhomb(
-            controls.fifths,
-            starType(controls.typeIndex),
-            controls.isDown,
-            p(x, y),
-            0
-        );
-        x += 21;
-        star(
-            controls.fifths,
-            starType(controls.typeIndex),
-            controls.isDown,
-            p(x, y),
-            1
-        );
-        starRhomb(
-            controls.fifths,
-            starType(controls.typeIndex),
-            controls.isDown,
-            p(x, y),
-            1
-        );
-        x += 54;
-        star(
-            controls.fifths,
-            starType(controls.typeIndex),
-            controls.isDown,
-            p(x, y),
-            2
-        );
-        starRhomb(
-            controls.fifths,
-            starType(controls.typeIndex),
-            controls.isDown,
-            p(x, y),
-            2
-        );
+                pentaRhomb(controls.fifths, type, controls.isDown, p(x, y), 2);
+                x = 13;
+                y += 55;
+
+                break;
+            case penrose.St1:
+            case penrose.St3:
+            case penrose.St5:
+                star(controls.fifths, type, controls.isDown, p(x, y), 0);
+                starRhomb(controls.fifths, type, controls.isDown, p(x, y), 0);
+                x += 21;
+                star(controls.fifths, type, controls.isDown, p(x, y), 1);
+                starRhomb(controls.fifths, type, controls.isDown, p(x, y), 1);
+                x += 54;
+                star(controls.fifths, type, controls.isDown, p(x, y), 2);
+                starRhomb(controls.fifths, type, controls.isDown, p(x, y), 2);
+
+                break;
+            case penrose.Deca:
+                deca(controls.fifths, controls.isDown, p(x, y), 0);
+                decaRhomb(controls.fifths, controls.isDown, p(x, y), 0);
+                x += 21;
+                deca(controls.fifths, controls.isDown, p(x, y), 1);
+                decaRhomb(controls.fifths, controls.isDown, p(x, y), 1);
+                x += 54;
+                deca(controls.fifths, controls.isDown, p(x, y), 2);
+                decaRhomb(controls.fifths, controls.isDown, p(x, y), 2);
+                break;
+        }
     };
 
     drawScreen();

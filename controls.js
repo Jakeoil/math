@@ -5,74 +5,6 @@ import { RhombStyle } from "./controls/rhomb-style.js";
 import { ShapeMode } from "./controls/shape-mode.js";
 import { Controls } from "./controls/controls.js";
 import { PentaStyle } from "./controls/penta-style.js";
-/**
- * !!!
- * The cookie has string ties to the controls.
- * It stores some of the control settings statically.
- * Move it to a new module, but not before coming up with a
- * consistant interface, for example, a this.cookie method.
- * or a cookie interface.
- *
- * Suggestion. Make a convention that the cookie name has to match the html
- * element id. But that the value encode and decode must be in the control's
- * class
- *
- */
-class Cookie {
-    constructor() {}
-
-    get(type, dflt) {
-        const cookie = getCookie(type);
-        if (cookie) {
-            return cookie;
-        }
-        return dflt;
-    }
-    set(type, value) {
-        setCookie(type, value, { "max-age": 3600 });
-    }
-
-    delete(type) {
-        deleteCookie(type);
-    }
-    getShapeMode(sm) {
-        const cookie = getCookie("shape-mode");
-        if (cookie) {
-            return cookie;
-        }
-        return sm;
-    }
-    setShapeMode(sm) {
-        setCookie("shape-mode", sm, { "max-age": 3600 });
-    }
-
-    getActiveButtonIndex(index) {
-        const cookie = getCookie("active-button-index");
-        if (cookie) {
-            return cookie;
-        }
-        return index;
-    }
-    setActiveButtonIndex(index) {
-        setCookie("active-button-index", index, { "max-age": 3600 });
-    }
-
-    getFifths(fifths) {
-        return fifths;
-    }
-    getIsDown(isDown) {
-        return isDown;
-    }
-    getTypeIndex(index) {
-        return index;
-    }
-    setFifths(fifths) {}
-    setIsDown(isDown) {}
-    setTypeIndex(index) {}
-}
-// The cookie interface !!! We already found this to be dangerous.
-export const cookie = new Cookie();
-
 /********************************
  * Convenience routines
  ********************************/
@@ -149,6 +81,74 @@ export function initControls(app) {
             measureTaskGlobals.shapeMode = new ShapeMode(app);
     }
 }
+/**
+ * !!!
+ * The cookie has string ties to the controls.
+ * It stores some of the control settings statically.
+ * Move it to a new module, but not before coming up with a
+ * consistant interface, for example, a this.cookie method.
+ * or a cookie interface.
+ *
+ * Suggestion. Make a convention that the cookie name has to match the html
+ * element id. But that the value encode and decode must be in the control's
+ * class
+ *
+ */
+class Cookie {
+    constructor() {}
+
+    get(type, dflt) {
+        const cookie = getCookie(type);
+        if (cookie) {
+            return cookie;
+        }
+        return dflt;
+    }
+    set(type, value) {
+        setCookie(type, value, { "max-age": 3600 });
+    }
+
+    delete(type) {
+        deleteCookie(type);
+    }
+    getShapeMode(sm) {
+        const cookie = getCookie("shape-mode");
+        if (cookie) {
+            return cookie;
+        }
+        return sm;
+    }
+    setShapeMode(sm) {
+        setCookie("shape-mode", sm, { "max-age": 3600 });
+    }
+
+    getActiveButtonIndex(index) {
+        const cookie = getCookie("active-button-index");
+        if (cookie) {
+            return cookie;
+        }
+        return index;
+    }
+    setActiveButtonIndex(index) {
+        setCookie("active-button-index", index, { "max-age": 3600 });
+    }
+
+    getFifths(fifths) {
+        return fifths;
+    }
+    getIsDown(isDown) {
+        return isDown;
+    }
+    getTypeIndex(index) {
+        return index;
+    }
+    setFifths(fifths) {}
+    setIsDown(isDown) {}
+    setTypeIndex(index) {}
+}
+// The cookie interface !!! We already found this to be dangerous.
+export const cookie = new Cookie();
+
 /**
  * cookie logic from  https://javascript.info/cookie
  * @param {*} name

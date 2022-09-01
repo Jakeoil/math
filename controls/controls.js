@@ -11,15 +11,15 @@ export class Controls {
     constructor(app, fifths, typeIndex, isDown) {
         this.app = app;
         this.eleFifths = document.querySelector("#fifths");
+        this.eleType = document.querySelector("#type");
+        this.eleIsDown = document.querySelector("#isDown");
+
         if (this.eleFifths)
             this.eleFifths.addEventListener(
                 "click",
                 this.clickFifths.bind(this),
                 false
             );
-
-        this.eleType = document.querySelector("#type");
-        this.eleIsDown = document.querySelector("#isDown");
 
         if (this.eleType)
             this.eleType.addEventListener(
@@ -35,13 +35,31 @@ export class Controls {
                 false
             );
         //else console.log(`no eleDown!`);
-
+        this.reset(fifths, typeIndex, isDown);
+        this.refresh();
+    }
+    reset(fifths, typeIndex, isDown) {
         this.fifths = fifths;
         this.typeIndex = typeIndex;
         this.isDown = isDown;
         this.fifths = cookie.getFifths(fifths);
         this.typeIndex = cookie.getTypeIndex(typeIndex);
         this.isDown = cookie.getIsDown(isDown);
+    }
+    refresh() {}
+    toString() {
+        return JSON.stringify({
+            fifths: this.fill,
+            typeIndex: this.typeIndex,
+            isDown: this.isDown,
+        });
+    }
+    fromString() {
+        ({
+            fifths: this.fill,
+            typeIndex: this.typeIndex,
+            isDown: this.isDown,
+        } = JSON.parse(jsonString));
     }
     bumpFifths() {
         this.fifths = norm(this.fifths + 1);
@@ -72,8 +90,8 @@ export class Controls {
         penrose.St1,
         penrose.St3,
         penrose.St5,
+        penrose.Deca,
     ];
-    reset() {}
     refresh() {
         if (this.eleFifths) this.eleFifths.innerHTML = `fifths: ${this.fifths}`;
         if (this.eleType) this.eleType.innerHTML = this.typeName;
@@ -94,20 +112,20 @@ export class Controls {
         console.log(`click fifths`);
         this.bumpFifths();
         console.log(`new value ${this.fifths}`);
-        this.eleFifths.innerHTML = `fifths: ${this.fifths}`;
+        this.refresh();
         this.app(Controls.name);
     }
 
     clickType() {
         console.log(`click type`);
         this.bumpType();
-        this.eleType.innerHTML = this.typeName;
+        this.refresh();
         this.app(Controls.name);
     }
 
     clickIsDown() {
         this.toggleDirection();
-        this.eleIsDown.innerHTML = this.direction;
+        this.refresh();
         this.app(Controls.name);
     }
 }
