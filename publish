@@ -32,4 +32,6 @@ cp controls/rhomb-style.js /Volumes/jakeoil.net/public_html/math/controls
 cp controls/shape-mode.js /Volumes/jakeoil.net/public_html/math/controls
 cp controls/penta-style.js /Volumes/jakeoil.net/public_html/math/controls
 
+cp measurements.js /Volumes/jakeoil.net/public_html/math
+
 echo complete
