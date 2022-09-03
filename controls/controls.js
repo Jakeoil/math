@@ -1,6 +1,7 @@
 import { cookie } from "../controls.js";
 import { penrose } from "../penrose.js";
 import { norm } from "../point.js";
+import { RhombStyle } from "./rhomb-style.js";
 
 /**
  * A clustered set of globals
@@ -46,7 +47,6 @@ export class Controls {
         this.typeIndex = cookie.getTypeIndex(typeIndex);
         this.isDown = cookie.getIsDown(isDown);
     }
-    refresh() {}
     toString() {
         return JSON.stringify({
             fifths: this.fill,
@@ -92,10 +92,12 @@ export class Controls {
         penrose.St5,
         penrose.Deca,
     ];
+    //refresh() {}
     refresh() {
         if (this.eleFifths) this.eleFifths.innerHTML = `fifths: ${this.fifths}`;
         if (this.eleType) this.eleType.innerHTML = this.typeName;
         if (this.eleIsDown) this.eleIsDown.innerHTML = this.direction;
+        cookie.set(Controls.name, this.toString);
     }
     toString() {
         return JSON.stringify({
