@@ -2,14 +2,14 @@
 The center of this site is the blog. It contains a few javascript items: numbers, circles and a Coylean map example. From here, you can navigate to Penrose and Coylean. 
 
 ## Penrose Mosaic
-The thing that makes the mozaic so fantastic is the fact that you can approximate a regular pentagon rather closely within a 6x6 square. By treating these as tiles you can see that the gaps between the corners is another shorter distance.  The sum of the side and this gap can added together to make a larger pentagon. 
+The thing that makes the mosaic so fantastic is that a very close approximation of a regular pentagon fits in the space of a 6 by 6 lattice. This allows you to tile the bathroom with a convincing Penrose Type1 pattern. It is possible to derive larger versions from this smallest version.
 
 The penrose tiles have the fibinacci series and the golden ratio written all over it.
 
 ## History
 This site originally consisted of a large page with programmatic canvases of rendering the Six tiles. The first canvas, now called inflation 1 work area, renders compond versions of the six tile with rotations for the four tiles that don't have 5 fold symmetry.
 
-An instance called penrose exposes a table of the six figures with each of the 10 rotations. A primitive function called figure() draws the specified tile in the specified place with the specified orientation. The original names of these figures were P0, P2, P4, star, boat and diamond. The current naming reflexts their symmetry better: 
+An instance called penrose defines tables of coordinates of tile locations (shape). In Type1 there are six figures. Each contains a version of itself in 10 rotations (shapes). A primitive function called figure() draws the specified tile in the specified place with the specified orientation. The original names of these figures were P0, P2, P4, star, boat and diamond. The current naming reflexts their symmetry better: 
 - Pe5: Blue or Five white tiles around a center tile
 - Pe3:  White or Three White tiles on top and two orange tiles on the bottom
 - Pe1: Orange or One White tile on top with four orange tiles on the bottom.
@@ -17,13 +17,13 @@ An instance called penrose exposes a table of the six figures with each of the 1
 - St3: A boat. A composite of 3 Diamonds upward.
 - St1: A diamond. Pointing upward.
 
-The first expansion is a composite of the primitive figures.
-The plan was to code the first and second expansion and use the results to generalize the nth expansion. By looking at the offsets required, I could build tables with all the offets for each orientation.  I called these wheels.
+The first generation is a composite of the primitive figures.
+The plan was to code the first and second generation and generalize the nth expansion experimentally. By looking at the offsets required, I could build tables with all the offets for each orientation.  I called these wheels.
 
 ## the wheels
-Technically there are 10 orientatins
-They are divided into Up and Down, each of these with 5 Fifths.
-Fifths(0) Up is always a negative y coordinate. Minus is up. P0 Down is a positive version of up. It is not a reflection, but a rotation of 180 degrees.
+Technically there are 10 orientations.
+They are divided into Up and Down, each of these with 5 angles called Fifths.
+Fifths(0) Up is always a negative y coordinate. Minus is up on computer screens. P0 Down is a positive version of up. It is not a reflection, but a rotation of 180 degrees.
 
 Going clockwise:
  | rotation | down | fifths |
@@ -39,23 +39,23 @@ Going clockwise:
 | 8 | false | 4 |
 | 9 | true | 2 |
 
-The wheels contain the x y offsets of the distances between the figures for each of these orientations.
+A wheels contain the x y offsets of the distances between the figures for each of these orientations.
 We needed three wheels for each expansion.
 - pWheel: Distance between pentagons
 - sWheel: Distance between pentagon and diamond gap
-- tWheel: Distance between boat and star
+- tWheel: Distance between boat and star. And eventually:
+- dWheel: Distance between center of pentagon and corner.
 
-I then proceeded to code the second expansion using the manually produced wheels.
-
+I then proceeded to code the second generation using the manually produced wheels.
 After lots of bugs, I sidetracked into some other tasks.
 
-One was to keep track of the size of the figure.  I have a bounds class that returns the extremes of the figure.  Routines which call this figure return a new bounds which is accumulated.
+One was to keep track of the size of the figure.  I have a bounds class that essentially returns the rectangle enclosing a figure.  Routines which call this figure return a new bounds which is accumulated.
 
 Now I added some controls. This required learning a little bit about page layouts and much css.
 I had to struggle with the tWheel.
 
 I added a decagon, but it was not centered.
-Fixed expansion 4 and up.
+At this point the program could draw any generation.
 
 # To do list
 
@@ -65,36 +65,33 @@ Fixed expansion 4 and up.
 -   [ ] Play with writing text on the canvas.
 
 Node goals:
--   [ ] Do a rewrite using module.
--   [ ] Make the penrose a module with classes. e.g. <script type="module" src="app.mjs"></script>
+-   [X] Do a rewrite using module.
+-   [x] Make the penrose a module with classes. e.g. <script type="module" src="app.mjs"></script>
 
 -   [ ] Design a theme and sub-theme hierarchy for rendering.
         For example we have graphics. Hard core. But can be printer or screen. Maybe some other characteristics.
         Then we have scale. Kind of in between.
 
-
 -   [X] Now that we have three different kinds of type 3, the 'figure' routine must be integrated better.  As it is, there is an ugly bit of guck in expansion 0
-Note: getting there, the figure seems easy to add, funky stuff with the types though.
 
 Bounds logic:
 -   [X] Fix bounds logic so that items that do not create a bounds will not need to return a [0000].  This essentially forces a zero point to be added to the bounds.  The receiver of the bounds should gracefully ignore it.
 -   [ ] create a nice measure routine
 -   [X] The redraw function which changes canvas dimensions should also compute a new 'base' based on 0,0 or a given base, where the upper left part of the drawing will be contained.
-It's probably a better idea to just use translate on the canvas and not change the command.
-Nope, was able to make a do{while} loop in drawCanvas.
 
 -   [X] Make bounds logic so it follows the canvas rectangle interface. x,y,len x,len y (will this buy me anything?)
-Not worth it.
+Added a rect property to return the standard rect diagnal.
 
--   [S] Does it make sense to integrate the central point in bounds?
+-   [X] Does it make sense to integrate the central point in bounds?
   not really, any negative values in the min will tell you how far to move all locs to the right/down.
   Positive values could be used to move business closer to the margins.
   g.translate(x,y) may be sensible.
 
 Controls
--   [ ] Add color picker to the controls
+-   [x] Add color picker to the controls
 -   [X] Add cookie so that controls and page defaults remain. ~~Add an option to use them or not~~
 -   [ ] Add (named) parameters to star, penta and deca to override controls?
+The plan is to use the controls and an options object which will override them.
 
 
 Menu:
