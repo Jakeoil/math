@@ -1,8 +1,46 @@
 //import { real } from "./shape-modes";
-window.addEventListener("load", rhombohedraApp, false);
+import * as THREE from "/js/three.js";
+
+window.addEventListener("load", threeTest, false);
 /**
  * This app basically loads the interactive canvases used to discuss rhombs
  */
+
+function threeTest() {
+    console.log(THREE);
+    console.log(THREE.exports);
+    var scene = new THREE.Scene();
+    var camera = new THREE.PerspectiveCamera(
+        75,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        1000
+    );
+
+    var renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    //document.body.appendChild(renderer.domElement);
+    document.getElementById("three-test").appendChild(renderer.domElement);
+
+    var geometry = new THREE.BoxGeometry(1, 1, 1);
+    var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+    var cube = new THREE.Mesh(geometry, material);
+    scene.add(cube);
+
+    camera.position.z = 5;
+
+    var animate = function () {
+        requestAnimationFrame(animate);
+
+        cube.rotation.x += 0.01;
+        cube.rotation.y += 0.01;
+
+        renderer.render(scene, camera);
+    };
+
+    animate();
+}
+
 function rhombohedraApp() {
     console.log(`started`);
     const canvas = document.querySelector("#gltest");
