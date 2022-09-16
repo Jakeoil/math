@@ -54,6 +54,8 @@ export function penroseApp(source) {
     drawGeneric3("g3");
 }
 
+window.addEventListener("load", penroseApp, false);
+
 /******************************************************************************
  * Screen Drawing Routines
  *****************************************************************************/
