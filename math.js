@@ -7,8 +7,6 @@ import { real, quadrille, mosaic } from "./shape-modes.js";
 import { initControls, logRefresh } from "./controls.js";
 import { globals } from "./controls.js";
 import { iface } from "./penrose-screen.js";
-import { PenroseScreen } from "./penrose-screen.js";
-import { Scrolling } from "./scrolling.js";
 
 /**
  * Penrose Mosaic and More
@@ -53,7 +51,6 @@ export function penroseApp(source) {
     drawGeneric123("g012");
     drawGeneric3("g3");
 }
-
 window.addEventListener("load", penroseApp, false);
 
 /******************************************************************************

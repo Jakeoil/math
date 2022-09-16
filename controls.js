@@ -49,10 +49,13 @@ export function logRefresh(app, source) {
             switch (val) {
                 case Event.name:
                     console.log(
-                        `Refresh ${app.name} from ${source.target.constructor.name}`
+                        `Refresh ${app.name} from ${Event.name}: ${source.type}`
                     );
+                    break;
                 default:
-                    console.log(`Refresh ${app.name} from ${source}`);
+                    console.log(
+                        `Refresh ${app.name} from unsupported ${val} ${source}`
+                    );
             }
     }
 }
