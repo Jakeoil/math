@@ -1,7 +1,6 @@
 import { cookie } from "../controls.js";
 import { penrose } from "../penrose.js";
 import { norm } from "../point.js";
-import { RhombStyle } from "./rhomb-style.js";
 
 /**
  * A clustered set of globals
@@ -43,28 +42,24 @@ export class Controls {
         this.fifths = fifths;
         this.typeIndex = typeIndex;
         this.isDown = isDown;
-        this.fifths = cookie.getFifths(fifths);
-        this.typeIndex = cookie.getTypeIndex(typeIndex);
-        this.isDown = cookie.getIsDown(isDown);
+        this.fromString(cookie.get(Controls.name, this.toString()));
     }
     toString() {
         return JSON.stringify({
-            fifths: this.fill,
+            fifths: this.fifths,
             typeIndex: this.typeIndex,
             isDown: this.isDown,
         });
     }
-    fromString() {
+    fromString(jsonString) {
         ({
-            fifths: this.fill,
+            fifths: this.fifths,
             typeIndex: this.typeIndex,
             isDown: this.isDown,
         } = JSON.parse(jsonString));
     }
     bumpFifths() {
         this.fifths = norm(this.fifths + 1);
-        console.log(`bump fifths to ${this.fifths}`);
-        cookie.setFifths(this.fifths);
     }
 
     get typeName() {
@@ -72,14 +67,12 @@ export class Controls {
     }
     bumpType() {
         this.typeIndex = (this.typeIndex + 1) % this.typeList.length;
-        cookie.setTypeIndex(this.typeIndex);
     }
     get direction() {
         return this.isDown ? "Down" : "Up";
     }
     toggleDirection() {
         this.isDown = !this.isDown;
-        cookie.setIsDown(this.isDown);
     }
 
     // eww, should add the decagon?
@@ -97,15 +90,9 @@ export class Controls {
         if (this.eleFifths) this.eleFifths.innerHTML = `fifths: ${this.fifths}`;
         if (this.eleType) this.eleType.innerHTML = this.typeName;
         if (this.eleIsDown) this.eleIsDown.innerHTML = this.direction;
-        cookie.set(Controls.name, this.toString);
+        cookie.set(Controls.name, this.toString());
     }
-    toString() {
-        return JSON.stringify({
-            fifths: this.fifths,
-            type: this.typeName,
-            isDown: this.isDown,
-        });
-    }
+
     /**
      * Initialization and
      * Events for the three buttons
@@ -113,7 +100,6 @@ export class Controls {
     clickFifths() {
         console.log(`click fifths`);
         this.bumpFifths();
-        console.log(`new value ${this.fifths}`);
         this.refresh();
         this.app(Controls.name);
     }

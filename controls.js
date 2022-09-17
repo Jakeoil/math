@@ -79,13 +79,14 @@ export function initControls(app) {
 
         if (!globals.pageNavigation)
             globals.pageNavigation = new PageNavigation(app);
-    } else {
+    } else if (app.name == "measureTasks") {
         if (!measureTaskGlobals.shapeMode)
             measureTaskGlobals.shapeMode = new ShapeMode(app);
+    } else {
+        console.log("missing app");
     }
 }
 /**
- * !!!
  * The cookie has string ties to the controls.
  * It stores some of the control settings statically.
  * Move it to a new module, but not before coming up with a
@@ -124,30 +125,6 @@ class Cookie {
     setShapeMode(sm) {
         setCookie("shape-mode", sm, { "max-age": 3600 });
     }
-
-    getActiveButtonIndex(index) {
-        const cookie = getCookie("active-button-index");
-        if (cookie) {
-            return cookie;
-        }
-        return index;
-    }
-    setActiveButtonIndex(index) {
-        setCookie("active-button-index", index, { "max-age": 3600 });
-    }
-
-    getFifths(fifths) {
-        return fifths;
-    }
-    getIsDown(isDown) {
-        return isDown;
-    }
-    getTypeIndex(index) {
-        return index;
-    }
-    setFifths(fifths) {}
-    setIsDown(isDown) {}
-    setTypeIndex(index) {}
 }
 // The cookie interface !!! We already found this to be dangerous.
 export const cookie = new Cookie();

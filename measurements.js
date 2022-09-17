@@ -9,9 +9,11 @@ import { measureTaskGlobals } from "./controls.js";
 import { initControls, logRefresh } from "./controls.js";
 
 window.addEventListener("load", measureTasks, false);
+
 export function measureTasks(source) {
     logRefresh(measureTasks, source);
     initControls(measureTasks);
+
     drawQuadrille();
     drawImage();
     wheelTables();
