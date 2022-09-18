@@ -1,15 +1,17 @@
 //import { real } from "./shape-modes";
-import * as THREE from "/js/three.js";
-
+import * as THREE from "./js/three.module.js";
 window.addEventListener("load", threeTest, false);
 /**
  * This app basically loads the interactive canvases used to discuss rhombs
  */
 
 function threeTest() {
+    console.log(
+        `Three test for window: ${window.innerWidth}, ${window.innerHeight}`
+    );
     console.log(THREE);
-    console.log(THREE.exports);
     var scene = new THREE.Scene();
+
     var camera = new THREE.PerspectiveCamera(
         75,
         window.innerWidth / window.innerHeight,
@@ -22,8 +24,9 @@ function threeTest() {
     //document.body.appendChild(renderer.domElement);
     document.getElementById("three-test").appendChild(renderer.domElement);
 
+    // The renderer is the canvas.
     var geometry = new THREE.BoxGeometry(1, 1, 1);
-    var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+    var material = new THREE.MeshBasicMaterial({ color: 0x00ffff });
     var cube = new THREE.Mesh(geometry, material);
     scene.add(cube);
 
@@ -32,8 +35,8 @@ function threeTest() {
     var animate = function () {
         requestAnimationFrame(animate);
 
-        cube.rotation.x += 0.01;
-        cube.rotation.y += 0.01;
+        cube.rotation.x += 1 / 200;
+        cube.rotation.y += 1 / 60;
 
         renderer.render(scene, camera);
     };
