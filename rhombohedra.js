@@ -1,6 +1,8 @@
 //import { real } from "./shape-modes";
 import * as THREE from "./js/three.module.js";
 import { OrbitControls } from "./js/controls/OrbitControls.js";
+import Stats from "./js/libs/stats.module.js";
+import { GUI } from "./js/dat.gui.module.js";
 window.addEventListener("load", threeTest, false);
 /**
  * This app basically loads the interactive canvases used to discuss rhombs
@@ -48,6 +50,10 @@ function threeTest() {
         },
         false
     );
+
+    const stats = Stats();
+    // Shows up oddly.
+    document.getElementById("three-test").appendChild(stats.dom);
 
     var animate = function () {
         requestAnimationFrame(animate);
