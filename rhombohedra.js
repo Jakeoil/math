@@ -70,8 +70,9 @@ function threeTest() {
 
         cube.rotation.x += 1 / 200;
         cube.rotation.y += 1 / 60;
-
+        controls.update();
         renderer.render(scene, camera);
+        stats.update();
     };
     function render() {
         renderer.render(scene, camera);
