@@ -25,13 +25,29 @@ function threeTest() {
     //document.body.appendChild(renderer.domElement);
     document.getElementById("three-test").appendChild(renderer.domElement);
 
+    const controls = new OrbitControls(camera, renderer.domElement);
+
     // The renderer is the canvas.
     var geometry = new THREE.BoxGeometry(1, 1, 1);
-    var material = new THREE.MeshBasicMaterial({ color: 0x00ffff });
+    var material = new THREE.MeshBasicMaterial({
+        color: 0x00ffff,
+        wireframe: true,
+    });
     var cube = new THREE.Mesh(geometry, material);
     scene.add(cube);
 
     camera.position.z = 5;
+
+    window.addEventListener(
+        "resize",
+        () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            render();
+        },
+        false
+    );
 
     var animate = function () {
         requestAnimationFrame(animate);
@@ -41,6 +57,9 @@ function threeTest() {
 
         renderer.render(scene, camera);
     };
+    function render() {
+        renderer.render(scene, camera);
+    }
 
     animate();
 }
