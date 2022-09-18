@@ -1,5 +1,6 @@
 //import { real } from "./shape-modes";
 import * as THREE from "./js/three.module.js";
+import { OrbitControls } from "./js/controls/OrbitControls.js";
 window.addEventListener("load", threeTest, false);
 /**
  * This app basically loads the interactive canvases used to discuss rhombs
