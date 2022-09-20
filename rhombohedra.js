@@ -30,15 +30,11 @@ function threeTest() {
     const controls = new OrbitControls(camera, renderer.domElement);
 
     // The renderer is the canvas.
-    var geometry = new THREE.BoxGeometry(1, 1, 1);
-    var material = new THREE.MeshBasicMaterial({
-        color: 0x00ffff,
-        wireframe: true,
-    });
-    var cube = new THREE.Mesh(geometry, material);
+    const cube = cubeGeometry(scene);
+    const line = lineGeometry(scene);
     scene.add(cube);
-
-    camera.position.z = 5;
+    scene.add(line);
+    camera.position.z = 75;
 
     window.addEventListener(
         "resize",
@@ -68,8 +64,8 @@ function threeTest() {
     var animate = function () {
         requestAnimationFrame(animate);
 
-        cube.rotation.x += 1 / 200;
-        cube.rotation.y += 1 / 60;
+        //cube.rotation.x += 1 / 200;
+        //cube.rotation.y += 1 / 60;
         controls.update();
         renderer.render(scene, camera);
         stats.update();
@@ -81,6 +77,27 @@ function threeTest() {
     animate();
 }
 
+function lineGeometry() {
+    //create a blue LineBasicMaterial
+    const material = new THREE.LineBasicMaterial({ color: 0x0000ff });
+    const points = [];
+    points.push(new THREE.Vector3(-10, 0, 0));
+    points.push(new THREE.Vector3(0, 10, 0));
+    points.push(new THREE.Vector3(10, 0, 0));
+    const geometry = new THREE.BufferGeometry(points);
+    const line = new THREE.Line(geometry, material);
+    return line;
+}
+
+function cubeGeometry(scene) {
+    const geometry = new THREE.BoxGeometry(1, 1, 1);
+    const material = new THREE.MeshBasicMaterial({
+        color: 0x00ffff,
+        wireframe: true,
+    });
+    const cube = new THREE.Mesh(geometry, material);
+    return cube;
+}
 function rhombohedraApp() {
     console.log(`started`);
     const canvas = document.querySelector("#gltest");
