@@ -20,6 +20,7 @@
         "color-name": "^1.1.4",
         "commander": "^9.3.0",
         "concat-map": "^0.0.1",
+        "dat.gui": "^0.7.9",
         "fs.realpath": "^1.0.0",
         "glob": "^7.2.3",
         "has-flag": "^4.0.0",
