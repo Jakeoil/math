@@ -14,28 +14,27 @@ function threeTest() {
         `Three test for window: ${window.innerWidth}, ${window.innerHeight}`
     );
     console.log(THREE);
-    var scene = new THREE.Scene();
 
-    var camera = new THREE.PerspectiveCamera(
-        75,
-        window.innerWidth / window.innerHeight,
-        0.1,
-        1000
-    );
+    let controls;
+    let stats;
 
-    var renderer = new THREE.WebGLRenderer();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    //document.body.appendChild(renderer.domElement);
-    document.getElementById("three-test").appendChild(renderer.domElement);
+    const { container, camera, renderer, scene } = init();
 
-    const controls = new OrbitControls(camera, renderer.domElement);
-
+    //addControls(camera, renderer);
     // The renderer is the canvas.
-    const cube = cubeGeometry(scene);
-    const line = lineGeometry(scene);
+    const cube = cubeGeometry();
+    const line = lineGeometry();
+    const cone = coneGeometry();
+    console.log(cone);
     scene.add(cube);
     scene.add(line);
-    camera.position.z = 75;
+    scene.add(cone);
+
+    const light = new THREE.DirectionalLight(0xffffff, 1.5);
+    light.position.set(-1, 2, 4);
+    scene.add(light);
+
+    console.log(scene);
 
     window.addEventListener(
         "resize",
@@ -48,57 +47,96 @@ function threeTest() {
         false
     );
 
-    const stats = Stats();
-    // Shows up oddly.
-    document.getElementById("three-test").appendChild(stats.dom);
+    function setUpStats() {
+        const stats = Stats();
+        // Shows up oddly.
+        container.appendChild(stats.dom);
+    }
 
-    const gui = new GUI();
-    const cubeFolder = gui.addFolder("Cube");
-    cubeFolder.add(cube.scale, "x", -5, 5);
-    cubeFolder.add(cube.scale, "y", -5, 5);
-    cubeFolder.add(cube.scale, "z", -5, 5);
-    cubeFolder.open();
-    const cameraFolder = gui.addFolder("Camera");
-    cameraFolder.add(camera.position, "z", 0, 10);
-    cameraFolder.open();
+    function setUpGui() {
+        const gui = new GUI();
+        const cubeFolder = gui.addFolder("Cube");
+        cubeFolder.add(cube.scale, "x", -5, 5);
+        cubeFolder.add(cube.scale, "y", -5, 5);
+        cubeFolder.add(cube.scale, "z", -5, 5);
+        cubeFolder.open();
+        const cameraFolder = gui.addFolder("Camera");
+        cameraFolder.add(camera.position, "z", 0, 10);
+        cameraFolder.open();
+    }
 
     var animate = function () {
         requestAnimationFrame(animate);
 
-        //cube.rotation.x += 1 / 200;
+        cube.rotation.x += 1 / 200;
         //cube.rotation.y += 1 / 60;
-        controls.update();
+        //controls.update();
+        cube.rotation.y += 1 / 60;
+        //controls.update();
         renderer.render(scene, camera);
-        stats.update();
+        //stats.update();
     };
+
     function render() {
         renderer.render(scene, camera);
     }
 
     animate();
 }
+function addControls(camera, renderer) {
+    controls = new OrbitControls(camera, renderer.domElement);
+}
+function init() {
+    const container = document.getElementById("three-test");
+    const camera = new THREE.PerspectiveCamera(
+        75,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        1000
+    );
+    camera.position.z = 5;
+
+    const scene = new THREE.Scene();
+
+    const renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    container.appendChild(renderer.domElement);
+    return { container, camera, scene, renderer };
+}
 
 function lineGeometry() {
     //create a blue LineBasicMaterial
-    const material = new THREE.LineBasicMaterial({ color: 0x0000ff });
+    const material = new THREE.LineBasicMaterial({ color: 0x00ffff });
     const points = [];
     points.push(new THREE.Vector3(-10, 0, 0));
     points.push(new THREE.Vector3(0, 10, 0));
     points.push(new THREE.Vector3(10, 0, 0));
     const geometry = new THREE.BufferGeometry(points);
+    console.log(`geometry: ${geometry}`);
+    console.log(geometry);
     const line = new THREE.Line(geometry, material);
     return line;
 }
 
-function cubeGeometry(scene) {
+function cubeGeometry() {
     const geometry = new THREE.BoxGeometry(1, 1, 1);
-    const material = new THREE.MeshBasicMaterial({
-        color: 0x00ffff,
-        wireframe: true,
-    });
+
+    const material = new THREE.MeshPhongMaterial({ color: 0x44aa88 }); // greenish blue
+
     const cube = new THREE.Mesh(geometry, material);
     return cube;
 }
+
+function coneGeometry() {
+    const geo = new THREE.ConeGeometry(3, 4, 16);
+    const material = new THREE.MeshPhongMaterial({ color: 0x44aa88 }); //
+    const cone = new THREE.Mesh(geo, material);
+    return cone;
+}
+/**
+ * This is trash.
+ * @returns
+ */
 function rhombohedraApp() {
     console.log(`started`);
     const canvas = document.querySelector("#gltest");
