@@ -8,17 +8,18 @@ const SQRT5 = Math.sqrt(5); // 2.236
 const PHI = (SQRT5 + 1) / 2; // 1.618
 
 /**
- * There are 5 angles measured in Fifths and their inverses.
- *
+ * Replacement for fifths and isDown
  *
  */
-class Angle {
+export class Angle {
     slicee = [0, 1, 2, 3, 4, 0, 1, 2, 3];
+
     constructor(fifths, isDown) {
-        this.fifths = fifths;
-        this.down = isDown;
+        this.fifths = fifths % 5;
+        this.isDown = isDown;
     }
-    // The clockwise operation
+    // The clockwise operation.
+    //   add a fifth
     get cw() {
         return new Angle(fifths == 5 ? 0 : this.fifths + 1, this.isDown);
     }
@@ -26,6 +27,7 @@ class Angle {
     get ccw() {
         return new Angle(fifths ? 5 : this.fifths - 1, this.isDown);
     }
+    // Add n fifths
     rot(n) {
         return new Angle(norm(this.fifths + n), isDown);
     }
@@ -34,20 +36,30 @@ class Angle {
         return new Angle(this.fifths, !this.isDown);
     }
     // Convert to tenths. Vectors (pstd) are stored in tenths
-    tenths(angle) {
+    get tenths() {
         return (this.fifths * 2 + (this.isDown ? 5 : 0)) % 10;
+    }
+    toString() {
+        return JSON.stringify({ fifths: this.fifths, isDown: this.isDown });
     }
 }
 
-/***
- * Some iterator thing that does not look useful at this moment
- */
-function fList(fifth) {
-    return slicee.slice(0, 5);
+function angleTest() {
+    console.log(`angle test`);
+    let an = new Angle(0, true);
+    let te = an.tenths;
+    console.log(`an: ${an}, te: ${te}`);
+    an = new Angle(1, true);
+    te = an.tenths;
+    console.log(`an: ${an}, te: ${te}`);
+    an = new Angle(1, false);
+    te = an.tenths;
+    console.log(`an: ${an}, te: ${te}`);
 }
+//angleTest();
 
 /**
- * Deprecated
+ * Deprecated. Replaced by Angle.tenths
  */
 function tenths(fifths, isDown) {
     return (fifths * 2 + (isDown ? 5 : 0)) % 10;
@@ -113,7 +125,8 @@ function testMix() {
     mix("#000", "#ff6600", 1.0);
 }
 
-testMix();
+//testMix();
+
 /**
  * This is a wrapper around penroseScreen
  * Just creates the screen with some aliases.
@@ -129,6 +142,8 @@ export function iface(g, scale, mode) {
     const decaRhomb = screen.decaRhomb.bind(screen);
     const figure = screen.figure.bind(screen);
     const outline = screen.outline.bind(screen);
+    const pentaNew = screen.pentaNew.bind(screen);
+    const starNew = screen.starNew.bind(screen);
     return {
         penta,
         star,
@@ -139,11 +154,14 @@ export function iface(g, scale, mode) {
         decaRhomb,
         figure,
         outline,
+        pentaNew,
+        starNew,
     };
 }
 
 /**
  * This routine depends on an initialized shapeColors instance.
+ * Instance must be star or penta, deca returns null
  *
  *
  * @param {*} type
@@ -180,6 +198,7 @@ function pColor(type) {
  * @param (Real|Quadrille|Mosaic|Typographic) - Rendering style of figures.
  *
  * Mosaic may be removed since it is unique to Quadrille
+ * Typographic is in progress
  *
  */
 export class PenroseScreen {
@@ -191,6 +210,7 @@ export class PenroseScreen {
 
     /**
      * Gets the figure for the type.
+     * Depends on this.mode
      *
      * @param {penrose.type} type
      * @param {Shapes} penta
@@ -215,7 +235,9 @@ export class PenroseScreen {
     }
 
     /**
-     * This is the overlay.penta version
+     * Gets the mosaic shape wheel.
+     * For the mosaic overlay.
+     *
      * @param {penrose.type} type
      * @returns the mosaic shape wheel
      */
@@ -238,7 +260,7 @@ export class PenroseScreen {
         return null;
     }
 
-    drawPentaPattern(fifths, type, isDown, loc, gen, isHeads) {
+    drawPentaPattern(fifths, type, isDown, loc, gen, isHeads, options) {
         const { overlays } = globals;
         const bounds = new Bounds();
         if (!overlays || overlays.pentaSelected) {
@@ -300,7 +322,7 @@ export class PenroseScreen {
      * @param {boolean} heads - Computed aspect of group. Convex or concave
      * @returns {Bounds} - Rectangle describing space taken by shape
      */
-    penta(fifths, type, isDown, loc, gen, isHeads = true) {
+    penta(fifths, type, isDown, loc, gen, isHeads = true, options) {
         const { overlays } = globals;
         const bounds = new Bounds();
         const delayQueue = [];
@@ -308,7 +330,15 @@ export class PenroseScreen {
         fifths = norm(fifths);
         if (gen == 0) {
             bounds.expand(
-                this.drawPentaPattern(fifths, type, isDown, loc, gen, isHeads)
+                this.drawPentaPattern(
+                    fifths,
+                    type,
+                    isDown,
+                    loc,
+                    gen,
+                    isHeads,
+                    options
+                )
             );
             return bounds;
         }
@@ -453,7 +483,7 @@ export class PenroseScreen {
      * The inputs are streamlined
      *
      */
-    drawPentaPatternNew({ type, angle, loc, gen, isHeads, options }) {
+    drawPentaPatternNew({ type, angle, isHeads, loc, gen, ...options }) {
         const { overlays } = globals; // don't forget the options
         const bounds = new Bounds();
         if (overlays.pentaSelected) {
@@ -476,14 +506,22 @@ export class PenroseScreen {
         return bounds; // call figure
     }
 
-    pentaNew({ type, angle, isHeads = true, loc, gen, options }) {
+    pentaNew({ type, angle, isHeads = true, loc, gen, ...options }) {
+        console.log(`type: ${type.name}, angle: ${angle}`);
         let { overlays } = globals;
         ({ overlays } = options); // some version of apply
         const bounds = new Bounds();
 
         if (gen == 0) {
             bounds.expand(
-                drawPentaPatternNew({ type, angle, loc, gen, options })
+                this.drawPentaPatternNew({
+                    type,
+                    angle,
+                    isHeads,
+                    loc,
+                    gen,
+                    ...options,
+                })
             );
             return bounds; // call figure
         }

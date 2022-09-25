@@ -7,6 +7,7 @@ import { real, quadrille, mosaic } from "./shape-modes.js";
 import { initControls, logRefresh } from "./controls.js";
 import { globals } from "./controls.js";
 import { iface } from "./penrose-screen.js";
+import { Angle } from "./penrose-screen.js";
 
 /**
  * Penrose Mosaic and More
@@ -72,7 +73,7 @@ function makeCanvas(canvasId) {
         g.strokeStyle = penrose.OUTLINE;
         g.lineWidth = 1;
         let scale = 10;
-        const { penta, star, pentaRhomb, starRhomb } = iface(
+        const { penta, star, pentaRhomb, starRhomb, pentaNew, starNew } = iface(
             g,
             scale,
             shapeMode.shapeMode
@@ -82,7 +83,8 @@ function makeCanvas(canvasId) {
         let width = 0;
         let height = 0;
         let base = p(0, 0);
-
+        let ang = new Angle(0, true);
+        console.log("ang: " + ang);
         let tries = 0;
 
         // Just for test.
@@ -93,13 +95,38 @@ function makeCanvas(canvasId) {
             bounds = new Bounds();
             bounds.expand(
                 canvasId == "p5"
-                    ? penta(0, penrose.Pe5, true, base, gen)
+                    ? pentaNew({
+                          type: penrose.Pe5,
+                          angle: new Angle(0, true),
+                          isHeads: true,
+                          loc: base,
+                          gen,
+                      })
                     : canvasId == "p3"
-                    ? penta(0, penrose.Pe3, false, base, gen)
+                    ? pentaNew({
+                          type: penrose.Pe3,
+                          angle: new Angle(0, false),
+                          isHeads: true,
+                          loc: base,
+                          gen,
+                      })
                     : canvasId == "p1"
-                    ? penta(0, penrose.Pe1, false, base, gen)
+                    ? pentaNew({
+                          type: penrose.Pe1,
+                          angle: new Angle(0, false),
+                          isHeads: true,
+                          loc: base,
+                          gen,
+                      })
                     : canvasId == "s5"
                     ? star(0, penrose.St5, false, base, gen)
+                    ? pentaNew({
+                          type: penrose.Pe1,
+                          angle: new Angle(0, false),
+                          isHeads: true,
+                          loc: base,
+                          gen,
+                      })
                     : canvasId == "s3"
                     ? star(0, penrose.St3, false, base, gen)
                     : canvasId == "s1"
