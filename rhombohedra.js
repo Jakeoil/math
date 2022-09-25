@@ -284,3 +284,20 @@ function solarSystem() {
 
     requestAnimationFrame(render);
 }
+function lights() {
+    const canvas = document.querySelector("#lights");
+
+    // renderer
+    const renderer = new THREE.WebGLRenderer({ canvas });
+    const gui = new GUI();
+
+    const aspect = 2;
+    const camera = new THREE.PerspectiveCamera(47, aspect, 0.1, 100);
+
+    const controls = new OrbitControls(camera, canvas);
+    controls.target.set(0, 5, 0);
+    controls.update();
+
+    const planeSize = 40;
+    const texture = THREE.Loader.load("deca2.png");
+}
