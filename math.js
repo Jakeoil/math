@@ -88,11 +88,12 @@ function makeCanvas(canvasId) {
         let tries = 0;
 
         // Just for test.
-        let gen = 0;
+        let gen = 1;
         do {
             canvas.width = width;
             canvas.height = height;
             bounds = new Bounds();
+            console.log("penta");
             bounds.expand(
                 canvasId == "p5"
                     ? pentaNew({
@@ -119,33 +120,87 @@ function makeCanvas(canvasId) {
                           gen,
                       })
                     : canvasId == "s5"
-                    ? star(0, penrose.St5, false, base, gen)
-                    ? pentaNew({
-                          type: penrose.Pe1,
+                    ? starNew({
+                          type: penrose.St5,
                           angle: new Angle(0, false),
                           isHeads: true,
                           loc: base,
                           gen,
                       })
                     : canvasId == "s3"
-                    ? star(0, penrose.St3, false, base, gen)
+                    ? starNew({
+                          type: penrose.St3,
+                          angle: new Angle(0, false),
+                          isHeads: true,
+                          loc: base,
+                          gen,
+                      })
                     : canvasId == "s1"
-                    ? star(0, penrose.St1, false, base, gen)
+                    ? starNew({
+                          type: penrose.St1,
+                          angle: new Angle(0, false),
+                          isHeads: true,
+                          loc: base,
+                          gen,
+                      })
                     : null
             );
+            console.log("deca");
             bounds.expand(
                 canvasId == "p5"
-                    ? pentaRhomb(0, penrose.Pe5, true, base, gen)
+                    ? pentaNew({
+                          type: penrose.Pe5,
+                          angle: new Angle(0, true),
+                          isHeads: true,
+                          loc: base,
+                          gen,
+                          rhomb: true,
+                      })
                     : canvasId == "p3"
-                    ? pentaRhomb(0, penrose.Pe3, false, base, gen)
+                    ? pentaNew({
+                          type: penrose.Pe3,
+                          angle: new Angle(0, false),
+                          isHeads: true,
+                          loc: base,
+                          gen,
+                          rhomb: true,
+                      })
                     : canvasId == "p1"
-                    ? pentaRhomb(0, penrose.Pe1, false, base, gen)
+                    ? pentaNew({
+                          type: penrose.Pe1,
+                          angle: new Angle(0, false),
+                          isHeads: true,
+                          loc: base,
+                          gen,
+                          rhomb: true,
+                      })
                     : canvasId == "s5"
-                    ? starRhomb(0, penrose.St5, false, base, gen)
+                    ? starNew({
+                          type: penrose.St5,
+                          angle: new Angle(0, false),
+                          isHeads: true,
+                          loc: base,
+                          gen,
+                          rhomb: true,
+                      })
                     : canvasId == "s3"
-                    ? starRhomb(0, penrose.St3, false, base, gen)
+                    ? starNew({
+                          type: penrose.St3,
+                          angle: new Angle(0, false),
+                          isHeads: true,
+                          loc: base,
+                          gen,
+                          rhomb: true,
+                      })
                     : canvasId == "s1"
-                    ? starRhomb(0, penrose.St1, false, base, gen)
+                    ? starNew({
+                          type: penrose.St1,
+                          angle: new Angle(0, false),
+                          isHeads: true,
+                          loc: base,
+                          gen,
+                          rhomb: true,
+                      })
                     : null
             );
             bounds.pad(0.5);
@@ -206,7 +261,7 @@ function drawFirstInflation(id) {
         g.strokeStyle = penrose.OUTLINE;
         g.lineWidth = 1;
         let scale = 10;
-        const { penta, star, pentaRhomb, starRhomb } = iface(
+        const { penta, star, pentaRhomb, starRhomb, pentaNew, starNew } = iface(
             g,
             scale,
             shapeMode.shapeMode
@@ -217,59 +272,99 @@ function drawFirstInflation(id) {
         const UP = false;
         const DOWN = true;
         const bounds = new Bounds();
-        bounds.expand(penta(0, penrose.Pe5, UP, p(x, y), 1));
-        bounds.expand(pentaRhomb(0, penrose.Pe5, UP, p(x, y), 1));
-        penta(0, penrose.Pe5, DOWN, p(25, y), 1);
-        pentaRhomb(0, penrose.Pe5, DOWN, p(25, y), 1);
+        let type = penrose.Pe5;
+        let angle = new Angle(0, UP);
+        let loc = p(x, y);
+        let gen = 1;
+        let deca = true;
+
+        bounds.expand(pentaNew({ type, angle, loc, gen }));
+        bounds.expand(pentaNew({ type, angle, loc, gen, deca }));
+        type = penrose.Pe5;
+        angle = new Angle(0, DOWN);
+        loc = p(25, y);
+
+        bounds.expand(pentaNew({ type, angle, loc, gen }));
+        bounds.expand(pentaNew({ type, angle, loc, gen, deca }));
+
         y += 18;
+
+        type = penrose.Pe3;
         for (let i = 0; i < 5; i++) {
-            penta(i, penrose.Pe3, UP, p(x + i * 20, y), 1);
-            pentaRhomb(i, penrose.Pe3, UP, p(x + i * 20, y), 1);
+            angle = new Angle(i, UP);
+            loc = p(x + i * 20, y);
+            bounds.expand(pentaNew({ type, angle, loc, gen }));
+            bounds.expand(pentaNew({ type, angle, loc, gen, deca }));
+        }
+        y += 20;
+
+        for (let i = 0; i < 5; i++) {
+            angle = new Angle(i, DOWN);
+            loc = p(x + i * 20, y);
+            bounds.expand(pentaNew({ type, angle, loc, gen }));
+            bounds.expand(pentaNew({ type, angle, loc, gen, deca }));
+        }
+        y += 20;
+        type = penrose.Pe1;
+        for (let i = 0; i < 5; i++) {
+            angle = new Angle(i, UP);
+            loc = p(x + i * 20, y);
+            bounds.expand(pentaNew({ type, angle, loc, gen }));
+            bounds.expand(pentaNew({ type, angle, loc, gen, deca }));
         }
         y += 20;
         for (let i = 0; i < 5; i++) {
-            penta(i, penrose.Pe3, DOWN, p(x + i * 20, y), 1);
-            pentaRhomb(i, penrose.Pe3, DOWN, p(x + i * 20, y), 1);
-        }
-        y += 20;
-        for (let i = 0; i < 5; i++) {
-            penta(i, penrose.Pe1, UP, p(x + i * 20, y), 1);
-            pentaRhomb(i, penrose.Pe1, UP, p(x + i * 20, y), 1);
-        }
-        y += 20;
-        for (let i = 0; i < 5; i++) {
-            penta(i, penrose.Pe1, DOWN, p(x + i * 20, y), 1);
-            bounds.expand(
-                pentaRhomb(i, penrose.Pe1, DOWN, p(x + i * 20, y), 1)
-            );
+            angle = new Angle(i, DOWN);
+            loc = p(x + i * 20, y);
+            bounds.expand(pentaNew({ type, angle, loc, gen }));
+            bounds.expand(pentaNew({ type, angle, loc, gen, deca }));
         }
         y += 25;
-        star(0, penrose.St5, UP, p(15, y), 1);
-        starRhomb(0, penrose.St5, UP, p(15, y), 1);
-        star(0, penrose.St5, DOWN, p(45, y), 1);
-        starRhomb(0, penrose.St5, DOWN, p(45, y), 1);
+        type = penrose.St5;
+        angle = new Angle(0, UP);
+        loc = p(15, y);
+
+        starNew({ type, angle, loc, gen });
+        starNew({ type, angle, loc, gen, deca });
+
+        angle = new Angle(0, DOWN);
+        loc = p(45, y);
+        starNew({ type, angle, loc, gen });
+        starNew({ type, angle, loc, gen, deca });
+
         x = 10;
         y += 30;
+
+        type = penrose.St1;
         for (let i = 0; i < 5; i++) {
-            star(i, penrose.St1, UP, p(x + i * 20, y), 1);
-            starRhomb(i, penrose.St1, UP, p(x + i * 20, y), 1);
+            angle = new Angle(i, UP);
+            loc = p(x + i * 20, y);
+            starNew({ type, angle, loc, gen });
+            starNew({ type, angle, loc, gen, deca });
         }
         y += 25;
         for (let i = 0; i < 5; i++) {
-            star(i, penrose.St1, DOWN, p(x + i * 20, y), 1);
-            starRhomb(i, penrose.St1, DOWN, p(x + i * 20, y), 1);
-        }
-        x = 15;
-        y += 25;
-        for (let i = 0; i < 5; i++) {
-            star(i, penrose.St3, UP, p(x + i * 25, y), 1);
-            starRhomb(i, penrose.St3, UP, p(x + i * 25, y), 1);
+            angle = new Angle(i, DOWN);
+            loc = p(x + i * 20, y);
+            starNew({ type, angle, loc, gen });
+            starNew({ type, angle, loc, gen, deca });
         }
 
+        x = 15;
+        y += 25;
+        type = penrose.St3;
+        for (let i = 0; i < 5; i++) {
+            angle = new Angle(i, UP);
+            loc = p(x + i * 25, y);
+            starNew({ type, angle, loc, gen });
+            starNew({ type, angle, loc, gen, deca });
+        }
         y += 25;
         for (let i = 0; i < 5; i++) {
-            bounds.expand(star(i, penrose.St3, DOWN, p(x + i * 25, y), 1));
-            bounds.expand(starRhomb(i, penrose.St3, DOWN, p(x + i * 25, y), 1));
+            angle = new Angle(i, DOWN);
+            loc = p(x + i * 25, y);
+            bounds.expand(starNew({ type, angle, loc, gen }));
+            bounds.expand(starNew({ type, angle, loc, gen, deca }));
         }
         // conditional redraw
         redraw(bounds, canvas, drawScreen, scale);
