@@ -413,13 +413,13 @@ function drawSecondInflation(id) {
         let y = 25;
 
         //penta(0, penrose.Pe5, UP, p(x, y), 2);
-        //pentaRhomb(0, penrose.Pe5, UP, p(x, y), 2);
-        // pentaNew({
-        //     type: penrose.Pe5,
-        //     angle: new Angle(0, UP),
-        //     loc: p(x, y),
-        //     gen: 2,
-        // });
+        pentaRhomb(0, penrose.Pe5, UP, p(x, y), 2);
+        pentaNew({
+            type: penrose.Pe5,
+            angle: new Angle(0, UP),
+            loc: p(x, y),
+            gen: 2,
+        });
         pentaNew({
             type: penrose.Pe5,
             angle: new Angle(0, UP),
@@ -428,45 +428,85 @@ function drawSecondInflation(id) {
             rhomb: true,
         });
 
-        penta(0, penrose.Pe5, DOWN, p(x + 50, y), 2); //
+        let type = penrose.Pe5;
+        let angle = new Angle(0, DOWN);
+        let loc = p(x + 50, y);
+        let gen = 2;
+        let rhomb = true;
+
+        pentaNew({ type, angle, loc, gen });
         y += 50;
         x = 25;
+        type = penrose.Pe3;
+
         for (let i = 0; i < 5; i++) {
-            penta(i, penrose.Pe3, UP, p(x + i * 50, y), 2);
+            angle = new Angle(i, UP);
+            loc = p(x + i * 50, y);
+            pentaNew({ type, angle, loc, gen });
         }
         y += 55;
+
         for (let i = 0; i < 5; i++) {
-            penta(i, penrose.Pe3, DOWN, p(x + i * 50, y), 2);
+            angle = new Angle(i, DOWN);
+            loc = p(x + i * 50, y);
+            pentaNew({ type, angle, loc, gen });
+            //            penta(i, penrose.Pe3, DOWN, p(x + i * 50, y), 2);
         }
         y += 50;
+        type = penrose.Pe1;
         for (let i = 0; i < 5; i++) {
-            penta(i, penrose.Pe1, UP, p(x + i * 50, y), 2);
+            angle = new Angle(i, UP);
+            loc = p(x + i * 50, y);
+            pentaNew({ type, angle, loc, gen });
+            //penta(i, penrose.Pe1, UP, p(x + i * 50, y), 2);
         }
         y += 55;
         for (let i = 0; i < 5; i++) {
-            penta(i, penrose.Pe1, DOWN, p(x + i * 50, y), 2);
+            angle = new Angle(i, DOWN);
+            loc = p(x + i * 50, y);
+            pentaNew({ type, angle, loc, gen });
+            //          penta(i, penrose.Pe1, DOWN, p(x + i * 50, y), 2);
         }
         y += 60; // one thru four
-        star(0, penrose.St5, UP, p(35, y), 2);
-        starRhomb(0, penrose.St5, UP, p(35, y), 2);
-        star(0, penrose.St5, DOWN, p(100, y), 2);
-        starRhomb(0, penrose.St5, DOWN, p(100, y), 2);
+        type = penrose.St5;
+        angle = new Angle(0, UP);
+        loc = p(35, y);
+        starNew({ type, angle, loc, gen });
+        starNew({ type, angle, loc, gen, rhomb });
+        //star(0, penrose.St5, UP, p(35, y), 2);
+        //starRhomb(0, penrose.St5, UP, p(35, y), 2);
+
+        angle = new Angle(0, DOWN);
+        loc = p(100, y);
+        starNew({ type, angle, loc, gen });
+        starNew({ type, angle, loc, gen, rhomb });
         y += 74; // one thru four
         x = 35;
+        type = penrose.St3;
+
         for (let i = 0; i < 5; i++) {
-            star(i, penrose.St3, UP, p(x + i * 67, y), 2);
+            angle = new Angle(i, UP);
+            loc = p(x + i * 67, y);
+            starNew({ type, angle, loc, gen });
         }
         y += 70; // one thru four
         for (let i = 0; i < 5; i++) {
-            star(i, penrose.St3, DOWN, p(x + i * 67, y), 2);
+            angle = new Angle(i, DOWN);
+            loc = p(x + i * 67, y);
+            starNew({ type, angle, loc, gen });
         }
+        type = penrose.St1;
         y += 75; // one thru four
         for (let i = 0; i < 5; i++) {
-            star(i, penrose.St1, UP, p(x + i * 50, y), 2);
+            angle = new Angle(i, UP);
+            loc = p(x + i * 50, y);
+            starNew({ type, angle, loc, gen });
         }
         y += 60; // one thru four
         for (let i = 0; i < 5; i++) {
-            star(i, penrose.St1, DOWN, p(x + i * 50, y), 2);
+            angle = new Angle(i, DOWN);
+            loc = p(x + i * 50, y);
+            starNew({ type, angle, loc, gen });
         }
     }
 }
@@ -496,7 +536,7 @@ function drawGridWork(id) {
         g.strokeStyle = penrose.OUTLINE;
         g.lineWidth = 1;
         let scale = 10;
-        const { deca, decaRhomb, grid, figure, outline } = iface(
+        const { deca, decaRhomb, grid, figure, outline, decaNew } = iface(
             g,
             scale,
             shapeMode.shapeMode
@@ -555,9 +595,16 @@ function drawGridWork(id) {
         isDown = false;
         base = p(15, 75);
         exp = 1;
-        deca(fifths, isDown, base, exp);
+        //deca(fifths, isDown, base, exp);
+        decaNew({ angle: new Angle(fifths, isDown), loc: base, gen: exp });
         grid(base, 10);
-        decaRhomb(fifths, isDown, base, exp);
+        decaNew({
+            angle: new Angle(fifths, isDown),
+            loc: base,
+            gen: exp,
+            rhomb: true,
+        });
+        //decaRhomb(fifths, isDown, base, exp);
 
         fifths = 0;
         isDown = false;

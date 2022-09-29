@@ -144,6 +144,7 @@ export function iface(g, scale, mode) {
     const outline = screen.outline.bind(screen);
     const pentaNew = screen.pentaNew.bind(screen);
     const starNew = screen.starNew.bind(screen);
+    const decaNew = screen.decaNew.bind(screen);
     return {
         penta,
         star,
@@ -156,6 +157,7 @@ export function iface(g, scale, mode) {
         outline,
         pentaNew,
         starNew,
+        decaNew,
     };
 }
 
@@ -831,6 +833,119 @@ export class PenroseScreen {
                 gen - 1,
                 !isHeads
             )
+        );
+        return bounds;
+    }
+
+    decaNew({ angle, isHeads = true, loc, gen, ...options }) {
+        console.log(
+            `type: deca, angle: ${angle}, loc: ${loc}, gen: ${gen}, options: ${JSON.stringify(
+                options
+            )}`
+        );
+
+        const { overlays } = globals;
+        const bounds = new Bounds();
+        if (gen == 0) {
+            return bounds;
+        }
+
+        const wheels = penrose[this.mode].wheels;
+
+        // Move the center of the decagon to the real center.
+        let dUp = wheels.d[gen].up;
+        let dDown = wheels.d[gen].down;
+        let dOff = angle.isDown ? dUp[angle.fifths] : dDown[angle.fifths];
+        let base = loc.tr(dOff);
+
+        let offs; // Work variable
+
+        // The central yellow pentagon
+        bounds.expand(
+            this.pentaNew({
+                type: penrose.Pe3,
+                angle: angle,
+                gen: gen - 1,
+                isHeads,
+                loc: base,
+                ...options,
+            })
+        );
+
+        const sUp = wheels.s[gen].up;
+        const sDown = wheels.s[gen].down;
+
+        // The two diamonds
+        offs = angle.isDown
+            ? sDown[angle.rot(1).fifths]
+            : sUp[angle.rot(1).fifths];
+        bounds.expand(
+            this.starNew({
+                type: penrose.St1,
+                angle: angle.rot(3),
+                isHeads,
+                loc: base.tr(offs),
+                gen: gen - 1,
+                ...options,
+            })
+        ); // sd1
+
+        offs = angle.isDown ? sDown[angle.ccw.fifths] : sUp[angle.ccw.fifths];
+        bounds.expand(
+            this.starNew({
+                type: penrose.St1,
+                angle: angle.rot(2),
+                isHeads,
+                loc: base.tr(offs),
+                gen: gen - 1,
+                ...options,
+            })
+        ); // sd4
+
+        const pUp = wheels.p[gen].up;
+        const pDown = wheels.p[gen].down;
+
+        // The two orange pentagons
+        offs = angle.isDown
+            ? pUp[angle.rot(3).fifths]
+            : pDown[angle.rot(3).fifths];
+        bounds.expand(
+            this.pentaNew({
+                angle: angle.rot(2).inv,
+                type: penrose.Pe1,
+                loc: base.tr(offs),
+                gen: gen - 1,
+                isHeads: !isHeads,
+                ...options,
+            })
+        );
+
+        offs = angle.isDown
+            ? pUp[angle.rot(2).fifths]
+            : pDown[angle.rot(2).fifths];
+        bounds.expand(
+            this.pentaNew({
+                angle: angle.rot(3).inv,
+                type: penrose.Pe1,
+                loc: base.tr(offs),
+                gen: gen - 1,
+                isHeads: !isHeads,
+                ...options,
+            })
+        );
+
+        // And the boat
+        offs = angle.isDown
+            ? pUp[angle.rot(2).fifths].tr(sUp[angle.rot(3).fifths])
+            : pDown[angle.rot(2).fifths].tr(sDown[angle.rot(3).fifths]);
+        bounds.expand(
+            this.starNew({
+                angle: angle.inv,
+                type: penrose.St3,
+                loc: base.tr(offs),
+                gen: gen - 1,
+                isHeads: !isHeads,
+            })
         );
         return bounds;
     }
