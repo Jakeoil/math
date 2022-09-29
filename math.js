@@ -403,7 +403,7 @@ function drawSecondInflation(id) {
         g.strokeStyle = penrose.OUTLINE;
         g.lineWidth = 1;
         let scale = 5;
-        const { star, penta, pentaRhomb, starRhomb } = iface(
+        const { star, penta, pentaRhomb, starRhomb, starNew, pentaNew } = iface(
             g,
             scale,
             shapeMode.shapeMode
@@ -411,8 +411,22 @@ function drawSecondInflation(id) {
 
         let x = 25;
         let y = 25;
-        penta(0, penrose.Pe5, UP, p(x, y), 2);
-        pentaRhomb(0, penrose.Pe5, UP, p(x, y), 2);
+
+        //penta(0, penrose.Pe5, UP, p(x, y), 2);
+        //pentaRhomb(0, penrose.Pe5, UP, p(x, y), 2);
+        // pentaNew({
+        //     type: penrose.Pe5,
+        //     angle: new Angle(0, UP),
+        //     loc: p(x, y),
+        //     gen: 2,
+        // });
+        pentaNew({
+            type: penrose.Pe5,
+            angle: new Angle(0, UP),
+            loc: p(x, y),
+            gen: 2,
+            rhomb: true,
+        });
 
         penta(0, penrose.Pe5, DOWN, p(x + 50, y), 2); //
         y += 50;

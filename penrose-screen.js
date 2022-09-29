@@ -486,7 +486,7 @@ export class PenroseScreen {
     drawPentaPatternNew({ type, angle, isHeads, loc, gen, ...options }) {
         const { overlays } = globals; // don't forget the options
         const bounds = new Bounds();
-        if (options.deca) {
+        if (options.rhomb) {
             return bounds;
         }
 
@@ -656,14 +656,15 @@ export class PenroseScreen {
 
         if (options.rhomb) {
             if (gen == 1 && !overlays.smallRhomb) {
-                this.drawNewRhombusPattern(
+                console.log(options);
+                this.drawNewRhombusPattern({
                     type,
                     angle,
                     isHeads,
                     loc,
                     gen,
-                    ...options
-                );
+                    ...options,
+                });
                 return bounds;
             }
         }
