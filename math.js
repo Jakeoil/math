@@ -712,77 +712,132 @@ function drawGeneric123(id) {
     g.strokeStyle = penrose.OUTLINE;
     g.lineWidth = 1;
     let scale = 10;
-    const { penta, star, deca, pentaRhomb, starRhomb, decaRhomb } = iface(
-        g,
-        scale,
-        shapeMode.shapeMode
-    );
+    const {
+        penta,
+        star,
+        deca,
+        pentaRhomb,
+        starRhomb,
+        decaRhomb,
+        pentaNew,
+        starNew,
+        decaNew,
+    } = iface(g, scale, shapeMode.shapeMode);
 
     const drawScreen = function () {
         let x = 13;
         let y = 26;
         const bounds = new Bounds();
         const type = controls.typeList[controls.typeIndex];
+        const angle = new Angle(controls.fifths, controls.isDown);
         switch (type) {
             case penrose.Pe1:
             case penrose.Pe3:
             case penrose.Pe5:
+                // bounds.expand(
+                //     penta(controls.fifths, type, controls.isDown, p(x, y), 0)
+                // );
+                // bounds.expand(
+                //     pentaRhomb(
+                //         controls.fifths,
+                //         type,
+                //         controls.isDown,
+                //         p(x, y),
+                //         0
+                //     )
+                // );
+                bounds.expand(pentaNew({ type, angle, loc: p(x, y), gen: 0 }));
                 bounds.expand(
-                    penta(controls.fifths, type, controls.isDown, p(x, y), 0)
-                );
-                bounds.expand(
-                    pentaRhomb(
-                        controls.fifths,
-                        type,
-                        controls.isDown,
-                        p(x, y),
-                        0
-                    )
+                    pentaNew({ type, angle, loc: p(x, y), gen: 0, rhomb: true })
                 );
                 x += 21;
-                penta(controls.fifths, type, controls.isDown, p(x, y), 1);
-                pentaRhomb(controls.fifths, type, controls.isDown, p(x, y), 1);
+                // penta(controls.fifths, type, controls.isDown, p(x, y), 1);
+                // pentaRhomb(controls.fifths, type, controls.isDown, p(x, y), 1);
+                bounds.expand(pentaNew({ type, angle, loc: p(x, y), gen: 1 }));
+                bounds.expand(
+                    pentaNew({ type, angle, loc: p(x, y), gen: 1, rhomb: true })
+                );
                 x += 34;
-                penta(controls.fifths, type, controls.isDown, p(x, y), 2);
-                pentaRhomb(controls.fifths, type, controls.isDown, p(x, y), 2);
+                // penta(controls.fifths, type, controls.isDown, p(x, y), 2);
+                // pentaRhomb(controls.fifths, type, controls.isDown, p(x, y), 2);
+                bounds.expand(pentaNew({ type, angle, loc: p(x, y), gen: 2 }));
+                bounds.expand(
+                    pentaNew({ type, angle, loc: p(x, y), gen: 2, rhomb: true })
+                );
                 x = 73;
                 y += 100;
-                penta(controls.fifths, type, controls.isDown, p(x, y), 3);
-                pentaRhomb(controls.fifths, type, controls.isDown, p(x, y), 3);
+                bounds.expand(pentaNew({ type, angle, loc: p(x, y), gen: 3 }));
+                bounds.expand(
+                    pentaNew({ type, angle, loc: p(x, y), gen: 3, rhomb: true })
+                );
+                // penta(controls.fifths, type, controls.isDown, p(x, y), 3);
+                // pentaRhomb(controls.fifths, type, controls.isDown, p(x, y), 3);
 
                 break;
             case penrose.St1:
             case penrose.St3:
             case penrose.St5:
                 y += 10;
-                star(controls.fifths, type, controls.isDown, p(x, y), 0);
-                starRhomb(controls.fifths, type, controls.isDown, p(x, y), 0);
+                // star(controls.fifths, type, controls.isDown, p(x, y), 0);
+                // starRhomb(controls.fifths, type, controls.isDown, p(x, y), 0);
+                bounds.expand(starNew({ type, angle, loc: p(x, y), gen: 0 }));
+                bounds.expand(
+                    starNew({ type, angle, loc: p(x, y), gen: 0, rhomb: true })
+                );
                 x += 21;
-                star(controls.fifths, type, controls.isDown, p(x, y), 1);
-                starRhomb(controls.fifths, type, controls.isDown, p(x, y), 1);
+                // star(controls.fifths, type, controls.isDown, p(x, y), 1);
+                // starRhomb(controls.fifths, type, controls.isDown, p(x, y), 1);
+                bounds.expand(starNew({ type, angle, loc: p(x, y), gen: 1 }));
+                bounds.expand(
+                    starNew({ type, angle, loc: p(x, y), gen: 1, rhomb: true })
+                );
                 x += 54;
-                star(controls.fifths, type, controls.isDown, p(x, y), 2);
-                starRhomb(controls.fifths, type, controls.isDown, p(x, y), 2);
+                // star(controls.fifths, type, controls.isDown, p(x, y), 2);
+                // starRhomb(controls.fifths, type, controls.isDown, p(x, y), 2);
+                bounds.expand(starNew({ type, angle, loc: p(x, y), gen: 2 }));
+                bounds.expand(
+                    starNew({ type, angle, loc: p(x, y), gen: 2, rhomb: true })
+                );
                 x = 93;
                 y += 130;
-                star(controls.fifths, type, controls.isDown, p(x, y), 3);
-                starRhomb(controls.fifths, type, controls.isDown, p(x, y), 3);
+                // star(controls.fifths, type, controls.isDown, p(x, y), 3);
+                // starRhomb(controls.fifths, type, controls.isDown, p(x, y), 3);
+                bounds.expand(starNew({ type, angle, loc: p(x, y), gen: 3 }));
+                bounds.expand(
+                    starNew({ type, angle, loc: p(x, y), gen: 3, rhomb: true })
+                );
 
                 break;
             case penrose.Deca:
-                deca(controls.fifths, controls.isDown, p(x, y), 1);
-                decaRhomb(controls.fifths, controls.isDown, p(x, y), 1);
+                // deca(controls.fifths, controls.isDown, p(x, y), 1);
+                // decaRhomb(controls.fifths, controls.isDown, p(x, y), 1);
+                bounds.expand(decaNew({ angle, loc: p(x, y), gen: 1 }));
+                bounds.expand(
+                    decaNew({ angle, loc: p(x, y), gen: 1, rhomb: true })
+                );
                 x += 31;
-                deca(controls.fifths, controls.isDown, p(x, y), 2);
-                decaRhomb(controls.fifths, controls.isDown, p(x, y), 2);
+                // deca(controls.fifths, controls.isDown, p(x, y), 2);
+                // decaRhomb(controls.fifths, controls.isDown, p(x, y), 2);
+                bounds.expand(decaNew({ angle, loc: p(x, y), gen: 2 }));
+                bounds.expand(
+                    decaNew({ angle, loc: p(x, y), gen: 2, rhomb: true })
+                );
                 x += 64;
                 y += 30;
-                deca(controls.fifths, controls.isDown, p(x, y), 3);
-                decaRhomb(controls.fifths, controls.isDown, p(x, y), 3);
+                // deca(controls.fifths, controls.isDown, p(x, y), 3);
+                // decaRhomb(controls.fifths, controls.isDown, p(x, y), 3);
+                bounds.expand(decaNew({ angle, loc: p(x, y), gen: 3 }));
+                bounds.expand(
+                    decaNew({ angle, loc: p(x, y), gen: 3, rhomb: true })
+                );
                 y += 170;
                 x += 30;
-                deca(controls.fifths, controls.isDown, p(x, y), 4);
-                decaRhomb(controls.fifths, controls.isDown, p(x, y), 4);
+                // deca(controls.fifths, controls.isDown, p(x, y), 4);
+                // decaRhomb(controls.fifths, controls.isDown, p(x, y), 4);
+                bounds.expand(decaNew({ angle, loc: p(x, y), gen: 4 }));
+                bounds.expand(
+                    decaNew({ angle, loc: p(x, y), gen: 4, rhomb: true })
+                );
                 break;
         }
     };
@@ -811,14 +866,14 @@ function drawGeneric3(id) {
     const drawScreen = function () {
         let x = 100;
         let y = 250;
-
+        let angle = new Angle(controls.fifths, controls.isDown);
         let decagon = true;
         if (decagon) {
-            deca(controls.fifths, controls.isDown, p(20, 20), 1);
-            deca(controls.fifths, controls.isDown, p(50, 50), 2);
-            deca(controls.fifths, controls.isDown, p(210, 80), 3);
-            deca(controls.fifths, controls.isDown, p(x, y), 6);
-            decaRhomb(controls.fifths, controls.isDown, p(x, y), 6);
+            // deca(controls.fifths, controls.isDown, p(20, 20), 1);
+            // deca(controls.fifths, controls.isDown, p(50, 50), 2);
+            // deca(controls.fifths, controls.isDown, p(210, 80), 3);
+            decaNew({ angle, loc: p(x, y), gen: 6 });
+            decaNew({ angle, loc: p(x, y), gen: 6, rhomb: true });
         } else {
             console.log(`drawScreen ${controls.typeIndex}`);
             const type = controls.typeList[controls.typeIndex];
@@ -827,14 +882,25 @@ function drawGeneric3(id) {
                 case penrose.Pe3:
                 case penrose.Pe5:
                     console.log("draw penta");
-                    penta(controls.fifths, type, controls.isDown, p(x, y), 3);
+                    pentaNew({
+                        type,
+                        angle: new Angle(controls.fifths, controls.isDown),
+                        loc: p(x, y),
+                        gen: 3,
+                    });
 
                     break;
                 case penrose.St1:
                 case penrose.St3:
                 case penrose.St5:
                     console.log("draw star");
-                    star(controls.fifths, type, controls.isDown, p(x, y), 3);
+                    starNew({
+                        type,
+                        angle: new Angle(controls.fifths, controls.isDown),
+                        loc: p(x, y),
+                        gen: 3,
+                    });
+                    //star(controls.fifths, type, controls.isDown, p(x, y), 3);
                     break;
             }
         }

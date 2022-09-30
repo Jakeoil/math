@@ -29,24 +29,28 @@ function drawQuadrille() {
     g.strokeStyle = penrose.OUTLINE;
     g.lineWidth = 1;
     const scale = 3.7;
-    const { deca } = iface(g, scale, measureTaskGlobals.shapeMode.MODE_REAL);
+    const { deca, decaNew } = iface(
+        g,
+        scale,
+        measureTaskGlobals.shapeMode.MODE_REAL
+    );
 
-    let base = p(0, 0);
+    let loc = p(0, 0);
     let fifths = 0;
     let isDown = false;
-    let exp = 2;
+    let gen = 2;
     // Now some decagons
     let bounds = new Bounds();
-    bounds.expand(deca(fifths, isDown, base, exp));
+    bounds.expand(decaNew({ angle: new Angle(fifths, isDown), loc, gen }));
     if (bounds.isEmpty) {
-        bounds.addPoint(base, p(0, 0));
+        bounds.addPoint(loc, p(0, 0));
     }
-    base = base.tr(p(bounds.minPoint.x, bounds.minPoint.y).neg);
+    loc = loc.tr(p(bounds.minPoint.x, bounds.minPoint.y).neg);
     canvas.width = (bounds.maxPoint.x - bounds.minPoint.x) * scale;
     canvas.height = (bounds.maxPoint.y - bounds.minPoint.y) * scale;
 
     bounds = new Bounds();
-    bounds.expand(deca(fifths, isDown, base, exp));
+    bounds.expand(decaNew({ angle: new Angle(fifths, isDown), loc, gen }));
     bounds = new Bounds();
     const img = canvas.toDataURL("img.png");
 }
