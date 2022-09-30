@@ -890,7 +890,9 @@ export class PenroseScreen {
             })
         ); // sd1
 
-        offs = angle.isDown ? sDown[angle.ccw.fifths] : sUp[angle.ccw.fifths];
+        offs = angle.isDown
+            ? sDown[angle.rot(4).fifths]
+            : sUp[angle.rot(4).fifths];
         bounds.expand(
             this.starNew({
                 type: penrose.St1,
@@ -945,6 +947,7 @@ export class PenroseScreen {
                 loc: base.tr(offs),
                 gen: gen - 1,
                 isHeads: !isHeads,
+                ...options,
             })
         );
         return bounds;

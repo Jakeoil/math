@@ -610,41 +610,82 @@ function drawGridWork(id) {
         isDown = false;
         base = p(45, 75);
         exp = 2;
-        deca(fifths, isDown, base, exp);
+        decaNew({ angle: new Angle(fifths, isDown), loc: base, gen: exp });
         grid(base, 18);
-        decaRhomb(fifths, isDown, base, exp);
+        decaNew({
+            angle: new Angle(fifths, isDown),
+            loc: base,
+            gen: exp,
+            rhomb: true,
+        });
 
         fifths = 3;
         isDown = true;
         base = p(15, 115);
         exp = 1;
-        deca(fifths, isDown, base, exp);
+        decaNew({
+            angle: new Angle(fifths, isDown),
+            loc: base,
+            gen: exp,
+        });
         grid(base, 10);
-        decaRhomb(fifths, isDown, base, exp);
+        decaNew({
+            angle: new Angle(fifths, isDown),
+            loc: base,
+            gen: exp,
+            rhomb: true,
+        });
 
         fifths = 3;
         isDown = true;
         base = p(45, 115);
         exp = 2;
-        deca(fifths, isDown, base, exp);
+        decaNew({
+            angle: new Angle(fifths, isDown),
+            loc: base,
+            gen: exp,
+        });
         grid(base, 18);
-        decaRhomb(fifths, isDown, base, exp);
+        decaNew({
+            angle: new Angle(fifths, isDown),
+            loc: base,
+            gen: exp,
+            rhomb: true,
+        });
 
         fifths = 1;
         isDown = false;
         base = p(15, 155);
         exp = 1;
-        deca(fifths, isDown, base, exp);
+        decaNew({
+            angle: new Angle(fifths, isDown),
+            loc: base,
+            gen: exp,
+        });
         grid(base, 10);
-        decaRhomb(fifths, isDown, base, exp);
+        decaNew({
+            angle: new Angle(fifths, isDown),
+            loc: base,
+            gen: exp,
+            rhomb: true,
+        });
 
         fifths = 1;
         isDown = false;
         base = p(45, 155);
         exp = 2;
-        deca(fifths, isDown, base, exp);
+        decaNew({
+            angle: new Angle(fifths, isDown),
+            loc: base,
+            gen: exp,
+        });
         grid(base, 18);
-        decaRhomb(fifths, isDown, base, exp);
+        decaNew({
+            angle: new Angle(fifths, isDown),
+            loc: base,
+            gen: exp,
+            rhomb: true,
+        });
     }
 }
 
