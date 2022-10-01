@@ -126,9 +126,9 @@ function testMix() {
  */
 export function iface(g, scale, mode) {
     let screen = new PenroseScreen(g, scale, mode);
-    const grid = screen.grid.bind(screen);
-    const figure = screen.figure.bind(screen);
-    const outline = screen.outline.bind(screen);
+    const grid = screen.context.grid.bind(screen.context);
+    const figure = screen.context.figure.bind(screen.context);
+    const outline = screen.context.outline.bind(screen.context);
     const penta = screen.penta.bind(screen);
     const star = screen.star.bind(screen);
     const deca = screen.deca.bind(screen);
@@ -171,7 +171,246 @@ function pColor(type) {
     } else return type.defaultColor;
 }
 
-class canvasContext {}
+class CanvasContext {
+    constructor(g, scale) {
+        this.g = g;
+        this.scale = scale;
+    }
+    /***
+     * Used by Mosaic figure.
+     * This is the routine that ultimately renders the 'tile'
+     * @param {*} fill One of the colors
+     * @param {*} offset Location in P format
+     * @param {*} shape centered array of 'pixels' centered.
+     * Prerequisites: Globals g and scale
+     */
+    figure(fill, offset, shape) {
+        const { pentaStyle } = globals;
+        const { g, scale } = this;
+        let currentStrokeStyle = g.strokeStyle;
+        let currentLineWidth = g.lineWidth;
+        let currentfillStyle = g.fillStyle;
+        g.fillStyle = fill; //e.g penrose.ORANGE;
+        g.strokeStyle = penrose.OUTLINE;
+
+        const bounds = new Bounds();
+        for (const point of shape) {
+            g.fillRect(
+                offset.x * scale + point.x * scale,
+                offset.y * scale + point.y * scale,
+                scale,
+                scale
+            );
+            if (scale >= 5) {
+                g.strokeRect(
+                    offset.x * scale + point.x * scale,
+                    offset.y * scale + point.y * scale,
+                    scale,
+                    scale
+                );
+            }
+            bounds.addPoint(offset, point);
+            bounds.addPoint(offset, point.tr(p(1, 1)));
+        }
+
+        g.strokeStyle = currentStrokeStyle;
+        g.lineWidth = currentLineWidth;
+        g.fillStyle = currentfillStyle;
+
+        return bounds;
+    }
+
+    /***
+     * Used for quadrille
+     *
+     */
+    outline(fill, offset, shape) {
+        const { pentaStyle } = globals;
+        const { g, scale } = this;
+        let currentStrokeStyle = g.strokeStyle;
+        let currentLineWidth = g.lineWidth;
+        let currentfillStyle = g.fillStyle;
+
+        let start = true;
+        if (!pentaStyle || pentaStyle.stroke == pentaStyle.SOLID) {
+            g.strokeStyle = "#000000";
+            g.lineWidth = 1;
+        }
+
+        if (!pentaStyle || pentaStyle.fill == pentaStyle.SOLID) {
+            g.fillStyle = fill;
+        } else if (pentaStyle && pentaStyle.fill == pentaStyle.TRANSPARENT) {
+            g.fillStyle = fill + "80";
+        }
+
+        const bounds = new Bounds();
+        for (const point of shape) {
+            if (start) {
+                g.beginPath();
+                g.moveTo(
+                    (point.x + offset.x) * scale,
+                    (point.y + offset.y) * scale
+                );
+                start = false;
+            } else {
+                g.lineTo(
+                    (point.x + offset.x) * scale,
+                    (point.y + offset.y) * scale
+                );
+            }
+
+            bounds.addPoint(offset, point);
+        }
+        g.closePath();
+        if (!pentaStyle || pentaStyle.stroke != pentaStyle.NONE) {
+            g.stroke();
+        }
+
+        // fill by default
+        if (!pentaStyle || pentaStyle.fill != pentaStyle.NONE) {
+            g.fill();
+        }
+        g.strokeStyle = currentStrokeStyle;
+        g.lineWidth = currentLineWidth;
+        g.fillStyle = currentfillStyle;
+
+        return bounds;
+    }
+
+    /**
+     * Draw a 2 size x 2 size grid matching the scale
+     * @param {point} offset - Point indicating center of grid
+     * @param {*} size
+     */
+    grid(offset, size) {
+        const bounds = new Bounds();
+        const { g, scale } = this;
+        g.strokeStyle = penrose.OUTLINE;
+        for (let y = -size; y < size; y++) {
+            for (let x = -size; x < size; x++) {
+                g.strokeRect(
+                    offset.x * scale + x * scale,
+                    offset.y * scale + y * scale,
+                    scale,
+                    scale
+                );
+            }
+        }
+        //
+        g.strokeStyle = "#FF0000";
+        g.beginPath();
+        g.moveTo(offset.x * scale, (offset.y - size) * scale);
+        g.lineTo(offset.x * scale, (offset.y + size) * scale);
+        g.stroke();
+
+        g.beginPath();
+        g.moveTo((offset.x - size) * scale, offset.y * scale);
+        g.lineTo((offset.x + size) * scale, offset.y * scale);
+        g.stroke();
+
+        bounds.addPoint(offset, p(-size, -size));
+        bounds.addPoint(offset, p(size, size));
+        return bounds;
+    }
+
+    line(loc, end, strokeStyle) {
+        const { g, scale } = this;
+
+        const bounds = new Bounds();
+        const currentWidth = g.lineWidth;
+        const currentStrokeStyle = g.strokeStyle;
+        g.strokeStyle = strokeStyle ? strokeStyle : "black";
+        g.lineWidth = 1;
+        g.beginPath();
+        g.moveTo(loc.x * scale, loc.y * scale);
+        g.lineTo(end.x * scale, end.y * scale);
+        bounds.addPoint(loc, loc);
+        bounds.addPoint(loc, end);
+        g.stroke();
+
+        g.lineWidth = currentWidth;
+        g.strokeStyle = currentStrokeStyle;
+        return bounds;
+    }
+
+    getGradient(fill, offset, shape, isHeads) {
+        const { g, scale } = this;
+
+        const point0 = shape[0].tr(offset).mult(scale);
+        const point1 = shape[2].tr(offset).mult(scale);
+        const canvasGradient = g.createLinearGradient(
+            point0.x,
+            point0.y,
+            point1.x,
+            point1.y
+        );
+        if (isHeads) {
+            canvasGradient.addColorStop(0, "#fff");
+            canvasGradient.addColorStop(2 / 3, fill);
+            // color stop 1 has to be 1/3 of the way to "#000"
+            const endColor = mix(fill, "#000", 1 / 3);
+            canvasGradient.addColorStop(1, endColor);
+        } else {
+            canvasGradient.addColorStop(0, "#000");
+            canvasGradient.addColorStop(2 / 3, fill);
+            const endColor = mix(fill, "#fff", 1 / 3);
+            canvasGradient.addColorStop(1, endColor);
+        }
+        return canvasGradient;
+    }
+
+    rhombus(fill, offset, shape, strokeStyle, isHeads) {
+        const { g, scale } = this;
+        const { rhombStyle } = globals;
+        let currentStrokeStyle = g.strokeStyle;
+        let currentLineWidth = g.lineWidth;
+        let currentfillStyle = g.fillStyle;
+
+        let gradient = rhombStyle.fill == rhombStyle.GRADIENT;
+        let start = true;
+        const bounds = new Bounds();
+        g.strokeStyle = strokeStyle ? strokeStyle : "black";
+        if (gradient) {
+            g.fillStyle = this.getGradient(fill, offset, shape, isHeads);
+        } else if (rhombStyle.fill == rhombStyle.TRANSPARENT) {
+            g.fillStyle = fill + "40"; //
+        } else {
+            g.fillStyle = fill;
+        }
+        g.lineWidth = scale < 5 ? 1 : 2;
+        for (const point of shape) {
+            if (start) {
+                g.beginPath();
+                g.moveTo(
+                    (point.x + offset.x) * scale,
+                    (point.y + offset.y) * scale
+                );
+                start = false;
+            } else {
+                g.lineTo(
+                    (point.x + offset.x) * scale,
+                    (point.y + offset.y) * scale
+                );
+            }
+
+            bounds.addPoint(offset, point);
+        }
+
+        g.closePath();
+        if (rhombStyle.fill != rhombStyle.NONE) {
+            g.fill();
+        }
+        if (rhombStyle.stroke != rhombStyle.NONE) {
+            g.stroke();
+        }
+
+        g.strokeStyle = currentStrokeStyle;
+        g.lineWidth = currentLineWidth;
+        g.fillStyle = currentfillStyle;
+
+        return bounds;
+    }
+}
 class threeContext {}
 /**
  * Represents a rendering screen
@@ -189,6 +428,7 @@ export class PenroseScreen {
         this.g = g;
         this.scale = scale;
         this.mode = mode;
+        this.context = new CanvasContext(g, scale);
     }
 
     /**
@@ -259,7 +499,11 @@ export class PenroseScreen {
             let shapes = this.pShape(type);
             if (shapes) {
                 bounds.expand(
-                    this.outline(pColor(type), loc, shapes[angle.tenths])
+                    this.context.outline(
+                        pColor(type),
+                        loc,
+                        shapes[angle.tenths]
+                    )
                 );
             }
         }
@@ -268,7 +512,7 @@ export class PenroseScreen {
             let shapes = this.mShape(type);
             if (shapes) {
                 bounds.expand(
-                    this.figure(pColor(type), loc, shapes[angle.tenths])
+                    this.context.figure(pColor(type), loc, shapes[angle.tenths])
                 );
             }
         }
@@ -480,7 +724,6 @@ export class PenroseScreen {
 
         if (options.rhomb) {
             if (gen == 1 && !overlays.smallRhomb) {
-                console.log(options);
                 this.drawRhombusPattern({
                     type,
                     angle,
@@ -686,6 +929,7 @@ export class PenroseScreen {
      * @param {*} shape centered array of 'pixels' centered.
      * Prerequisites: Globals g and scale
      */
+    /*
     figure(fill, offset, shape) {
         const { pentaStyle } = globals;
         const { g, scale } = this;
@@ -721,11 +965,12 @@ export class PenroseScreen {
 
         return bounds;
     }
-
+*/
     /***
      * Used for quadrille
      *
      */
+    /*
     outline(fill, offset, shape) {
         const { pentaStyle } = globals;
         const { g, scale } = this;
@@ -778,12 +1023,13 @@ export class PenroseScreen {
 
         return bounds;
     }
-
+*/
     /**
      * Draw a 2 size x 2 size grid matching the scale
      * @param {point} offset - Point indicating center of grid
      * @param {*} size
      */
+    /*
     grid(offset, size) {
         const bounds = new Bounds();
         const { g, scale } = this;
@@ -814,7 +1060,8 @@ export class PenroseScreen {
         bounds.addPoint(offset, p(size, size));
         return bounds;
     }
-
+*/
+    /*
     line(loc, end, strokeStyle) {
         const { g, scale } = this;
 
@@ -833,7 +1080,7 @@ export class PenroseScreen {
         g.lineWidth = currentWidth;
         g.strokeStyle = currentStrokeStyle;
         return bounds;
-    }
+    }*/
 
     /**
      * Draw the ammann segments
@@ -904,6 +1151,7 @@ export class PenroseScreen {
         return segment[0].tr(abs.mult(offset / PHI));
     }
 
+    /*
     getGradient(fill, offset, shape, isHeads) {
         const { g, scale } = this;
 
@@ -981,7 +1229,7 @@ export class PenroseScreen {
 
         return bounds;
     }
-
+*/
     /**
      * The color of the rhomb is based on the type.
      * The string will be seached for the # character. Everything before
@@ -1028,7 +1276,13 @@ export class PenroseScreen {
                     const thick5 = thicks[shift.tenths];
                     if (rhombSelected) {
                         bounds.expand(
-                            this.rhombus(fill, loc, thick5, outline, isHeads)
+                            this.context.rhombus(
+                                fill,
+                                loc,
+                                thick5,
+                                outline,
+                                isHeads
+                            )
                         );
                     }
                     if (ammannSelected) {
@@ -1041,7 +1295,7 @@ export class PenroseScreen {
                             const thin3 = thins[shift.tenths];
                             if (rhombSelected) {
                                 bounds.expand(
-                                    this.rhombus(
+                                    this.context.rhombus(
                                         fill,
                                         loc,
                                         thin3,
@@ -1061,7 +1315,7 @@ export class PenroseScreen {
                             const thick3 = thicks[shift.tenths];
                             if (rhombSelected) {
                                 bounds.expand(
-                                    this.rhombus(
+                                    this.context.rhombus(
                                         fill,
                                         loc,
                                         thick3,
@@ -1086,7 +1340,7 @@ export class PenroseScreen {
                             const thick2 = thicks[shift.tenths];
                             if (rhombSelected) {
                                 bounds.expand(
-                                    this.rhombus(
+                                    this.context.rhombus(
                                         fill,
                                         loc,
                                         thick2,
@@ -1107,7 +1361,7 @@ export class PenroseScreen {
                             const thinR2 = thins[shift.tenths];
                             if (rhombSelected) {
                                 bounds.expand(
-                                    this.rhombus(
+                                    this.context.rhombus(
                                         fill,
                                         loc,
                                         thinR2,

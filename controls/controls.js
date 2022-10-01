@@ -42,8 +42,6 @@ export class Controls {
         this.fifths = fifths;
         this.typeIndex = typeIndex;
         this.isDown = isDown;
-        console.log(this.toString());
-        console.log(Controls.name);
         this.fromString(cookie.get(Controls.name, this.toString()));
     }
     toString() {

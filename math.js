@@ -375,10 +375,8 @@ function drawSecondInflation(id) {
      *
      */
     function drawScreen() {
-        console.log(`g-test`);
         let fill = "rgb(10, 10, 10)";
         g.fillStyle = fill;
-        console.log(g.fillStyle);
         const UP = false;
         const DOWN = true;
         g.fillStyle = "#ffffff";
