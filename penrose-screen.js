@@ -130,15 +130,15 @@ export function iface(g, scale, mode) {
     const figure = screen.figure.bind(screen);
     const outline = screen.outline.bind(screen);
     const penta = screen.penta.bind(screen);
-    const starNew = screen.starNew.bind(screen);
-    const decaNew = screen.decaNew.bind(screen);
+    const star = screen.star.bind(screen);
+    const deca = screen.deca.bind(screen);
     return {
         grid,
         figure,
         outline,
-        penta: penta,
-        starNew,
-        decaNew,
+        penta,
+        star,
+        deca,
     };
 }
 
@@ -243,12 +243,12 @@ export class PenroseScreen {
         return null;
     }
 
-    /**&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+    /**
      * This will revamp and combine penta and pentaRhomb
      * The inputs are streamlined
      *
      */
-    drawPentaPatternNew({ type, angle, isHeads, loc, gen, ...options }) {
+    drawPentaPattern({ type, angle, isHeads, loc, gen, ...options }) {
         const { overlays } = globals; // don't forget the options
         const bounds = new Bounds();
         if (options.rhomb) {
@@ -308,20 +308,20 @@ export class PenroseScreen {
      */
 
     penta({ type, angle, isHeads = true, loc, gen, ...options }) {
-        console.log(
-            `type: ${
-                type.name
-            }, angle: ${angle}, gen: ${gen}, options: ${JSON.stringify(
-                options
-            )}`
-        );
+        // console.log(
+        //     `type: ${
+        //         type.name
+        //     }, angle: ${angle}, gen: ${gen}, options: ${JSON.stringify(
+        //         options
+        //     )}`
+        // );
         let { overlays } = globals;
         //({ overlays } = options); // some version of apply
         const bounds = new Bounds();
 
         if (gen == 0) {
             bounds.expand(
-                this.drawPentaPatternNew({
+                this.drawPentaPattern({
                     type,
                     angle,
                     isHeads,
@@ -333,7 +333,7 @@ export class PenroseScreen {
 
             if (overlays && overlays.smallRhomb) {
                 bounds.expand(
-                    this.drawNewRhombusPattern({
+                    this.drawRhombusPattern({
                         type,
                         angle,
                         isHeads,
@@ -353,7 +353,7 @@ export class PenroseScreen {
         if (options.rhomb) {
             if (gen == 1 && !overlays.smallRhomb) {
                 bounds.expand(
-                    this.drawNewRhombusPattern({
+                    this.drawRhombusPattern({
                         type,
                         angle,
                         isHeads,
@@ -394,7 +394,7 @@ export class PenroseScreen {
 
             if (type.diamond.includes(i)) {
                 bounds.expand(
-                    this.starNew({
+                    this.star({
                         type: penrose.St1,
                         angle: shift.inv,
                         loc: locDiamond,
@@ -440,20 +440,20 @@ export class PenroseScreen {
      * @param {boolean} heads - Computed aspect of group. Convex or concave
      * @returns {Bounds} - Rectangle describing space taken by shape
      */
-    starNew({ type, angle, isHeads = true, loc, gen, ...options }) {
+    star({ type, angle, isHeads = true, loc, gen, ...options }) {
         const { overlays } = Object.assign(globals, options);
         const bounds = new Bounds();
-        console.log(
-            `type: ${
-                type.name
-            }, angle: ${angle}, gen: ${gen}, options: ${JSON.stringify(
-                options
-            )}`
-        );
+        // console.log(
+        //     `type: ${
+        //         type.name
+        //     }, angle: ${angle}, gen: ${gen}, options: ${JSON.stringify(
+        //         options
+        //     )}`
+        // );
 
         if (gen == 0) {
             bounds.expand(
-                this.drawPentaPatternNew({
+                this.drawPentaPattern({
                     type,
                     angle,
                     isHeads,
@@ -464,7 +464,7 @@ export class PenroseScreen {
             );
             if (overlays && overlays.smallRhomb) {
                 bounds.expand(
-                    this.drawNewRhombusPattern({
+                    this.drawRhombusPattern({
                         type,
                         angle,
                         isHeads,
@@ -481,7 +481,7 @@ export class PenroseScreen {
         if (options.rhomb) {
             if (gen == 1 && !overlays.smallRhomb) {
                 console.log(options);
-                this.drawNewRhombusPattern({
+                this.drawRhombusPattern({
                     type,
                     angle,
                     isHeads,
@@ -497,7 +497,7 @@ export class PenroseScreen {
         const sWheel = wheels.s[gen].w;
 
         bounds.expand(
-            this.starNew({
+            this.star({
                 angle: angle.inv,
                 type: penrose.St5,
                 loc,
@@ -525,7 +525,7 @@ export class PenroseScreen {
                     })
                 );
                 bounds.expand(
-                    this.starNew({
+                    this.star({
                         type: penrose.St3,
                         angle: shift,
                         isHeads,
@@ -562,12 +562,12 @@ export class PenroseScreen {
      * @returns {Bounds} - Rectangle describing space taken by shape
      * *
      */
-    decaNew({ angle, isHeads = true, loc, gen, ...options }) {
-        console.log(
-            `type: deca, angle: ${angle}, loc: ${loc}, gen: ${gen}, options: ${JSON.stringify(
-                options
-            )}`
-        );
+    deca({ angle, isHeads = true, loc, gen, ...options }) {
+        // console.log(
+        //     `type: deca, angle: ${angle}, loc: ${loc}, gen: ${gen}, options: ${JSON.stringify(
+        //         options
+        //     )}`
+        // );
 
         const { overlays } = globals;
         const bounds = new Bounds();
@@ -605,7 +605,7 @@ export class PenroseScreen {
             ? sDown[angle.rot(1).fifths]
             : sUp[angle.rot(1).fifths];
         bounds.expand(
-            this.starNew({
+            this.star({
                 type: penrose.St1,
                 angle: angle.rot(3),
                 isHeads,
@@ -619,7 +619,7 @@ export class PenroseScreen {
             ? sDown[angle.rot(4).fifths]
             : sUp[angle.rot(4).fifths];
         bounds.expand(
-            this.starNew({
+            this.star({
                 type: penrose.St1,
                 angle: angle.rot(2),
                 isHeads,
@@ -666,7 +666,7 @@ export class PenroseScreen {
             ? pUp[angle.rot(2).fifths].tr(sUp[angle.rot(3).fifths])
             : pDown[angle.rot(2).fifths].tr(sDown[angle.rot(3).fifths]);
         bounds.expand(
-            this.starNew({
+            this.star({
                 angle: angle.inv,
                 type: penrose.St3,
                 loc: base.tr(offs),
@@ -835,32 +835,6 @@ export class PenroseScreen {
         return bounds;
     }
 
-    getGradient(fill, offset, shape, isHeads) {
-        const { g, scale } = this;
-
-        const point0 = shape[0].tr(offset).mult(scale);
-        const point1 = shape[2].tr(offset).mult(scale);
-        const canvasGradient = g.createLinearGradient(
-            point0.x,
-            point0.y,
-            point1.x,
-            point1.y
-        );
-        if (isHeads) {
-            canvasGradient.addColorStop(0, "#fff");
-            canvasGradient.addColorStop(2 / 3, fill);
-            // color stop 1 has to be 1/3 of the way to "#000"
-            const endColor = mix(fill, "#000", 1 / 3);
-            canvasGradient.addColorStop(1, endColor);
-        } else {
-            canvasGradient.addColorStop(0, "#000");
-            canvasGradient.addColorStop(2 / 3, fill);
-            const endColor = mix(fill, "#fff", 1 / 3);
-            canvasGradient.addColorStop(1, endColor);
-        }
-        return canvasGradient;
-    }
-
     /**
      * Draw the ammann segments
      * They will be drawn naively for the quadrille case.
@@ -928,6 +902,32 @@ export class PenroseScreen {
     ammannTarget(segment, offset) {
         const abs = segment[1].tr(segment[0].neg);
         return segment[0].tr(abs.mult(offset / PHI));
+    }
+
+    getGradient(fill, offset, shape, isHeads) {
+        const { g, scale } = this;
+
+        const point0 = shape[0].tr(offset).mult(scale);
+        const point1 = shape[2].tr(offset).mult(scale);
+        const canvasGradient = g.createLinearGradient(
+            point0.x,
+            point0.y,
+            point1.x,
+            point1.y
+        );
+        if (isHeads) {
+            canvasGradient.addColorStop(0, "#fff");
+            canvasGradient.addColorStop(2 / 3, fill);
+            // color stop 1 has to be 1/3 of the way to "#000"
+            const endColor = mix(fill, "#000", 1 / 3);
+            canvasGradient.addColorStop(1, endColor);
+        } else {
+            canvasGradient.addColorStop(0, "#000");
+            canvasGradient.addColorStop(2 / 3, fill);
+            const endColor = mix(fill, "#fff", 1 / 3);
+            canvasGradient.addColorStop(1, endColor);
+        }
+        return canvasGradient;
     }
 
     rhombus(fill, offset, shape, strokeStyle, isHeads) {
@@ -1008,7 +1008,7 @@ export class PenroseScreen {
      * @param {*} isHeads
      * @returns
      */
-    drawNewRhombusPattern({ type, angle, isHeads, loc, gen, ...options }) {
+    drawRhombusPattern({ type, angle, isHeads, loc, gen, ...options }) {
         const bounds = new Bounds();
         const { overlays } = globals;
         if (!options.rhomb) {

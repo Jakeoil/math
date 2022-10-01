@@ -30,11 +30,7 @@ function drawQuadrille() {
     g.strokeStyle = penrose.OUTLINE;
     g.lineWidth = 1;
     const scale = 3.7;
-    const { deca, decaNew } = iface(
-        g,
-        scale,
-        measureTaskGlobals.shapeMode.MODE_REAL
-    );
+    const { deca } = iface(g, scale, measureTaskGlobals.shapeMode.MODE_REAL);
 
     let loc = p(0, 0);
     let fifths = 0;
@@ -42,7 +38,7 @@ function drawQuadrille() {
     let gen = 2;
     // Now some decagons
     let bounds = new Bounds();
-    bounds.expand(decaNew({ angle: new Angle(fifths, isDown), loc, gen }));
+    bounds.expand(deca({ angle: new Angle(fifths, isDown), loc, gen }));
     if (bounds.isEmpty) {
         bounds.addPoint(loc, p(0, 0));
     }
@@ -51,7 +47,7 @@ function drawQuadrille() {
     canvas.height = (bounds.maxPoint.y - bounds.minPoint.y) * scale;
 
     bounds = new Bounds();
-    bounds.expand(decaNew({ angle: new Angle(fifths, isDown), loc, gen }));
+    bounds.expand(deca({ angle: new Angle(fifths, isDown), loc, gen }));
     bounds = new Bounds();
     const img = canvas.toDataURL("img.png");
 }
@@ -67,7 +63,7 @@ function drawImage() {
     const scale = 5;
     // Stupid way to get the globals.
     const { shapeMode } = measureTaskGlobals;
-    const { decaNew } = iface(g, scale, shapeMode.MODE_REAL);
+    const { deca } = iface(g, scale, shapeMode.MODE_REAL);
 
     // Now some decagons
 
@@ -77,14 +73,14 @@ function drawImage() {
     let loc = p(0, 0);
     let gen = 1;
     let bounds = new Bounds();
-    bounds.expand(decaNew({ angle, loc, gen }));
+    bounds.expand(deca({ angle, loc, gen }));
     bounds.pad(1);
     loc = loc.tr(p(bounds.minPoint.x, bounds.minPoint.y).neg);
     canvas.width = (bounds.maxPoint.x - bounds.minPoint.x) * scale;
     canvas.height = (bounds.maxPoint.y - bounds.minPoint.y) * scale;
 
     bounds = new Bounds();
-    bounds.expand(decaNew({ angle, loc, gen }));
+    bounds.expand(deca({ angle, loc, gen }));
     bounds.pad(1);
     bounds = new Bounds();
     const img = canvas.toDataURL("img.png");
