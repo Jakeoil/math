@@ -67,23 +67,24 @@ function drawImage() {
     const scale = 5;
     // Stupid way to get the globals.
     const { shapeMode } = measureTaskGlobals;
-    const { deca } = iface(g, scale, shapeMode.MODE_REAL);
+    const { decaNew } = iface(g, scale, shapeMode.MODE_REAL);
 
     // Now some decagons
 
     let fifths = 0;
     let isDown = false;
-    let base = p(0, 0);
-    let exp = 1;
+    let angle = new Angle(fifths, isDown);
+    let loc = p(0, 0);
+    let gen = 1;
     let bounds = new Bounds();
-    bounds.expand(deca(fifths, isDown, base, exp));
+    bounds.expand(decaNew({ angle, loc, gen }));
     bounds.pad(1);
-    base = base.tr(p(bounds.minPoint.x, bounds.minPoint.y).neg);
+    loc = loc.tr(p(bounds.minPoint.x, bounds.minPoint.y).neg);
     canvas.width = (bounds.maxPoint.x - bounds.minPoint.x) * scale;
     canvas.height = (bounds.maxPoint.y - bounds.minPoint.y) * scale;
 
     bounds = new Bounds();
-    bounds.expand(deca(fifths, isDown, base, exp));
+    bounds.expand(decaNew({ angle, loc, gen }));
     bounds.pad(1);
     bounds = new Bounds();
     const img = canvas.toDataURL("img.png");

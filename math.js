@@ -69,7 +69,7 @@ function makeCanvas(canvasId) {
         g.strokeStyle = penrose.OUTLINE;
         g.lineWidth = 1;
         let scale = 10;
-        const { pentaNew, starNew } = iface(g, scale, shapeMode.shapeMode);
+        const { penta, starNew } = iface(g, scale, shapeMode.shapeMode);
 
         let bounds;
         let width = 0;
@@ -88,7 +88,7 @@ function makeCanvas(canvasId) {
             console.log("penta");
             bounds.expand(
                 canvasId == "p5"
-                    ? pentaNew({
+                    ? penta({
                           type: penrose.Pe5,
                           angle: new Angle(0, true),
                           isHeads: true,
@@ -96,7 +96,7 @@ function makeCanvas(canvasId) {
                           gen,
                       })
                     : canvasId == "p3"
-                    ? pentaNew({
+                    ? penta({
                           type: penrose.Pe3,
                           angle: new Angle(0, false),
                           isHeads: true,
@@ -104,7 +104,7 @@ function makeCanvas(canvasId) {
                           gen,
                       })
                     : canvasId == "p1"
-                    ? pentaNew({
+                    ? penta({
                           type: penrose.Pe1,
                           angle: new Angle(0, false),
                           isHeads: true,
@@ -140,7 +140,7 @@ function makeCanvas(canvasId) {
             console.log("deca");
             bounds.expand(
                 canvasId == "p5"
-                    ? pentaNew({
+                    ? penta({
                           type: penrose.Pe5,
                           angle: new Angle(0, true),
                           isHeads: true,
@@ -149,7 +149,7 @@ function makeCanvas(canvasId) {
                           rhomb: true,
                       })
                     : canvasId == "p3"
-                    ? pentaNew({
+                    ? penta({
                           type: penrose.Pe3,
                           angle: new Angle(0, false),
                           isHeads: true,
@@ -158,7 +158,7 @@ function makeCanvas(canvasId) {
                           rhomb: true,
                       })
                     : canvasId == "p1"
-                    ? pentaNew({
+                    ? penta({
                           type: penrose.Pe1,
                           angle: new Angle(0, false),
                           isHeads: true,
@@ -253,7 +253,7 @@ function drawFirstInflation(id) {
         g.strokeStyle = penrose.OUTLINE;
         g.lineWidth = 1;
         let scale = 10;
-        const { pentaNew, starNew } = iface(g, scale, shapeMode.shapeMode);
+        const { penta, starNew } = iface(g, scale, shapeMode.shapeMode);
 
         let x = 8;
         let y = 9;
@@ -266,14 +266,14 @@ function drawFirstInflation(id) {
         let gen = 1;
         let rhomb = true;
 
-        bounds.expand(pentaNew({ type, angle, loc, gen }));
-        bounds.expand(pentaNew({ type, angle, loc, gen, rhomb }));
+        bounds.expand(penta({ type, angle, loc, gen }));
+        bounds.expand(penta({ type, angle, loc, gen, rhomb }));
         type = penrose.Pe5;
         angle = new Angle(0, DOWN);
         loc = p(25, y);
 
-        bounds.expand(pentaNew({ type, angle, loc, gen }));
-        bounds.expand(pentaNew({ type, angle, loc, gen, rhomb }));
+        bounds.expand(penta({ type, angle, loc, gen }));
+        bounds.expand(penta({ type, angle, loc, gen, rhomb }));
 
         y += 18;
 
@@ -281,31 +281,31 @@ function drawFirstInflation(id) {
         for (let i = 0; i < 5; i++) {
             angle = new Angle(i, UP);
             loc = p(x + i * 20, y);
-            bounds.expand(pentaNew({ type, angle, loc, gen }));
-            bounds.expand(pentaNew({ type, angle, loc, gen, rhomb }));
+            bounds.expand(penta({ type, angle, loc, gen }));
+            bounds.expand(penta({ type, angle, loc, gen, rhomb }));
         }
         y += 20;
 
         for (let i = 0; i < 5; i++) {
             angle = new Angle(i, DOWN);
             loc = p(x + i * 20, y);
-            bounds.expand(pentaNew({ type, angle, loc, gen }));
-            bounds.expand(pentaNew({ type, angle, loc, gen, rhomb }));
+            bounds.expand(penta({ type, angle, loc, gen }));
+            bounds.expand(penta({ type, angle, loc, gen, rhomb }));
         }
         y += 20;
         type = penrose.Pe1;
         for (let i = 0; i < 5; i++) {
             angle = new Angle(i, UP);
             loc = p(x + i * 20, y);
-            bounds.expand(pentaNew({ type, angle, loc, gen }));
-            bounds.expand(pentaNew({ type, angle, loc, gen, rhomb }));
+            bounds.expand(penta({ type, angle, loc, gen }));
+            bounds.expand(penta({ type, angle, loc, gen, rhomb }));
         }
         y += 20;
         for (let i = 0; i < 5; i++) {
             angle = new Angle(i, DOWN);
             loc = p(x + i * 20, y);
-            bounds.expand(pentaNew({ type, angle, loc, gen }));
-            bounds.expand(pentaNew({ type, angle, loc, gen, rhomb }));
+            bounds.expand(penta({ type, angle, loc, gen }));
+            bounds.expand(penta({ type, angle, loc, gen, rhomb }));
         }
         y += 25;
         type = penrose.St5;
@@ -391,18 +391,18 @@ function drawSecondInflation(id) {
         g.strokeStyle = penrose.OUTLINE;
         g.lineWidth = 1;
         let scale = 5;
-        const { starNew, pentaNew } = iface(g, scale, shapeMode.shapeMode);
+        const { starNew, penta } = iface(g, scale, shapeMode.shapeMode);
 
         let x = 25;
         let y = 25;
 
-        pentaNew({
+        penta({
             type: penrose.Pe5,
             angle: new Angle(0, UP),
             loc: p(x, y),
             gen: 2,
         });
-        pentaNew({
+        penta({
             type: penrose.Pe5,
             angle: new Angle(0, UP),
             loc: p(x, y),
@@ -416,7 +416,7 @@ function drawSecondInflation(id) {
         let gen = 2;
         let rhomb = true;
 
-        pentaNew({ type, angle, loc, gen });
+        penta({ type, angle, loc, gen });
         y += 50;
         x = 25;
         type = penrose.Pe3;
@@ -424,14 +424,14 @@ function drawSecondInflation(id) {
         for (let i = 0; i < 5; i++) {
             angle = new Angle(i, UP);
             loc = p(x + i * 50, y);
-            pentaNew({ type, angle, loc, gen });
+            penta({ type, angle, loc, gen });
         }
         y += 55;
 
         for (let i = 0; i < 5; i++) {
             angle = new Angle(i, DOWN);
             loc = p(x + i * 50, y);
-            pentaNew({ type, angle, loc, gen });
+            penta({ type, angle, loc, gen });
             //            penta(i, penrose.Pe3, DOWN, p(x + i * 50, y), 2);
         }
         y += 50;
@@ -439,13 +439,13 @@ function drawSecondInflation(id) {
         for (let i = 0; i < 5; i++) {
             angle = new Angle(i, UP);
             loc = p(x + i * 50, y);
-            pentaNew({ type, angle, loc, gen });
+            penta({ type, angle, loc, gen });
         }
         y += 55;
         for (let i = 0; i < 5; i++) {
             angle = new Angle(i, DOWN);
             loc = p(x + i * 50, y);
-            pentaNew({ type, angle, loc, gen });
+            penta({ type, angle, loc, gen });
         }
         y += 60; // one thru four
         type = penrose.St5;
@@ -688,7 +688,7 @@ function drawGeneric123(id) {
     g.strokeStyle = penrose.OUTLINE;
     g.lineWidth = 1;
     let scale = 10;
-    const { pentaNew, starNew, decaNew } = iface(g, scale, shapeMode.shapeMode);
+    const { penta, starNew, decaNew } = iface(g, scale, shapeMode.shapeMode);
 
     const drawScreen = function () {
         let x = 13;
@@ -700,25 +700,25 @@ function drawGeneric123(id) {
             case penrose.Pe1:
             case penrose.Pe3:
             case penrose.Pe5:
-                bounds.expand(pentaNew({ type, angle, loc: p(x, y), gen: 0 }));
+                bounds.expand(penta({ type, angle, loc: p(x, y), gen: 0 }));
                 bounds.expand(
-                    pentaNew({ type, angle, loc: p(x, y), gen: 0, rhomb: true })
+                    penta({ type, angle, loc: p(x, y), gen: 0, rhomb: true })
                 );
                 x += 21;
-                bounds.expand(pentaNew({ type, angle, loc: p(x, y), gen: 1 }));
+                bounds.expand(penta({ type, angle, loc: p(x, y), gen: 1 }));
                 bounds.expand(
-                    pentaNew({ type, angle, loc: p(x, y), gen: 1, rhomb: true })
+                    penta({ type, angle, loc: p(x, y), gen: 1, rhomb: true })
                 );
                 x += 34;
-                bounds.expand(pentaNew({ type, angle, loc: p(x, y), gen: 2 }));
+                bounds.expand(penta({ type, angle, loc: p(x, y), gen: 2 }));
                 bounds.expand(
-                    pentaNew({ type, angle, loc: p(x, y), gen: 2, rhomb: true })
+                    penta({ type, angle, loc: p(x, y), gen: 2, rhomb: true })
                 );
                 x = 73;
                 y += 100;
-                bounds.expand(pentaNew({ type, angle, loc: p(x, y), gen: 3 }));
+                bounds.expand(penta({ type, angle, loc: p(x, y), gen: 3 }));
                 bounds.expand(
-                    pentaNew({ type, angle, loc: p(x, y), gen: 3, rhomb: true })
+                    penta({ type, angle, loc: p(x, y), gen: 3, rhomb: true })
                 );
 
                 break;
@@ -811,7 +811,7 @@ function drawGeneric3(id) {
                 case penrose.Pe3:
                 case penrose.Pe5:
                     console.log("draw penta");
-                    pentaNew({
+                    penta({
                         type,
                         angle: new Angle(controls.fifths, controls.isDown),
                         loc: p(x, y),

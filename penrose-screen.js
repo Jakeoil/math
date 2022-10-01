@@ -129,14 +129,14 @@ export function iface(g, scale, mode) {
     const grid = screen.grid.bind(screen);
     const figure = screen.figure.bind(screen);
     const outline = screen.outline.bind(screen);
-    const pentaNew = screen.pentaNew.bind(screen);
+    const penta = screen.penta.bind(screen);
     const starNew = screen.starNew.bind(screen);
     const decaNew = screen.decaNew.bind(screen);
     return {
         grid,
         figure,
         outline,
-        pentaNew,
+        penta: penta,
         starNew,
         decaNew,
     };
@@ -307,7 +307,7 @@ export class PenroseScreen {
      * @returns {Bounds} - Rectangle describing space taken by shape
      */
 
-    pentaNew({ type, angle, isHeads = true, loc, gen, ...options }) {
+    penta({ type, angle, isHeads = true, loc, gen, ...options }) {
         console.log(
             `type: ${
                 type.name
@@ -366,7 +366,7 @@ export class PenroseScreen {
             }
         }
         bounds.expand(
-            this.pentaNew({
+            this.penta({
                 type: penrose.Pe5,
                 angle: angle.inv,
                 isHeads: !isHeads,
@@ -382,7 +382,7 @@ export class PenroseScreen {
             const locPenta = loc.tr(pWheel[shift.tenths]);
             const locDiamond = loc.tr(sWheel[shift.inv.tenths]);
             bounds.expand(
-                this.pentaNew({
+                this.penta({
                     type: type.twist[i] == 0 ? penrose.Pe3 : penrose.Pe1,
                     angle: shift.rot(type.twist[i]),
                     isHeads: !isHeads,
@@ -515,7 +515,7 @@ export class PenroseScreen {
 
             if (type.color[i] != null) {
                 bounds.expand(
-                    this.pentaNew({
+                    this.penta({
                         type: penrose.Pe1,
                         angle: shift.inv,
                         isHeads,
@@ -587,7 +587,7 @@ export class PenroseScreen {
 
         // The central yellow pentagon
         bounds.expand(
-            this.pentaNew({
+            this.penta({
                 type: penrose.Pe3,
                 angle: angle,
                 gen: gen - 1,
@@ -637,7 +637,7 @@ export class PenroseScreen {
             ? pUp[angle.rot(3).fifths]
             : pDown[angle.rot(3).fifths];
         bounds.expand(
-            this.pentaNew({
+            this.penta({
                 angle: angle.rot(2).inv,
                 type: penrose.Pe1,
                 loc: base.tr(offs),
@@ -651,7 +651,7 @@ export class PenroseScreen {
             ? pUp[angle.rot(2).fifths]
             : pDown[angle.rot(2).fifths];
         bounds.expand(
-            this.pentaNew({
+            this.penta({
                 angle: angle.rot(3).inv,
                 type: penrose.Pe1,
                 loc: base.tr(offs),
