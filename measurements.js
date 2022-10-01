@@ -5,6 +5,7 @@ import { penrose } from "./penrose.js";
 //import { MODE_REAL } from "./controls/shape-mode.js"; // Now _really_
 import { quadrille } from "./shape-modes.js";
 import { iface } from "./penrose-screen.js";
+import { Angle } from "./penrose-screen.js";
 import { measureTaskGlobals } from "./controls.js";
 import { initControls, logRefresh } from "./controls.js";
 

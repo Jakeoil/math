@@ -88,7 +88,7 @@ function makeCanvas(canvasId) {
         let tries = 0;
 
         // Just for test.
-        let gen = 1;
+        let gen = 0;
         do {
             canvas.width = width;
             canvas.height = height;
@@ -413,7 +413,7 @@ function drawSecondInflation(id) {
         let y = 25;
 
         //penta(0, penrose.Pe5, UP, p(x, y), 2);
-        pentaRhomb(0, penrose.Pe5, UP, p(x, y), 2);
+        //pentaRhomb(0, penrose.Pe5, UP, p(x, y), 2);
         pentaNew({
             type: penrose.Pe5,
             angle: new Angle(0, UP),
@@ -862,7 +862,7 @@ function drawGeneric3(id) {
     g.strokeStyle = penrose.OUTLINE;
     g.lineWidth = 1;
     let scale = 4;
-    const { deca, decaRhomb } = iface(g, scale, shapeMode.shapeMode);
+    const { deca, decaRhomb, decaNew } = iface(g, scale, shapeMode.shapeMode);
     const drawScreen = function () {
         let x = 100;
         let y = 250;
