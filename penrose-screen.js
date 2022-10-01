@@ -8,8 +8,8 @@ const SQRT5 = Math.sqrt(5); // 2.236
 const PHI = (SQRT5 + 1) / 2; // 1.618
 
 /**
- * Replacement for fifths and isDown
- *
+ * Class wrapping fifths and isDown
+ * Move to utilities
  */
 export class Angle {
     slicee = [0, 1, 2, 3, 4, 0, 1, 2, 3];
@@ -58,18 +58,13 @@ function angleTest() {
 }
 //angleTest();
 
-/**
- * Deprecated. Replaced by Angle.tenths
- */
-// function tenths(fifths, isDown) {
-//     return (fifths * 2 + (isDown ? 5 : 0)) % 10;
-// }
-
 /***
  * Thanks to:
  * https://css-tricks.com/converting-color-spaces-in-javascript/
  *
  * Converts #rgb and #rrggbb formats
+ *
+ * Move to utilities
  */
 function hexToRGB(h) {
     let r = 0,
@@ -88,8 +83,6 @@ function hexToRGB(h) {
         g = "0x" + h[3] + h[4];
         b = "0x" + h[5] + h[6];
     }
-    //const command = `rgb(${r},${g},${b})`;
-    //console.log(`command: ${command}`);
 
     return [r, g, b];
 }
@@ -133,26 +126,14 @@ function testMix() {
  */
 export function iface(g, scale, mode) {
     let screen = new PenroseScreen(g, scale, mode);
-    // const penta = screen.penta.bind(screen);
-    // const star = screen.star.bind(screen);
-    // const deca = screen.deca.bind(screen);
     const grid = screen.grid.bind(screen);
-    // const pentaRhomb = screen.pentaRhomb.bind(screen);
-    // const starRhomb = screen.starRhomb.bind(screen);
-    // const decaRhomb = screen.decaRhomb.bind(screen);
     const figure = screen.figure.bind(screen);
     const outline = screen.outline.bind(screen);
     const pentaNew = screen.pentaNew.bind(screen);
     const starNew = screen.starNew.bind(screen);
     const decaNew = screen.decaNew.bind(screen);
     return {
-        // penta,
-        // star,
-        // deca,
         grid,
-        // pentaRhomb,
-        // starRhomb,
-        // decaRhomb,
         figure,
         outline,
         pentaNew,
@@ -164,12 +145,10 @@ export function iface(g, scale, mode) {
 /**
  * This routine depends on an initialized shapeColors instance.
  * Instance must be star or penta, deca returns null
- *
+ * Returns color based on type
  *
  * @param {*} type
- * @returns
- *
- * The initial test was done due to shapeColors missing
+ * @returns assigned color
  */
 function pColor(type) {
     const { shapeColors } = globals;
@@ -192,6 +171,8 @@ function pColor(type) {
     } else return type.defaultColor;
 }
 
+class canvasContext {}
+class threeContext {}
 /**
  * Represents a rendering screen
  *
@@ -262,36 +243,37 @@ export class PenroseScreen {
         return null;
     }
 
-    // drawPentaPattern(fifths, type, isDown, loc, gen, isHeads, options) {
-    //     const { overlays } = globals;
-    //     const bounds = new Bounds();
-    //     if (!overlays || overlays.pentaSelected) {
-    //         let shapes = this.pShape(type);
-    //         if (shapes) {
-    //             bounds.expand(
-    //                 this.outline(
-    //                     pColor(type),
-    //                     loc,
-    //                     shapes[tenths(fifths, isDown)]
-    //                 )
-    //             );
-    //         }
-    //     }
+    /**&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+     * This will revamp and combine penta and pentaRhomb
+     * The inputs are streamlined
+     *
+     */
+    drawPentaPatternNew({ type, angle, isHeads, loc, gen, ...options }) {
+        const { overlays } = globals; // don't forget the options
+        const bounds = new Bounds();
+        if (options.rhomb) {
+            return bounds;
+        }
 
-    //     if (overlays && overlays.mosaicSelected) {
-    //         let shapes = this.mShape(type);
-    //         if (shapes) {
-    //             bounds.expand(
-    //                 this.figure(
-    //                     pColor(type),
-    //                     loc,
-    //                     shapes[tenths(fifths, isDown)]
-    //                 )
-    //             );
-    //         }
-    //     }
-    //     return bounds; // call figure
-    // }
+        if (!overlays || overlays.pentaSelected) {
+            let shapes = this.pShape(type);
+            if (shapes) {
+                bounds.expand(
+                    this.outline(pColor(type), loc, shapes[angle.tenths])
+                );
+            }
+        }
+
+        if (!overlays || overlays.mosaicSelected) {
+            let shapes = this.mShape(type);
+            if (shapes) {
+                bounds.expand(
+                    this.figure(pColor(type), loc, shapes[angle.tenths])
+                );
+            }
+        }
+        return bounds; // call figure
+    }
 
     /**************************************************************************
      * Recursive routine to draw pentagon type objects.
@@ -324,193 +306,6 @@ export class PenroseScreen {
      * @param {boolean} heads - Computed aspect of group. Convex or concave
      * @returns {Bounds} - Rectangle describing space taken by shape
      */
-    // penta(fifths, type, isDown, loc, gen, isHeads = true, options) {
-    //     const { overlays } = globals;
-    //     const bounds = new Bounds();
-    //     const delayQueue = [];
-
-    //     fifths = norm(fifths);
-    //     if (gen == 0) {
-    //         bounds.expand(
-    //             this.drawPentaPattern(
-    //                 fifths,
-    //                 type,
-    //                 isDown,
-    //                 loc,
-    //                 gen,
-    //                 isHeads,
-    //                 options
-    //             )
-    //         );
-    //         return bounds;
-    //     }
-
-    //     const wheels = penrose[this.mode].wheels;
-    //     const pWheel = wheels.p[gen].w;
-    //     const sWheel = wheels.s[gen].w;
-
-    //     bounds.expand(
-    //         this.penta(0, penrose.Pe5, !isDown, loc, gen - 1),
-    //         isHeads
-    //     );
-
-    //     for (let i = 0; i < 5; i++) {
-    //         const shift = norm(fifths + i);
-    //         const angle = tenths(shift, isDown);
-    //         const locPenta = loc.tr(pWheel[angle]);
-    //         const locDiamond = loc.tr(sWheel[tenths(shift, !isDown)]);
-    //         bounds.expand(
-    //             this.penta(
-    //                 norm(shift + type.twist[i]),
-    //                 type.twist[i] == 0 ? penrose.Pe3 : penrose.Pe1,
-    //                 isDown,
-    //                 locPenta,
-    //                 gen - 1,
-    //                 !isHeads
-    //             )
-    //         );
-
-    //         if (type.diamond.includes(i)) {
-    //             bounds.expand(
-    //                 this.star(
-    //                     shift,
-    //                     penrose.St1,
-    //                     !isDown,
-    //                     locDiamond,
-    //                     gen - 1,
-    //                     isHeads
-    //                 )
-    //             );
-    //             if (overlays && overlays.treeSelected)
-    //                 delayQueue.push(() => this.line(loc, locDiamond, "red"));
-    //         }
-    //         if (overlays && overlays.treeSelected)
-    //             delayQueue.push(() => this.line(loc, locPenta, "black"));
-    //     }
-    //     // This is kind of fruitless unless the functions are added to bounds.
-    //     delayQueue.forEach((f) => f());
-    //     return bounds;
-    // }
-
-    /*************************************************************************
-     * S5, S3 and S1  Up versions shown
-     *    s5   star
-     *
-     *     *
-     *  *  .  *
-     *   *   *
-     *
-     *    s3   boat
-     *
-     *     *         *                             *
-     *  *  .  *      .  *      .  *   *  .      *  .
-     *                 *     *   *     *   *     *
-     *
-     *    s5   diamond
-     *
-     *     *
-     *     .         .  *      .         .      *  .
-     *                           *     *
-     *
-     * @param {0|1|2|3|4} fifths - angle cw from upright
-     * @param {penrose.type} type - only St<1|3|5> types considered
-     * @param {boolean} isDown - inverted if true
-     * @param {Point} loc - center of figure
-     * @param {number} gen - generation number. Recursively decrements to 0 (or  value specified by control)
-     * @param {boolean} heads - Computed aspect of group. Convex or concave
-     * @returns {Bounds} - Rectangle describing space taken by shape
-     */
-    // star(fifths, type, isDown, loc, gen, isHeads = true) {
-    //     const { overlays } = globals;
-    //     const bounds = new Bounds();
-    //     const delayQueue = [];
-
-    //     fifths = norm(fifths);
-    //     if (gen == 0) {
-    //         bounds.expand(
-    //             this.drawPentaPattern(fifths, type, isDown, loc, gen, isHeads)
-    //         );
-    //         return bounds;
-    //     }
-
-    //     const wheels = penrose[this.mode].wheels;
-    //     const tWheel = wheels.t[gen].w;
-    //     const sWheel = wheels.s[gen].w;
-
-    //     bounds.expand(
-    //         this.star(0, penrose.St5, !isDown, loc, gen - 1, isHeads)
-    //     );
-
-    //     for (let i = 0; i < 5; i++) {
-    //         const shift = norm(fifths + i);
-    //         const angle = tenths(shift, isDown);
-    //         const locPenta = loc.tr(sWheel[angle]);
-    //         const locBoat = loc.tr(tWheel[angle]);
-
-    //         if (type.color[i] != null) {
-    //             bounds.expand(
-    //                 this.penta(
-    //                     shift,
-    //                     penrose.Pe1,
-    //                     !isDown,
-    //                     locPenta,
-    //                     gen - 1,
-    //                     isHeads
-    //                 )
-    //             );
-
-    //             bounds.expand(
-    //                 this.star(
-    //                     shift,
-    //                     penrose.St3,
-    //                     isDown,
-    //                     locBoat,
-    //                     gen - 1,
-    //                     isHeads
-    //                 )
-    //             );
-
-    //             if (overlays && overlays.treeSelected) {
-    //                 delayQueue.push(() => this.line(loc, locPenta, "red"));
-    //                 delayQueue.push(() => this.line(loc, locBoat, "blue"));
-    //             }
-    //         }
-    //     }
-    //     delayQueue.forEach((f) => bounds.expand(f()));
-    //     return bounds;
-    // }
-
-    /**&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-     * This will revamp and combine penta and pentaRhomb
-     * The inputs are streamlined
-     *
-     */
-    drawPentaPatternNew({ type, angle, isHeads, loc, gen, ...options }) {
-        const { overlays } = globals; // don't forget the options
-        const bounds = new Bounds();
-        if (options.rhomb) {
-            return bounds;
-        }
-
-        if (!overlays || overlays.pentaSelected) {
-            let shapes = this.pShape(type);
-            if (shapes) {
-                bounds.expand(
-                    this.outline(pColor(type), loc, shapes[angle.tenths])
-                );
-            }
-        }
-
-        if (!overlays || overlays.mosaicSelected) {
-            let shapes = this.mShape(type);
-            if (shapes) {
-                bounds.expand(
-                    this.figure(pColor(type), loc, shapes[angle.tenths])
-                );
-            }
-        }
-        return bounds; // call figure
-    }
 
     pentaNew({ type, angle, isHeads = true, loc, gen, ...options }) {
         console.log(
@@ -617,7 +412,34 @@ export class PenroseScreen {
         return bounds;
     }
 
-    /**&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& */
+    /*************************************************************************
+     * S5, S3 and S1  Up versions shown
+     *    s5   star
+     *
+     *     *
+     *  *  .  *
+     *   *   *
+     *
+     *    s3   boat
+     *
+     *     *         *                             *
+     *  *  .  *      .  *      .  *   *  .      *  .
+     *                 *     *   *     *   *     *
+     *
+     *    s5   diamond
+     *
+     *     *
+     *     .         .  *      .         .      *  .
+     *                           *     *
+     *
+     * @param {0|1|2|3|4} fifths - angle cw from upright
+     * @param {penrose.type} type - only St<1|3|5> types considered
+     * @param {boolean} isDown - inverted if true
+     * @param {Point} loc - center of figure
+     * @param {number} gen - generation number. Recursively decrements to 0 (or  value specified by control)
+     * @param {boolean} heads - Computed aspect of group. Convex or concave
+     * @returns {Bounds} - Rectangle describing space taken by shape
+     */
     starNew({ type, angle, isHeads = true, loc, gen, ...options }) {
         const { overlays } = Object.assign(globals, options);
         const bounds = new Bounds();
@@ -740,103 +562,6 @@ export class PenroseScreen {
      * @returns {Bounds} - Rectangle describing space taken by shape
      * *
      */
-
-    // deca(fifths, isDown, loc, gen, isHeads = true) {
-    //     const { overlays } = globals;
-    //     const bounds = new Bounds();
-    //     if (gen == 0) {
-    //         return bounds;
-    //     }
-
-    //     const wheels = penrose[this.mode].wheels;
-
-    //     // Move the center of the decagon to the real center.
-    //     let dUp = wheels.d[gen].up;
-    //     let dDown = wheels.d[gen].down;
-    //     let dOff = isDown ? dUp[fifths] : dDown[fifths];
-    //     let base = loc.tr(dOff);
-
-    //     let offs; // Work variable
-
-    //     // The central yellow pentagon
-    //     bounds.expand(
-    //         this.penta(fifths, penrose.Pe3, isDown, base, gen - 1),
-    //         isHeads
-    //     ); //
-
-    //     const sUp = wheels.s[gen].up;
-    //     const sDown = wheels.s[gen].down;
-
-    //     // The two diamonds
-    //     offs = isDown ? sDown[norm(1 + fifths)] : sUp[norm(1 + fifths)];
-    //     bounds.expand(
-    //         this.star(
-    //             norm(fifths + 3),
-    //             penrose.St1,
-    //             isDown,
-    //             base.tr(offs),
-    //             gen - 1,
-    //             isHeads
-    //         )
-    //     ); // sd1
-
-    //     offs = isDown ? sDown[norm(4 + fifths)] : sUp[norm(4 + fifths)];
-    //     bounds.expand(
-    //         this.star(
-    //             norm(fifths + 2),
-    //             penrose.St1,
-    //             isDown,
-    //             base.tr(offs),
-    //             gen - 1,
-    //             isHeads
-    //         )
-    //     ); // sd4
-
-    //     const pUp = wheels.p[gen].up;
-    //     const pDown = wheels.p[gen].down;
-
-    //     // The two orange pentagons
-    //     offs = isDown ? pUp[norm(3 + fifths)] : pDown[norm(3 + fifths)];
-    //     bounds.expand(
-    //         this.penta(
-    //             norm(fifths + 2),
-    //             penrose.Pe1,
-    //             !isDown,
-    //             base.tr(offs),
-    //             gen - 1,
-    //             !isHeads
-    //         )
-    //     );
-
-    //     offs = isDown ? pUp[norm(2 + fifths)] : pDown[norm(2 + fifths)];
-    //     bounds.expand(
-    //         this.penta(
-    //             norm(fifths + 3),
-    //             penrose.Pe1,
-    //             !isDown,
-    //             base.tr(offs),
-    //             gen - 1,
-    //             !isHeads
-    //         )
-    //     );
-
-    //     // And the boat
-    //     offs = isDown
-    //         ? pUp[norm(2 + fifths)].tr(sUp[norm(3 + fifths)])
-    //         : pDown[norm(2 + fifths)].tr(sDown[norm(3 + fifths)]);
-    //     bounds.expand(
-    //         this.star(
-    //             fifths + 0,
-    //             penrose.St3,
-    //             !isDown,
-    //             base.tr(offs),
-    //             gen - 1,
-    //             !isHeads
-    //         )
-    //     );
-    //     return bounds;
-    // }
-
     decaNew({ angle, isHeads = true, loc, gen, ...options }) {
         console.log(
             `type: deca, angle: ${angle}, loc: ${loc}, gen: ${gen}, options: ${JSON.stringify(
@@ -1270,122 +995,6 @@ export class PenroseScreen {
      * @param {*} isHeads
      * @returns
      */
-    // drawRhombusPattern(fifths, type, isDown, loc, gen, isHeads) {
-    //     const bounds = new Bounds();
-    //     const { overlays } = globals;
-    //     const { ammannSelected, rhombSelected } = overlays;
-    //     let gradient = true;
-    //     const thins = penrose[this.mode].thinRhomb[gen];
-    //     const thicks = penrose[this.mode].thickRhomb[gen];
-    //     const fill = pColor(type);
-    //     const outline = null;
-    //     for (let i = 0; i < 5; i++) {
-    //         const shift = norm(fifths + i);
-    //         switch (type) {
-    //             case penrose.Pe5:
-    //                 const thick5 = thicks[tenths(shift, isDown)];
-    //                 if (rhombSelected) {
-    //                     bounds.expand(
-    //                         this.rhombus(fill, loc, thick5, outline, isHeads)
-    //                     );
-    //                 }
-    //                 if (ammannSelected) {
-    //                     bounds.expand(this.ammannSegments(loc, thick5, true));
-    //                 }
-    //                 break;
-    //             case penrose.Pe3:
-    //                 switch (i) {
-    //                     case 0:
-    //                         const thin3 = thins[tenths(shift, isDown)];
-    //                         if (rhombSelected) {
-    //                             bounds.expand(
-    //                                 this.rhombus(
-    //                                     fill,
-    //                                     loc,
-    //                                     thin3,
-    //                                     outline,
-    //                                     isHeads
-    //                                 )
-    //                             );
-    //                         }
-    //                         if (ammannSelected) {
-    //                             bounds.expand(
-    //                                 this.ammannSegments(loc, thin3, false)
-    //                             );
-    //                         }
-    //                     // no break here
-    //                     case 1:
-    //                     case 4:
-    //                         const thick3 = thicks[tenths(shift, isDown)];
-    //                         if (rhombSelected) {
-    //                             bounds.expand(
-    //                                 this.rhombus(
-    //                                     fill,
-    //                                     loc,
-    //                                     thick3,
-    //                                     outline,
-    //                                     isHeads
-    //                                 )
-    //                             );
-    //                         }
-    //                         if (ammannSelected) {
-    //                             bounds.expand(
-    //                                 this.ammannSegments(loc, thick3, true)
-    //                             );
-    //                         }
-    //                         break;
-    //                     default:
-    //                         break;
-    //                 }
-    //                 break;
-    //             case penrose.Pe1:
-    //                 switch (i) {
-    //                     case 0:
-    //                         const thick2 = thicks[tenths(shift, isDown)];
-    //                         if (rhombSelected) {
-    //                             bounds.expand(
-    //                                 this.rhombus(
-    //                                     fill,
-    //                                     loc,
-    //                                     thick2,
-    //                                     outline,
-    //                                     isHeads
-    //                                 )
-    //                             );
-    //                         }
-    //                         if (ammannSelected) {
-    //                             bounds.expand(
-    //                                 this.ammannSegments(loc, thick2, true)
-    //                             );
-    //                         }
-
-    //                         break;
-    //                     case 4:
-    //                     case 1:
-    //                         const thinR2 = thins[tenths(shift, isDown)];
-    //                         if (rhombSelected) {
-    //                             bounds.expand(
-    //                                 this.rhombus(
-    //                                     fill,
-    //                                     loc,
-    //                                     thinR2,
-    //                                     outline,
-    //                                     isHeads
-    //                                 )
-    //                             );
-    //                         }
-    //                         if (ammannSelected) {
-    //                             bounds.expand(
-    //                                 this.ammannSegments(loc, thinR2, false)
-    //                             );
-    //                         }
-    //                         break;
-    //                 }
-    //         }
-    //     }
-    //     return bounds;
-    // }
-
     /**
      * The color of the rhomb is based on the type.
      * The string will be seached for the # character. Everything before
@@ -1518,245 +1127,4 @@ export class PenroseScreen {
         }
         return bounds;
     }
-
-    // pentaRhomb(fifths, type, isDown, loc, gen, isHeads = true) {
-    //     const { overlays } = globals;
-    //     const bounds = new Bounds();
-    //     //if (!overlays.rhombSelected ) {
-    //     //    return bounds;
-    //     //}
-
-    //     fifths = norm(fifths);
-
-    //     if (gen == 0) {
-    //         if (overlays.smallRhomb) {
-    //             bounds.expand(
-    //                 this.drawRhombusPattern(
-    //                     fifths,
-    //                     type,
-    //                     isDown,
-    //                     loc,
-    //                     gen,
-    //                     isHeads
-    //                 )
-    //             );
-    //         }
-
-    //         return bounds;
-    //     }
-
-    //     if (gen == 1 && !overlays.smallRhomb) {
-    //         bounds.expand(
-    //             this.drawRhombusPattern(fifths, type, isDown, loc, gen, isHeads)
-    //         );
-    //         return bounds;
-    //     }
-    //     const wheels = penrose[this.mode].wheels;
-    //     const pWheel = wheels.p[gen].w;
-    //     const sWheel = wheels.s[gen].w;
-
-    //     bounds.expand(
-    //         this.pentaRhomb(0, penrose.Pe5, !isDown, loc, gen - 1, isHeads)
-    //     );
-
-    //     for (let i = 0; i < 5; i++) {
-    //         const shift = norm(fifths + i);
-    //         const angle = tenths(shift, isDown);
-    //         const locPenta = loc.tr(pWheel[angle]);
-    //         const locDiamond = loc.tr(sWheel[tenths(shift, !isDown)]);
-    //         bounds.expand(
-    //             this.pentaRhomb(
-    //                 norm(shift + type.twist[i]),
-    //                 type.twist[i] == 0 ? penrose.Pe3 : penrose.Pe1,
-    //                 isDown,
-    //                 locPenta,
-    //                 gen - 1,
-    //                 !isHeads
-    //             )
-    //         );
-
-    //         if (type.diamond.includes(i)) {
-    //             bounds.expand(
-    //                 this.starRhomb(
-    //                     shift,
-    //                     penrose.St1,
-    //                     !isDown,
-    //                     locDiamond,
-    //                     gen - 1,
-    //                     isHeads // !!! just a guess
-    //                 )
-    //             );
-    //         }
-    //     }
-    //     return bounds;
-    // }
-
-    // starRhomb(fifths, type, isDown, loc, gen, isHeads) {
-    //     const { overlays } = globals;
-    //     const bounds = new Bounds();
-    //     //if (!overlays.rhombSelected) {
-    //     //    return bounds;
-    //     //}
-
-    //     fifths = norm(fifths);
-
-    //     if (gen == 0) {
-    //         if (overlays.smallRhomb) {
-    //             bounds.expand(
-    //                 this.drawRhombusPattern(
-    //                     fifths,
-    //                     type,
-    //                     isDown,
-    //                     loc,
-    //                     gen,
-    //                     isHeads
-    //                 )
-    //             );
-    //         }
-    //         return bounds;
-    //     }
-
-    //     if (gen == 1 && !overlays.smallRhomb) {
-    //         bounds.expand(
-    //             this.drawRhombusPattern(fifths, type, isDown, loc, gen, isHeads)
-    //         );
-    //         return bounds;
-    //     }
-
-    //     const wheels = penrose[this.mode].wheels;
-    //     const tWheel = wheels.t[gen].w;
-    //     const sWheel = wheels.s[gen].w;
-
-    //     bounds.expand(
-    //         this.starRhomb(0, penrose.St5, !isDown, loc, gen - 1, isHeads),
-    //         isHeads
-    //     );
-
-    //     for (let i = 0; i < 5; i++) {
-    //         const shift = norm(fifths + i);
-    //         const angle = tenths(shift, isDown);
-    //         const locPenta = loc.tr(sWheel[angle]);
-    //         const locBoat = loc.tr(tWheel[angle]);
-
-    //         if (type.color[i] != null) {
-    //             bounds.expand(
-    //                 this.pentaRhomb(
-    //                     norm(shift),
-    //                     penrose.Pe1,
-    //                     !isDown,
-    //                     locPenta,
-    //                     gen - 1,
-    //                     isHeads
-    //                 )
-    //             );
-
-    //             bounds.expand(
-    //                 this.starRhomb(
-    //                     shift,
-    //                     penrose.St3,
-    //                     isDown,
-    //                     locBoat,
-    //                     gen - 1,
-    //                     isHeads
-    //                 )
-    //             );
-    //         }
-    //     }
-    //     return bounds;
-    // }
-    // decaRhomb(fifths, isDown, loc, gen, isHeads = true) {
-    //     const { overlays } = globals;
-    //     const bounds = new Bounds();
-    //     //if (!overlays.rhombSelected) {
-    //     //    return bounds;
-    //     //}
-
-    //     if (gen == 0) {
-    //         return bounds;
-    //     }
-
-    //     const wheels = penrose[this.mode].wheels;
-
-    //     // Move the center of the decagon to the real center.
-    //     let dUp = wheels.d[gen].up;
-    //     let dDown = wheels.d[gen].down;
-    //     let dOff = isDown ? dUp[fifths] : dDown[fifths];
-    //     let base = loc.tr(dOff);
-    //     let pUp = wheels.p[gen].up;
-    //     let pDown = wheels.p[gen].down;
-    //     let sUp = wheels.s[gen].up;
-    //     let sDown = wheels.s[gen].down;
-    //     let offs; // Work variable
-
-    //     // The central yellow pentagon
-    //     bounds.expand(
-    //         this.pentaRhomb(fifths, penrose.Pe3, isDown, base, gen - 1, isHeads)
-    //     ); //
-
-    //     // The two diamonds
-    //     offs = isDown ? sDown[norm(1 + fifths)] : sUp[norm(1 + fifths)];
-    //     bounds.expand(
-    //         this.starRhomb(
-    //             norm(fifths + 3),
-    //             penrose.St1,
-    //             isDown,
-    //             base.tr(offs),
-    //             gen - 1,
-    //             isHeads // !!! this is just a guess
-    //         )
-    //     ); // sd1
-
-    //     offs = isDown ? sDown[norm(4 + fifths)] : sUp[norm(4 + fifths)];
-    //     bounds.expand(
-    //         this.starRhomb(
-    //             norm(fifths + 2),
-    //             penrose.St1,
-    //             isDown,
-    //             base.tr(offs),
-    //             gen - 1,
-    //             isHeads // !!! just a guess
-    //         )
-    //     ); // sd4
-
-    //     // The two orange pentagons
-    //     offs = isDown ? pUp[norm(3 + fifths)] : pDown[norm(3 + fifths)];
-    //     bounds.expand(
-    //         this.pentaRhomb(
-    //             norm(fifths + 2),
-    //             penrose.Pe1,
-    //             !isDown,
-    //             base.tr(offs),
-    //             gen - 1,
-    //             !isHeads
-    //         )
-    //     );
-
-    //     offs = isDown ? pUp[norm(2 + fifths)] : pDown[norm(2 + fifths)];
-    //     bounds.expand(
-    //         this.pentaRhomb(
-    //             norm(fifths + 3),
-    //             penrose.Pe1,
-    //             !isDown,
-    //             base.tr(offs),
-    //             gen - 1,
-    //             !isHeads
-    //         )
-    //     );
-
-    //     // And the boat
-    //     offs = isDown
-    //         ? pUp[norm(2 + fifths)].tr(sUp[norm(3 + fifths)])
-    //         : pDown[norm(2 + fifths)].tr(sDown[norm(3 + fifths)]);
-    //     bounds.expand(
-    //         this.starRhomb(
-    //             fifths + 0,
-    //             penrose.St3,
-    //             !isDown,
-    //             base.tr(offs),
-    //             gen - 1,
-    //             !isHeads
-    //         )
-    //     );
-    //     return bounds;
-    // }
 }
