@@ -126,9 +126,9 @@ function testMix() {
  */
 export function iface(g, scale, mode) {
     let screen = new PenroseScreen(g, scale, mode);
-    const grid = screen.context.grid.bind(screen.context);
-    const figure = screen.context.figure.bind(screen.context);
-    const outline = screen.context.outline.bind(screen.context);
+    const grid = screen.renderer.grid.bind(screen.renderer);
+    const figure = screen.renderer.figure.bind(screen.renderer);
+    const outline = screen.renderer.outline.bind(screen.renderer);
     const penta = screen.penta.bind(screen);
     const star = screen.star.bind(screen);
     const deca = screen.deca.bind(screen);
@@ -171,7 +171,7 @@ function pColor(type) {
     } else return type.defaultColor;
 }
 
-class CanvasContext {
+class CanvasRenderer {
     constructor(g, scale) {
         this.g = g;
         this.scale = scale;
@@ -411,7 +411,7 @@ class CanvasContext {
         return bounds;
     }
 }
-class threeContext {}
+class threeRenderer {}
 /**
  * Represents a rendering screen
  *
@@ -425,10 +425,10 @@ class threeContext {}
  */
 export class PenroseScreen {
     constructor(g, scale, mode) {
-        this.g = g;
-        this.scale = scale;
+        //this.g = g;
+        //this.scale = scale;
         this.mode = mode;
-        this.context = new CanvasContext(g, scale);
+        this.renderer = new CanvasRenderer(g, scale);
     }
 
     /**
@@ -499,7 +499,7 @@ export class PenroseScreen {
             let shapes = this.pShape(type);
             if (shapes) {
                 bounds.expand(
-                    this.context.outline(
+                    this.renderer.outline(
                         pColor(type),
                         loc,
                         shapes[angle.tenths]
@@ -512,7 +512,11 @@ export class PenroseScreen {
             let shapes = this.mShape(type);
             if (shapes) {
                 bounds.expand(
-                    this.context.figure(pColor(type), loc, shapes[angle.tenths])
+                    this.renderer.figure(
+                        pColor(type),
+                        loc,
+                        shapes[angle.tenths]
+                    )
                 );
             }
         }
@@ -1276,7 +1280,7 @@ export class PenroseScreen {
                     const thick5 = thicks[shift.tenths];
                     if (rhombSelected) {
                         bounds.expand(
-                            this.context.rhombus(
+                            this.renderer.rhombus(
                                 fill,
                                 loc,
                                 thick5,
@@ -1295,7 +1299,7 @@ export class PenroseScreen {
                             const thin3 = thins[shift.tenths];
                             if (rhombSelected) {
                                 bounds.expand(
-                                    this.context.rhombus(
+                                    this.renderer.rhombus(
                                         fill,
                                         loc,
                                         thin3,
@@ -1315,7 +1319,7 @@ export class PenroseScreen {
                             const thick3 = thicks[shift.tenths];
                             if (rhombSelected) {
                                 bounds.expand(
-                                    this.context.rhombus(
+                                    this.renderer.rhombus(
                                         fill,
                                         loc,
                                         thick3,
@@ -1340,7 +1344,7 @@ export class PenroseScreen {
                             const thick2 = thicks[shift.tenths];
                             if (rhombSelected) {
                                 bounds.expand(
-                                    this.context.rhombus(
+                                    this.renderer.rhombus(
                                         fill,
                                         loc,
                                         thick2,
@@ -1361,7 +1365,7 @@ export class PenroseScreen {
                             const thinR2 = thins[shift.tenths];
                             if (rhombSelected) {
                                 bounds.expand(
-                                    this.context.rhombus(
+                                    this.renderer.rhombus(
                                         fill,
                                         loc,
                                         thinR2,
