@@ -16,6 +16,8 @@ function threeTest() {
     let stats;
 
     const { container, camera, renderer, scene } = init();
+    console.log(container);
+    console.log(container.constructor.name);
 
     //addControls(camera, renderer);
     // The renderer is the canvas.

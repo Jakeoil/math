@@ -87,7 +87,7 @@ export function initControls(app) {
     }
 }
 /**
- * The cookie has string ties to the controls.
+ * The cookie has strong ties to the controls.
  * It stores some of the control settings statically.
  * Move it to a new module, but not before coming up with a
  * consistant interface, for example, a this.cookie method.
