@@ -5,6 +5,10 @@ import { RhombStyle } from "./controls/rhomb-style.js";
 import { ShapeMode } from "./controls/shape-mode.js";
 import { Controls } from "./controls/controls.js";
 import { PentaStyle } from "./controls/penta-style.js";
+
+/**
+ * Controls are
+ */
 /********************************
  * Convenience routines
  ********************************/

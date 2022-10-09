@@ -1,4 +1,3 @@
-import G from "glob";
 import { Bounds } from "./bounds.js";
 import { globals } from "./controls.js";
 
