@@ -1,5 +1,7 @@
 import { Bounds } from "./bounds.js";
 import { globals } from "./controls.js";
+import { penrose } from "./penrose.js";
+import { p } from "./point.js";
 
 import * as THREE from "./js/three.module.js";
 
@@ -80,16 +82,10 @@ export class CanvasRenderer {
         for (const point of shape) {
             if (start) {
                 g.beginPath();
-                g.moveTo(
-                    (point.x + offset.x) * scale,
-                    (point.y + offset.y) * scale
-                );
+                g.moveTo((point.x + offset.x) * scale, (point.y + offset.y) * scale);
                 start = false;
             } else {
-                g.lineTo(
-                    (point.x + offset.x) * scale,
-                    (point.y + offset.y) * scale
-                );
+                g.lineTo((point.x + offset.x) * scale, (point.y + offset.y) * scale);
             }
 
             bounds.addPoint(offset, point);
@@ -171,12 +167,7 @@ export class CanvasRenderer {
 
         const point0 = shape[0].tr(offset).mult(scale);
         const point1 = shape[2].tr(offset).mult(scale);
-        const canvasGradient = g.createLinearGradient(
-            point0.x,
-            point0.y,
-            point1.x,
-            point1.y
-        );
+        const canvasGradient = g.createLinearGradient(point0.x, point0.y, point1.x, point1.y);
         if (isHeads) {
             canvasGradient.addColorStop(0, "#fff");
             canvasGradient.addColorStop(2 / 3, fill);
@@ -214,16 +205,10 @@ export class CanvasRenderer {
         for (const point of shape) {
             if (start) {
                 g.beginPath();
-                g.moveTo(
-                    (point.x + offset.x) * scale,
-                    (point.y + offset.y) * scale
-                );
+                g.moveTo((point.x + offset.x) * scale, (point.y + offset.y) * scale);
                 start = false;
             } else {
-                g.lineTo(
-                    (point.x + offset.x) * scale,
-                    (point.y + offset.y) * scale
-                );
+                g.lineTo((point.x + offset.x) * scale, (point.y + offset.y) * scale);
             }
 
             bounds.addPoint(offset, point);

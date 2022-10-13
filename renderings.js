@@ -34,123 +34,53 @@ export function makeCanvas(canvasId) {
         let base = p(0, 0);
         let ang = new Angle(0, true);
         let tries = 0;
+        //let type, angle, isHeads, loc, gen;
 
         // Just for test.
         let gen = 0;
+        let loc = p(0, 0);
+        let type, angle;
+
+        [type, angle] =
+            canvasId == "p5"
+                ? [penrose.Pe5, new Angle(0, true)]
+                : canvasId == "p3"
+                ? [penrose.Pe3, new Angle(0, false)]
+                : canvasId == "p1"
+                ? [penrose.Pe1, new Angle(0, false)]
+                : canvasId == "s5"
+                ? [penrose.St5, new Angle(0, false)]
+                : canvasId == "s3"
+                ? [penrose.St3, new Angle(0, false)]
+                : canvasId == "s1"
+                ? [penrose.St1, new Angle(0, false)]
+                : [];
+
+        let rhomb = true; // for second call
         do {
             canvas.width = width;
             canvas.height = height;
             bounds = new Bounds();
             bounds.expand(
-                canvasId == "p5"
-                    ? penta({
-                          type: penrose.Pe5,
-                          angle: new Angle(0, true),
-                          isHeads: true,
-                          loc: base,
-                          gen,
-                      })
-                    : canvasId == "p3"
-                    ? penta({
-                          type: penrose.Pe3,
-                          angle: new Angle(0, false),
-                          isHeads: true,
-                          loc: base,
-                          gen,
-                      })
-                    : canvasId == "p1"
-                    ? penta({
-                          type: penrose.Pe1,
-                          angle: new Angle(0, false),
-                          isHeads: true,
-                          loc: base,
-                          gen,
-                      })
-                    : canvasId == "s5"
-                    ? star({
-                          type: penrose.St5,
-                          angle: new Angle(0, false),
-                          isHeads: true,
-                          loc: base,
-                          gen,
-                      })
-                    : canvasId == "s3"
-                    ? star({
-                          type: penrose.St3,
-                          angle: new Angle(0, false),
-                          isHeads: true,
-                          loc: base,
-                          gen,
-                      })
-                    : canvasId == "s1"
-                    ? star({
-                          type: penrose.St1,
-                          angle: new Angle(0, false),
-                          isHeads: true,
-                          loc: base,
-                          gen,
-                      })
-                    : null
+                penta({
+                    type,
+                    angle,
+                    loc,
+                    gen,
+                })
             );
             bounds.expand(
-                canvasId == "p5"
-                    ? penta({
-                          type: penrose.Pe5,
-                          angle: new Angle(0, true),
-                          isHeads: true,
-                          loc: base,
-                          gen,
-                          rhomb: true,
-                      })
-                    : canvasId == "p3"
-                    ? penta({
-                          type: penrose.Pe3,
-                          angle: new Angle(0, false),
-                          isHeads: true,
-                          loc: base,
-                          gen,
-                          rhomb: true,
-                      })
-                    : canvasId == "p1"
-                    ? penta({
-                          type: penrose.Pe1,
-                          angle: new Angle(0, false),
-                          isHeads: true,
-                          loc: base,
-                          gen,
-                          rhomb: true,
-                      })
-                    : canvasId == "s5"
-                    ? star({
-                          type: penrose.St5,
-                          angle: new Angle(0, false),
-                          isHeads: true,
-                          loc: base,
-                          gen,
-                          rhomb: true,
-                      })
-                    : canvasId == "s3"
-                    ? star({
-                          type: penrose.St3,
-                          angle: new Angle(0, false),
-                          isHeads: true,
-                          loc: base,
-                          gen,
-                          rhomb: true,
-                      })
-                    : canvasId == "s1"
-                    ? star({
-                          type: penrose.St1,
-                          angle: new Angle(0, false),
-                          isHeads: true,
-                          loc: base,
-                          gen,
-                          rhomb: true,
-                      })
-                    : null
+                penta({
+                    type,
+                    angle,
+                    loc,
+                    rhomb,
+                    gen,
+                })
             );
+
             bounds.pad(0.5);
-            base = base.tr(bounds.minPoint.neg);
+            loc = loc.tr(bounds.minPoint.neg);
             width = (bounds.width - 1) * scale;
             height = (bounds.height - 1) * scale;
             tries += 1; // prevention of infinite loop
@@ -176,10 +106,7 @@ function redraw(bounds, canvas, drawFunction, scale) {
     }
     const computedWidth = bounds.maxPoint.x * scale + scale;
     const computedHeight = bounds.maxPoint.y * scale + scale;
-    if (
-        canvas.width != Math.floor(computedWidth) ||
-        canvas.height != Math.floor(computedHeight)
-    ) {
+    if (canvas.width != Math.floor(computedWidth) || canvas.height != Math.floor(computedHeight)) {
         canvas.width = computedWidth;
         canvas.height = computedHeight;
         setTimeout(drawFunction());
@@ -466,11 +393,7 @@ export function drawGridWork(id) {
         g.strokeStyle = penrose.OUTLINE;
         g.lineWidth = 1;
         let scale = 10;
-        const { grid, figure, outline, deca } = iface(
-            g,
-            scale,
-            shapeMode.shapeMode
-        );
+        const { grid, figure, outline, deca } = iface(g, scale, shapeMode.shapeMode);
 
         let y = 5;
         const shapes = [mosaic.penta, mosaic.diamond, mosaic.star, mosaic.boat];
@@ -479,37 +402,20 @@ export function drawGridWork(id) {
         for (const shape of shapes) {
             for (let i = 0; i < 10; i++) {
                 let offset = p((i + 1) * spacing, y);
-                figure(
-                    shapeColors.shapeColors["pe1-color"],
-                    offset,
-                    shape[i],
-                    g,
-                    scale
-                );
+                figure(shapeColors.shapeColors["pe1-color"], offset, shape[i], g, scale);
                 grid(p((i + 1) * spacing, y), 5);
             }
             y += spacing;
         }
 
         y = 5;
-        const qShapes = [
-            quadrille.penta,
-            quadrille.diamond,
-            quadrille.star,
-            quadrille.boat,
-        ];
+        const qShapes = [quadrille.penta, quadrille.diamond, quadrille.star, quadrille.boat];
 
         for (const shape of qShapes) {
             for (let i = 0; i < 10; i++) {
                 let offset = p((i + 1) * spacing, y);
 
-                outline(
-                    shapeColors.shapeColors["pe1-color"] + "44",
-                    offset,
-                    shape[i],
-                    g,
-                    scale
-                );
+                outline(shapeColors.shapeColors["pe1-color"] + "44", offset, shape[i], g, scale);
             }
             y += spacing;
         }
@@ -653,25 +559,17 @@ export function drawGeneric123(id) {
             case penrose.Pe3:
             case penrose.Pe5:
                 bounds.expand(penta({ type, angle, loc: p(x, y), gen: 0 }));
-                bounds.expand(
-                    penta({ type, angle, loc: p(x, y), gen: 0, rhomb: true })
-                );
+                bounds.expand(penta({ type, angle, loc: p(x, y), gen: 0, rhomb: true }));
                 x += 21;
                 bounds.expand(penta({ type, angle, loc: p(x, y), gen: 1 }));
-                bounds.expand(
-                    penta({ type, angle, loc: p(x, y), gen: 1, rhomb: true })
-                );
+                bounds.expand(penta({ type, angle, loc: p(x, y), gen: 1, rhomb: true }));
                 x += 34;
                 bounds.expand(penta({ type, angle, loc: p(x, y), gen: 2 }));
-                bounds.expand(
-                    penta({ type, angle, loc: p(x, y), gen: 2, rhomb: true })
-                );
+                bounds.expand(penta({ type, angle, loc: p(x, y), gen: 2, rhomb: true }));
                 x = 73;
                 y += 100;
                 bounds.expand(penta({ type, angle, loc: p(x, y), gen: 3 }));
-                bounds.expand(
-                    penta({ type, angle, loc: p(x, y), gen: 3, rhomb: true })
-                );
+                bounds.expand(penta({ type, angle, loc: p(x, y), gen: 3, rhomb: true }));
 
                 break;
             case penrose.St1:
@@ -679,49 +577,33 @@ export function drawGeneric123(id) {
             case penrose.St5:
                 y += 10;
                 bounds.expand(star({ type, angle, loc: p(x, y), gen: 0 }));
-                bounds.expand(
-                    star({ type, angle, loc: p(x, y), gen: 0, rhomb: true })
-                );
+                bounds.expand(star({ type, angle, loc: p(x, y), gen: 0, rhomb: true }));
                 x += 21;
                 bounds.expand(star({ type, angle, loc: p(x, y), gen: 1 }));
-                bounds.expand(
-                    star({ type, angle, loc: p(x, y), gen: 1, rhomb: true })
-                );
+                bounds.expand(star({ type, angle, loc: p(x, y), gen: 1, rhomb: true }));
                 x += 54;
                 bounds.expand(star({ type, angle, loc: p(x, y), gen: 2 }));
-                bounds.expand(
-                    star({ type, angle, loc: p(x, y), gen: 2, rhomb: true })
-                );
+                bounds.expand(star({ type, angle, loc: p(x, y), gen: 2, rhomb: true }));
                 x = 93;
                 y += 130;
                 bounds.expand(star({ type, angle, loc: p(x, y), gen: 3 }));
-                bounds.expand(
-                    star({ type, angle, loc: p(x, y), gen: 3, rhomb: true })
-                );
+                bounds.expand(star({ type, angle, loc: p(x, y), gen: 3, rhomb: true }));
 
                 break;
             case penrose.Deca:
                 bounds.expand(deca({ angle, loc: p(x, y), gen: 1 }));
-                bounds.expand(
-                    deca({ angle, loc: p(x, y), gen: 1, rhomb: true })
-                );
+                bounds.expand(deca({ angle, loc: p(x, y), gen: 1, rhomb: true }));
                 x += 31;
                 bounds.expand(deca({ angle, loc: p(x, y), gen: 2 }));
-                bounds.expand(
-                    deca({ angle, loc: p(x, y), gen: 2, rhomb: true })
-                );
+                bounds.expand(deca({ angle, loc: p(x, y), gen: 2, rhomb: true }));
                 x += 64;
                 y += 30;
                 bounds.expand(deca({ angle, loc: p(x, y), gen: 3 }));
-                bounds.expand(
-                    deca({ angle, loc: p(x, y), gen: 3, rhomb: true })
-                );
+                bounds.expand(deca({ angle, loc: p(x, y), gen: 3, rhomb: true }));
                 y += 170;
                 x += 30;
                 bounds.expand(deca({ angle, loc: p(x, y), gen: 4 }));
-                bounds.expand(
-                    deca({ angle, loc: p(x, y), gen: 4, rhomb: true })
-                );
+                bounds.expand(deca({ angle, loc: p(x, y), gen: 4, rhomb: true }));
                 break;
         }
     };
