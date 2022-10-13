@@ -31,13 +31,10 @@ export function makeCanvas(canvasId) {
         let bounds;
         let width = 0;
         let height = 0;
-        let base = p(0, 0);
-        let ang = new Angle(0, true);
         let tries = 0;
-        //let type, angle, isHeads, loc, gen;
 
-        // Just for test.
-        let gen = 0;
+        // Set up the parameters
+        let gen = 1;
         let loc = p(0, 0);
         let type, angle;
 

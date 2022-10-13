@@ -103,9 +103,7 @@ function mix(start, end, frac, opacity) {
     if (frac > 1) frac = 1;
     const rgbStart = hexToRGB(start);
     const rgbEnd = hexToRGB(end);
-    const [r, g, b] = rgbStart.map(
-        (item, index) => item * (1 - frac) + rgbEnd[index] * frac
-    );
+    const [r, g, b] = rgbStart.map((item, index) => item * (1 - frac) + rgbEnd[index] * frac);
     const command = `rgb(${r},${g},${b})`;
     return command;
 }
@@ -265,26 +263,14 @@ export class PenroseScreen {
         if (!overlays || overlays.pentaSelected) {
             let shapes = this.pShape(type);
             if (shapes) {
-                bounds.expand(
-                    this.renderer.outline(
-                        pColor(type),
-                        loc,
-                        shapes[angle.tenths]
-                    )
-                );
+                bounds.expand(this.renderer.outline(pColor(type), loc, shapes[angle.tenths]));
             }
         }
 
         if (!overlays || overlays.mosaicSelected) {
             let shapes = this.mShape(type);
             if (shapes) {
-                bounds.expand(
-                    this.renderer.figure(
-                        pColor(type),
-                        loc,
-                        shapes[angle.tenths]
-                    )
-                );
+                bounds.expand(this.renderer.figure(pColor(type), loc, shapes[angle.tenths]));
             }
         }
         return bounds; // call figure
@@ -330,6 +316,12 @@ export class PenroseScreen {
         //         options
         //     )}`
         // );
+        switch (type) {
+            case penrose.St5:
+            case penrose.St3:
+            case penrose.St1:
+                return this.star({ type, angle, isHeads, loc, gen, ...options });
+        }
         let { overlays } = globals;
         //({ overlays } = options); // some version of apply
         const bounds = new Bounds();
@@ -418,11 +410,9 @@ export class PenroseScreen {
                         ...options,
                     })
                 );
-                if (overlays && overlays.treeSelected)
-                    this.line(loc, locDiamond, "red");
+                if (overlays && overlays.treeSelected) this.line(loc, locDiamond, "red");
             }
-            if (overlays && overlays.treeSelected)
-                this.line(loc, locPenta, "black");
+            if (overlays && overlays.treeSelected) this.line(loc, locPenta, "black");
         }
         return bounds;
     }
@@ -615,9 +605,7 @@ export class PenroseScreen {
         const sDown = wheels.s[gen].down;
 
         // The two diamonds
-        offs = angle.isDown
-            ? sDown[angle.rot(1).fifths]
-            : sUp[angle.rot(1).fifths];
+        offs = angle.isDown ? sDown[angle.rot(1).fifths] : sUp[angle.rot(1).fifths];
         bounds.expand(
             this.star({
                 type: penrose.St1,
@@ -629,9 +617,7 @@ export class PenroseScreen {
             })
         ); // sd1
 
-        offs = angle.isDown
-            ? sDown[angle.rot(4).fifths]
-            : sUp[angle.rot(4).fifths];
+        offs = angle.isDown ? sDown[angle.rot(4).fifths] : sUp[angle.rot(4).fifths];
         bounds.expand(
             this.star({
                 type: penrose.St1,
@@ -647,9 +633,7 @@ export class PenroseScreen {
         const pDown = wheels.p[gen].down;
 
         // The two orange pentagons
-        offs = angle.isDown
-            ? pUp[angle.rot(3).fifths]
-            : pDown[angle.rot(3).fifths];
+        offs = angle.isDown ? pUp[angle.rot(3).fifths] : pDown[angle.rot(3).fifths];
         bounds.expand(
             this.penta({
                 angle: angle.rot(2).inv,
@@ -661,9 +645,7 @@ export class PenroseScreen {
             })
         );
 
-        offs = angle.isDown
-            ? pUp[angle.rot(2).fifths]
-            : pDown[angle.rot(2).fifths];
+        offs = angle.isDown ? pUp[angle.rot(2).fifths] : pDown[angle.rot(2).fifths];
         bounds.expand(
             this.penta({
                 angle: angle.rot(3).inv,
@@ -901,11 +883,7 @@ export class PenroseScreen {
         }
 
         for (let i = 0; i < segmentPoints.length - 1; i++) {
-            this.line(
-                offset.tr(segmentPoints[i]),
-                offset.tr(segmentPoints[i + 1]),
-                "red"
-            );
+            this.line(offset.tr(segmentPoints[i]), offset.tr(segmentPoints[i + 1]), "red");
         }
 
         return bounds;
@@ -1046,15 +1024,7 @@ export class PenroseScreen {
                 case penrose.Pe5:
                     const thick5 = thicks[shift.tenths];
                     if (rhombSelected) {
-                        bounds.expand(
-                            this.renderer.rhombus(
-                                fill,
-                                loc,
-                                thick5,
-                                outline,
-                                isHeads
-                            )
-                        );
+                        bounds.expand(this.renderer.rhombus(fill, loc, thick5, outline, isHeads));
                     }
                     if (ammannSelected) {
                         bounds.expand(this.ammannSegments(loc, thick5, true));
@@ -1066,19 +1036,11 @@ export class PenroseScreen {
                             const thin3 = thins[shift.tenths];
                             if (rhombSelected) {
                                 bounds.expand(
-                                    this.renderer.rhombus(
-                                        fill,
-                                        loc,
-                                        thin3,
-                                        outline,
-                                        isHeads
-                                    )
+                                    this.renderer.rhombus(fill, loc, thin3, outline, isHeads)
                                 );
                             }
                             if (ammannSelected) {
-                                bounds.expand(
-                                    this.ammannSegments(loc, thin3, false)
-                                );
+                                bounds.expand(this.ammannSegments(loc, thin3, false));
                             }
                         // no break here
                         case 1:
@@ -1086,19 +1048,11 @@ export class PenroseScreen {
                             const thick3 = thicks[shift.tenths];
                             if (rhombSelected) {
                                 bounds.expand(
-                                    this.renderer.rhombus(
-                                        fill,
-                                        loc,
-                                        thick3,
-                                        outline,
-                                        isHeads
-                                    )
+                                    this.renderer.rhombus(fill, loc, thick3, outline, isHeads)
                                 );
                             }
                             if (ammannSelected) {
-                                bounds.expand(
-                                    this.ammannSegments(loc, thick3, true)
-                                );
+                                bounds.expand(this.ammannSegments(loc, thick3, true));
                             }
                             break;
                         default:
@@ -1111,19 +1065,11 @@ export class PenroseScreen {
                             const thick2 = thicks[shift.tenths];
                             if (rhombSelected) {
                                 bounds.expand(
-                                    this.renderer.rhombus(
-                                        fill,
-                                        loc,
-                                        thick2,
-                                        outline,
-                                        isHeads
-                                    )
+                                    this.renderer.rhombus(fill, loc, thick2, outline, isHeads)
                                 );
                             }
                             if (ammannSelected) {
-                                bounds.expand(
-                                    this.ammannSegments(loc, thick2, true)
-                                );
+                                bounds.expand(this.ammannSegments(loc, thick2, true));
                             }
 
                             break;
@@ -1132,19 +1078,11 @@ export class PenroseScreen {
                             const thinR2 = thins[shift.tenths];
                             if (rhombSelected) {
                                 bounds.expand(
-                                    this.renderer.rhombus(
-                                        fill,
-                                        loc,
-                                        thinR2,
-                                        outline,
-                                        isHeads
-                                    )
+                                    this.renderer.rhombus(fill, loc, thinR2, outline, isHeads)
                                 );
                             }
                             if (ammannSelected) {
-                                bounds.expand(
-                                    this.ammannSegments(loc, thinR2, false)
-                                );
+                                bounds.expand(this.ammannSegments(loc, thinR2, false));
                             }
                             break;
                     }
