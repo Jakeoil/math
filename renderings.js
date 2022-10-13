@@ -34,7 +34,7 @@ export function makeCanvas(canvasId) {
         let tries = 0;
 
         // Set up the parameters
-        let gen = 1;
+        let gen = 0;
         let loc = p(0, 0);
         let type, angle;
 

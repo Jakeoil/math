@@ -2,7 +2,7 @@ import { norm, p } from "./point.js";
 import { Bounds } from "./bounds.js";
 import { penrose } from "./penrose.js";
 import { globals } from "./controls.js";
-import { mosaic, quadrille } from "./shape-modes.js";
+import { mosaic, quadrille, real } from "./shape-modes.js";
 import { CanvasRenderer, isThree, threeRenderer } from "./renderers.js";
 
 const SQRT5 = Math.sqrt(5); // 2.236
@@ -188,7 +188,6 @@ export class PenroseScreen {
         // console.log(g.name);
         this.mode = mode;
         if (g instanceof CanvasRenderingContext2D) {
-            console.log(g.constructor.name);
             this.renderer = new CanvasRenderer(g, scale);
         } else if (isThree(g)) {
             console.log("isThree");
@@ -230,8 +229,8 @@ export class PenroseScreen {
      * @returns the mosaic shape wheel
      */
     mShape(type) {
-        if (this.mode != quadrille.key) {
-            return null; // !! there may be some recourse for real.
+        if (this.mode == real.key) {
+            return null;
         }
         switch (type) {
             case penrose.Pe5:
@@ -257,6 +256,14 @@ export class PenroseScreen {
         const { overlays } = globals; // don't forget the options
         const bounds = new Bounds();
         if (options.rhomb) {
+            return bounds;
+        }
+
+        if (this.mode == penrose.mosaic.key) {
+            let shapes = this.mShape(type);
+            if (shapes) {
+                bounds.expand(this.renderer.figure(pColor(type), loc, shapes[angle.tenths]));
+            }
             return bounds;
         }
 
