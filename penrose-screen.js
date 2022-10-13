@@ -410,9 +410,9 @@ export class PenroseScreen {
                         ...options,
                     })
                 );
-                if (overlays && overlays.treeSelected) this.line(loc, locDiamond, "red");
+                if (overlays && overlays.treeSelected) this.renderer.line(loc, locDiamond, "red");
             }
-            if (overlays && overlays.treeSelected) this.line(loc, locPenta, "black");
+            if (overlays && overlays.treeSelected) this.renderer.line(loc, locPenta, "black");
         }
         return bounds;
     }
@@ -539,8 +539,8 @@ export class PenroseScreen {
                     })
                 );
                 if (overlays && overlays.treeSelected) {
-                    this.line(loc, locPenta, "red");
-                    this.line(loc, locBoat, "blue");
+                    this.renderer.line(loc, locPenta, "red");
+                    this.renderer.line(loc, locBoat, "blue");
                 }
             }
         }
@@ -883,7 +883,7 @@ export class PenroseScreen {
         }
 
         for (let i = 0; i < segmentPoints.length - 1; i++) {
-            this.line(offset.tr(segmentPoints[i]), offset.tr(segmentPoints[i + 1]), "red");
+            this.renderer.line(offset.tr(segmentPoints[i]), offset.tr(segmentPoints[i + 1]), "red");
         }
 
         return bounds;
@@ -900,85 +900,6 @@ export class PenroseScreen {
         return segment[0].tr(abs.mult(offset / PHI));
     }
 
-    /*
-    getGradient(fill, offset, shape, isHeads) {
-        const { g, scale } = this;
-
-        const point0 = shape[0].tr(offset).mult(scale);
-        const point1 = shape[2].tr(offset).mult(scale);
-        const canvasGradient = g.createLinearGradient(
-            point0.x,
-            point0.y,
-            point1.x,
-            point1.y
-        );
-        if (isHeads) {
-            canvasGradient.addColorStop(0, "#fff");
-            canvasGradient.addColorStop(2 / 3, fill);
-            // color stop 1 has to be 1/3 of the way to "#000"
-            const endColor = mix(fill, "#000", 1 / 3);
-            canvasGradient.addColorStop(1, endColor);
-        } else {
-            canvasGradient.addColorStop(0, "#000");
-            canvasGradient.addColorStop(2 / 3, fill);
-            const endColor = mix(fill, "#fff", 1 / 3);
-            canvasGradient.addColorStop(1, endColor);
-        }
-        return canvasGradient;
-    }
-
-    rhombus(fill, offset, shape, strokeStyle, isHeads) {
-        const { g, scale } = this;
-        const { rhombStyle } = globals;
-        let currentStrokeStyle = g.strokeStyle;
-        let currentLineWidth = g.lineWidth;
-        let currentfillStyle = g.fillStyle;
-
-        let gradient = rhombStyle.fill == rhombStyle.GRADIENT;
-        let start = true;
-        const bounds = new Bounds();
-        g.strokeStyle = strokeStyle ? strokeStyle : "black";
-        if (gradient) {
-            g.fillStyle = this.getGradient(fill, offset, shape, isHeads);
-        } else if (rhombStyle.fill == rhombStyle.TRANSPARENT) {
-            g.fillStyle = fill + "40"; //
-        } else {
-            g.fillStyle = fill;
-        }
-        g.lineWidth = scale < 5 ? 1 : 2;
-        for (const point of shape) {
-            if (start) {
-                g.beginPath();
-                g.moveTo(
-                    (point.x + offset.x) * scale,
-                    (point.y + offset.y) * scale
-                );
-                start = false;
-            } else {
-                g.lineTo(
-                    (point.x + offset.x) * scale,
-                    (point.y + offset.y) * scale
-                );
-            }
-
-            bounds.addPoint(offset, point);
-        }
-
-        g.closePath();
-        if (rhombStyle.fill != rhombStyle.NONE) {
-            g.fill();
-        }
-        if (rhombStyle.stroke != rhombStyle.NONE) {
-            g.stroke();
-        }
-
-        g.strokeStyle = currentStrokeStyle;
-        g.lineWidth = currentLineWidth;
-        g.fillStyle = currentfillStyle;
-
-        return bounds;
-    }
-*/
     /**
      * The color of the rhomb is based on the type.
      * The string will be seached for the # character. Everything before
