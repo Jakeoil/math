@@ -27,49 +27,25 @@ export class Overlays {
         this.eleSmallRhomb = document.querySelector("#small-rhomb");
 
         if (this.elePenta) {
-            this.elePenta.addEventListener(
-                "click",
-                this.pentaClicked.bind(this),
-                false
-            );
+            this.elePenta.addEventListener("click", this.pentaClicked.bind(this), false);
         }
         if (this.eleMosaic) {
-            this.eleMosaic.addEventListener(
-                "click",
-                this.mosaicClicked.bind(this),
-                false
-            );
+            this.eleMosaic.addEventListener("click", this.mosaicClicked.bind(this), false);
         }
         if (this.eleTree) {
-            this.eleTree.addEventListener(
-                "click",
-                this.treeClicked.bind(this),
-                false
-            );
+            this.eleTree.addEventListener("click", this.treeClicked.bind(this), false);
         }
 
         if (this.eleRhomb) {
-            this.eleRhomb.addEventListener(
-                "click",
-                this.rhombClicked.bind(this),
-                false
-            );
+            this.eleRhomb.addEventListener("click", this.rhombClicked.bind(this), false);
         }
 
         if (this.eleAmmann) {
-            this.eleAmmann.addEventListener(
-                "click",
-                this.ammannClicked.bind(this),
-                false
-            );
+            this.eleAmmann.addEventListener("click", this.ammannClicked.bind(this), false);
         }
 
         for (let button of this.radioButtons) {
-            button.addEventListener(
-                "click",
-                this.rhombSizeClicked.bind(this),
-                false
-            );
+            button.addEventListener("click", this.rhombSizeClicked.bind(this), false);
         }
 
         this.reset();
@@ -106,11 +82,7 @@ export class Overlays {
             this.eleAmmann.checked = this.ammannSelected;
         }
 
-        if (
-            this.eleRhombSizeField &&
-            this.eleSmallRhomb &&
-            this.eleLargeRhomb
-        ) {
+        if (this.eleRhombSizeField && this.eleSmallRhomb && this.eleLargeRhomb) {
             if (this.rhombSelected || this.ammannSelected) {
                 this.eleRhombSizeField.style.display = "block";
                 if (this.smallRhomb) {
@@ -174,8 +146,6 @@ export class Overlays {
         this.app(Overlays.name);
     }
     rhombSizeClicked() {
-        console.log(`click: smalRhomb: ${this.smallRhomb}`);
-        console.log(`button`);
         for (let button of this.radioButtons) {
             if (button.checked) {
                 this.smallRhomb = button.id == "small-rhomb";

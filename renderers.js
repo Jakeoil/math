@@ -22,9 +22,7 @@ export class CanvasRenderer {
     figure(fill, offset, shape) {
         const { pentaStyle } = globals;
         const { g, scale } = this;
-        let currentStrokeStyle = g.strokeStyle;
-        let currentLineWidth = g.lineWidth;
-        let currentfillStyle = g.fillStyle;
+        g.save();
         g.fillStyle = fill; //e.g penrose.ORANGE;
         g.strokeStyle = penrose.OUTLINE;
 
@@ -47,10 +45,7 @@ export class CanvasRenderer {
             bounds.addPoint(offset, point);
             bounds.addPoint(offset, point.tr(p(1, 1)));
         }
-
-        g.strokeStyle = currentStrokeStyle;
-        g.lineWidth = currentLineWidth;
-        g.fillStyle = currentfillStyle;
+        g.restore();
 
         return bounds;
     }
@@ -62,9 +57,7 @@ export class CanvasRenderer {
     outline(fill, offset, shape) {
         const { pentaStyle } = globals;
         const { g, scale } = this;
-        let currentStrokeStyle = g.strokeStyle;
-        let currentLineWidth = g.lineWidth;
-        let currentfillStyle = g.fillStyle;
+        g.save();
 
         let start = true;
         if (!pentaStyle || pentaStyle.stroke == pentaStyle.SOLID) {
@@ -99,9 +92,10 @@ export class CanvasRenderer {
         if (!pentaStyle || pentaStyle.fill != pentaStyle.NONE) {
             g.fill();
         }
-        g.strokeStyle = currentStrokeStyle;
-        g.lineWidth = currentLineWidth;
-        g.fillStyle = currentfillStyle;
+        //g.strokeStyle = currentStrokeStyle;
+        //g.lineWidth = currentLineWidth;
+        //g.fillStyle = currentfillStyle;
+        g.restore();
 
         return bounds;
     }
@@ -114,7 +108,7 @@ export class CanvasRenderer {
     grid(offset, size) {
         const bounds = new Bounds();
         const { g, scale } = this;
-        g.strokeStyle = penrose.OUTLINE;
+        g.save();
         for (let y = -size; y < size; y++) {
             for (let x = -size; x < size; x++) {
                 g.strokeRect(
@@ -139,6 +133,8 @@ export class CanvasRenderer {
 
         bounds.addPoint(offset, p(-size, -size));
         bounds.addPoint(offset, p(size, size));
+
+        g.restore();
         return bounds;
     }
 
@@ -186,10 +182,7 @@ export class CanvasRenderer {
     rhombus(fill, offset, shape, strokeStyle, isHeads) {
         const { g, scale } = this;
         const { rhombStyle } = globals;
-        let currentStrokeStyle = g.strokeStyle;
-        let currentLineWidth = g.lineWidth;
-        let currentfillStyle = g.fillStyle;
-
+        g.save();
         let gradient = rhombStyle.fill == rhombStyle.GRADIENT;
         let start = true;
         const bounds = new Bounds();
@@ -221,14 +214,15 @@ export class CanvasRenderer {
         if (rhombStyle.stroke != rhombStyle.NONE) {
             g.stroke();
         }
-
-        g.strokeStyle = currentStrokeStyle;
-        g.lineWidth = currentLineWidth;
-        g.fillStyle = currentfillStyle;
+        g.restore();
 
         return bounds;
     }
 }
+
+/**
+ * Test code for threejs proposal
+ */
 export class threeRenderer {
     constructor(g, scale) {
         this.g = g;

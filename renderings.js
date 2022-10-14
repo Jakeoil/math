@@ -26,7 +26,7 @@ export function makeCanvas(canvasId) {
         g.strokeStyle = penrose.OUTLINE;
         g.lineWidth = 1;
         let scale = 10;
-        const { penta, star: star } = iface(g, scale, shapeMode.shapeMode);
+        const { penta } = iface(g, scale, shapeMode.shapeMode);
 
         let bounds;
         let width = 0;
@@ -665,4 +665,9 @@ export function drawGeneric3(id) {
         }
     };
     drawScreen();
+}
+
+export function drawDualDemo() {
+    const canvas = document.createElement("canvas");
+    let g = canvas.getContext("2d");
 }
