@@ -1,52 +1,57 @@
 {
-  "devDependencies": {
-    "htmlhint": "^1.1.4",
-    "prettier": "2.7.1"
-  },
-  "scripts": {
-    "format": "prettier --write \"./**/*.{js,jsx}\""
-  },
-  "name": "math",
-  "description": "To do list",
-  "version": "1.0.0",
-  "main": "blog.html",
-  "dependencies": {
-    "ansi-styles": "^4.3.0",
-    "balanced-match": "^1.0.2",
-    "async": "^3.2.3",
-    "brace-expansion": "^1.1.11",
-    "chalk": "^4.1.2",
-    "color-name": "^1.1.4",
-    "concat-map": "^0.0.1",
-    "color-convert": "^2.0.1",
-    "fs.realpath": "^1.0.0",
-    "inflight": "^1.0.6",
-    "inherits": "^2.0.4",
-    "glob": "^7.2.3",
-    "is-extglob": "^2.1.1",
-    "has-flag": "^4.0.0",
-    "once": "^1.4.0",
-    "path-is-absolute": "^1.0.1",
-    "is-glob": "^4.0.3",
-    "minimatch": "^3.1.2",
-    "supports-color": "^7.2.0",
-    "strip-json-comments": "^3.1.0",
-    "webidl-conversions": "^3.0.1",
-    "tr46": "^0.0.3",
-    "wrappy": "^1.0.2",
-    "whatwg-url": "^5.0.0",
-    "node-fetch": "^2.6.7",
-    "commander": "^9.3.0",
-    "xml": "^1.0.1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Jakeoil/math.git"
-  },
-  "author": "Jeff Coyle",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/Jakeoil/math/issues"
-  },
-  "homepage": "https://github.com/Jakeoil/math#readme"
+    "devDependencies": {
+        "htmlhint": "^1.1.4",
+        "prettier": "2.7.1"
+    },
+    "scripts": {
+        "format": "prettier --write \"./**/*.{js,jsx}\""
+    },
+    "name": "math",
+    "description": "To do list",
+    "version": "1.0.0",
+    "main": "blog.html",
+    "dependencies": {
+        "ansi-styles": "^4.3.0",
+        "async": "^3.2.3",
+        "balanced-match": "^1.0.2",
+        "brace-expansion": "^1.1.11",
+        "chalk": "^4.1.2",
+        "color-convert": "^2.0.1",
+        "color-name": "^1.1.4",
+        "commander": "^9.3.0",
+        "concat-map": "^0.0.1",
+        "dat.gui": "^0.7.9",
+        "fs.realpath": "^1.0.0",
+        "glob": "^7.2.3",
+        "has-flag": "^4.0.0",
+        "inflight": "^1.0.6",
+        "inherits": "^2.0.4",
+        "is-extglob": "^2.1.1",
+        "is-glob": "^4.0.3",
+        "lodash": "^4.17.21",
+        "minimatch": "^3.1.2",
+        "node-fetch": "^2.6.7",
+        "once": "^1.4.0",
+        "path-is-absolute": "^1.0.1",
+        "strip-json-comments": "^3.1.0",
+        "supports-color": "^7.2.0",
+        "three": "^0.144.0",
+        "tr46": "^0.0.3",
+        "upper-case": "^2.0.2",
+        "webidl-conversions": "^3.0.1",
+        "whatwg-url": "^5.0.0",
+        "wrappy": "^1.0.2",
+        "xml": "^1.0.1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Jakeoil/math.git"
+    },
+    "author": "Jeff Coyle",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/Jakeoil/math/issues"
+    },
+    "homepage": "https://github.com/Jakeoil/math#readme",
+    "type": "module"
 }

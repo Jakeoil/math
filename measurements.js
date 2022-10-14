@@ -5,13 +5,16 @@ import { penrose } from "./penrose.js";
 //import { MODE_REAL } from "./controls/shape-mode.js"; // Now _really_
 import { quadrille } from "./shape-modes.js";
 import { iface } from "./penrose-screen.js";
+import { Angle } from "./penrose-screen.js";
 import { measureTaskGlobals } from "./controls.js";
 import { initControls, logRefresh } from "./controls.js";
 
 window.addEventListener("load", measureTasks, false);
+
 export function measureTasks(source) {
     logRefresh(measureTasks, source);
     initControls(measureTasks);
+
     drawQuadrille();
     drawImage();
     wheelTables();
@@ -29,22 +32,22 @@ function drawQuadrille() {
     const scale = 3.7;
     const { deca } = iface(g, scale, measureTaskGlobals.shapeMode.MODE_REAL);
 
-    let base = p(0, 0);
+    let loc = p(0, 0);
     let fifths = 0;
     let isDown = false;
-    let exp = 2;
+    let gen = 2;
     // Now some decagons
     let bounds = new Bounds();
-    bounds.expand(deca(fifths, isDown, base, exp));
+    bounds.expand(deca({ angle: new Angle(fifths, isDown), loc, gen }));
     if (bounds.isEmpty) {
-        bounds.addPoint(base, p(0, 0));
+        bounds.addPoint(loc, p(0, 0));
     }
-    base = base.tr(p(bounds.minPoint.x, bounds.minPoint.y).neg);
+    loc = loc.tr(p(bounds.minPoint.x, bounds.minPoint.y).neg);
     canvas.width = (bounds.maxPoint.x - bounds.minPoint.x) * scale;
     canvas.height = (bounds.maxPoint.y - bounds.minPoint.y) * scale;
 
     bounds = new Bounds();
-    bounds.expand(deca(fifths, isDown, base, exp));
+    bounds.expand(deca({ angle: new Angle(fifths, isDown), loc, gen }));
     bounds = new Bounds();
     const img = canvas.toDataURL("img.png");
 }
@@ -66,17 +69,18 @@ function drawImage() {
 
     let fifths = 0;
     let isDown = false;
-    let base = p(0, 0);
-    let exp = 1;
+    let angle = new Angle(fifths, isDown);
+    let loc = p(0, 0);
+    let gen = 1;
     let bounds = new Bounds();
-    bounds.expand(deca(fifths, isDown, base, exp));
+    bounds.expand(deca({ angle, loc, gen }));
     bounds.pad(1);
-    base = base.tr(p(bounds.minPoint.x, bounds.minPoint.y).neg);
+    loc = loc.tr(p(bounds.minPoint.x, bounds.minPoint.y).neg);
     canvas.width = (bounds.maxPoint.x - bounds.minPoint.x) * scale;
     canvas.height = (bounds.maxPoint.y - bounds.minPoint.y) * scale;
 
     bounds = new Bounds();
-    bounds.expand(deca(fifths, isDown, base, exp));
+    bounds.expand(deca({ angle, loc, gen }));
     bounds.pad(1);
     bounds = new Bounds();
     const img = canvas.toDataURL("img.png");
