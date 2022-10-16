@@ -262,25 +262,72 @@ export class PenroseScreen {
         if (this.mode == penrose.mosaic.key) {
             let shapes = this.mShape(type);
             if (shapes) {
-                bounds.expand(this.renderer.figure(pColor(type), loc, shapes[angle.tenths]));
+                bounds.expand(this.figure(pColor(type), loc, shapes[angle.tenths]));
             }
             return bounds;
         }
 
         if (!overlays || overlays.pentaSelected) {
+            const fill = pColor(type);
             let shapes = this.pShape(type);
             if (shapes) {
-                bounds.expand(this.renderer.outline(pColor(type), loc, shapes[angle.tenths]));
+                const shape = shapes[angle.tenths];
+                bounds.expand(this.outline(fill, loc, shape));
             }
         }
 
         if (!overlays || overlays.mosaicSelected) {
             let shapes = this.mShape(type);
             if (shapes) {
-                bounds.expand(this.renderer.figure(pColor(type), loc, shapes[angle.tenths]));
+                bounds.expand(this.figure(pColor(type), loc, shapes[angle.tenths]));
             }
         }
         return bounds; // call figure
+    }
+
+    outline(fill, loc, shape) {
+        const bounds = new Bounds();
+        bounds.addVectors(loc, shape);
+        const command = "outline";
+        bounds.renderList.push({ command, fill, loc, shape });
+        this.renderer.render(bounds.renderList);
+        return bounds;
+    }
+    figure(fill, loc, shape) {
+        const bounds = new Bounds();
+        bounds.addSquares(loc, shape);
+        const command = "figure";
+        bounds.renderList.push({ command, fill, loc, shape });
+        this.renderer.render(bounds.renderList);
+        return bounds;
+    }
+    grid(offset, size) {
+        const bounds = new Bounds();
+        bounds.addPoint(offset, p(-size, -size));
+        bounds.addPoint(offset, p(size, size));
+        const command = "grid";
+        bounds.renderList.push({ command, offset, size });
+        this.renderer.render(bounds.renderList);
+        return bounds;
+    }
+    line(loc, end, strokeStyle) {
+        const bounds = new Bounds();
+        bounds.addPoint(loc, loc);
+        bounds.addPoint(loc, end);
+        const command = "line";
+        bounds.renderList.push({ command, loc, end, strokeStyle });
+        this.renderer.render(bounds.renderList);
+        return bounds;
+    }
+    rhombus(fill, offset, shape, strokeStyle, isHeads) {
+        const bounds = new Bounds();
+        for (const point of shape) {
+            bounds.addPoint(offset, point);
+        }
+        const command = "rhombus";
+        bounds.renderList.push({ command, offset, shape, strokeStyle, isHeads });
+        this.renderer.render(bounds.renderList);
+        return bounds;
     }
 
     /**************************************************************************

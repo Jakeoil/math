@@ -162,6 +162,8 @@ export function drawFirstInflation(id) {
             bounds.expand(penta({ type, angle, loc, gen }));
             bounds.expand(penta({ type, angle, loc, gen, rhomb }));
         }
+
+        //bounds.dumpNodes(bounds.nodeList);
         y += 20;
 
         for (let i = 0; i < 5; i++) {
@@ -392,6 +394,7 @@ export function drawGridWork(id) {
         let scale = 10;
         const { grid, figure, outline, deca } = iface(g, scale, shapeMode.shapeMode);
 
+        const bounds = new Bounds();
         let y = 5;
         const shapes = [mosaic.penta, mosaic.diamond, mosaic.star, mosaic.boat];
 
@@ -399,8 +402,10 @@ export function drawGridWork(id) {
         for (const shape of shapes) {
             for (let i = 0; i < 10; i++) {
                 let offset = p((i + 1) * spacing, y);
-                figure(shapeColors.shapeColors["pe1-color"], offset, shape[i], g, scale);
-                grid(p((i + 1) * spacing, y), 5);
+                bounds.expand(
+                    figure(shapeColors.shapeColors["pe1-color"], offset, shape[i], g, scale)
+                );
+                bounds.expand(grid(p((i + 1) * spacing, y), 5));
             }
             y += spacing;
         }
@@ -412,7 +417,9 @@ export function drawGridWork(id) {
             for (let i = 0; i < 10; i++) {
                 let offset = p((i + 1) * spacing, y);
 
-                outline(shapeColors.shapeColors["pe1-color"] + "44", offset, shape[i], g, scale);
+                bounds.expand(
+                    outline(shapeColors.shapeColors["pe1-color"] + "44", offset, shape[i], g, scale)
+                );
             }
             y += spacing;
         }
@@ -428,95 +435,115 @@ export function drawGridWork(id) {
         isDown = false;
         base = p(15, 75);
         exp = 1;
-        deca({ angle: new Angle(fifths, isDown), loc: base, gen: exp });
-        grid(base, 10);
-        deca({
-            angle: new Angle(fifths, isDown),
-            loc: base,
-            gen: exp,
-            rhomb: true,
-        });
+        bounds.expand(deca({ angle: new Angle(fifths, isDown), loc: base, gen: exp }));
+        bounds.expand(grid(base, 10));
+        bounds.expand(
+            deca({
+                angle: new Angle(fifths, isDown),
+                loc: base,
+                gen: exp,
+                rhomb: true,
+            })
+        );
 
         fifths = 0;
         isDown = false;
         base = p(45, 75);
         exp = 2;
-        deca({ angle: new Angle(fifths, isDown), loc: base, gen: exp });
-        grid(base, 18);
-        deca({
-            angle: new Angle(fifths, isDown),
-            loc: base,
-            gen: exp,
-            rhomb: true,
-        });
+        bounds.expand(deca({ angle: new Angle(fifths, isDown), loc: base, gen: exp }));
+        bounds.expand(grid(base, 18));
+        bounds.expand(
+            deca({
+                angle: new Angle(fifths, isDown),
+                loc: base,
+                gen: exp,
+                rhomb: true,
+            })
+        );
 
         fifths = 3;
         isDown = true;
         base = p(15, 115);
         exp = 1;
-        deca({
-            angle: new Angle(fifths, isDown),
-            loc: base,
-            gen: exp,
-        });
-        grid(base, 10);
-        deca({
-            angle: new Angle(fifths, isDown),
-            loc: base,
-            gen: exp,
-            rhomb: true,
-        });
+        bounds.expand(
+            deca({
+                angle: new Angle(fifths, isDown),
+                loc: base,
+                gen: exp,
+            })
+        );
+        bounds.expand(grid(base, 10));
+        bounds.expand(
+            deca({
+                angle: new Angle(fifths, isDown),
+                loc: base,
+                gen: exp,
+                rhomb: true,
+            })
+        );
 
         fifths = 3;
         isDown = true;
         base = p(45, 115);
         exp = 2;
-        deca({
-            angle: new Angle(fifths, isDown),
-            loc: base,
-            gen: exp,
-        });
-        grid(base, 18);
-        deca({
-            angle: new Angle(fifths, isDown),
-            loc: base,
-            gen: exp,
-            rhomb: true,
-        });
+        bounds.expand(
+            deca({
+                angle: new Angle(fifths, isDown),
+                loc: base,
+                gen: exp,
+            })
+        );
+        bounds.expand(grid(base, 18));
+        bounds.expand(
+            deca({
+                angle: new Angle(fifths, isDown),
+                loc: base,
+                gen: exp,
+                rhomb: true,
+            })
+        );
 
         fifths = 1;
         isDown = false;
         base = p(15, 155);
         exp = 1;
-        deca({
-            angle: new Angle(fifths, isDown),
-            loc: base,
-            gen: exp,
-        });
-        grid(base, 10);
-        deca({
-            angle: new Angle(fifths, isDown),
-            loc: base,
-            gen: exp,
-            rhomb: true,
-        });
+        bounds.expand(
+            deca({
+                angle: new Angle(fifths, isDown),
+                loc: base,
+                gen: exp,
+            })
+        );
+        bounds.expand(grid(base, 10));
+        bounds.expand(
+            deca({
+                angle: new Angle(fifths, isDown),
+                loc: base,
+                gen: exp,
+                rhomb: true,
+            })
+        );
 
         fifths = 1;
         isDown = false;
         base = p(45, 155);
         exp = 2;
-        deca({
-            angle: new Angle(fifths, isDown),
-            loc: base,
-            gen: exp,
-        });
-        grid(base, 18);
-        deca({
-            angle: new Angle(fifths, isDown),
-            loc: base,
-            gen: exp,
-            rhomb: true,
-        });
+        bounds.expand(
+            deca({
+                angle: new Angle(fifths, isDown),
+                loc: base,
+                gen: exp,
+            })
+        );
+        bounds.expand(grid(base, 18));
+        bounds.expand(
+            deca({
+                angle: new Angle(fifths, isDown),
+                loc: base,
+                gen: exp,
+                rhomb: true,
+            })
+        );
     }
 }
 
@@ -631,9 +658,10 @@ export function drawGeneric3(id) {
         let y = 250;
         let angle = new Angle(controls.fifths, controls.isDown);
         let decagon = true;
+        const bounds = new Bounds();
         if (decagon) {
-            deca({ angle, loc: p(x, y), gen: 6 });
-            deca({ angle, loc: p(x, y), gen: 6, rhomb: true });
+            bounds.expand(deca({ angle, loc: p(x, y), gen: 6 }));
+            bounds.expand(deca({ angle, loc: p(x, y), gen: 6, rhomb: true }));
         } else {
             console.log(`drawScreen ${controls.typeIndex}`);
             const type = controls.typeList[controls.typeIndex];
@@ -642,24 +670,28 @@ export function drawGeneric3(id) {
                 case penrose.Pe3:
                 case penrose.Pe5:
                     console.log("draw penta");
-                    penta({
-                        type,
-                        angle: new Angle(controls.fifths, controls.isDown),
-                        loc: p(x, y),
-                        gen: 3,
-                    });
+                    bounds.expand(
+                        penta({
+                            type,
+                            angle: new Angle(controls.fifths, controls.isDown),
+                            loc: p(x, y),
+                            gen: 3,
+                        })
+                    );
 
                     break;
                 case penrose.St1:
                 case penrose.St3:
                 case penrose.St5:
                     console.log("draw star");
-                    star({
-                        type,
-                        angle: new Angle(controls.fifths, controls.isDown),
-                        loc: p(x, y),
-                        gen: 3,
-                    });
+                    bounds.expand(
+                        star({
+                            type,
+                            angle: new Angle(controls.fifths, controls.isDown),
+                            loc: p(x, y),
+                            gen: 3,
+                        })
+                    );
                     break;
             }
         }

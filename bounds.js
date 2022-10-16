@@ -9,6 +9,7 @@ export class Bounds {
     constructor() {
         this.maxPoint = null;
         this.minPoint = null;
+        this.renderList = [];
     }
 
     /**
@@ -32,6 +33,15 @@ export class Bounds {
         } else if (logicalPoint.y > this.maxPoint.y) {
             this.maxPoint.y = logicalPoint.y;
         }
+    }
+    addVectors(offset, shape) {
+        for (const point of shape) {
+            this.addPoint(offset, point);
+        }
+    }
+    addSquares(offset, shape) {
+        this.addVectors(offset, shape);
+        this.pad(0, 1, 1, 0);
     }
 
     get isEmpty() {
@@ -60,6 +70,7 @@ export class Bounds {
             // This is the first expansion of this.
             this.minPoint = bounds.minPoint;
             this.maxPoint = bounds.maxPoint;
+            this.renderList.push(...bounds.renderList);
             return;
         }
 
@@ -75,6 +86,8 @@ export class Bounds {
         if (bounds.maxPoint.y > this.maxPoint.y) {
             this.maxPoint.y = bounds.maxPoint.y;
         }
+
+        this.renderList.push(...bounds.renderList);
     }
 
     /**
@@ -144,6 +157,24 @@ export class Bounds {
     toString() {
         return `min: ${this.minPoint}, max: ${this.maxPoint}`;
     }
+
+    //testBounds();
+    dumpNodes(nodeList) {
+        console.log(`dump nodes ${JSON.stringify(nodeList)}`);
+        if (nodeList instanceof Array) {
+            console.log(`found array size: ${nodeList.length}`);
+            if (!nodeList.isEmpty) {
+                for (const node of nodeList) {
+                    console.log(`recursive call on node: ${node.nodeList}`);
+                    this.dumpNodes(node);
+                }
+            } else {
+                console.log(`empty node`);
+            }
+        } else {
+            console.log(`node: ${nodeList}`);
+        }
+    }
 }
 
 function testBounds() {
@@ -168,4 +199,3 @@ function testBounds() {
     console.log(`${bounds.pad(-10)}`);
     console.log(`${bounds.pad(-10)}`);
 }
-//testBounds();

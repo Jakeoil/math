@@ -72,6 +72,7 @@ export class CanvasRenderer {
         }
 
         const bounds = new Bounds();
+
         for (const point of shape) {
             if (start) {
                 g.beginPath();
@@ -217,6 +218,28 @@ export class CanvasRenderer {
         g.restore();
 
         return bounds;
+    }
+
+    render(renderList) {
+        for (const item of renderList) {
+            switch (item.command) {
+                case "outline":
+                    this.outline(item.fill, item.loc, item.shape);
+                    break;
+                case "figure":
+                    this.figure(item.fill, item.loc, item.shape);
+                    break;
+                case "grid":
+                    this.grid(item.fill, offset, size);
+                    break;
+                case "line":
+                    this.line(item.loc, item.end, item.strokeStyle);
+                    break;
+                case "rhombus":
+                    this.rhombus(item.fill, item.loc, item.shape, item.strokeStyle, isHeads);
+                    break;
+            }
+        }
     }
 }
 
