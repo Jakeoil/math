@@ -230,13 +230,19 @@ export class CanvasRenderer {
                     this.figure(item.fill, item.loc, item.shape);
                     break;
                 case "grid":
-                    this.grid(item.fill, offset, size);
+                    this.grid(item.offset, item.size);
                     break;
                 case "line":
                     this.line(item.loc, item.end, item.strokeStyle);
                     break;
                 case "rhombus":
-                    this.rhombus(item.fill, item.loc, item.shape, item.strokeStyle, isHeads);
+                    this.rhombus(
+                        item.fill,
+                        item.offset,
+                        item.shape,
+                        item.strokeStyle,
+                        item.isHeads
+                    );
                     break;
             }
         }

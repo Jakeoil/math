@@ -3,7 +3,7 @@ import { Bounds } from "./bounds.js";
 import { penrose } from "./penrose.js";
 import { globals } from "./controls.js";
 import { mosaic, quadrille, real } from "./shape-modes.js";
-import { CanvasRenderer, isThree, threeRenderer } from "./renderers.js";
+//import { CanvasRenderer, isThree, threeRenderer } from "./renderers.js";
 
 const SQRT5 = Math.sqrt(5); // 2.236
 const PHI = (SQRT5 + 1) / 2; // 1.618
@@ -89,7 +89,7 @@ function hexToRGB(h) {
 }
 
 /**
- * Create an rgb command merging the two colors
+ * Linear interpolate tow colors
  *
  * @param {*} start
  * @param {*} end
@@ -98,7 +98,7 @@ function hexToRGB(h) {
  *
  * todo!!! implement opacity. It is a fraction from 0 (transparent) to 1.
  */
-function mix(start, end, frac, opacity) {
+function lerp(start, end, frac, opacity) {
     if (frac < 0) frac = 0;
     if (frac > 1) frac = 1;
     const rgbStart = hexToRGB(start);
@@ -109,12 +109,12 @@ function mix(start, end, frac, opacity) {
 }
 
 function testMix() {
-    mix("#000", "#ff6600", 0);
-    mix("#000", "#ff6600", 0.1);
-    mix("#000", "#ff6600", 0.25);
-    mix("#000", "#ff6600", 0.5);
-    mix("#000", "#ff6600", 0.75);
-    mix("#000", "#ff6600", 1.0);
+    lerp("#000", "#ff6600", 0);
+    lerp("#000", "#ff6600", 0.1);
+    lerp("#000", "#ff6600", 0.25);
+    lerp("#000", "#ff6600", 0.5);
+    lerp("#000", "#ff6600", 0.75);
+    lerp("#000", "#ff6600", 1.0);
 }
 
 //testMix();
@@ -123,11 +123,11 @@ function testMix() {
  * This is a wrapper around penroseScreen
  * Just creates the screen with some aliases.
  */
-export function iface(g, scale, mode) {
-    let screen = new PenroseScreen(g, scale, mode);
-    const grid = screen.renderer.grid.bind(screen.renderer);
-    const figure = screen.renderer.figure.bind(screen.renderer);
-    const outline = screen.renderer.outline.bind(screen.renderer);
+export function iface(mode) {
+    let screen = new PenroseScreen(mode);
+    const grid = screen.grid.bind(screen.renderer);
+    const figure = screen.figure.bind(screen.renderer);
+    const outline = screen.outline.bind(screen.renderer);
     const penta = screen.penta.bind(screen);
     const star = screen.star.bind(screen);
     const deca = screen.deca.bind(screen);
@@ -182,17 +182,8 @@ function pColor(type) {
  *
  */
 export class PenroseScreen {
-    constructor(g, scale, mode) {
-        // console.log(g);
-        // console.log(g.constructor.name);
-        // console.log(g.name);
+    constructor(mode) {
         this.mode = mode;
-        if (g instanceof CanvasRenderingContext2D) {
-            this.renderer = new CanvasRenderer(g, scale);
-        } else if (isThree(g)) {
-            console.log("isThree");
-            this.renderer = new threeRenderer(g, scale);
-        }
     }
 
     /**
@@ -333,8 +324,8 @@ export class PenroseScreen {
             bounds.addPoint(offset, point);
         }
         const command = "rhombus";
-        bounds.renderList.push({ command, offset, shape, strokeStyle, isHeads });
-        this.renderer.render(bounds.renderList);
+        bounds.renderList.push({ command, fill, offset, shape, strokeStyle, isHeads });
+        //this.renderer.render(bounds.renderList);
         return bounds;
     }
 
@@ -378,6 +369,7 @@ export class PenroseScreen {
         //         options
         //     )}`
         // );
+        const bounds = new Bounds();
         switch (type) {
             case penrose.St5:
             case penrose.St3:
@@ -386,7 +378,6 @@ export class PenroseScreen {
         }
         let { overlays } = globals;
         //({ overlays } = options); // some version of apply
-        const bounds = new Bounds();
 
         if (gen == 0) {
             bounds.expand(
@@ -472,9 +463,10 @@ export class PenroseScreen {
                         ...options,
                     })
                 );
-                if (overlays && overlays.treeSelected) this.renderer.line(loc, locDiamond, "red");
+                if (overlays && overlays.treeSelected)
+                    bounds.expand(this.line(loc, locDiamond, "red"));
             }
-            if (overlays && overlays.treeSelected) this.renderer.line(loc, locPenta, "black");
+            if (overlays && overlays.treeSelected) bounds.expand(this.line(loc, locPenta, "black"));
         }
         return bounds;
     }
@@ -601,8 +593,8 @@ export class PenroseScreen {
                     })
                 );
                 if (overlays && overlays.treeSelected) {
-                    this.renderer.line(loc, locPenta, "red");
-                    this.renderer.line(loc, locBoat, "blue");
+                    bounds.expand(this.line(loc, locPenta, "red"));
+                    bounds.expand(this.line(loc, locBoat, "blue"));
                 }
             }
         }
@@ -736,167 +728,6 @@ export class PenroseScreen {
         return bounds;
     }
 
-    /***
-     * Used by Mosaic figure.
-     * This is the routine that ultimately renders the 'tile'
-     * @param {*} fill One of the colors
-     * @param {*} offset Location in P format
-     * @param {*} shape centered array of 'pixels' centered.
-     * Prerequisites: Globals g and scale
-     */
-    /*
-    figure(fill, offset, shape) {
-        const { pentaStyle } = globals;
-        const { g, scale } = this;
-        let currentStrokeStyle = g.strokeStyle;
-        let currentLineWidth = g.lineWidth;
-        let currentfillStyle = g.fillStyle;
-        g.fillStyle = fill; //e.g penrose.ORANGE;
-        g.strokeStyle = penrose.OUTLINE;
-
-        const bounds = new Bounds();
-        for (const point of shape) {
-            g.fillRect(
-                offset.x * scale + point.x * scale,
-                offset.y * scale + point.y * scale,
-                scale,
-                scale
-            );
-            if (scale >= 5) {
-                g.strokeRect(
-                    offset.x * scale + point.x * scale,
-                    offset.y * scale + point.y * scale,
-                    scale,
-                    scale
-                );
-            }
-            bounds.addPoint(offset, point);
-            bounds.addPoint(offset, point.tr(p(1, 1)));
-        }
-
-        g.strokeStyle = currentStrokeStyle;
-        g.lineWidth = currentLineWidth;
-        g.fillStyle = currentfillStyle;
-
-        return bounds;
-    }
-*/
-    /***
-     * Used for quadrille
-     *
-     */
-    /*
-    outline(fill, offset, shape) {
-        const { pentaStyle } = globals;
-        const { g, scale } = this;
-        let currentStrokeStyle = g.strokeStyle;
-        let currentLineWidth = g.lineWidth;
-        let currentfillStyle = g.fillStyle;
-
-        let start = true;
-        if (!pentaStyle || pentaStyle.stroke == pentaStyle.SOLID) {
-            g.strokeStyle = "#000000";
-            g.lineWidth = 1;
-        }
-
-        if (!pentaStyle || pentaStyle.fill == pentaStyle.SOLID) {
-            g.fillStyle = fill;
-        } else if (pentaStyle && pentaStyle.fill == pentaStyle.TRANSPARENT) {
-            g.fillStyle = fill + "80";
-        }
-
-        const bounds = new Bounds();
-        for (const point of shape) {
-            if (start) {
-                g.beginPath();
-                g.moveTo(
-                    (point.x + offset.x) * scale,
-                    (point.y + offset.y) * scale
-                );
-                start = false;
-            } else {
-                g.lineTo(
-                    (point.x + offset.x) * scale,
-                    (point.y + offset.y) * scale
-                );
-            }
-
-            bounds.addPoint(offset, point);
-        }
-        g.closePath();
-        if (!pentaStyle || pentaStyle.stroke != pentaStyle.NONE) {
-            g.stroke();
-        }
-
-        // fill by default
-        if (!pentaStyle || pentaStyle.fill != pentaStyle.NONE) {
-            g.fill();
-        }
-        g.strokeStyle = currentStrokeStyle;
-        g.lineWidth = currentLineWidth;
-        g.fillStyle = currentfillStyle;
-
-        return bounds;
-    }
-*/
-    /**
-     * Draw a 2 size x 2 size grid matching the scale
-     * @param {point} offset - Point indicating center of grid
-     * @param {*} size
-     */
-    /*
-    grid(offset, size) {
-        const bounds = new Bounds();
-        const { g, scale } = this;
-        g.strokeStyle = penrose.OUTLINE;
-        for (let y = -size; y < size; y++) {
-            for (let x = -size; x < size; x++) {
-                g.strokeRect(
-                    offset.x * scale + x * scale,
-                    offset.y * scale + y * scale,
-                    scale,
-                    scale
-                );
-            }
-        }
-        //
-        g.strokeStyle = "#FF0000";
-        g.beginPath();
-        g.moveTo(offset.x * scale, (offset.y - size) * scale);
-        g.lineTo(offset.x * scale, (offset.y + size) * scale);
-        g.stroke();
-
-        g.beginPath();
-        g.moveTo((offset.x - size) * scale, offset.y * scale);
-        g.lineTo((offset.x + size) * scale, offset.y * scale);
-        g.stroke();
-
-        bounds.addPoint(offset, p(-size, -size));
-        bounds.addPoint(offset, p(size, size));
-        return bounds;
-    }
-*/
-    /*
-    line(loc, end, strokeStyle) {
-        const { g, scale } = this;
-
-        const bounds = new Bounds();
-        const currentWidth = g.lineWidth;
-        const currentStrokeStyle = g.strokeStyle;
-        g.strokeStyle = strokeStyle ? strokeStyle : "black";
-        g.lineWidth = 1;
-        g.beginPath();
-        g.moveTo(loc.x * scale, loc.y * scale);
-        g.lineTo(end.x * scale, end.y * scale);
-        bounds.addPoint(loc, loc);
-        bounds.addPoint(loc, end);
-        g.stroke();
-
-        g.lineWidth = currentWidth;
-        g.strokeStyle = currentStrokeStyle;
-        return bounds;
-    }*/
-
     /**
      * Draw the ammann segments
      * They will be drawn naively for the quadrille case.
@@ -945,7 +776,9 @@ export class PenroseScreen {
         }
 
         for (let i = 0; i < segmentPoints.length - 1; i++) {
-            this.renderer.line(offset.tr(segmentPoints[i]), offset.tr(segmentPoints[i + 1]), "red");
+            bounds.expand(
+                this.line(offset.tr(segmentPoints[i]), offset.tr(segmentPoints[i + 1]), "red")
+            );
         }
 
         return bounds;
@@ -1007,7 +840,7 @@ export class PenroseScreen {
                 case penrose.Pe5:
                     const thick5 = thicks[shift.tenths];
                     if (rhombSelected) {
-                        bounds.expand(this.renderer.rhombus(fill, loc, thick5, outline, isHeads));
+                        bounds.expand(this.rhombus(fill, loc, thick5, outline, isHeads));
                     }
                     if (ammannSelected) {
                         bounds.expand(this.ammannSegments(loc, thick5, true));
@@ -1018,9 +851,7 @@ export class PenroseScreen {
                         case 0:
                             const thin3 = thins[shift.tenths];
                             if (rhombSelected) {
-                                bounds.expand(
-                                    this.renderer.rhombus(fill, loc, thin3, outline, isHeads)
-                                );
+                                bounds.expand(this.rhombus(fill, loc, thin3, outline, isHeads));
                             }
                             if (ammannSelected) {
                                 bounds.expand(this.ammannSegments(loc, thin3, false));
@@ -1030,9 +861,7 @@ export class PenroseScreen {
                         case 4:
                             const thick3 = thicks[shift.tenths];
                             if (rhombSelected) {
-                                bounds.expand(
-                                    this.renderer.rhombus(fill, loc, thick3, outline, isHeads)
-                                );
+                                bounds.expand(this.rhombus(fill, loc, thick3, outline, isHeads));
                             }
                             if (ammannSelected) {
                                 bounds.expand(this.ammannSegments(loc, thick3, true));
@@ -1047,9 +876,7 @@ export class PenroseScreen {
                         case 0:
                             const thick2 = thicks[shift.tenths];
                             if (rhombSelected) {
-                                bounds.expand(
-                                    this.renderer.rhombus(fill, loc, thick2, outline, isHeads)
-                                );
+                                bounds.expand(this.rhombus(fill, loc, thick2, outline, isHeads));
                             }
                             if (ammannSelected) {
                                 bounds.expand(this.ammannSegments(loc, thick2, true));
@@ -1060,9 +887,7 @@ export class PenroseScreen {
                         case 1:
                             const thinR2 = thins[shift.tenths];
                             if (rhombSelected) {
-                                bounds.expand(
-                                    this.renderer.rhombus(fill, loc, thinR2, outline, isHeads)
-                                );
+                                bounds.expand(this.rhombus(fill, loc, thinR2, outline, isHeads));
                             }
                             if (ammannSelected) {
                                 bounds.expand(this.ammannSegments(loc, thinR2, false));

@@ -56,8 +56,7 @@ export class Bounds {
     expand(bounds) {
         if (!bounds) {
             // Figure returned null?
-            console.log("expand: Figure returned null?");
-            console.log(bounds.toString);
+            console.log("expand: input is undefined?");
             return;
         }
 
@@ -103,13 +102,13 @@ export class Bounds {
             this.minPoint = p(0, 0);
             this.maxPoint = p(0, 0);
         }
-        if (top) {
+        if (top || top == 0) {
             this.minPoint.y -= top;
-            if (right) {
+            if (right || right == 0) {
                 this.maxPoint.x += right;
-                if (bottom) {
+                if (bottom || bottom == 0) {
                     this.maxPoint.y += bottom;
-                    if (left) {
+                    if (left || left == 0) {
                         this.minPoint.x -= left;
                     } else {
                         this.minPoint.x -= right;

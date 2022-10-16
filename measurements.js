@@ -31,7 +31,7 @@ function drawQuadrille() {
     g.strokeStyle = penrose.OUTLINE;
     g.lineWidth = 1;
     const scale = 3.7;
-    const { deca } = iface(g, scale, measureTaskGlobals.shapeMode.MODE_REAL);
+    const { deca } = iface(measureTaskGlobals.shapeMode.MODE_REAL);
 
     let loc = p(0, 0);
     let fifths = 0;
@@ -49,8 +49,8 @@ function drawQuadrille() {
 
     bounds = new Bounds();
     bounds.expand(deca({ angle: new Angle(fifths, isDown), loc, gen }));
-    
-    new CanvasRenderer(g, scale).render(bounds.renderList)
+
+    new CanvasRenderer(g, scale).render(bounds.renderList);
     bounds = new Bounds();
     const img = canvas.toDataURL("img.png");
 }
@@ -66,7 +66,7 @@ function drawImage() {
     const scale = 5;
     // Stupid way to get the globals.
     const { shapeMode } = measureTaskGlobals;
-    const { deca } = iface(g, scale, shapeMode.MODE_REAL);
+    const { deca } = iface(shapeMode.MODE_REAL);
 
     // Now some decagons
 
@@ -85,7 +85,7 @@ function drawImage() {
     bounds = new Bounds();
     bounds.expand(deca({ angle, loc, gen }));
     bounds.pad(1);
-	new CanvasRenderer(g, scale).render(bounds.renderList)
+    new CanvasRenderer(g, scale).render(bounds.renderList);
 
     bounds = new Bounds();
     const img = canvas.toDataURL("img.png");
@@ -111,9 +111,7 @@ function wheelTables() {
             const input = wheels[i].w;
             const correct = wheels[i - 1].w;
             const result = interpolateWheel(...input);
-            const matches = result.every((v, index) =>
-                v.equals(correct[index])
-            );
+            const matches = result.every((v, index) => v.equals(correct[index]));
             if (!matches) console.log("Interpolation failed: " + matches);
         }
     }
@@ -141,9 +139,7 @@ function wheelTable(id, wheel) {
     const eleRh1 = document.createElement("th");
     eleRh1.innerHTML = "";
     eleH1.appendChild(eleRh1);
-    const h1Headers = "up0,down3,up1,down4,up2,down0,up3,down1,up4,down2".split(
-        ","
-    );
+    const h1Headers = "up0,down3,up1,down4,up2,down0,up3,down1,up4,down2".split(",");
 
     const insertTh = function (value) {
         const thEle = document.createElement("th");
@@ -194,16 +190,12 @@ function makeShapesSeedSuccessor(shapesSeed) {
         const point0 = shapesSeed[0][i];
         const point1 = shapesSeed[1][i];
         const point2 = shapesSeed[2][i];
-        const [sPoint0, sPoint1, sPoint2] = successorPoint(
-            point0,
-            point1,
-            point2
-        );
-        [
-            shapesSeedSuccessor[0][i],
-            shapesSeedSuccessor[1][i],
-            shapesSeedSuccessor[2][i],
-        ] = [sPoint0, sPoint1, sPoint2];
+        const [sPoint0, sPoint1, sPoint2] = successorPoint(point0, point1, point2);
+        [shapesSeedSuccessor[0][i], shapesSeedSuccessor[1][i], shapesSeedSuccessor[2][i]] = [
+            sPoint0,
+            sPoint1,
+            sPoint2,
+        ];
         // console.log(
         //     `${point0}${point1}${point2} ==> ${sPoint0}${sPoint0}${sPoint0}`
         // );

@@ -27,9 +27,7 @@ export function makeCanvas(canvasId) {
         g.strokeStyle = penrose.OUTLINE;
         g.lineWidth = 1;
         let scale = 10;
-        const { penta } = iface(g, scale, shapeMode.shapeMode);
-        const screen = new PenroseScreen(g, scale, shapeMode);
-        const pent = screen.penta.bind(screen);
+        const { penta } = iface(shapeMode.shapeMode);
         let bounds;
         let width = 0;
         let height = 0;
@@ -83,7 +81,6 @@ export function makeCanvas(canvasId) {
             width = (bounds.width - 1) * scale;
             height = (bounds.height - 1) * scale;
             tries += 1; // prevention of infinite loop
-            console.log(`tries: ${tries}`);
             const renderer = new CanvasRenderer(g, scale);
             renderer.render(bounds.renderList);
         } while (!bounds.minPoint.isZero && tries < 2);
@@ -136,7 +133,7 @@ export function drawFirstInflation(id) {
         g.strokeStyle = penrose.OUTLINE;
         g.lineWidth = 1;
         let scale = 10;
-        const { penta, star } = iface(g, scale, shapeMode.shapeMode);
+        const { penta, star } = iface(shapeMode.shapeMode);
 
         let x = 8;
         let y = 9;
@@ -275,7 +272,7 @@ export function drawSecondInflation(id) {
         g.strokeStyle = penrose.OUTLINE;
         g.lineWidth = 1;
         let scale = 5;
-        const { star: star, penta } = iface(g, scale, shapeMode.shapeMode);
+        const { star: star, penta } = iface(shapeMode.shapeMode);
         const bounds = new Bounds();
         let x = 25;
         let y = 25;
@@ -404,7 +401,7 @@ export function drawGridWork(id) {
         g.strokeStyle = penrose.OUTLINE;
         g.lineWidth = 1;
         let scale = 10;
-        const { grid, figure, outline, deca } = iface(g, scale, shapeMode.shapeMode);
+        const { grid, figure, outline, deca } = iface(shapeMode.shapeMode);
 
         const bounds = new Bounds();
         let y = 5;
@@ -584,7 +581,7 @@ export function drawGeneric123(id) {
     g.strokeStyle = penrose.OUTLINE;
     g.lineWidth = 1;
     let scale = 10;
-    const { penta, star, deca } = iface(g, scale, shapeMode.shapeMode);
+    const { penta, star, deca } = iface(shapeMode.shapeMode);
 
     const drawScreen = function () {
         let x = 13;
@@ -644,7 +641,8 @@ export function drawGeneric123(id) {
                 bounds.expand(deca({ angle, loc: p(x, y), gen: 4, rhomb: true }));
                 break;
         }
-        new CanvasRenderer(g, scale).render(bounds.renderList);
+        const renderer = new CanvasRenderer(g, scale);
+        renderer.render(bounds.renderList);
     };
 
     drawScreen();
@@ -667,7 +665,7 @@ export function drawGeneric3(id) {
     g.strokeStyle = penrose.OUTLINE;
     g.lineWidth = 1;
     let scale = 4;
-    const { deca } = iface(g, scale, shapeMode.shapeMode);
+    const { deca } = iface(shapeMode.shapeMode);
     const drawScreen = function () {
         let x = 100;
         let y = 250;
