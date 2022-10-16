@@ -8,6 +8,7 @@ import { iface } from "./penrose-screen.js";
 import { Angle } from "./penrose-screen.js";
 import { measureTaskGlobals } from "./controls.js";
 import { initControls, logRefresh } from "./controls.js";
+import { CanvasRenderer } from "./renderers.js";
 
 window.addEventListener("load", measureTasks, false);
 
@@ -48,6 +49,8 @@ function drawQuadrille() {
 
     bounds = new Bounds();
     bounds.expand(deca({ angle: new Angle(fifths, isDown), loc, gen }));
+    
+    new CanvasRenderer(g, scale).render(bounds.renderList)
     bounds = new Bounds();
     const img = canvas.toDataURL("img.png");
 }
@@ -82,6 +85,8 @@ function drawImage() {
     bounds = new Bounds();
     bounds.expand(deca({ angle, loc, gen }));
     bounds.pad(1);
+	new CanvasRenderer(g, scale).render(bounds.renderList)
+
     bounds = new Bounds();
     const img = canvas.toDataURL("img.png");
     const ele = document.querySelector("#image");

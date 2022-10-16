@@ -285,12 +285,20 @@ export class PenroseScreen {
         return bounds; // call figure
     }
 
+    /**
+     * These add to the render list
+     *
+     * @param {*} fill
+     * @param {*} loc
+     * @param {*} shape
+     * @returns
+     */
     outline(fill, loc, shape) {
         const bounds = new Bounds();
         bounds.addVectors(loc, shape);
         const command = "outline";
         bounds.renderList.push({ command, fill, loc, shape });
-        this.renderer.render(bounds.renderList);
+        //this.renderer.render(bounds.renderList);
         return bounds;
     }
     figure(fill, loc, shape) {
@@ -298,7 +306,7 @@ export class PenroseScreen {
         bounds.addSquares(loc, shape);
         const command = "figure";
         bounds.renderList.push({ command, fill, loc, shape });
-        this.renderer.render(bounds.renderList);
+        //this.renderer.render(bounds.renderList);
         return bounds;
     }
     grid(offset, size) {
@@ -307,7 +315,7 @@ export class PenroseScreen {
         bounds.addPoint(offset, p(size, size));
         const command = "grid";
         bounds.renderList.push({ command, offset, size });
-        this.renderer.render(bounds.renderList);
+        //this.renderer.render(bounds.renderList);
         return bounds;
     }
     line(loc, end, strokeStyle) {
@@ -316,7 +324,7 @@ export class PenroseScreen {
         bounds.addPoint(loc, end);
         const command = "line";
         bounds.renderList.push({ command, loc, end, strokeStyle });
-        this.renderer.render(bounds.renderList);
+        //this.renderer.render(bounds.renderList);
         return bounds;
     }
     rhombus(fill, offset, shape, strokeStyle, isHeads) {
