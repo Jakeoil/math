@@ -4,7 +4,7 @@ import { penrose } from "./penrose.js";
 import { quadrille, mosaic } from "./shape-modes.js";
 
 import { globals } from "./controls.js";
-import { iface, PenroseScreen } from "./penrose-screen.js";
+import { iface, PenroseScreen, USE_FUNCTION_LIST } from "./penrose-screen.js";
 import { Angle } from "./penrose-screen.js";
 import { CanvasRenderer } from "./renderers.js";
 
@@ -586,6 +586,7 @@ export function drawGeneric123(id) {
     const drawScreen = function () {
         let x = 13;
         let y = 26;
+        const begin = performance.now();
         const bounds = new Bounds();
         const type = controls.typeList[controls.typeIndex];
         const angle = new Angle(controls.fifths, controls.isDown);
@@ -641,8 +642,12 @@ export function drawGeneric123(id) {
                 bounds.expand(deca({ angle, loc: p(x, y), gen: 4, rhomb: true }));
                 break;
         }
+        const built = performance.now();
         const renderer = new CanvasRenderer(g, scale);
+        console.log(`shapes built: ${built - begin} ms`);
         renderer.render(bounds.renderList);
+        const rendered = performance.now();
+        console.log(`shapes rendered: ${rendered - built} ms, function list: ${USE_FUNCTION_LIST}`);
     };
 
     drawScreen();
@@ -667,10 +672,13 @@ export function drawGeneric3(id) {
     let scale = 4;
     const { deca } = iface(shapeMode.shapeMode);
     const drawScreen = function () {
+        console.log(performance.now());
+
         let x = 100;
         let y = 250;
         let angle = new Angle(controls.fifths, controls.isDown);
         let decagon = true;
+        const begin = performance.now();
         const bounds = new Bounds();
         if (decagon) {
             bounds.expand(deca({ angle, loc: p(x, y), gen: 6 }));
@@ -708,7 +716,11 @@ export function drawGeneric3(id) {
                     break;
             }
         }
+        const built = performance.now();
+        console.log(`shapes built: ${built - begin} ms`);
         new CanvasRenderer(g, scale).render(bounds.renderList);
+        const rendered = performance.now();
+        console.log(`shapes rendered: ${rendered - built} ms, function list: ${USE_FUNCTION_LIST}`);
     };
     drawScreen();
 }

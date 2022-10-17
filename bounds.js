@@ -69,6 +69,7 @@ export class Bounds {
             // This is the first expansion of this.
             this.minPoint = bounds.minPoint;
             this.maxPoint = bounds.maxPoint;
+            //console.log(bounds.renderList);
             this.renderList.push(...bounds.renderList);
             return;
         }
@@ -86,7 +87,9 @@ export class Bounds {
             this.maxPoint.y = bounds.maxPoint.y;
         }
 
-        this.renderList.push(...bounds.renderList);
+        //console.log(this.renderList.length, bounds.renderList.length);
+        //this.renderList.push(...bounds.renderList); // This breaks down somewhere over a million
+        this.renderList = this.renderList.concat(bounds.renderList);
     }
 
     /**

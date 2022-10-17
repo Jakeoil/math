@@ -4,6 +4,8 @@ import { penrose } from "./penrose.js";
 import { p } from "./point.js";
 
 import * as THREE from "./js/three.module.js";
+import { PenroseScreen } from "./penrose-screen.js";
+import { USE_FUNCTION_LIST } from "./penrose-screen.js";
 
 export const isThree = (g) => g instanceof THREE.Scene;
 export class CanvasRenderer {
@@ -221,6 +223,15 @@ export class CanvasRenderer {
     }
 
     render(renderList) {
+        if (USE_FUNCTION_LIST) {
+            for (const item of renderList) {
+                item(this);
+            }
+        } else {
+            this.render2(renderList);
+        }
+    }
+    render2(renderList) {
         for (const item of renderList) {
             switch (item.command) {
                 case "outline":

@@ -7,7 +7,7 @@ import { mosaic, quadrille, real } from "./shape-modes.js";
 
 const SQRT5 = Math.sqrt(5); // 2.236
 const PHI = (SQRT5 + 1) / 2; // 1.618
-
+export const USE_FUNCTION_LIST = true;
 /**
  * Class wrapping fifths and isDown
  * Move to utilities
@@ -288,7 +288,13 @@ export class PenroseScreen {
         const bounds = new Bounds();
         bounds.addVectors(loc, shape);
         const command = "outline";
-        bounds.renderList.push({ command, fill, loc, shape });
+
+        if (USE_FUNCTION_LIST) {
+            const f = (r) => r.outline(fill, loc, shape);
+            bounds.renderList.push(f);
+        } else {
+            bounds.renderList.push({ command, fill, loc, shape });
+        }
         //this.renderer.render(bounds.renderList);
         return bounds;
     }
@@ -296,7 +302,12 @@ export class PenroseScreen {
         const bounds = new Bounds();
         bounds.addSquares(loc, shape);
         const command = "figure";
-        bounds.renderList.push({ command, fill, loc, shape });
+        if (USE_FUNCTION_LIST) {
+            const f = (r) => r.figure(fill, loc, shape);
+            bounds.renderList.push(f);
+        } else {
+            bounds.renderList.push({ command, fill, loc, shape });
+        }
         //this.renderer.render(bounds.renderList);
         return bounds;
     }
@@ -304,8 +315,13 @@ export class PenroseScreen {
         const bounds = new Bounds();
         bounds.addPoint(offset, p(-size, -size));
         bounds.addPoint(offset, p(size, size));
-        const command = "grid";
-        bounds.renderList.push({ command, offset, size });
+        if (USE_FUNCTION_LIST) {
+            const f = (r) => r.grid(offset, size);
+            bounds.renderList.push(f);
+        } else {
+            const command = "grid";
+            bounds.renderList.push({ command, offset, size });
+        }
         //this.renderer.render(bounds.renderList);
         return bounds;
     }
@@ -313,8 +329,13 @@ export class PenroseScreen {
         const bounds = new Bounds();
         bounds.addPoint(loc, loc);
         bounds.addPoint(loc, end);
-        const command = "line";
-        bounds.renderList.push({ command, loc, end, strokeStyle });
+        if (USE_FUNCTION_LIST) {
+            const f = (r) => r.line(loc, end, strokeStyle);
+            bounds.renderList.push(f);
+        } else {
+            const command = "line";
+            bounds.renderList.push({ command, loc, end, strokeStyle });
+        }
         //this.renderer.render(bounds.renderList);
         return bounds;
     }
@@ -323,8 +344,13 @@ export class PenroseScreen {
         for (const point of shape) {
             bounds.addPoint(offset, point);
         }
-        const command = "rhombus";
-        bounds.renderList.push({ command, fill, offset, shape, strokeStyle, isHeads });
+        if (USE_FUNCTION_LIST) {
+            const f = (r) => r.rhombus(fill, offset, shape, strokeStyle, isHeads);
+            bounds.renderList.push(f);
+        } else {
+            const command = "rhombus";
+            bounds.renderList.push({ command, fill, offset, shape, strokeStyle, isHeads });
+        }
         //this.renderer.render(bounds.renderList);
         return bounds;
     }
