@@ -243,6 +243,61 @@ export function drawFirstInflation(id) {
     drawScreen();
 }
 
+export function drawDualDemo(id) {
+    const { shapeMode, controls } = globals;
+
+    const bounds = new Bounds();
+    const bounds2 = new Bounds();
+    const scene = new PenroseScreen(shapeMode.shapeMode);
+
+    let x = 8;
+    let y = 9;
+    const UP = false;
+    const DOWN = true;
+    let type = penrose.Pe5;
+    let angle = new Angle(0, UP);
+    let loc = p(x, y);
+    let gen = 1;
+    let rhomb = true;
+    //bounds.expand(scene.penta({ type, angle, loc, gen }));
+
+    bounds.expand(
+        scene.penta({
+            type: penrose.Pe5,
+            angle: new Angle(0, false),
+            loc: p(25, 25),
+            gen: 3,
+            rhomb: false,
+        })
+    );
+    bounds2.expand(
+        scene.penta({
+            type: penrose.St5,
+            angle: new Angle(0, false),
+            loc: p(25 * 1.618, 25 * 1.618),
+            gen: 3,
+            rhomb: true,
+            PentaStyle: { fill: "none", stroke: "solid" },
+        })
+    );
+    console.log(bounds);
+    console.log(id);
+    const page = document.querySelector(`#${id}`);
+    if (page.style.display == "none") return;
+    const canvas = document.querySelector(`#${id} > canvas`);
+
+    //const canvas = document.createElement("canvas");
+    let g = canvas.getContext("2d");
+    g.fillStyle = "white";
+    g.fillRect(0, 0, canvas.width, canvas.height);
+    g.strokeStyle = penrose.OUTLINE;
+    g.lineWidth = 1;
+
+    let scale = 10;
+    new CanvasRenderer(g, scale).render(bounds.renderList);
+    new CanvasRenderer(g, scale * 0.618).render(bounds2.renderList);
+}
+
 /**
  * The second draw test is the expansion of the first draw test.
  * It draws the second expansion of each of the tiles.
@@ -723,9 +778,4 @@ export function drawGeneric3(id) {
         console.log(`shapes rendered: ${rendered - built} ms, function list: ${USE_FUNCTION_LIST}`);
     };
     drawScreen();
-}
-
-export function drawDualDemo() {
-    const canvas = document.createElement("canvas");
-    let g = canvas.getContext("2d");
 }

@@ -44,6 +44,7 @@ export class PageNavigation {
             }
         }
 
+        // Only display the active page.
         this.pages.forEach((page) => (page.style.display = "none"));
         const activePageId = activeNavButton.getAttribute("data-id");
         this.activePage = document.querySelector(`#${activePageId}`);
@@ -59,8 +60,7 @@ export class PageNavigation {
     }
 
     fromString(jsonString) {
-        ({ activeButtonIndex: this.activeButtonIndex } =
-            JSON.parse(jsonString));
+        ({ activeButtonIndex: this.activeButtonIndex } = JSON.parse(jsonString));
     }
 
     pageClicked(event) {

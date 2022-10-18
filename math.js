@@ -6,6 +6,7 @@ import {
     drawGridWork,
     drawGeneric123,
     drawGeneric3,
+    drawDualDemo,
 } from "./renderings.js";
 
 import { initControls, logRefresh } from "./controls.js";
@@ -48,5 +49,6 @@ export function penroseApp(source) {
     drawGridWork("gwork");
     drawGeneric123("g012");
     drawGeneric3("g3");
+    drawDualDemo("dual");
 }
 window.addEventListener("load", penroseApp, false);

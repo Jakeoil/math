@@ -10,7 +10,8 @@ const PHI = (SQRT5 + 1) / 2; // 1.618
 export const USE_FUNCTION_LIST = true;
 /**
  * Class wrapping fifths and isDown
- * Move to utilities
+ * Move to utilities79
+ *
  */
 export class Angle {
     slicee = [0, 1, 2, 3, 4, 0, 1, 2, 3];
@@ -237,45 +238,6 @@ export class PenroseScreen {
         }
         return null;
     }
-
-    /**
-     * This will revamp and combine penta and pentaRhomb
-     * The inputs are streamlined
-     *
-     */
-    drawPentaPattern({ type, angle, isHeads, loc, gen, ...options }) {
-        const { overlays } = globals; // don't forget the options
-        const bounds = new Bounds();
-        if (options.rhomb) {
-            return bounds;
-        }
-
-        if (this.mode == penrose.mosaic.key) {
-            let shapes = this.mShape(type);
-            if (shapes) {
-                bounds.expand(this.figure(pColor(type), loc, shapes[angle.tenths]));
-            }
-            return bounds;
-        }
-
-        if (!overlays || overlays.pentaSelected) {
-            const fill = pColor(type);
-            let shapes = this.pShape(type);
-            if (shapes) {
-                const shape = shapes[angle.tenths];
-                bounds.expand(this.outline(fill, loc, shape));
-            }
-        }
-
-        if (!overlays || overlays.mosaicSelected) {
-            let shapes = this.mShape(type);
-            if (shapes) {
-                bounds.expand(this.figure(pColor(type), loc, shapes[angle.tenths]));
-            }
-        }
-        return bounds; // call figure
-    }
-
     /**
      * These add to the render list
      *
@@ -353,6 +315,44 @@ export class PenroseScreen {
         }
         //this.renderer.render(bounds.renderList);
         return bounds;
+    }
+
+    /**
+     * This will revamp and combine penta and pentaRhomb
+     * The inputs are streamlined
+     *
+     */
+    drawPentaPattern({ type, angle, isHeads, loc, gen, ...options }) {
+        const { overlays } = globals; // don't forget the options
+        const bounds = new Bounds();
+        if (options.rhomb) {
+            return bounds;
+        }
+
+        if (this.mode == penrose.mosaic.key) {
+            let shapes = this.mShape(type);
+            if (shapes) {
+                bounds.expand(this.figure(pColor(type), loc, shapes[angle.tenths]));
+            }
+            return bounds;
+        }
+
+        if (!overlays || overlays.pentaSelected) {
+            const fill = pColor(type);
+            let shapes = this.pShape(type);
+            if (shapes) {
+                const shape = shapes[angle.tenths];
+                bounds.expand(this.outline(fill, loc, shape));
+            }
+        }
+
+        if (!overlays || overlays.mosaicSelected) {
+            let shapes = this.mShape(type);
+            if (shapes) {
+                bounds.expand(this.figure(pColor(type), loc, shapes[angle.tenths]));
+            }
+        }
+        return bounds; // call figure
     }
 
     /**************************************************************************
