@@ -3,14 +3,17 @@ import { Bounds } from "./bounds.js";
 import { penrose } from "./penrose.js";
 import { globals } from "./controls.js";
 import { mosaic, quadrille, real } from "./shape-modes.js";
-//import { CanvasRenderer, isThree, threeRenderer } from "./renderers.js";
+import { CanvasRenderer, isThree, threeRenderer } from "./renderers.js";
 
 const SQRT5 = Math.sqrt(5); // 2.236
 const PHI = (SQRT5 + 1) / 2; // 1.618
+
+// Used for tests
 export const USE_FUNCTION_LIST = true;
+
 /**
  * Class wrapping fifths and isDown
- * Move to utilities79
+ * Move to utilities
  *
  */
 export class Angle {
@@ -90,26 +93,26 @@ function hexToRGB(h) {
 }
 
 /**
- * Linear interpolate tow colors
+ * Linear interpolate two colors
  *
  * @param {*} start
  * @param {*} end
- * @param {*} frac  Value from 0 to 1
+ * @param {*} alpha  Value from 0 to 1
  * @returns ccs command string
  *
  * todo!!! implement opacity. It is a fraction from 0 (transparent) to 1.
  */
-function lerp(start, end, frac, opacity) {
-    if (frac < 0) frac = 0;
-    if (frac > 1) frac = 1;
+function lerp(start, end, alpha, opacity) {
+    if (alpha < 0) alpha = 0;
+    if (alpha > 1) alpha = 1;
     const rgbStart = hexToRGB(start);
     const rgbEnd = hexToRGB(end);
-    const [r, g, b] = rgbStart.map((item, index) => item * (1 - frac) + rgbEnd[index] * frac);
+    const [r, g, b] = rgbStart.map((item, index) => item * (1 - alpha) + rgbEnd[index] * alpha);
     const command = `rgb(${r},${g},${b})`;
     return command;
 }
 
-function testMix() {
+function testLerp() {
     lerp("#000", "#ff6600", 0);
     lerp("#000", "#ff6600", 0.1);
     lerp("#000", "#ff6600", 0.25);
@@ -118,11 +121,11 @@ function testMix() {
     lerp("#000", "#ff6600", 1.0);
 }
 
-//testMix();
+//testLerp();
 
 /**
  * This is a wrapper around penroseScreen
- * Just creates the screen with some aliases.
+ * It provides a bound alias of some screen commands
  */
 export function iface(mode) {
     let screen = new PenroseScreen(mode);
@@ -174,11 +177,9 @@ function pColor(type) {
 /**
  * Represents a rendering screen
  *
- * @param {RenderingContext} g - canvas rendering context
- * @param {number} scale - multiplication factor for rendering points.
  * @param (Real|Quadrille|Mosaic|Typographic) - Rendering style of figures.
  *
- * Mosaic may be removed since it is unique to Quadrille
+ * Mosaic should be removed since it is unique to Quadrille
  * Typographic is in progress
  *
  */
@@ -189,13 +190,13 @@ export class PenroseScreen {
 
     /**
      * Gets the figure for the type.
-     * Depends on this.mode
+     * Depends on this.mode. Generally real or quadrille
      *
      * @param {penrose.type} type
      * @param {Shapes} penta
-     * @returns penta|star|boat|diamond Point array
+     * @returns penta|star|boat|diamond Array of 10 shapes
      *
-     * Mode quadrille being phased out.
+     * Mode mosaic being phased out.
      */
     pShape(type) {
         switch (type) {
@@ -238,6 +239,7 @@ export class PenroseScreen {
         }
         return null;
     }
+
     /**
      * These add to the render list
      *
@@ -249,30 +251,32 @@ export class PenroseScreen {
     outline(fill, loc, shape) {
         const bounds = new Bounds();
         bounds.addVectors(loc, shape);
-        const command = "outline";
 
         if (USE_FUNCTION_LIST) {
             const f = (r) => r.outline(fill, loc, shape);
             bounds.renderList.push(f);
         } else {
+            const command = "outline";
             bounds.renderList.push({ command, fill, loc, shape });
         }
         //this.renderer.render(bounds.renderList);
         return bounds;
     }
+
     figure(fill, loc, shape) {
         const bounds = new Bounds();
         bounds.addSquares(loc, shape);
-        const command = "figure";
         if (USE_FUNCTION_LIST) {
             const f = (r) => r.figure(fill, loc, shape);
             bounds.renderList.push(f);
         } else {
+            const command = "figure";
             bounds.renderList.push({ command, fill, loc, shape });
         }
         //this.renderer.render(bounds.renderList);
         return bounds;
     }
+
     grid(offset, size) {
         const bounds = new Bounds();
         bounds.addPoint(offset, p(-size, -size));
@@ -287,6 +291,7 @@ export class PenroseScreen {
         //this.renderer.render(bounds.renderList);
         return bounds;
     }
+
     line(loc, end, strokeStyle) {
         const bounds = new Bounds();
         bounds.addPoint(loc, loc);
@@ -301,6 +306,7 @@ export class PenroseScreen {
         //this.renderer.render(bounds.renderList);
         return bounds;
     }
+
     rhombus(fill, offset, shape, strokeStyle, isHeads) {
         const bounds = new Bounds();
         for (const point of shape) {
@@ -325,6 +331,7 @@ export class PenroseScreen {
     drawPentaPattern({ type, angle, isHeads, loc, gen, ...options }) {
         const { overlays } = globals; // don't forget the options
         const bounds = new Bounds();
+
         if (options.rhomb) {
             return bounds;
         }
@@ -401,6 +408,8 @@ export class PenroseScreen {
             case penrose.St3:
             case penrose.St1:
                 return this.star({ type, angle, isHeads, loc, gen, ...options });
+            case penrose.Deca:
+                return this.deca({ type, angle, isHeads, loc, gen, ...options });
         }
         let { overlays } = globals;
         //({ overlays } = options); // some version of apply
@@ -660,6 +669,8 @@ export class PenroseScreen {
         }
 
         const wheels = penrose[this.mode].wheels;
+        const dWheel = wheels.d[gen];
+        const sWheel = wheels.s[gen];
 
         // Move the center of the decagon to the real center.
         let dUp = wheels.d[gen].up;

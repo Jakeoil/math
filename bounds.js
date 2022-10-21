@@ -4,6 +4,7 @@ import { p } from "./point.js";
  * This measures and adjusts the bounding rectangle.
  * Only the element drawing function (figure) creates a new bounds and returns
  * either a Bounds with the max min or null max min if nothing got drawn.
+ * Maintains a renderList of function
  */
 export class Bounds {
     constructor() {

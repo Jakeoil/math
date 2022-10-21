@@ -456,7 +456,7 @@ export function drawGridWork(id) {
         g.strokeStyle = penrose.OUTLINE;
         g.lineWidth = 1;
         let scale = 10;
-        const { grid, figure, outline, deca } = iface(shapeMode.shapeMode);
+        const { grid, figure, outline, deca, penta } = iface(shapeMode.shapeMode);
 
         const bounds = new Bounds();
         let y = 5;
@@ -501,8 +501,10 @@ export function drawGridWork(id) {
         exp = 1;
         bounds.expand(deca({ angle: new Angle(fifths, isDown), loc: base, gen: exp }));
         bounds.expand(grid(base, 10));
+
         bounds.expand(
-            deca({
+            penta({
+                type: penrose.Deca,
                 angle: new Angle(fifths, isDown),
                 loc: base,
                 gen: exp,
