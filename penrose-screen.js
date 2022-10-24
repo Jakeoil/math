@@ -11,58 +11,6 @@ const PHI = (SQRT5 + 1) / 2; // 1.618
 // Used for tests
 export const USE_FUNCTION_LIST = true;
 
-/**
- * Class wrapping fifths and isDown
- * Move to utilities
- *
- */
-export class Angle {
-    slicee = [0, 1, 2, 3, 4, 0, 1, 2, 3];
-
-    constructor(fifths, isDown) {
-        this.fifths = fifths % 5;
-        this.isDown = isDown;
-    }
-    // The clockwise operation.
-    //   add a fifth
-    get cw() {
-        return new Angle(fifths == 4 ? 0 : this.fifths + 1, this.isDown);
-    }
-    // The counter-clockwise operation
-    get ccw() {
-        return new Angle(fifths ? this.fifths - 1 : 4, this.isDown);
-    }
-    // Add n fifths
-    rot(n) {
-        return new Angle(norm(this.fifths + n), this.isDown);
-    }
-    // Reverse the direction.
-    get inv() {
-        return new Angle(this.fifths, !this.isDown);
-    }
-    // Convert to tenths. Vectors (pstd) are stored in tenths
-    get tenths() {
-        return (this.fifths * 2 + (this.isDown ? 5 : 0)) % 10;
-    }
-    toString() {
-        return JSON.stringify({ fifths: this.fifths, isDown: this.isDown });
-    }
-}
-
-function angleTest() {
-    console.log(`angle test`);
-    let an = new Angle(0, true);
-    let te = an.tenths;
-    console.log(`an: ${an}, te: ${te}`);
-    an = new Angle(1, true);
-    te = an.tenths;
-    console.log(`an: ${an}, te: ${te}`);
-    an = new Angle(1, false);
-    te = an.tenths;
-    console.log(`an: ${an}, te: ${te}`);
-}
-//angleTest();
-
 /***
  * Thanks to:
  * https://css-tricks.com/converting-color-spaces-in-javascript/
@@ -102,12 +50,14 @@ function hexToRGB(h) {
  *
  * todo!!! implement opacity. It is a fraction from 0 (transparent) to 1.
  */
-function lerp(start, end, alpha, opacity) {
+export function lerp(start, end, alpha, opacity) {
     if (alpha < 0) alpha = 0;
     if (alpha > 1) alpha = 1;
     const rgbStart = hexToRGB(start);
     const rgbEnd = hexToRGB(end);
-    const [r, g, b] = rgbStart.map((item, index) => item * (1 - alpha) + rgbEnd[index] * alpha);
+    const [r, g, b] = rgbStart.map(
+        (item, index) => item * (1 - alpha) + rgbEnd[index] * alpha
+    );
     const command = `rgb(${r},${g},${b})`;
     return command;
 }
@@ -313,11 +263,19 @@ export class PenroseScreen {
             bounds.addPoint(offset, point);
         }
         if (USE_FUNCTION_LIST) {
-            const f = (r) => r.rhombus(fill, offset, shape, strokeStyle, isHeads);
+            const f = (r) =>
+                r.rhombus(fill, offset, shape, strokeStyle, isHeads);
             bounds.renderList.push(f);
         } else {
             const command = "rhombus";
-            bounds.renderList.push({ command, fill, offset, shape, strokeStyle, isHeads });
+            bounds.renderList.push({
+                command,
+                fill,
+                offset,
+                shape,
+                strokeStyle,
+                isHeads,
+            });
         }
         //this.renderer.render(bounds.renderList);
         return bounds;
@@ -328,18 +286,20 @@ export class PenroseScreen {
      * The inputs are streamlined
      *
      */
-    drawPentaPattern({ type, angle, isHeads, loc, gen, ...options }) {
+    drawPentaPattern({ type, angle, isHeads, loc, gen, layer, ...options }) {
         const { overlays } = globals; // don't forget the options
         const bounds = new Bounds();
 
-        if (options.rhomb) {
+        if (layer == "rhomb" || layer == "dual") {
             return bounds;
         }
 
         if (this.mode == penrose.mosaic.key) {
             let shapes = this.mShape(type);
             if (shapes) {
-                bounds.expand(this.figure(pColor(type), loc, shapes[angle.tenths]));
+                bounds.expand(
+                    this.figure(pColor(type), loc, shapes[angle.tenths])
+                );
             }
             return bounds;
         }
@@ -356,7 +316,9 @@ export class PenroseScreen {
         if (!overlays || overlays.mosaicSelected) {
             let shapes = this.mShape(type);
             if (shapes) {
-                bounds.expand(this.figure(pColor(type), loc, shapes[angle.tenths]));
+                bounds.expand(
+                    this.figure(pColor(type), loc, shapes[angle.tenths])
+                );
             }
         }
         return bounds; // call figure
@@ -394,7 +356,15 @@ export class PenroseScreen {
      * @returns {Bounds} - Rectangle describing space taken by shape
      */
 
-    penta({ type, angle, isHeads = true, loc, gen, ...options }) {
+    penta({
+        type,
+        angle,
+        isHeads = true,
+        loc,
+        layer = "penta",
+        gen,
+        ...options
+    }) {
         // console.log(
         //     `type: ${
         //         type.name
@@ -402,33 +372,39 @@ export class PenroseScreen {
         //         options
         //     )}`
         // );
+        if (options.rhomb) {
+            layer = "rhomb";
+        }
         const bounds = new Bounds();
         switch (type) {
             case penrose.St5:
             case penrose.St3:
             case penrose.St1:
-                return this.star({ type, angle, isHeads, loc, gen, ...options });
-            case penrose.Deca:
-                return this.deca({ type, angle, isHeads, loc, gen, ...options });
-        }
-        let { overlays } = globals;
-        //({ overlays } = options); // some version of apply
-
-        if (gen == 0) {
-            bounds.expand(
-                this.drawPentaPattern({
+                return this.star({
                     type,
                     angle,
                     isHeads,
                     loc,
                     gen,
                     ...options,
-                })
-            );
+                });
+            case penrose.Deca:
+                return this.deca({
+                    type,
+                    angle,
+                    isHeads,
+                    loc,
+                    gen,
+                    ...options,
+                });
+        }
+        let { overlays } = globals;
+        //({ overlays } = options); // some version of apply
 
-            if (overlays && overlays.smallRhomb) {
+        if (gen == 0) {
+            if (layer == "penta") {
                 bounds.expand(
-                    this.drawRhombusPattern({
+                    this.drawPentaPattern({
                         type,
                         angle,
                         isHeads,
@@ -438,6 +414,21 @@ export class PenroseScreen {
                     })
                 );
             }
+
+            if ((layer = "rhomb")) {
+                if (overlays && overlays.smallRhomb) {
+                    bounds.expand(
+                        this.drawRhombusPattern({
+                            type,
+                            angle,
+                            isHeads,
+                            loc,
+                            gen,
+                            ...options,
+                        })
+                    );
+                }
+            }
             return bounds; // call figure
         }
 
@@ -445,7 +436,7 @@ export class PenroseScreen {
         const pWheel = wheels.p[gen].w;
         const sWheel = wheels.s[gen].w;
 
-        if (options.rhomb) {
+        if (layer == "rhomb") {
             if (gen == 1 && !overlays.smallRhomb) {
                 bounds.expand(
                     this.drawRhombusPattern({
@@ -460,6 +451,7 @@ export class PenroseScreen {
                 return bounds;
             }
         }
+
         bounds.expand(
             this.penta({
                 type: penrose.Pe5,
@@ -467,6 +459,7 @@ export class PenroseScreen {
                 isHeads: !isHeads,
                 loc,
                 isHeads,
+                layer,
                 gen: gen - 1,
                 ...options,
             })
@@ -482,6 +475,7 @@ export class PenroseScreen {
                     angle: shift.rot(type.twist[i]),
                     isHeads: !isHeads,
                     loc: locPenta,
+                    layer,
                     gen: gen - 1,
                     ...options,
                 })
@@ -494,6 +488,7 @@ export class PenroseScreen {
                         angle: shift.inv,
                         loc: locDiamond,
                         isHeads,
+                        layer,
                         gen: gen - 1,
                         ...options,
                     })
@@ -501,7 +496,8 @@ export class PenroseScreen {
                 if (overlays && overlays.treeSelected)
                     bounds.expand(this.line(loc, locDiamond, "red"));
             }
-            if (overlays && overlays.treeSelected) bounds.expand(this.line(loc, locPenta, "black"));
+            if (overlays && overlays.treeSelected)
+                bounds.expand(this.line(loc, locPenta, "black"));
         }
         return bounds;
     }
@@ -534,7 +530,15 @@ export class PenroseScreen {
      * @param {boolean} heads - Computed aspect of group. Convex or concave
      * @returns {Bounds} - Rectangle describing space taken by shape
      */
-    star({ type, angle, isHeads = true, loc, gen, ...options }) {
+    star({
+        type,
+        angle,
+        isHeads = true,
+        loc,
+        layer = "penta",
+        gen,
+        ...options
+    }) {
         const { overlays } = Object.assign(globals, options);
         const bounds = new Bounds();
         // console.log(
@@ -546,19 +550,9 @@ export class PenroseScreen {
         // );
 
         if (gen == 0) {
-            bounds.expand(
-                this.drawPentaPattern({
-                    type,
-                    angle,
-                    isHeads,
-                    loc,
-                    gen,
-                    ...options,
-                })
-            );
-            if (overlays && overlays.smallRhomb) {
+            if (layer == "penta") {
                 bounds.expand(
-                    this.drawRhombusPattern({
+                    this.drawPentaPattern({
                         type,
                         angle,
                         isHeads,
@@ -569,10 +563,25 @@ export class PenroseScreen {
                 );
             }
 
+            if (layer == "rhomb") {
+                if (overlays && overlays.smallRhomb) {
+                    bounds.expand(
+                        this.drawRhombusPattern({
+                            type,
+                            angle,
+                            isHeads,
+                            loc,
+                            gen,
+                            ...options,
+                        })
+                    );
+                }
+            }
+
             return bounds; // call figure
         }
 
-        if (options.rhomb) {
+        if (layer == "rhomb") {
             if (gen == 1 && !overlays.smallRhomb) {
                 this.drawRhombusPattern({
                     type,
@@ -594,6 +603,7 @@ export class PenroseScreen {
                 angle: angle.inv,
                 type: penrose.St5,
                 loc,
+                layer,
                 gen: gen - 1,
                 isHeads,
                 ...options,
@@ -613,6 +623,7 @@ export class PenroseScreen {
                         angle: shift.inv,
                         isHeads,
                         loc: locPenta,
+                        layer,
                         gen: gen - 1,
                         ...options,
                     })
@@ -623,6 +634,7 @@ export class PenroseScreen {
                         angle: shift,
                         isHeads,
                         loc: locBoat,
+                        layer,
                         gen: gen - 1,
                         ...options,
                     })
@@ -655,7 +667,7 @@ export class PenroseScreen {
      * @returns {Bounds} - Rectangle describing space taken by shape
      * *
      */
-    deca({ angle, isHeads = true, loc, gen, ...options }) {
+    deca({ angle, isHeads = true, loc, gen, layer = "penta", ...options }) {
         // console.log(
         //     `type: deca, angle: ${angle}, loc: ${loc}, gen: ${gen}, options: ${JSON.stringify(
         //         options
@@ -688,6 +700,7 @@ export class PenroseScreen {
                 gen: gen - 1,
                 isHeads,
                 loc: base,
+                layer,
                 ...options,
             })
         );
@@ -696,25 +709,31 @@ export class PenroseScreen {
         const sDown = wheels.s[gen].down;
 
         // The two diamonds
-        offs = angle.isDown ? sDown[angle.rot(1).fifths] : sUp[angle.rot(1).fifths];
+        offs = angle.isDown
+            ? sDown[angle.rot(1).fifths]
+            : sUp[angle.rot(1).fifths];
         bounds.expand(
             this.star({
                 type: penrose.St1,
                 angle: angle.rot(3),
                 isHeads,
                 loc: base.tr(offs),
+                layer,
                 gen: gen - 1,
                 ...options,
             })
         ); // sd1
 
-        offs = angle.isDown ? sDown[angle.rot(4).fifths] : sUp[angle.rot(4).fifths];
+        offs = angle.isDown
+            ? sDown[angle.rot(4).fifths]
+            : sUp[angle.rot(4).fifths];
         bounds.expand(
             this.star({
                 type: penrose.St1,
                 angle: angle.rot(2),
                 isHeads,
                 loc: base.tr(offs),
+                layer,
                 gen: gen - 1,
                 ...options,
             })
@@ -724,19 +743,24 @@ export class PenroseScreen {
         const pDown = wheels.p[gen].down;
 
         // The two orange pentagons
-        offs = angle.isDown ? pUp[angle.rot(3).fifths] : pDown[angle.rot(3).fifths];
+        offs = angle.isDown
+            ? pUp[angle.rot(3).fifths]
+            : pDown[angle.rot(3).fifths];
         bounds.expand(
             this.penta({
                 angle: angle.rot(2).inv,
                 type: penrose.Pe1,
                 loc: base.tr(offs),
+                layer,
                 gen: gen - 1,
                 isHeads: !isHeads,
                 ...options,
             })
         );
 
-        offs = angle.isDown ? pUp[angle.rot(2).fifths] : pDown[angle.rot(2).fifths];
+        offs = angle.isDown
+            ? pUp[angle.rot(2).fifths]
+            : pDown[angle.rot(2).fifths];
         bounds.expand(
             this.penta({
                 angle: angle.rot(3).inv,
@@ -744,6 +768,7 @@ export class PenroseScreen {
                 loc: base.tr(offs),
                 gen: gen - 1,
                 isHeads: !isHeads,
+                layer,
                 ...options,
             })
         );
@@ -757,8 +782,9 @@ export class PenroseScreen {
                 angle: angle.inv,
                 type: penrose.St3,
                 loc: base.tr(offs),
-                gen: gen - 1,
                 isHeads: !isHeads,
+                layer,
+                gen: gen - 1,
                 ...options,
             })
         );
@@ -814,7 +840,11 @@ export class PenroseScreen {
 
         for (let i = 0; i < segmentPoints.length - 1; i++) {
             bounds.expand(
-                this.line(offset.tr(segmentPoints[i]), offset.tr(segmentPoints[i + 1]), "red")
+                this.line(
+                    offset.tr(segmentPoints[i]),
+                    offset.tr(segmentPoints[i + 1]),
+                    "red"
+                )
             );
         }
 
@@ -861,9 +891,6 @@ export class PenroseScreen {
     drawRhombusPattern({ type, angle, isHeads, loc, gen, ...options }) {
         const bounds = new Bounds();
         const { overlays } = globals;
-        if (!options.rhomb) {
-            return bounds;
-        }
         const { ammannSelected, rhombSelected } = overlays;
 
         const thins = penrose[this.mode].thinRhomb[gen];
@@ -877,7 +904,9 @@ export class PenroseScreen {
                 case penrose.Pe5:
                     const thick5 = thicks[shift.tenths];
                     if (rhombSelected) {
-                        bounds.expand(this.rhombus(fill, loc, thick5, outline, isHeads));
+                        bounds.expand(
+                            this.rhombus(fill, loc, thick5, outline, isHeads)
+                        );
                     }
                     if (ammannSelected) {
                         bounds.expand(this.ammannSegments(loc, thick5, true));
@@ -888,20 +917,40 @@ export class PenroseScreen {
                         case 0:
                             const thin3 = thins[shift.tenths];
                             if (rhombSelected) {
-                                bounds.expand(this.rhombus(fill, loc, thin3, outline, isHeads));
+                                bounds.expand(
+                                    this.rhombus(
+                                        fill,
+                                        loc,
+                                        thin3,
+                                        outline,
+                                        isHeads
+                                    )
+                                );
                             }
                             if (ammannSelected) {
-                                bounds.expand(this.ammannSegments(loc, thin3, false));
+                                bounds.expand(
+                                    this.ammannSegments(loc, thin3, false)
+                                );
                             }
                         // no break here
                         case 1:
                         case 4:
                             const thick3 = thicks[shift.tenths];
                             if (rhombSelected) {
-                                bounds.expand(this.rhombus(fill, loc, thick3, outline, isHeads));
+                                bounds.expand(
+                                    this.rhombus(
+                                        fill,
+                                        loc,
+                                        thick3,
+                                        outline,
+                                        isHeads
+                                    )
+                                );
                             }
                             if (ammannSelected) {
-                                bounds.expand(this.ammannSegments(loc, thick3, true));
+                                bounds.expand(
+                                    this.ammannSegments(loc, thick3, true)
+                                );
                             }
                             break;
                         default:
@@ -913,10 +962,20 @@ export class PenroseScreen {
                         case 0:
                             const thick2 = thicks[shift.tenths];
                             if (rhombSelected) {
-                                bounds.expand(this.rhombus(fill, loc, thick2, outline, isHeads));
+                                bounds.expand(
+                                    this.rhombus(
+                                        fill,
+                                        loc,
+                                        thick2,
+                                        outline,
+                                        isHeads
+                                    )
+                                );
                             }
                             if (ammannSelected) {
-                                bounds.expand(this.ammannSegments(loc, thick2, true));
+                                bounds.expand(
+                                    this.ammannSegments(loc, thick2, true)
+                                );
                             }
 
                             break;
@@ -924,10 +983,20 @@ export class PenroseScreen {
                         case 1:
                             const thinR2 = thins[shift.tenths];
                             if (rhombSelected) {
-                                bounds.expand(this.rhombus(fill, loc, thinR2, outline, isHeads));
+                                bounds.expand(
+                                    this.rhombus(
+                                        fill,
+                                        loc,
+                                        thinR2,
+                                        outline,
+                                        isHeads
+                                    )
+                                );
                             }
                             if (ammannSelected) {
-                                bounds.expand(this.ammannSegments(loc, thinR2, false));
+                                bounds.expand(
+                                    this.ammannSegments(loc, thinR2, false)
+                                );
                             }
                             break;
                     }

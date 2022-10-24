@@ -1,11 +1,10 @@
-import { p } from "./point.js";
+import { p, ang } from "./point.js";
 import { Bounds } from "./bounds.js";
 import { interpolateWheel, successorPoint } from "./wheels.js";
 import { penrose } from "./penrose.js";
 //import { MODE_REAL } from "./controls/shape-mode.js"; // Now _really_
 import { quadrille } from "./shape-modes.js";
 import { iface } from "./penrose-screen.js";
-import { Angle } from "./penrose-screen.js";
 import { measureTaskGlobals } from "./controls.js";
 import { initControls, logRefresh } from "./controls.js";
 import { CanvasRenderer } from "./renderers.js";
@@ -39,7 +38,7 @@ function drawQuadrille() {
     let gen = 2;
     // Now some decagons
     let bounds = new Bounds();
-    bounds.expand(deca({ angle: new Angle(fifths, isDown), loc, gen }));
+    bounds.expand(deca({ angle: ang(fifths, isDown), loc, gen }));
     if (bounds.isEmpty) {
         bounds.addPoint(loc, p(0, 0));
     }
@@ -48,7 +47,7 @@ function drawQuadrille() {
     canvas.height = (bounds.maxPoint.y - bounds.minPoint.y) * scale;
 
     bounds = new Bounds();
-    bounds.expand(deca({ angle: new Angle(fifths, isDown), loc, gen }));
+    bounds.expand(deca({ angle: ang(fifths, isDown), loc, gen }));
 
     new CanvasRenderer(g, scale).render(bounds.renderList);
     bounds = new Bounds();
@@ -72,7 +71,7 @@ function drawImage() {
 
     let fifths = 0;
     let isDown = false;
-    let angle = new Angle(fifths, isDown);
+    let angle = ang(fifths, isDown);
     let loc = p(0, 0);
     let gen = 1;
     let bounds = new Bounds();
@@ -111,7 +110,9 @@ function wheelTables() {
             const input = wheels[i].w;
             const correct = wheels[i - 1].w;
             const result = interpolateWheel(...input);
-            const matches = result.every((v, index) => v.equals(correct[index]));
+            const matches = result.every((v, index) =>
+                v.equals(correct[index])
+            );
             if (!matches) console.log("Interpolation failed: " + matches);
         }
     }
@@ -139,7 +140,9 @@ function wheelTable(id, wheel) {
     const eleRh1 = document.createElement("th");
     eleRh1.innerHTML = "";
     eleH1.appendChild(eleRh1);
-    const h1Headers = "up0,down3,up1,down4,up2,down0,up3,down1,up4,down2".split(",");
+    const h1Headers = "up0,down3,up1,down4,up2,down0,up3,down1,up4,down2".split(
+        ","
+    );
 
     const insertTh = function (value) {
         const thEle = document.createElement("th");
@@ -190,12 +193,16 @@ function makeShapesSeedSuccessor(shapesSeed) {
         const point0 = shapesSeed[0][i];
         const point1 = shapesSeed[1][i];
         const point2 = shapesSeed[2][i];
-        const [sPoint0, sPoint1, sPoint2] = successorPoint(point0, point1, point2);
-        [shapesSeedSuccessor[0][i], shapesSeedSuccessor[1][i], shapesSeedSuccessor[2][i]] = [
-            sPoint0,
-            sPoint1,
-            sPoint2,
-        ];
+        const [sPoint0, sPoint1, sPoint2] = successorPoint(
+            point0,
+            point1,
+            point2
+        );
+        [
+            shapesSeedSuccessor[0][i],
+            shapesSeedSuccessor[1][i],
+            shapesSeedSuccessor[2][i],
+        ] = [sPoint0, sPoint1, sPoint2];
         // console.log(
         //     `${point0}${point1}${point2} ==> ${sPoint0}${sPoint0}${sPoint0}`
         // );

@@ -71,7 +71,8 @@ export class Bounds {
             this.minPoint = bounds.minPoint;
             this.maxPoint = bounds.maxPoint;
             //console.log(bounds.renderList);
-            this.renderList.push(...bounds.renderList);
+            //this.renderList.push(...bounds.renderList);
+            this.renderList = this.renderList.concat(bounds.renderList);
             return;
         }
 

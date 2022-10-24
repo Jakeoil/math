@@ -4,8 +4,8 @@ import { penrose } from "./penrose.js";
 import { p } from "./point.js";
 
 import * as THREE from "./js/three.module.js";
-import { PenroseScreen } from "./penrose-screen.js";
 import { USE_FUNCTION_LIST } from "./penrose-screen.js";
+import { lerp } from "./penrose-screen.js";
 
 export const isThree = (g) => g instanceof THREE.Scene;
 export class CanvasRenderer {
@@ -171,12 +171,12 @@ export class CanvasRenderer {
             canvasGradient.addColorStop(0, "#fff");
             canvasGradient.addColorStop(2 / 3, fill);
             // color stop 1 has to be 1/3 of the way to "#000"
-            const endColor = mix(fill, "#000", 1 / 3);
+            const endColor = lerp(fill, "#000", 1 / 3);
             canvasGradient.addColorStop(1, endColor);
         } else {
             canvasGradient.addColorStop(0, "#000");
             canvasGradient.addColorStop(2 / 3, fill);
-            const endColor = mix(fill, "#fff", 1 / 3);
+            const endColor = lerp(fill, "#fff", 1 / 3);
             canvasGradient.addColorStop(1, endColor);
         }
         return canvasGradient;
