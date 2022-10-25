@@ -1,4 +1,4 @@
-import { norm, p } from "./point.js";
+import { p } from "./point.js";
 import { Bounds } from "./bounds.js";
 import { penrose } from "./penrose.js";
 import { globals } from "./controls.js";

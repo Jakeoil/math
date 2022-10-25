@@ -95,6 +95,17 @@ export class Bounds {
     }
 
     /**
+     * bounds is mutated.
+     * @returns
+     */
+    round() {
+        if (this.isEmpty) return;
+        this.minPoint.x = Math.round(this.minPoint.x * 1000) / 1000;
+        this.minPoint.y = Math.round(this.minPoint.y * 1000) / 1000;
+        this.maxPoint.x = Math.round(this.maxPoint.x * 1000) / 1000;
+        this.maxPoint.y = Math.round(this.maxPoint.y * 1000) / 1000;
+    }
+    /**
      * Framing adjust the bounds. Positive values increases the bounds and
      * negative values decreases. The values are scaled.
      * It takes into account the tightness of the bounds

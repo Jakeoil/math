@@ -18,74 +18,74 @@ import { CanvasRenderer } from "./renderers.js";
 export function makeCanvas(canvasId) {
     const { shapeMode } = globals;
     const canvas = document.getElementById(canvasId);
+    if (!canvas) {
+        console.log("ID not found");
+        return;
+    }
+
+    const scene = new PenroseScreen(shapeMode.shapeMode);
+    const penta = scene.penta.bind(scene);
+
+    // Set up the parameters
+    let gen = 0;
+    let loc = p(0, 0);
+    let [type, angle] =
+        canvasId == "p5"
+            ? [penrose.Pe5, ang(0, true)]
+            : canvasId == "p3"
+            ? [penrose.Pe3, ang(0, false)]
+            : canvasId == "p1"
+            ? [penrose.Pe1, ang(0, false)]
+            : canvasId == "s5"
+            ? [penrose.St5, ang(0, false)]
+            : canvasId == "s3"
+            ? [penrose.St3, ang(1, true)]
+            : canvasId == "s1"
+            ? [penrose.St1, ang(1, false)]
+            : [];
+
+    let layer = "rhomb"; // for second call
+
+    function measure() {
+        const bounds = new Bounds();
+        bounds.expand(
+            penta({
+                type,
+                angle,
+                loc,
+                gen,
+            })
+        );
+        bounds.expand(
+            penta({
+                type,
+                angle,
+                loc,
+                layer,
+                gen,
+            })
+        );
+        bounds.pad(0.1);
+        bounds.round();
+        return bounds;
+    }
+
+    let bounds = measure();
+    // Adjust the location and relist
+    loc = loc.tr(bounds.minPoint.neg);
+    bounds = measure();
+
+    // Now render the commands stored in bounds
+    let scale = 10;
+    canvas.width = (bounds.width - 1) * scale;
+    canvas.height = (bounds.height - 1) * scale;
+
     let g = canvas.getContext("2d");
+    g.fillStyle = "transparent"; //"#ffffff";
+    g.fillRect(0, 0, canvas.width, canvas.height);
 
-    const drawScreen = function () {
-        g.fillStyle = "transparent"; //"#ffffff";
-        g.fillRect(0, 0, canvas.width, canvas.height);
-        g.strokeStyle = penrose.OUTLINE;
-        g.lineWidth = 1;
-        let scale = 10;
-        const { penta } = iface(shapeMode.shapeMode);
-        let bounds;
-        let width = 0;
-        let height = 0;
-        let tries = 0;
-
-        // Set up the parameters
-        let gen = 0;
-        let loc = p(0, 0);
-        let type, angle;
-
-        [type, angle] =
-            canvasId == "p5"
-                ? [penrose.Pe5, ang(0, true)]
-                : canvasId == "p3"
-                ? [penrose.Pe3, ang(0, false)]
-                : canvasId == "p1"
-                ? [penrose.Pe1, ang(0, false)]
-                : canvasId == "s5"
-                ? [penrose.St5, ang(0, false)]
-                : canvasId == "s3"
-                ? [penrose.St3, ang(0, false)]
-                : canvasId == "s1"
-                ? [penrose.St1, ang(0, false)]
-                : [];
-
-        let rhomb = "rhomb"; // for second call
-        do {
-            canvas.width = width;
-            canvas.height = height;
-            bounds = new Bounds();
-            bounds.expand(
-                penta({
-                    type,
-                    angle,
-                    loc,
-                    gen,
-                })
-            );
-            bounds.expand(
-                penta({
-                    type,
-                    angle,
-                    loc,
-                    layer: rhomb,
-                    gen,
-                })
-            );
-
-            bounds.pad(0.5);
-            loc = loc.tr(bounds.minPoint.neg);
-            width = (bounds.width - 1) * scale;
-            height = (bounds.height - 1) * scale;
-            tries += 1; // prevention of infinite loop
-            const renderer = new CanvasRenderer(g, scale);
-            renderer.render(bounds.renderList);
-        } while (!bounds.minPoint.isZero && tries < 2);
-    };
-
-    drawScreen();
+    const renderer = new CanvasRenderer(g, scale);
+    renderer.render(bounds.renderList);
 }
 
 /**
@@ -282,8 +282,8 @@ export function drawDualDemo(id) {
             PentaStyle: { fill: "none", stroke: "solid" },
         })
     );
-    console.log(bounds);
-    console.log(id);
+    //console.log(bounds);
+    //console.log(id);
     const page = document.querySelector(`#${id}`);
     if (page.style.display == "none") return;
     const canvas = document.querySelector(`#${id} > canvas`);
@@ -781,6 +781,7 @@ export function drawGeneric3(id) {
     g.lineWidth = 1;
     let scale = 4;
     const { deca } = iface(shapeMode.shapeMode);
+
     const drawScreen = function () {
         console.log(performance.now());
 
