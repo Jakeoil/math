@@ -86,6 +86,8 @@ export function initControls(app) {
     } else if (app.name == "measureTasks") {
         if (!measureTaskGlobals.shapeMode)
             measureTaskGlobals.shapeMode = new ShapeMode(app);
+        if (!measureTaskGlobals.overlays)
+            measureTaskGlobals.overlays = new Overlays(app);
     } else {
         console.log("missing app");
     }

@@ -596,6 +596,18 @@ export class PenroseScreen {
                 }
             }
 
+            if ((layer = "dual")) {
+                bounds.expand(
+                    this.drawDualRhombusPattern({
+                        type,
+                        angle,
+                        isHeads,
+                        loc,
+                        gen,
+                    })
+                );
+            }
+
             return bounds; // call figure
         }
 
@@ -1011,7 +1023,122 @@ export class PenroseScreen {
                                     this.ammannSegments(loc, thick2, true)
                                 );
                             }
+                            break;
+                        case 4:
+                        case 1:
+                            const thinR2 = thins[shift.tenths];
+                            if (rhombSelected) {
+                                bounds.expand(
+                                    this.rhombus(
+                                        fill,
+                                        loc,
+                                        thinR2,
+                                        outline,
+                                        isHeads
+                                    )
+                                );
+                            }
+                            if (ammannSelected) {
+                                bounds.expand(
+                                    this.ammannSegments(loc, thinR2, false)
+                                );
+                            }
+                            break;
+                    }
+            }
+        }
+        return bounds;
+    }
+    drawDualRhombusPattern({ type, angle, isHeads, loc, gen, ...options }) {
+        console.log(`drawDual: type: ${type}, gen: ${gen}`);
+        const bounds = new Bounds();
+        const { overlays } = globals;
+        //const { ammannSelected, rhombSelected } = overlays;
 
+        const thins = penrose[this.mode].thinRhomb[gen];
+        const thicks = penrose[this.mode].thickRhomb[gen];
+        const fill = pColor(type);
+        const outline = null;
+        for (let i = 0; i < 5; i++) {
+            const shift = angle.rot(i);
+            //const shift = norm(fifths + i);
+            switch (type) {
+                case penrose.Pe5:
+                    const thick5 = thicks[shift.tenths];
+                    if (rhombSelected) {
+                        bounds.expand(
+                            this.rhombus(fill, loc, thick5, outline, isHeads)
+                        );
+                    }
+                    if (ammannSelected) {
+                        bounds.expand(this.ammannSegments(loc, thick5, true));
+                    }
+                    break;
+                case penrose.Pe3:
+                    switch (i) {
+                        case 0:
+                            const thin3 = thins[shift.tenths];
+                            if (rhombSelected) {
+                                bounds.expand(
+                                    this.rhombus(
+                                        fill,
+                                        loc,
+                                        thin3,
+                                        outline,
+                                        isHeads
+                                    )
+                                );
+                            }
+                            if (ammannSelected) {
+                                bounds.expand(
+                                    this.ammannSegments(loc, thin3, false)
+                                );
+                            }
+                        // no break here
+                        case 1:
+                        case 4:
+                            const thick3 = thicks[shift.tenths];
+                            if (rhombSelected) {
+                                bounds.expand(
+                                    this.rhombus(
+                                        fill,
+                                        loc,
+                                        thick3,
+                                        outline,
+                                        isHeads
+                                    )
+                                );
+                            }
+                            if (ammannSelected) {
+                                bounds.expand(
+                                    this.ammannSegments(loc, thick3, true)
+                                );
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                case penrose.Pe1:
+                    switch (i) {
+                        case 0:
+                            const thick2 = thicks[shift.tenths];
+                            if (rhombSelected) {
+                                bounds.expand(
+                                    this.rhombus(
+                                        fill,
+                                        loc,
+                                        thick2,
+                                        outline,
+                                        isHeads
+                                    )
+                                );
+                            }
+                            if (ammannSelected) {
+                                bounds.expand(
+                                    this.ammannSegments(loc, thick2, true)
+                                );
+                            }
                             break;
                         case 4:
                         case 1:

@@ -118,6 +118,7 @@ export class CanvasRenderer {
         const bounds = new Bounds();
         const { g, scale } = this;
         g.save();
+        g.strokeStyle = penrose.OUTLINE;
         for (let y = -size; y < size; y++) {
             for (let x = -size; x < size; x++) {
                 g.strokeRect(

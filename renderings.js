@@ -236,33 +236,12 @@ export function drawFirstInflation(id) {
 
         // The second time through we render.
 
-        render(scene, bounds, canvas, 10);
-        // if (!scene.measure) {
-        //     if (bounds.isEmpty) {
-        //         console.log(`isEmpty`);
-        //         return;
-        //     }
-        //     let g = canvas.getContext("2d");
-        //     g.fillStyle = "white";
-        //     g.fillRect(0, 0, canvas.width, canvas.height);
-        //     let scale = 10;
-
-        //     const computedWidth = bounds.maxPoint.x * scale + scale;
-        //     const computedHeight = bounds.maxPoint.y * scale + scale;
-        //     if (
-        //         canvas.width != Math.floor(computedWidth) ||
-        //         canvas.height != Math.floor(computedHeight)
-        //     ) {
-        //         canvas.width = computedWidth;
-        //         canvas.height = computedHeight;
-        //     }
-        //     new CanvasRenderer(g, scale).render(bounds.renderList);
-        // }
+        resizeAndRender(scene, bounds, canvas, 10);
     };
 
-    scene.setToMeasure();
-    drawScreen();
-    scene.setToRender();
+    //scene.setToMeasure();
+    //drawScreen();
+    //scene.setToRender();
     drawScreen();
 }
 
@@ -335,8 +314,8 @@ export function drawSecondInflation(id) {
     const scene = new PenroseScreen(shapeMode.shapeMode);
     const penta = scene.penta.bind(scene);
     const star = scene.star.bind(scene);
-    scene.setToMeasure();
-    drawScreen();
+    //scene.setToMeasure();
+    //drawScreen();
     scene.setToRender();
     drawScreen();
     /**
@@ -427,34 +406,11 @@ export function drawSecondInflation(id) {
             bounds.expand(scene.pentaRhomb(type, angle, loc, gen));
         }
 
-        // The second time through we render.
-        render(scene, bounds, canvas, 3);
-
-        // if (!scene.measure) {
-        //     if (bounds.isEmpty) {
-        //         console.log(`isEmpty`);
-        //         return;
-        //     }
-        //     let g = canvas.getContext("2d");
-        //     g.fillStyle = "white";
-        //     g.fillRect(0, 0, canvas.width, canvas.height);
-        //     let scale = 5;
-
-        //     const computedWidth = bounds.maxPoint.x * scale + scale;
-        //     const computedHeight = bounds.maxPoint.y * scale + scale;
-        //     if (
-        //         canvas.width != Math.floor(computedWidth) ||
-        //         canvas.height != Math.floor(computedHeight)
-        //     ) {
-        //         canvas.width = computedWidth;
-        //         canvas.height = computedHeight;
-        //     }
-        //     new CanvasRenderer(g, scale).render(bounds.renderList);
-        // }
+        resizeAndRender(scene, bounds, canvas, 3);
     }
 }
 
-function render(scene, bounds, canvas, scale) {
+function resizeAndRender(scene, bounds, canvas, scale) {
     if (!scene.measure) {
         if (bounds.isEmpty) {
             console.log(`isEmpty`);
@@ -464,6 +420,7 @@ function render(scene, bounds, canvas, scale) {
         g.fillStyle = "white";
         g.fillRect(0, 0, canvas.width, canvas.height);
 
+        // I believe canvas width and height can be put in directly
         const computedWidth = bounds.maxPoint.x * scale + scale;
         const computedHeight = bounds.maxPoint.y * scale + scale;
         if (
@@ -484,8 +441,9 @@ export function drawGridWork(id) {
     if (page.style.display == "none") return;
     const canvas = document.querySelector(`#${id} > canvas`);
 
-    let g = canvas.getContext("2d");
     const { shapeMode, shapeColors } = globals;
+
+    const { grid, figure, outline, deca, penta } = iface(shapeMode.shapeMode);
 
     drawBig();
 
@@ -494,32 +452,29 @@ export function drawGridWork(id) {
      * Draws a few decagons too.
      */
     function drawBig() {
+        const g = canvas.getContext("2d");
         g.fillStyle = "white";
         g.fillRect(0, 0, canvas.width, canvas.height);
-
-        //g.fillStyle = p1Orange;
-        g.strokeStyle = penrose.OUTLINE;
-        g.lineWidth = 1;
         let scale = 10;
-        const { grid, figure, outline, deca, penta } = iface(
-            shapeMode.shapeMode
-        );
 
         const bounds = new Bounds();
         let y = 5;
-        const shapes = [mosaic.penta, mosaic.diamond, mosaic.star, mosaic.boat];
+        const mosaicShapes = [
+            mosaic.penta,
+            mosaic.diamond,
+            mosaic.star,
+            mosaic.boat,
+        ];
 
         const spacing = 12;
-        for (const shape of shapes) {
+        for (const shape of mosaicShapes) {
             for (let i = 0; i < 10; i++) {
                 let offset = p((i + 1) * spacing, y);
                 bounds.expand(
                     figure(
                         shapeColors.shapeColors["pe1-color"],
                         offset,
-                        shape[i],
-                        g,
-                        scale
+                        shape[i]
                     )
                 );
                 bounds.expand(grid(p((i + 1) * spacing, y), 5));
@@ -543,9 +498,7 @@ export function drawGridWork(id) {
                     outline(
                         shapeColors.shapeColors["pe1-color"] + "44",
                         offset,
-                        shape[i],
-                        g,
-                        scale
+                        shape[i]
                     )
                 );
             }
