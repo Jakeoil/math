@@ -78,10 +78,16 @@ export class CanvasRenderer {
         for (const point of shape) {
             if (start) {
                 g.beginPath();
-                g.moveTo((point.x + offset.x) * scale, (point.y + offset.y) * scale);
+                g.moveTo(
+                    (point.x + offset.x) * scale,
+                    (point.y + offset.y) * scale
+                );
                 start = false;
             } else {
-                g.lineTo((point.x + offset.x) * scale, (point.y + offset.y) * scale);
+                g.lineTo(
+                    (point.x + offset.x) * scale,
+                    (point.y + offset.y) * scale
+                );
             }
 
             bounds.addPoint(offset, point);
@@ -166,7 +172,12 @@ export class CanvasRenderer {
 
         const point0 = shape[0].tr(offset).mult(scale);
         const point1 = shape[2].tr(offset).mult(scale);
-        const canvasGradient = g.createLinearGradient(point0.x, point0.y, point1.x, point1.y);
+        const canvasGradient = g.createLinearGradient(
+            point0.x,
+            point0.y,
+            point1.x,
+            point1.y
+        );
         if (isHeads) {
             canvasGradient.addColorStop(0, "#fff");
             canvasGradient.addColorStop(2 / 3, fill);
@@ -187,24 +198,33 @@ export class CanvasRenderer {
         const { rhombStyle } = globals;
         g.save();
         let gradient = rhombStyle.fill == rhombStyle.GRADIENT;
-        let start = true;
         const bounds = new Bounds();
         g.strokeStyle = strokeStyle ? strokeStyle : "black";
-        if (gradient) {
-            g.fillStyle = this.getGradient(fill, offset, shape, isHeads);
-        } else if (rhombStyle.fill == rhombStyle.TRANSPARENT) {
-            g.fillStyle = fill + "40"; //
-        } else {
-            g.fillStyle = fill;
+        switch (rhombStyle.fill) {
+            case rhombStyle.GRADIENT:
+                g.fillStyle = this.getGradient(fill, offset, shape, isHeads);
+                break;
+            case rhombStyle.TRANSPARENT:
+                g.fillStyle = fill + "40"; //
+                break;
+            default:
+                g.fillStyle = fill;
         }
         g.lineWidth = scale < 5 ? 1 : 2;
+        let start = true;
         for (const point of shape) {
             if (start) {
                 g.beginPath();
-                g.moveTo((point.x + offset.x) * scale, (point.y + offset.y) * scale);
+                g.moveTo(
+                    (point.x + offset.x) * scale,
+                    (point.y + offset.y) * scale
+                );
                 start = false;
             } else {
-                g.lineTo((point.x + offset.x) * scale, (point.y + offset.y) * scale);
+                g.lineTo(
+                    (point.x + offset.x) * scale,
+                    (point.y + offset.y) * scale
+                );
             }
 
             bounds.addPoint(offset, point);

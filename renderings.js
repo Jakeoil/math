@@ -44,7 +44,7 @@ export function makeCanvas(canvasId) {
             ? [penrose.St1, ang(1, false)]
             : [];
 
-    let layer = "rhomb"; // for second call
+    const layer = "rhomb"; // for second call
 
     function measure() {
         const bounds = new Bounds();
@@ -70,9 +70,12 @@ export function makeCanvas(canvasId) {
         return bounds;
     }
 
+    // todo suppress bounds.renderList
+    scene.setToMeasure();
     let bounds = measure();
     // Adjust the location and relist
     loc = loc.tr(bounds.minPoint.neg);
+    scene.setToRender();
     bounds = measure();
 
     // Now render the commands stored in bounds
@@ -126,16 +129,12 @@ export function drawFirstInflation(id) {
         console.log("canvasId is null!");
         return;
     }
-    const { shapeMode } = globals;
-    let g = canvas.getContext("2d");
 
     const drawScreen = function () {
-        g.fillStyle = "white";
-        g.fillRect(0, 0, canvas.width, canvas.height);
-        g.strokeStyle = penrose.OUTLINE;
-        g.lineWidth = 1;
-        let scale = 10;
-        const { penta, star } = iface(shapeMode.shapeMode);
+        const { shapeMode } = globals;
+        const screen = new PenroseScreen(shapeMode.shapeMode);
+        const penta = screen.penta.bind(screen);
+        const star = screen.star.bind(screen);
 
         let x = 8;
         let y = 9;
@@ -238,6 +237,12 @@ export function drawFirstInflation(id) {
             bounds.expand(star({ type, angle, loc, gen }));
             bounds.expand(star({ type, angle, loc, gen, layer }));
         }
+
+        let g = canvas.getContext("2d");
+        g.fillStyle = "white";
+        g.fillRect(0, 0, canvas.width, canvas.height);
+        let scale = 10;
+
         new CanvasRenderer(g, scale).render(bounds.renderList);
         // conditional redraw
         redraw(bounds, canvas, drawScreen, scale);

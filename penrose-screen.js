@@ -1,7 +1,7 @@
 import { p } from "./point.js";
 import { Bounds } from "./bounds.js";
 import { penrose } from "./penrose.js";
-import { globals } from "./controls.js";
+import { globals, measureTask } from "./controls.js";
 import { mosaic, quadrille, real } from "./shape-modes.js";
 import { CanvasRenderer, isThree, threeRenderer } from "./renderers.js";
 
@@ -79,9 +79,9 @@ function testLerp() {
  */
 export function iface(mode) {
     let screen = new PenroseScreen(mode);
-    const grid = screen.grid.bind(screen.renderer);
-    const figure = screen.figure.bind(screen.renderer);
-    const outline = screen.outline.bind(screen.renderer);
+    const grid = screen.grid.bind(screen);
+    const figure = screen.figure.bind(screen);
+    const outline = screen.outline.bind(screen);
     const penta = screen.penta.bind(screen);
     const star = screen.star.bind(screen);
     const deca = screen.deca.bind(screen);
@@ -136,6 +136,7 @@ function pColor(type) {
 export class PenroseScreen {
     constructor(mode) {
         this.mode = mode;
+        this.measure = false;
     }
 
     /**
@@ -190,6 +191,13 @@ export class PenroseScreen {
         return null;
     }
 
+    setToMeasure() {
+        this.measure = true;
+    }
+    setToRender() {
+        this.measure = false;
+    }
+
     /**
      * These add to the render list
      *
@@ -201,6 +209,7 @@ export class PenroseScreen {
     outline(fill, loc, shape) {
         const bounds = new Bounds();
         bounds.addVectors(loc, shape);
+        if (this.measure) return bounds;
 
         if (USE_FUNCTION_LIST) {
             const f = (r) => r.outline(fill, loc, shape);
@@ -216,6 +225,7 @@ export class PenroseScreen {
     figure(fill, loc, shape) {
         const bounds = new Bounds();
         bounds.addSquares(loc, shape);
+        if (this.measure) return bounds;
         if (USE_FUNCTION_LIST) {
             const f = (r) => r.figure(fill, loc, shape);
             bounds.renderList.push(f);
@@ -231,6 +241,7 @@ export class PenroseScreen {
         const bounds = new Bounds();
         bounds.addPoint(offset, p(-size, -size));
         bounds.addPoint(offset, p(size, size));
+        if (this.measure) return bounds;
         if (USE_FUNCTION_LIST) {
             const f = (r) => r.grid(offset, size);
             bounds.renderList.push(f);
@@ -246,6 +257,7 @@ export class PenroseScreen {
         const bounds = new Bounds();
         bounds.addPoint(loc, loc);
         bounds.addPoint(loc, end);
+        if (this.measure) return bounds;
         if (USE_FUNCTION_LIST) {
             const f = (r) => r.line(loc, end, strokeStyle);
             bounds.renderList.push(f);
@@ -262,6 +274,9 @@ export class PenroseScreen {
         for (const point of shape) {
             bounds.addPoint(offset, point);
         }
+
+        if (this.measure) return bounds;
+
         if (USE_FUNCTION_LIST) {
             const f = (r) =>
                 r.rhombus(fill, offset, shape, strokeStyle, isHeads);
@@ -372,9 +387,9 @@ export class PenroseScreen {
         //         options
         //     )}`
         // );
-        if (options.rhomb) {
-            layer = "rhomb";
-        }
+        //if (options.rhomb) {
+        //    layer = "rhomb";
+        //}
         const bounds = new Bounds();
         switch (type) {
             case penrose.St5:
@@ -879,6 +894,8 @@ export class PenroseScreen {
      * The color of the rhomb is based on the type.
      * The string will be seached for the # character. Everything before
      * # is a modifier.
+     *
+     * This is only called when layer = "rhomb";
      *
      * @param {*} fifths
      * @param {*} type
