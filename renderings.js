@@ -129,41 +129,37 @@ export function drawFirstInflation(id) {
         console.log("canvasId is null!");
         return;
     }
+    const { shapeMode } = globals;
+    const scene = new PenroseScreen(shapeMode.shapeMode);
+    const penta = scene.penta.bind(scene);
+    const star = scene.star.bind(scene);
 
     const drawScreen = function () {
-        const { shapeMode } = globals;
-        const screen = new PenroseScreen(shapeMode.shapeMode);
-        const penta = screen.penta.bind(screen);
-        const star = screen.star.bind(screen);
-
         let x = 8;
         let y = 9;
         const UP = false;
         const DOWN = true;
+
         const bounds = new Bounds();
         let type = penrose.Pe5;
         let angle = ang(0, UP);
         let loc = p(x, y);
-        let gen = 1;
-        let layer = "rhomb";
+        const gen = 1;
+        const layer = "rhomb";
 
-        bounds.expand(penta({ type, angle, loc, gen }));
-        bounds.expand(penta({ type, angle, loc, gen, layer }));
+        bounds.expand(scene.pentaRhomb(type, angle, loc, gen));
         type = penrose.Pe5;
         angle = ang(0, DOWN);
         loc = p(25, y);
 
-        bounds.expand(penta({ type, angle, loc, gen }));
-        bounds.expand(penta({ type, angle, loc, gen, layer }));
-
+        bounds.expand(scene.pentaRhomb(type, angle, loc, gen));
         y += 18;
 
         type = penrose.Pe3;
         for (let i = 0; i < 5; i++) {
             angle = ang(i, UP);
             loc = p(x + i * 20, y);
-            bounds.expand(penta({ type, angle, loc, gen }));
-            bounds.expand(penta({ type, angle, loc, gen, layer }));
+            bounds.expand(scene.pentaRhomb(type, angle, loc, gen));
         }
 
         //bounds.dumpNodes(bounds.nodeList);
@@ -238,15 +234,35 @@ export function drawFirstInflation(id) {
             bounds.expand(star({ type, angle, loc, gen, layer }));
         }
 
-        let g = canvas.getContext("2d");
-        g.fillStyle = "white";
-        g.fillRect(0, 0, canvas.width, canvas.height);
-        let scale = 10;
+        // The second time through we render.
 
-        new CanvasRenderer(g, scale).render(bounds.renderList);
-        // conditional redraw
-        redraw(bounds, canvas, drawScreen, scale);
+        render(scene, bounds, canvas, 10);
+        // if (!scene.measure) {
+        //     if (bounds.isEmpty) {
+        //         console.log(`isEmpty`);
+        //         return;
+        //     }
+        //     let g = canvas.getContext("2d");
+        //     g.fillStyle = "white";
+        //     g.fillRect(0, 0, canvas.width, canvas.height);
+        //     let scale = 10;
+
+        //     const computedWidth = bounds.maxPoint.x * scale + scale;
+        //     const computedHeight = bounds.maxPoint.y * scale + scale;
+        //     if (
+        //         canvas.width != Math.floor(computedWidth) ||
+        //         canvas.height != Math.floor(computedHeight)
+        //     ) {
+        //         canvas.width = computedWidth;
+        //         canvas.height = computedHeight;
+        //     }
+        //     new CanvasRenderer(g, scale).render(bounds.renderList);
+        // }
     };
+
+    scene.setToMeasure();
+    drawScreen();
+    scene.setToRender();
     drawScreen();
 }
 
@@ -314,48 +330,28 @@ export function drawSecondInflation(id) {
     const page = document.querySelector(`#${id}`);
     if (page.style.display == "none") return;
     const canvas = document.querySelector(`#${id} > canvas`);
-    // g is global
-    let g = canvas.getContext("2d");
-    const { shapeMode } = globals;
 
+    const { shapeMode } = globals;
+    const scene = new PenroseScreen(shapeMode.shapeMode);
+    const penta = scene.penta.bind(scene);
+    const star = scene.star.bind(scene);
+    scene.setToMeasure();
+    drawScreen();
+    scene.setToRender();
     drawScreen();
     /**
      *
      */
     function drawScreen() {
-        let fill = "rgb(10, 10, 10)";
-        g.fillStyle = fill;
         const UP = false;
         const DOWN = true;
-        g.fillStyle = "#ffffff";
-        g.fillRect(0, 0, canvas.width, canvas.height);
 
-        g.fillStyle = penrose.ORANGE_PENTA;
-        g.strokeStyle = penrose.OUTLINE;
-        g.lineWidth = 1;
-        let scale = 5;
-        const { star: star, penta } = iface(shapeMode.shapeMode);
+        //const { star: star, penta } = iface(shapeMode.shapeMode);
         const bounds = new Bounds();
         let x = 25;
         let y = 25;
 
-        bounds.expand(
-            penta({
-                type: penrose.Pe5,
-                angle: ang(0, UP),
-                loc: p(x, y),
-                gen: 2,
-            })
-        );
-        bounds.expand(
-            penta({
-                type: penrose.Pe5,
-                angle: ang(0, UP),
-                loc: p(x, y),
-                gen: 2,
-                rhomb: true,
-            })
-        );
+        bounds.expand(scene.pentaRhomb(penrose.Pe5, ang(0, UP), p(x, y), 2));
 
         let type = penrose.Pe5;
         let angle = ang(0, DOWN);
@@ -363,7 +359,7 @@ export function drawSecondInflation(id) {
         let gen = 2;
         let rhomb = true;
 
-        bounds.expand(penta({ type, angle, loc, gen }));
+        bounds.expand(scene.pentaRhomb(type, angle, loc, gen));
         y += 50;
         x = 25;
         type = penrose.Pe3;
@@ -371,40 +367,37 @@ export function drawSecondInflation(id) {
         for (let i = 0; i < 5; i++) {
             angle = ang(i, UP);
             loc = p(x + i * 50, y);
-            bounds.expand(penta({ type, angle, loc, gen }));
+            bounds.expand(scene.pentaRhomb(type, angle, loc, gen));
         }
         y += 55;
 
         for (let i = 0; i < 5; i++) {
             angle = ang(i, DOWN);
             loc = p(x + i * 50, y);
-            bounds.expand(penta({ type, angle, loc, gen }));
-            //            penta(i, penrose.Pe3, DOWN, p(x + i * 50, y), 2);
+            bounds.expand(scene.pentaRhomb(type, angle, loc, gen));
         }
         y += 50;
         type = penrose.Pe1;
         for (let i = 0; i < 5; i++) {
             angle = ang(i, UP);
             loc = p(x + i * 50, y);
-            bounds.expand(penta({ type, angle, loc, gen }));
+            bounds.expand(scene.pentaRhomb(type, angle, loc, gen));
         }
         y += 55;
         for (let i = 0; i < 5; i++) {
             angle = ang(i, DOWN);
             loc = p(x + i * 50, y);
-            bounds.expand(penta({ type, angle, loc, gen }));
+            bounds.expand(scene.pentaRhomb(type, angle, loc, gen));
         }
         y += 60; // one thru four
         type = penrose.St5;
         angle = ang(0, UP);
         loc = p(35, y);
-        bounds.expand(star({ type, angle, loc, gen }));
-        bounds.expand(star({ type, angle, loc, gen, rhomb }));
+        bounds.expand(scene.pentaRhomb(type, angle, loc, gen));
 
         angle = ang(0, DOWN);
         loc = p(100, y);
-        bounds.expand(star({ type, angle, loc, gen }));
-        bounds.expand(star({ type, angle, loc, gen, rhomb }));
+        bounds.expand(scene.pentaRhomb(type, angle, loc, gen));
         y += 74; // one thru four
         x = 35;
         type = penrose.St3;
@@ -412,32 +405,77 @@ export function drawSecondInflation(id) {
         for (let i = 0; i < 5; i++) {
             angle = ang(i, UP);
             loc = p(x + i * 67, y);
-            bounds.expand(star({ type, angle, loc, gen }));
+            bounds.expand(scene.pentaRhomb(type, angle, loc, gen));
         }
         y += 70; // one thru four
         for (let i = 0; i < 5; i++) {
             angle = ang(i, DOWN);
             loc = p(x + i * 67, y);
-            bounds.expand(star({ type, angle, loc, gen }));
+            bounds.expand(scene.pentaRhomb(type, angle, loc, gen));
         }
         type = penrose.St1;
         y += 75; // one thru four
         for (let i = 0; i < 5; i++) {
             angle = ang(i, UP);
             loc = p(x + i * 50, y);
-            bounds.expand(star({ type, angle, loc, gen }));
+            bounds.expand(scene.pentaRhomb(type, angle, loc, gen));
         }
         y += 60; // one thru four
         for (let i = 0; i < 5; i++) {
             angle = ang(i, DOWN);
             loc = p(x + i * 50, y);
-            bounds.expand(star({ type, angle, loc, gen }));
+            bounds.expand(scene.pentaRhomb(type, angle, loc, gen));
         }
 
-        new CanvasRenderer(g, scale).render(bounds.renderList);
+        // The second time through we render.
+        render(scene, bounds, canvas, 3);
+
+        // if (!scene.measure) {
+        //     if (bounds.isEmpty) {
+        //         console.log(`isEmpty`);
+        //         return;
+        //     }
+        //     let g = canvas.getContext("2d");
+        //     g.fillStyle = "white";
+        //     g.fillRect(0, 0, canvas.width, canvas.height);
+        //     let scale = 5;
+
+        //     const computedWidth = bounds.maxPoint.x * scale + scale;
+        //     const computedHeight = bounds.maxPoint.y * scale + scale;
+        //     if (
+        //         canvas.width != Math.floor(computedWidth) ||
+        //         canvas.height != Math.floor(computedHeight)
+        //     ) {
+        //         canvas.width = computedWidth;
+        //         canvas.height = computedHeight;
+        //     }
+        //     new CanvasRenderer(g, scale).render(bounds.renderList);
+        // }
     }
 }
 
+function render(scene, bounds, canvas, scale) {
+    if (!scene.measure) {
+        if (bounds.isEmpty) {
+            console.log(`isEmpty`);
+            return;
+        }
+        let g = canvas.getContext("2d");
+        g.fillStyle = "white";
+        g.fillRect(0, 0, canvas.width, canvas.height);
+
+        const computedWidth = bounds.maxPoint.x * scale + scale;
+        const computedHeight = bounds.maxPoint.y * scale + scale;
+        if (
+            canvas.width != Math.floor(computedWidth) ||
+            canvas.height != Math.floor(computedHeight)
+        ) {
+            canvas.width = computedWidth;
+            canvas.height = computedHeight;
+        }
+        new CanvasRenderer(g, scale).render(bounds.renderList);
+    }
+}
 /***
  * A lot of cool stuff for computing sizes here
  */

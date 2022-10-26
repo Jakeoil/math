@@ -399,6 +399,7 @@ export class PenroseScreen {
                     type,
                     angle,
                     isHeads,
+                    layer,
                     loc,
                     gen,
                     ...options,
@@ -408,6 +409,7 @@ export class PenroseScreen {
                     type,
                     angle,
                     isHeads,
+                    layer,
                     loc,
                     gen,
                     ...options,
@@ -430,7 +432,7 @@ export class PenroseScreen {
                 );
             }
 
-            if ((layer = "rhomb")) {
+            if (layer == "rhomb") {
                 if (overlays && overlays.smallRhomb) {
                     bounds.expand(
                         this.drawRhombusPattern({
@@ -451,6 +453,7 @@ export class PenroseScreen {
         const pWheel = wheels.p[gen].w;
         const sWheel = wheels.s[gen].w;
 
+        // short circuit
         if (layer == "rhomb") {
             if (gen == 1 && !overlays.smallRhomb) {
                 bounds.expand(
@@ -664,6 +667,20 @@ export class PenroseScreen {
         return bounds;
     }
 
+    pentaRhomb(type, angle, loc, gen) {
+        const bounds = new Bounds();
+        bounds.expand(this.penta({ type, angle, loc, gen }));
+        bounds.expand(
+            this.penta({
+                type,
+                angle,
+                loc,
+                gen,
+                layer: "rhomb",
+            })
+        );
+        return bounds;
+    }
     /**
      * Decagon is a type unto itself.
      *      * The up version.
