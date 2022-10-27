@@ -440,38 +440,32 @@ class Real {
         // --------------------------------------
         // Making the rhomb shapes ones.
 
-        const [thickRhombUp, thickRhombWon, thickRhombToo] = goThickReal(
-            this.wheels,
-            1
-        );
-        const [thinRhombUp, thinRhombWon, thinRhombToo] = goThinReal(
-            this.wheels,
-            1
-        );
-        this.thinRhomb = {};
-        this.thickRhomb = {};
-        this.thinRhomb[1] = shapeWheel(thinRhombUp, thinRhombWon, thinRhombToo);
-        this.thickRhomb[1] = shapeWheel(
-            thickRhombUp,
-            thickRhombWon,
-            thickRhombToo
-        );
-
-        const [thickSmallRhombUp, thickSmallRhombWon, thickSmallRhombToo] =
-            goThickReal(this.wheels, 0);
-        const [thinSmallRhombUp, thinSmallRhombWon, thinSmallRhombToo] =
-            goThinReal(this.wheels, 0);
-
-        this.thinRhomb[0] = shapeWheel(
-            thinSmallRhombUp,
-            thinSmallRhombWon,
-            thinSmallRhombToo
-        );
-        this.thickRhomb[0] = shapeWheel(
-            thickSmallRhombUp,
-            thickSmallRhombWon,
-            thickSmallRhombToo
-        );
+        this.thickRhomb = [];
+        this.thinRhomb = [];
+        for (let i = 0; i < 2; i++) {
+            const [thickRhombUp, thickRhombWon, thickRhombToo] = goThickReal(
+                this.wheels,
+                i
+            );
+            this.thickRhomb.push(
+                shapeWheel(thickRhombUp, thickRhombWon, thickRhombToo)
+            );
+            const [thinRhombUp, thinRhombWon, thinRhombToo] = goThinReal(
+                this.wheels,
+                i
+            );
+            this.thinRhomb.push(
+                shapeWheel(thinRhombUp, thinRhombWon, thinRhombToo)
+            );
+        }
+        // const [thickRhombUp, thickRhombWon, thickRhombToo] = goThickReal(
+        //     this.wheels,
+        //     1
+        // );
+        // const [thinRhombUp, thinRhombWon, thinRhombToo] = goThinReal(
+        //     this.wheels,
+        //     1
+        // );
 
         this.key = "real";
 
