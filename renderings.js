@@ -44,7 +44,7 @@ export function makeCanvas(canvasId) {
             ? [penrose.St1, ang(1, false)]
             : [];
 
-    const layer = "dual"; // for second call
+    const layer = "rhomb"; // for second call
 
     function measure() {
         const bounds = new Bounds();
