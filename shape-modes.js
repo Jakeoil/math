@@ -442,21 +442,18 @@ class Real {
 
         this.thickRhomb = [];
         this.thinRhomb = [];
+        this.thickDualRhomb = [];
+        this.thinDualRhomb = [];
+        let up, won, too;
         for (let i = 0; i < 2; i++) {
-            const [thickRhombUp, thickRhombWon, thickRhombToo] = goThickReal(
-                this.wheels,
-                i
-            );
-            this.thickRhomb.push(
-                shapeWheel(thickRhombUp, thickRhombWon, thickRhombToo)
-            );
-            const [thinRhombUp, thinRhombWon, thinRhombToo] = goThinReal(
-                this.wheels,
-                i
-            );
-            this.thinRhomb.push(
-                shapeWheel(thinRhombUp, thinRhombWon, thinRhombToo)
-            );
+            [up, won, too] = goThickReal(this.wheels, i);
+            this.thickRhomb.push(shapeWheel(up, won, too));
+            [up, won, too] = goThinReal(this.wheels, i);
+            this.thinRhomb.push(shapeWheel(up, won, too));
+            [up, won, too] = goThickRealDual(this.wheels, i);
+            this.thickDualRhomb.push(shapeWheel(up, won, too));
+            [up, won, too] = goThinRealDual(this.wheels, i);
+            this.thinDualRhomb.push(shapeWheel(up, won, too));
         }
 
         this.key = "real";
@@ -657,22 +654,21 @@ class Quadrille {
 
         this.thinRhomb = [];
         this.thickRhomb = [];
+        this.thinDualRhomb = [];
+        this.thickDualRhomb = [];
+        let up, one, too;
         for (let i = 0; i < 2; i++) {
-            const [thickRhombUp, thickRhombWon, thickRhombToo] = goThick(
-                this.wheels,
-                i
-            );
-            this.thickRhomb.push(
-                shapeWheel(thickRhombUp, thickRhombWon, thickRhombToo)
-            );
+            [up, one, too] = goThick(this.wheels, i);
+            this.thickRhomb.push(shapeWheel(up, one, too));
 
-            const [thinRhombUp, thinRhombWon, thinRhombToo] = goThin(
-                this.wheels,
-                i
-            );
-            this.thinRhomb.push(
-                shapeWheel(thinRhombUp, thinRhombWon, thinRhombToo)
-            );
+            [up, one, too] = goThin(this.wheels, i);
+            this.thinRhomb.push(shapeWheel(up, one, too));
+
+            [up, one, too] = goThickDual(this.wheels, i);
+            this.thickDualRhomb.push(shapeWheel(up, one, too));
+
+            [up, one, too] = goThinDual(this.wheels, i);
+            this.thinDualRhomb.push(shapeWheel(up, one, too));
         }
 
         this.key = "quadrille";
@@ -786,23 +782,23 @@ class Mosaic {
 
         // Use quadrille instead.
 
-        this.thickRhomb = [];
         this.thinRhomb = [];
+        this.thickRhomb = [];
+        this.thinDualRhomb = [];
+        this.thickDualRhomb = [];
+        let up, one, too;
         for (let i = 0; i < 2; i++) {
-            const [thickRhombUp, thickRhombWon, thickRhombToo] = goThickReal(
-                this.wheels,
-                i
-            );
-            this.thickRhomb.push(
-                shapeWheel(thickRhombUp, thickRhombWon, thickRhombToo)
-            );
-            const [thinRhombUp, thinRhombWon, thinRhombToo] = goThinReal(
-                this.wheels,
-                i
-            );
-            this.thinRhomb.push(
-                shapeWheel(thinRhombUp, thinRhombWon, thinRhombToo)
-            );
+            [up, one, too] = goThick(this.wheels, i);
+            this.thickRhomb.push(shapeWheel(up, one, too));
+
+            [up, one, too] = goThin(this.wheels, i);
+            this.thinRhomb.push(shapeWheel(up, one, too));
+
+            [up, one, too] = goThickDual(this.wheels, i);
+            this.thickDualRhomb.push(shapeWheel(up, one, too));
+
+            [up, one, too] = goThinDual(this.wheels, i);
+            this.thinDualRhomb.push(shapeWheel(up, one, too));
         }
     }
 
