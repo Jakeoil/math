@@ -1,111 +1,10 @@
 import { p, toP } from "./point.js";
-import { Bounds } from "./bounds.js";
-import { shapeWheel, Wheels, shapeWheelMosaic, interpolateWheel } from "./wheels.js";
-import { globals } from "./controls.js";
-import { penrose } from "./penrose.js";
-/***
- * Used by Mosaic figure.
- * This is the routine that ultimately renders the 'tile'
- * @param {*} fill One of the colors
- * @param {*} offset Location in P format
- * @param {*} shape centered array of 'pixels' centered.
- * Prerequisites: Globals g and scale
- */
-/*
-function figure(fill, offset, shape, g, scale) {
-    const { pentaStyle } = globals;
-    let currentStrokeStyle = g.strokeStyle;
-    let currentLineWidth = g.lineWidth;
-    let currentfillStyle = g.fillStyle;
-    g.fillStyle = fill; //e.g penrose.ORANGE;
-    g.strokeStyle = penrose.OUTLINE;
-
-    const bounds = new Bounds();
-    for (const point of shape) {
-        g.fillRect(
-            offset.x * scale + point.x * scale,
-            offset.y * scale + point.y * scale,
-            scale,
-            scale
-        );
-        if (scale >= 5) {
-            g.strokeRect(
-                offset.x * scale + point.x * scale,
-                offset.y * scale + point.y * scale,
-                scale,
-                scale
-            );
-        }
-        bounds.addPoint(offset, point);
-        bounds.addPoint(offset, point.tr(p(1, 1)));
-    }
-
-    g.strokeStyle = currentStrokeStyle;
-    g.lineWidth = currentLineWidth;
-    g.fillStyle = currentfillStyle;
-
-    return bounds;
-}
-*/
-/***
- * Used for quadrille
- *
- */
-/*
-
-export function outline(fill, offset, shape, g, scale) {
-    const { pentaStyle } = globals;
-    let currentStrokeStyle = g.strokeStyle;
-    let currentLineWidth = g.lineWidth;
-    let currentfillStyle = g.fillStyle;
-
-    let start = true;
-    const bounds = new Bounds();
-    for (const point of shape) {
-        g.strokeStyle = "#000000";
-        g.fillStyle = fill;
-        g.lineWidth = 1;
-        if (start) {
-            g.beginPath();
-            g.moveTo(
-                (point.x + offset.x) * scale,
-                (point.y + offset.y) * scale
-            );
-            start = false;
-        } else {
-            g.lineTo(
-                (point.x + offset.x) * scale,
-                (point.y + offset.y) * scale
-            );
-        }
-
-        bounds.addPoint(offset, point);
-    }
-    g.closePath();
-    g.stroke();
-
-    // switch (pentaStyle.fill) {
-    //     case pentaStyle.SOLID:
-    //         console.log("solid");
-    //         break;
-    //     case pentaStyle.NONE:
-    //         console.log("none");
-    //         break;
-    //     case pentaStyle.TRANSPARENT:
-    //         console.log("transparent");
-    //         break;
-    // }
-
-    if (fill) {
-        g.fill();
-    }
-    g.strokeStyle = currentStrokeStyle;
-    g.lineWidth = currentLineWidth;
-    g.fillStyle = currentfillStyle;
-
-    return bounds;
-}
-*/
+import {
+    shapeWheel,
+    Wheels,
+    shapeWheelMosaic,
+    interpolateWheel,
+} from "./wheels.js";
 
 /***************************************************
  * SHAPE MODE REAL
@@ -154,6 +53,8 @@ function mod10(n) {
 
 /**
  * This is the one for quadrille
+ * Invoked by mosaic constuctor and quadrille constructor
+ *
  * @param {} wheels
  * @param {*} exp
  * @returns
@@ -191,11 +92,48 @@ function goThin(wheels, exp) {
     }
 }
 
+function goThickDual(wheels, exp) {
+    const tWheel = wheels.t[exp].w;
+    const sWheel = wheels.s[exp].w;
+    const pWheel = wheels.p[exp].w;
+    const dWheel = wheels.d[exp].w;
+
+    return [rhThick(0), rhThick(1), rhThick(2)];
+
+    function rhThick(tenth) {
+        const o = p(0, 0);
+        const o1 = o.tr(sWheel[mod10(tenth + 9)]);
+        const o2 = o1.tr(pWheel[mod10(tenth + 1)]);
+        const o3 = o2.tr(pWheel[mod10(tenth + 4)]);
+        return [o, o1, o2, o3];
+    }
+}
+
+function goThinDual(wheels, exp) {
+    const tWheel = wheels.t[exp].w;
+    const sWheel = wheels.s[exp].w;
+    const pWheel = wheels.p[exp].w;
+    const dWheel = wheels.d[exp].w;
+    return [rhThin(0), rhThin(1), rhThin(2)];
+
+    function rhThin(tenth) {
+        const o = p(0, 0);
+        const o1 = o.tr(sWheel[mod10(tenth + 3)]);
+        const o2 = o1.tr(pWheel[mod10(tenth + 7)]);
+        const o3 = o2.tr(pWheel[mod10(tenth + 8)]);
+        return [o, o1, o2, o3];
+    }
+}
+
 /**
  * This one belongs in real
  * @param {*} wheels
  * @param {*} exp
  * @returns
+ *
+ * Can this be unified with quad and mosaic. The only difference is the line
+ * in the rh routine d + p == t. Perhaps I was hasty if the real of d+p == t,
+ * then we don't have to separate them.
  */
 function goThickReal(wheels, exp) {
     const tWheel = wheels.t[exp].w;
@@ -226,6 +164,39 @@ function goThinReal(wheels, exp) {
         const o1 = o.tr(tWheel[mod10(tenth + 3)]);
         const o2 = o1.tr(tWheel[mod10(tenth + 7)]);
         const o3 = o2.tr(tWheel[mod10(tenth + 8)]);
+        return [o, o1, o2, o3];
+    }
+}
+
+function goThickRealDual(wheels, exp) {
+    const tWheel = wheels.t[exp].w;
+    const sWheel = wheels.s[exp].w;
+    const pWheel = wheels.p[exp].w;
+    const dWheel = wheels.d[exp].w;
+
+    return [rhThick(0), rhThick(1), rhThick(2)];
+
+    function rhThick(tenth) {
+        const o = p(0, 0);
+        const o1 = o.tr(pWheel[mod10(tenth + 9)]);
+        const o2 = o1.tr(pWheel[mod10(tenth + 1)]);
+        const o3 = o2.tr(pWheel[mod10(tenth + 4)]);
+        return [o, o1, o2, o3];
+    }
+}
+
+function goThinRealDual(wheels, exp) {
+    const tWheel = wheels.t[exp].w;
+    const sWheel = wheels.s[exp].w;
+    const pWheel = wheels.p[exp].w;
+    const dWheel = wheels.d[exp].w;
+    return [rhThin(0), rhThin(1), rhThin(2)];
+
+    function rhThin(tenth) {
+        const o = p(0, 0);
+        const o1 = o.tr(pWheel[mod10(tenth + 3)]);
+        const o2 = o1.tr(pWheel[mod10(tenth + 7)]);
+        const o3 = o2.tr(pWheel[mod10(tenth + 8)]);
         return [o, o1, o2, o3];
     }
 }
@@ -380,13 +351,26 @@ class Real {
             starDimples[2],
         ];
 
-        const diamondUp = [starTips[0], starDimples[3], starDimples[0], starDimples[2]];
+        const diamondUp = [
+            starTips[0],
+            starDimples[3],
+            starDimples[0],
+            starDimples[2],
+        ];
 
-        const diamondToo = [starDimples[3], starTips[1], starDimples[4], starDimples[1]];
+        const diamondToo = [
+            starDimples[3],
+            starTips[1],
+            starDimples[4],
+            starDimples[1],
+        ];
 
-        const diamondWon = [starDimples[3], starDimples[0], starTips[3], starDimples[1]].map(
-            (it) => it.neg
-        );
+        const diamondWon = [
+            starDimples[3],
+            starDimples[0],
+            starTips[3],
+            starDimples[1],
+        ].map((it) => it.neg);
 
         const boatUp = [
             starTips[0],
@@ -430,7 +414,8 @@ class Real {
 
         // tSeed distance is the centers of two stars with their feet touching
         // So simply (pgram.R + pgram.y) * 2;
-        const tMag = (solve(pgram, "a", 4, "R") + solve(pgram, "a", 4, "y")) * 2;
+        const tMag =
+            (solve(pgram, "a", 4, "R") + solve(pgram, "a", 4, "y")) * 2;
         const tSeed = makeSeed(tMag);
 
         // dseed is simply pgon 2 * r + R with a set to 4.
@@ -438,7 +423,11 @@ class Real {
         const dSeed = makeSeed(dMag);
 
         function makeSeed(mag) {
-            return [unitUp[0].mult(mag), unitDown[3].mult(mag), unitUp[1].mult(mag)];
+            return [
+                unitUp[0].mult(mag),
+                unitDown[3].mult(mag),
+                unitUp[1].mult(mag),
+            ];
         }
 
         this.penta = shapeWheel(pentaUp);
@@ -448,24 +437,44 @@ class Real {
 
         this.wheels = new Wheels(pSeed, sSeed, tSeed, dSeed);
 
-        // Making the real ones.
-        const [thickRhombUp, thickRhombWon, thickRhombToo] = goThickReal(this.wheels, 1);
-        const [thinRhombUp, thinRhombWon, thinRhombToo] = goThinReal(this.wheels, 1);
+        // --------------------------------------
+        // Making the rhomb shapes ones.
+
+        const [thickRhombUp, thickRhombWon, thickRhombToo] = goThickReal(
+            this.wheels,
+            1
+        );
+        const [thinRhombUp, thinRhombWon, thinRhombToo] = goThinReal(
+            this.wheels,
+            1
+        );
         this.thinRhomb = {};
         this.thickRhomb = {};
         this.thinRhomb[1] = shapeWheel(thinRhombUp, thinRhombWon, thinRhombToo);
-        this.thickRhomb[1] = shapeWheel(thickRhombUp, thickRhombWon, thickRhombToo);
-
-        const [thickSmallRhombUp, thickSmallRhombWon, thickSmallRhombToo] = goThickReal(
-            this.wheels,
-            0
+        this.thickRhomb[1] = shapeWheel(
+            thickRhombUp,
+            thickRhombWon,
+            thickRhombToo
         );
-        const [thinSmallRhombUp, thinSmallRhombWon, thinSmallRhombToo] = goThinReal(this.wheels, 0);
 
-        this.thinRhomb[0] = shapeWheel(thinSmallRhombUp, thinSmallRhombWon, thinSmallRhombToo);
-        this.thickRhomb[0] = shapeWheel(thickSmallRhombUp, thickSmallRhombWon, thickSmallRhombToo);
+        const [thickSmallRhombUp, thickSmallRhombWon, thickSmallRhombToo] =
+            goThickReal(this.wheels, 0);
+        const [thinSmallRhombUp, thinSmallRhombWon, thinSmallRhombToo] =
+            goThinReal(this.wheels, 0);
+
+        this.thinRhomb[0] = shapeWheel(
+            thinSmallRhombUp,
+            thinSmallRhombWon,
+            thinSmallRhombToo
+        );
+        this.thickRhomb[0] = shapeWheel(
+            thickSmallRhombUp,
+            thickSmallRhombWon,
+            thickSmallRhombToo
+        );
 
         this.key = "real";
+
         //this.renderShape = outline;
     }
 }
@@ -660,17 +669,39 @@ class Quadrille {
 
         this.wheels = new Wheels(pSeed, sSeed, tSeed, dSeed);
 
-        const [thickRhombUp, thickRhombWon, thickRhombToo] = goThick(this.wheels, 1);
-        const [thinRhombUp, thinRhombWon, thinRhombToo] = goThin(this.wheels, 1);
+        const [thickRhombUp, thickRhombWon, thickRhombToo] = goThick(
+            this.wheels,
+            1
+        );
+        const [thinRhombUp, thinRhombWon, thinRhombToo] = goThin(
+            this.wheels,
+            1
+        );
         this.thinRhomb = {};
         this.thinRhomb[1] = shapeWheel(thinRhombUp, thinRhombWon, thinRhombToo);
         this.thickRhomb = {};
-        this.thickRhomb[1] = shapeWheel(thickRhombUp, thickRhombWon, thickRhombToo);
+        this.thickRhomb[1] = shapeWheel(
+            thickRhombUp,
+            thickRhombWon,
+            thickRhombToo
+        );
 
-        const [thickSmallRhombUp, thickSmallRhombWon, thickSmallRhombToo] = goThick(this.wheels, 0);
-        const [thinSmallRhombUp, thinSmallRhombWon, thinSmallRhombToo] = goThin(this.wheels, 0);
-        this.thinRhomb[0] = shapeWheel(thinSmallRhombUp, thinSmallRhombWon, thinSmallRhombToo);
-        this.thickRhomb[0] = shapeWheel(thickSmallRhombUp, thickSmallRhombWon, thickSmallRhombToo);
+        const [thickSmallRhombUp, thickSmallRhombWon, thickSmallRhombToo] =
+            goThick(this.wheels, 0);
+        const [thinSmallRhombUp, thinSmallRhombWon, thinSmallRhombToo] = goThin(
+            this.wheels,
+            0
+        );
+        this.thinRhomb[0] = shapeWheel(
+            thinSmallRhombUp,
+            thinSmallRhombWon,
+            thinSmallRhombToo
+        );
+        this.thickRhomb[0] = shapeWheel(
+            thickSmallRhombUp,
+            thickSmallRhombWon,
+            thickSmallRhombToo
+        );
 
         this.key = "quadrille";
         //this.renderShape = outline;
@@ -763,12 +794,17 @@ class Mosaic {
             primitives.diamond_won,
             primitives.diamond_too
         );
-        this.boat = shapeWheelMosaic(primitives.boat_up, primitives.boat_won, primitives.boat_too);
+        this.boat = shapeWheelMosaic(
+            primitives.boat_up,
+            primitives.boat_won,
+            primitives.boat_too
+        );
         this.star = shapeWheelMosaic(primitives.star_up);
 
         this.key = "mosaic";
         //this.renderShape = figure;
 
+        // Create rhombs
         const pSeed = [p(0, -6), p(3, -4), p(5, -2)];
         const sSeed = [p(0, -5), p(3, -5), p(5, -1)];
         const tSeed = [p(0, -8), p(5, -8), p(8, -2)];
@@ -779,17 +815,41 @@ class Mosaic {
         this.thickRhombSeed = [];
         this.thickRhombSeed[1] = goThick(this.wheels, 1);
 
-        const [thickRhombUp, thickRhombWon, thickRhombToo] = goThick(this.wheels, 1);
-        const [thinRhombUp, thinRhombWon, thinRhombToo] = goThin(this.wheels, 1);
+        const [thickRhombUp, thickRhombWon, thickRhombToo] = goThick(
+            this.wheels,
+            1
+        );
+        const [thinRhombUp, thinRhombWon, thinRhombToo] = goThin(
+            this.wheels,
+            1
+        );
         this.thinRhomb = {};
         this.thickRhomb = {};
         this.thinRhomb[1] = shapeWheel(thinRhombUp, thinRhombWon, thinRhombToo);
-        this.thickRhomb[1] = shapeWheel(thickRhombUp, thickRhombWon, thickRhombToo);
-        const [thickSmallRhombUp, thickSmallRhombWon, thickSmallRhombToo] = goThick(this.wheels, 0);
-        const [thinSmallRhombUp, thinSmallRhombWon, thinSmallRhombToo] = goThin(this.wheels, 0);
-        this.thinRhomb[0] = shapeWheel(thinSmallRhombUp, thinSmallRhombWon, thinSmallRhombToo);
-        this.thickRhomb[0] = shapeWheel(thickSmallRhombUp, thickSmallRhombWon, thickSmallRhombToo);
+        this.thickRhomb[1] = shapeWheel(
+            thickRhombUp,
+            thickRhombWon,
+            thickRhombToo
+        );
+        const [thickSmallRhombUp, thickSmallRhombWon, thickSmallRhombToo] =
+            goThick(this.wheels, 0);
+        const [thinSmallRhombUp, thinSmallRhombWon, thinSmallRhombToo] = goThin(
+            this.wheels,
+            0
+        );
+        this.thinRhomb[0] = shapeWheel(
+            thinSmallRhombUp,
+            thinSmallRhombWon,
+            thinSmallRhombToo
+        );
+        this.thickRhomb[0] = shapeWheel(
+            thickSmallRhombUp,
+            thickSmallRhombWon,
+            thickSmallRhombToo
+        );
     }
+
+    createRhombs() {}
 }
 
 export const mosaic = new Mosaic();

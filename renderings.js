@@ -44,7 +44,7 @@ export function makeCanvas(canvasId) {
             ? [penrose.St1, ang(1, false)]
             : [];
 
-    const layer = "rhomb"; // for second call
+    const layer = "dual"; // for second call
 
     function measure() {
         const bounds = new Bounds();
@@ -269,7 +269,7 @@ export function drawDualDemo(id) {
             angle: ang(0, false),
             loc: p(25, 25),
             gen: 3,
-            rhomb: false,
+            layer: "penta",
         })
     );
     bounds2.expand(
@@ -278,7 +278,7 @@ export function drawDualDemo(id) {
             angle: ang(0, false),
             loc: p(25 * 1.618, 25 * 1.618),
             gen: 3,
-            rhomb: true,
+            layer: "rhomb",
             PentaStyle: { fill: "none", stroke: "solid" },
         })
     );

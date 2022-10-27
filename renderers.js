@@ -1,5 +1,6 @@
 import { Bounds } from "./bounds.js";
 import { globals } from "./controls.js";
+import { measureTaskGlobals } from "./controls.js";
 import { penrose } from "./penrose.js";
 import { p } from "./point.js";
 
@@ -196,7 +197,7 @@ export class CanvasRenderer {
 
     rhombus(fill, offset, shape, strokeStyle, isHeads) {
         const { g, scale } = this;
-        const { rhombStyle } = globals;
+        const { rhombStyle } = { ...globals, ...measureTaskGlobals };
         g.save();
         let gradient = rhombStyle.fill == rhombStyle.GRADIENT;
         const bounds = new Bounds();

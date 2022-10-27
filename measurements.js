@@ -5,7 +5,7 @@ import { penrose } from "./penrose.js";
 //import { MODE_REAL } from "./controls/shape-mode.js"; // Now _really_
 import { quadrille } from "./shape-modes.js";
 import { iface } from "./penrose-screen.js";
-import { measureTaskGlobals } from "./controls.js";
+import { measureTaskGlobals, globals } from "./controls.js";
 import { initControls, logRefresh } from "./controls.js";
 import { CanvasRenderer } from "./renderers.js";
 
@@ -25,7 +25,7 @@ function drawQuadrille() {
     const canvas = document.querySelector("#quadrille");
     canvas.width = 0;
     canvas.height = 0;
-    const { shapeMode } = measureTaskGlobals;
+    const { shapeMode, overlays } = { ...globals, ...measureTaskGlobals };
     const g = canvas.getContext("2d");
     g.strokeStyle = penrose.OUTLINE;
     g.lineWidth = 1;

@@ -18,16 +18,18 @@ export class RhombStyle {
         this.eleFill = document.querySelector("#rhomb-fill");
         // none, color, gradiant.
         this.eleStroke = document.querySelector("#rhomb-stroke");
-        this.eleFill.addEventListener(
-            "change",
-            this.onFillChanged.bind(this),
-            false
-        );
-        this.eleStroke.addEventListener(
-            "change",
-            this.onStrokeChanged.bind(this),
-            false
-        );
+        if (this.eleFill)
+            this.eleFill.addEventListener(
+                "change",
+                this.onFillChanged.bind(this),
+                false
+            );
+        if (this.eleStroke)
+            this.eleStroke.addEventListener(
+                "change",
+                this.onStrokeChanged.bind(this),
+                false
+            );
         this.reset();
         this.refresh();
     }

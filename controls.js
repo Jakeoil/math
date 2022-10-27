@@ -88,6 +88,8 @@ export function initControls(app) {
             measureTaskGlobals.shapeMode = new ShapeMode(app);
         if (!measureTaskGlobals.overlays)
             measureTaskGlobals.overlays = new Overlays(app);
+        if (!measureTaskGlobals.rhombStyle)
+            measureTaskGlobals.rhombStyle = new RhombStyle(app);
     } else {
         console.log("missing app");
     }

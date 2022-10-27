@@ -1,7 +1,7 @@
 import { p } from "./point.js";
 import { Bounds } from "./bounds.js";
 import { penrose } from "./penrose.js";
-import { globals, measureTask } from "./controls.js";
+import { globals, measureTaskGlobals } from "./controls.js";
 import { mosaic, quadrille, real } from "./shape-modes.js";
 import { CanvasRenderer, isThree, threeRenderer } from "./renderers.js";
 
@@ -596,7 +596,7 @@ export class PenroseScreen {
                 }
             }
 
-            if ((layer = "dual")) {
+            if (layer == "dual") {
                 bounds.expand(
                     this.drawDualRhombusPattern({
                         type,
@@ -1052,8 +1052,8 @@ export class PenroseScreen {
     drawDualRhombusPattern({ type, angle, isHeads, loc, gen, ...options }) {
         console.log(`drawDual: type: ${type}, gen: ${gen}`);
         const bounds = new Bounds();
-        const { overlays } = globals;
-        //const { ammannSelected, rhombSelected } = overlays;
+        const { overlays } = { ...globals, ...measureTaskGlobals };
+        const { ammannSelected, rhombSelected } = overlays;
 
         const thins = penrose[this.mode].thinRhomb[gen];
         const thicks = penrose[this.mode].thickRhomb[gen];
@@ -1063,7 +1063,7 @@ export class PenroseScreen {
             const shift = angle.rot(i);
             //const shift = norm(fifths + i);
             switch (type) {
-                case penrose.Pe5:
+                case penrose.St5:
                     const thick5 = thicks[shift.tenths];
                     if (rhombSelected) {
                         bounds.expand(
@@ -1074,7 +1074,7 @@ export class PenroseScreen {
                         bounds.expand(this.ammannSegments(loc, thick5, true));
                     }
                     break;
-                case penrose.Pe3:
+                case penrose.St3:
                     switch (i) {
                         case 0:
                             const thin3 = thins[shift.tenths];
@@ -1119,7 +1119,7 @@ export class PenroseScreen {
                             break;
                     }
                     break;
-                case penrose.Pe1:
+                case penrose.St1:
                     switch (i) {
                         case 0:
                             const thick2 = thicks[shift.tenths];
