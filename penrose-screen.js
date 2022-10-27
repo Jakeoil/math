@@ -693,6 +693,20 @@ export class PenroseScreen {
         );
         return bounds;
     }
+    pentaDual(type, angle, loc, gen) {
+        const bounds = new Bounds();
+        bounds.expand(this.penta({ type, angle, loc, gen }));
+        bounds.expand(
+            this.penta({
+                type,
+                angle,
+                loc,
+                gen,
+                layer: "dual",
+            })
+        );
+        return bounds;
+    }
     /**
      * Decagon is a type unto itself.
      *      * The up version.
@@ -1055,15 +1069,16 @@ export class PenroseScreen {
         const { overlays } = { ...globals, ...measureTaskGlobals };
         const { ammannSelected, rhombSelected } = overlays;
 
-        const thins = penrose[this.mode].thinRhomb[gen];
-        const thicks = penrose[this.mode].thickRhomb[gen];
-        const fill = pColor(type);
+        const thins = penrose[this.mode].thinDualRhomb[gen + 1];
+        const thicks = penrose[this.mode].thickDualRhomb[gen + 1];
+        let fill = pColor(type);
         const outline = null;
         for (let i = 0; i < 5; i++) {
             const shift = angle.rot(i);
             //const shift = norm(fifths + i);
             switch (type) {
                 case penrose.St5:
+                    fill = pColor(penrose.Pe5);
                     const thick5 = thicks[shift.tenths];
                     if (rhombSelected) {
                         bounds.expand(
@@ -1075,6 +1090,7 @@ export class PenroseScreen {
                     }
                     break;
                 case penrose.St3:
+                    fill = pColor(penrose.Pe3);
                     switch (i) {
                         case 0:
                             const thin3 = thins[shift.tenths];
@@ -1120,6 +1136,7 @@ export class PenroseScreen {
                     }
                     break;
                 case penrose.St1:
+                    fill = pColor(penrose.Pe1);
                     switch (i) {
                         case 0:
                             const thick2 = thicks[shift.tenths];

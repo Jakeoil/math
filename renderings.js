@@ -44,7 +44,7 @@ export function makeCanvas(canvasId) {
             ? [penrose.St1, ang(1, false)]
             : [];
 
-    const layer = "rhomb"; // for second call
+    const layer = "dual"; // for second call
 
     function measure() {
         const bounds = new Bounds();
@@ -145,21 +145,21 @@ export function drawFirstInflation(id) {
         let angle = ang(0, UP);
         let loc = p(x, y);
         const gen = 1;
-        const layer = "rhomb";
+        const layer = "dual";
 
-        bounds.expand(scene.pentaRhomb(type, angle, loc, gen));
+        bounds.expand(scene.pentaDual(type, angle, loc, gen));
         type = penrose.Pe5;
         angle = ang(0, DOWN);
         loc = p(25, y);
 
-        bounds.expand(scene.pentaRhomb(type, angle, loc, gen));
+        bounds.expand(scene.pentaDual(type, angle, loc, gen));
         y += 18;
 
         type = penrose.Pe3;
         for (let i = 0; i < 5; i++) {
             angle = ang(i, UP);
             loc = p(x + i * 20, y);
-            bounds.expand(scene.pentaRhomb(type, angle, loc, gen));
+            bounds.expand(scene.pentaDual(type, angle, loc, gen));
         }
 
         //bounds.dumpNodes(bounds.nodeList);
@@ -330,7 +330,7 @@ export function drawSecondInflation(id) {
         let x = 25;
         let y = 25;
 
-        bounds.expand(scene.pentaRhomb(penrose.Pe5, ang(0, UP), p(x, y), 2));
+        bounds.expand(scene.pentaDual(penrose.Pe5, ang(0, UP), p(x, y), 2));
 
         let type = penrose.Pe5;
         let angle = ang(0, DOWN);
@@ -338,7 +338,7 @@ export function drawSecondInflation(id) {
         let gen = 2;
         let rhomb = true;
 
-        bounds.expand(scene.pentaRhomb(type, angle, loc, gen));
+        bounds.expand(scene.pentaDual(type, angle, loc, gen));
         y += 50;
         x = 25;
         type = penrose.Pe3;
@@ -372,11 +372,11 @@ export function drawSecondInflation(id) {
         type = penrose.St5;
         angle = ang(0, UP);
         loc = p(35, y);
-        bounds.expand(scene.pentaRhomb(type, angle, loc, gen));
+        bounds.expand(scene.pentaDual(type, angle, loc, gen));
 
         angle = ang(0, DOWN);
         loc = p(100, y);
-        bounds.expand(scene.pentaRhomb(type, angle, loc, gen));
+        bounds.expand(scene.pentaDual(type, angle, loc, gen));
         y += 74; // one thru four
         x = 35;
         type = penrose.St3;
@@ -384,7 +384,7 @@ export function drawSecondInflation(id) {
         for (let i = 0; i < 5; i++) {
             angle = ang(i, UP);
             loc = p(x + i * 67, y);
-            bounds.expand(scene.pentaRhomb(type, angle, loc, gen));
+            bounds.expand(scene.pentaDual(type, angle, loc, gen));
         }
         y += 70; // one thru four
         for (let i = 0; i < 5; i++) {
@@ -406,7 +406,7 @@ export function drawSecondInflation(id) {
             bounds.expand(scene.pentaRhomb(type, angle, loc, gen));
         }
 
-        resizeAndRender(scene, bounds, canvas, 3);
+        resizeAndRender(scene, bounds, canvas, 5);
     }
 }
 
@@ -668,29 +668,31 @@ export function drawGeneric123(id) {
         const bounds = new Bounds();
         const type = controls.typeList[controls.typeIndex];
         const angle = ang(controls.fifths, controls.isDown);
+        //const layer = "rhomb";
+        const layer = "dual";
         switch (type) {
             case penrose.Pe1:
             case penrose.Pe3:
             case penrose.Pe5:
                 bounds.expand(penta({ type, angle, loc: p(x, y), gen: 0 }));
                 bounds.expand(
-                    penta({ type, angle, loc: p(x, y), gen: 0, rhomb: true })
+                    penta({ type, angle, loc: p(x, y), gen: 0, layer })
                 );
                 x += 21;
                 bounds.expand(penta({ type, angle, loc: p(x, y), gen: 1 }));
                 bounds.expand(
-                    penta({ type, angle, loc: p(x, y), gen: 1, rhomb: true })
+                    penta({ type, angle, loc: p(x, y), gen: 1, layer })
                 );
                 x += 34;
                 bounds.expand(penta({ type, angle, loc: p(x, y), gen: 2 }));
                 bounds.expand(
-                    penta({ type, angle, loc: p(x, y), gen: 2, rhomb: true })
+                    penta({ type, angle, loc: p(x, y), gen: 2, layer })
                 );
                 x = 73;
                 y += 100;
                 bounds.expand(penta({ type, angle, loc: p(x, y), gen: 3 }));
                 bounds.expand(
-                    penta({ type, angle, loc: p(x, y), gen: 3, rhomb: true })
+                    penta({ type, angle, loc: p(x, y), gen: 3, layer })
                 );
 
                 break;
@@ -700,48 +702,40 @@ export function drawGeneric123(id) {
                 y += 10;
                 bounds.expand(star({ type, angle, loc: p(x, y), gen: 0 }));
                 bounds.expand(
-                    star({ type, angle, loc: p(x, y), gen: 0, rhomb: true })
+                    star({ type, angle, loc: p(x, y), gen: 0, layer })
                 );
                 x += 21;
                 bounds.expand(star({ type, angle, loc: p(x, y), gen: 1 }));
                 bounds.expand(
-                    star({ type, angle, loc: p(x, y), gen: 1, rhomb: true })
+                    star({ type, angle, loc: p(x, y), gen: 1, layer })
                 );
                 x += 54;
                 bounds.expand(star({ type, angle, loc: p(x, y), gen: 2 }));
                 bounds.expand(
-                    star({ type, angle, loc: p(x, y), gen: 2, rhomb: true })
+                    star({ type, angle, loc: p(x, y), gen: 2, layer })
                 );
                 x = 93;
                 y += 130;
                 bounds.expand(star({ type, angle, loc: p(x, y), gen: 3 }));
                 bounds.expand(
-                    star({ type, angle, loc: p(x, y), gen: 3, rhomb: true })
+                    star({ type, angle, loc: p(x, y), gen: 3, layer })
                 );
 
                 break;
             case penrose.Deca:
                 bounds.expand(deca({ angle, loc: p(x, y), gen: 1 }));
-                bounds.expand(
-                    deca({ angle, loc: p(x, y), gen: 1, rhomb: true })
-                );
+                bounds.expand(deca({ angle, loc: p(x, y), gen: 1, layer }));
                 x += 31;
                 bounds.expand(deca({ angle, loc: p(x, y), gen: 2 }));
-                bounds.expand(
-                    deca({ angle, loc: p(x, y), gen: 2, rhomb: true })
-                );
+                bounds.expand(deca({ angle, loc: p(x, y), gen: 2, layer }));
                 x += 64;
                 y += 30;
                 bounds.expand(deca({ angle, loc: p(x, y), gen: 3 }));
-                bounds.expand(
-                    deca({ angle, loc: p(x, y), gen: 3, rhomb: true })
-                );
+                bounds.expand(deca({ angle, loc: p(x, y), gen: 3, layer }));
                 y += 170;
                 x += 30;
                 bounds.expand(deca({ angle, loc: p(x, y), gen: 4 }));
-                bounds.expand(
-                    deca({ angle, loc: p(x, y), gen: 4, rhomb: true })
-                );
+                bounds.expand(deca({ angle, loc: p(x, y), gen: 4, layer }));
                 break;
         }
         const built = performance.now();
