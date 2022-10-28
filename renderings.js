@@ -14,6 +14,7 @@ import { CanvasRenderer } from "./renderers.js";
 /***
  * Draws a little canvas with a shape.
  * Shape depends on passed in ID.
+ * Measures twice before rendering.
  */
 export function makeCanvas(canvasId) {
     const { shapeMode } = globals;
@@ -67,28 +68,19 @@ export function makeCanvas(canvasId) {
         );
         bounds.pad(0.1);
         bounds.round();
+        resizeAndRender(scene, bounds, canvas, 10);
+
         return bounds;
     }
 
     // todo suppress bounds.renderList
     scene.setToMeasure();
     let bounds = measure();
+
     // Adjust the location and relist
     loc = loc.tr(bounds.minPoint.neg);
     scene.setToRender();
     bounds = measure();
-
-    // Now render the commands stored in bounds
-    let scale = 10;
-    canvas.width = (bounds.width - 1) * scale;
-    canvas.height = (bounds.height - 1) * scale;
-
-    let g = canvas.getContext("2d");
-    g.fillStyle = "transparent"; //"#ffffff";
-    g.fillRect(0, 0, canvas.width, canvas.height);
-
-    const renderer = new CanvasRenderer(g, scale);
-    renderer.render(bounds.renderList);
 }
 
 /**
@@ -442,9 +434,8 @@ export function drawGridWork(id) {
     const canvas = document.querySelector(`#${id} > canvas`);
 
     const { shapeMode, shapeColors } = globals;
-
     const { grid, figure, outline, deca, penta } = iface(shapeMode.shapeMode);
-
+    const scene = new PenroseScreen(shapeMode.shapeMode);
     drawBig();
 
     /**
@@ -452,11 +443,6 @@ export function drawGridWork(id) {
      * Draws a few decagons too.
      */
     function drawBig() {
-        const g = canvas.getContext("2d");
-        g.fillStyle = "white";
-        g.fillRect(0, 0, canvas.width, canvas.height);
-        let scale = 10;
-
         const bounds = new Bounds();
         let y = 5;
         const mosaicShapes = [
@@ -632,7 +618,7 @@ export function drawGridWork(id) {
             })
         );
 
-        new CanvasRenderer(g, scale).render(bounds.renderList);
+        resizeAndRender(scene, bounds, canvas, 10);
     }
 }
 
@@ -651,15 +637,8 @@ export function drawGeneric123(id) {
     if (page.style.display == "none") return;
     const canvas = document.querySelector(`#${id} > canvas`);
     const { shapeMode, controls } = globals;
-    let g = canvas.getContext("2d");
-    canvas.width = 2000;
-    canvas.height = 2000;
-    g.fillStyle = "#ffffff";
-    g.fillRect(0, 0, canvas.width, canvas.height);
-    g.strokeStyle = penrose.OUTLINE;
-    g.lineWidth = 1;
-    let scale = 10;
     const { penta, star, deca } = iface(shapeMode.shapeMode);
+    const scene = new PenroseScreen(shapeMode.shapeMode);
 
     const drawScreen = function () {
         let x = 13;
@@ -739,9 +718,10 @@ export function drawGeneric123(id) {
                 break;
         }
         const built = performance.now();
-        const renderer = new CanvasRenderer(g, scale);
+        resizeAndRender(scene, bounds, canvas, 10);
+
         console.log(`shapes built: ${built - begin} ms`);
-        renderer.render(bounds.renderList);
+        //renderer.render(bounds.renderList);
         const rendered = performance.now();
         console.log(
             `shapes rendered: ${
@@ -763,14 +743,9 @@ export function drawGeneric3(id) {
     const canvas = document.querySelector(`#${id} > canvas`);
 
     const { shapeMode, controls } = globals;
-    // g is global
-    let g = canvas.getContext("2d");
-    g.fillStyle = "#ffffff";
-    g.fillRect(0, 0, canvas.width, canvas.height);
-    g.strokeStyle = penrose.OUTLINE;
-    g.lineWidth = 1;
-    let scale = 4;
-    const { deca } = iface(shapeMode.shapeMode);
+    const scene = new PenroseScreen(shapeMode.shapeMode);
+    const deca = scene.deca.bind(scene);
+    let base = p(0, 0);
 
     const drawScreen = function () {
         console.log(performance.now());
@@ -781,51 +756,27 @@ export function drawGeneric3(id) {
         let decagon = true;
         const begin = performance.now();
         const bounds = new Bounds();
-        if (decagon) {
-            bounds.expand(deca({ angle, loc: p(x, y), gen: 6 }));
-            bounds.expand(deca({ angle, loc: p(x, y), gen: 6, rhomb: true }));
-        } else {
-            console.log(`drawScreen ${controls.typeIndex}`);
-            const type = controls.typeList[controls.typeIndex];
-            switch (type) {
-                case penrose.Pe1:
-                case penrose.Pe3:
-                case penrose.Pe5:
-                    console.log("draw penta");
-                    bounds.expand(
-                        penta({
-                            type,
-                            angle: ang(controls.fifths, controls.isDown),
-                            loc: p(x, y),
-                            gen: 3,
-                        })
-                    );
+        bounds.expand(deca({ angle, loc: p(x, y).tr(base), gen: 6 }));
+        bounds.expand(
+            deca({ angle, loc: p(x, y).tr(base), gen: 6, layer: "rhomb" })
+        );
 
-                    break;
-                case penrose.St1:
-                case penrose.St3:
-                case penrose.St5:
-                    console.log("draw star");
-                    bounds.expand(
-                        star({
-                            type,
-                            angle: ang(controls.fifths, controls.isDown),
-                            loc: p(x, y),
-                            gen: 3,
-                        })
-                    );
-                    break;
-            }
-        }
         const built = performance.now();
         console.log(`shapes built: ${built - begin} ms`);
-        new CanvasRenderer(g, scale).render(bounds.renderList);
+        resizeAndRender(scene, bounds, canvas, 4);
         const rendered = performance.now();
         console.log(
             `shapes rendered: ${
                 rendered - built
             } ms, function list: ${USE_FUNCTION_LIST}`
         );
+        return bounds;
     };
+
+    scene.setToMeasure;
+    let bounds = drawScreen();
+    console.log(`bounds.minpoint: ${bounds.maxPoint}`);
+    base = base.tr(bounds.minPoint.neg);
+    scene.setToRender;
     drawScreen();
 }
