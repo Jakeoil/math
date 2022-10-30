@@ -137,6 +137,7 @@ export class PenroseScreen {
     constructor(mode) {
         this.mode = mode;
         this.measure = false;
+        this.bounds = new Bounds();
     }
 
     /**
@@ -209,7 +210,10 @@ export class PenroseScreen {
     outline(fill, loc, shape) {
         const bounds = new Bounds();
         bounds.addVectors(loc, shape);
-        if (this.measure) return bounds;
+        if (this.measure) {
+            this.bounds.expand(bounds);
+            return bounds;
+        }
 
         if (USE_FUNCTION_LIST) {
             const f = (r) => r.outline(fill, loc, shape);
@@ -219,13 +223,17 @@ export class PenroseScreen {
             bounds.renderList.push({ command, fill, loc, shape });
         }
         //this.renderer.render(bounds.renderList);
+        this.bounds.expand(bounds);
         return bounds;
     }
 
     figure(fill, loc, shape) {
         const bounds = new Bounds();
         bounds.addSquares(loc, shape);
-        if (this.measure) return bounds;
+        if (this.measure) {
+            this.bounds.expand(bounds);
+            return bounds;
+        }
         if (USE_FUNCTION_LIST) {
             const f = (r) => r.figure(fill, loc, shape);
             bounds.renderList.push(f);
@@ -234,6 +242,7 @@ export class PenroseScreen {
             bounds.renderList.push({ command, fill, loc, shape });
         }
         //this.renderer.render(bounds.renderList);
+        this.bounds.expand(bounds);
         return bounds;
     }
 
@@ -241,7 +250,10 @@ export class PenroseScreen {
         const bounds = new Bounds();
         bounds.addPoint(offset, p(-size, -size));
         bounds.addPoint(offset, p(size, size));
-        if (this.measure) return bounds;
+        if (this.measure) {
+            this.bounds.expand(bounds);
+            return bounds;
+        }
         if (USE_FUNCTION_LIST) {
             const f = (r) => r.grid(offset, size);
             bounds.renderList.push(f);
@@ -250,6 +262,7 @@ export class PenroseScreen {
             bounds.renderList.push({ command, offset, size });
         }
         //this.renderer.render(bounds.renderList);
+        this.bounds.expand(bounds);
         return bounds;
     }
 
@@ -257,7 +270,10 @@ export class PenroseScreen {
         const bounds = new Bounds();
         bounds.addPoint(loc, loc);
         bounds.addPoint(loc, end);
-        if (this.measure) return bounds;
+        if (this.measure) {
+            this.bounds.expand(bounds);
+            return bounds;
+        }
         if (USE_FUNCTION_LIST) {
             const f = (r) => r.line(loc, end, strokeStyle);
             bounds.renderList.push(f);
@@ -266,6 +282,7 @@ export class PenroseScreen {
             bounds.renderList.push({ command, loc, end, strokeStyle });
         }
         //this.renderer.render(bounds.renderList);
+        this.bounds.expand(bounds);
         return bounds;
     }
 
@@ -275,7 +292,10 @@ export class PenroseScreen {
             bounds.addPoint(offset, point);
         }
 
-        if (this.measure) return bounds;
+        if (this.measure) {
+            this.bounds.expand(bounds);
+            return bounds;
+        }
 
         if (USE_FUNCTION_LIST) {
             const f = (r) =>
@@ -293,6 +313,7 @@ export class PenroseScreen {
             });
         }
         //this.renderer.render(bounds.renderList);
+        this.bounds.expand(bounds);
         return bounds;
     }
 
@@ -306,6 +327,7 @@ export class PenroseScreen {
         const bounds = new Bounds();
 
         if (layer == "rhomb" || layer == "dual") {
+            this.bounds.expand(bounds);
             return bounds;
         }
 
@@ -316,6 +338,7 @@ export class PenroseScreen {
                     this.figure(pColor(type), loc, shapes[angle.tenths])
                 );
             }
+            this.bounds.expand(bounds);
             return bounds;
         }
 
@@ -336,6 +359,7 @@ export class PenroseScreen {
                 );
             }
         }
+        this.bounds.expand(bounds);
         return bounds; // call figure
     }
 
@@ -446,6 +470,7 @@ export class PenroseScreen {
                     );
                 }
             }
+            this.bounds.expand(bounds);
             return bounds; // call figure
         }
 
@@ -466,6 +491,7 @@ export class PenroseScreen {
                         ...options,
                     })
                 );
+                this.bounds.expand(bounds);
                 return bounds;
             }
         }
@@ -517,6 +543,7 @@ export class PenroseScreen {
             if (overlays && overlays.treeSelected)
                 bounds.expand(this.line(loc, locPenta, "black"));
         }
+        this.bounds.expand(bounds);
         return bounds;
     }
 
@@ -608,6 +635,7 @@ export class PenroseScreen {
                 );
             }
 
+            this.bounds.expand(bounds);
             return bounds; // call figure
         }
 
@@ -621,6 +649,7 @@ export class PenroseScreen {
                     gen,
                     ...options,
                 });
+                this.bounds.expand(bounds);
                 return bounds;
             }
         }
@@ -676,6 +705,7 @@ export class PenroseScreen {
             }
         }
 
+        this.bounds.expand(bounds);
         return bounds;
     }
 
@@ -691,6 +721,7 @@ export class PenroseScreen {
                 layer: "rhomb",
             })
         );
+        this.bounds.expand(bounds);
         return bounds;
     }
     pentaDual(type, angle, loc, gen) {
@@ -705,6 +736,7 @@ export class PenroseScreen {
                 layer: "dual",
             })
         );
+        this.bounds.expand(bounds);
         return bounds;
     }
     /**
@@ -846,6 +878,7 @@ export class PenroseScreen {
                 ...options,
             })
         );
+        this.bounds.expand(bounds);
         return bounds;
     }
 
@@ -905,6 +938,7 @@ export class PenroseScreen {
                 )
             );
         }
+        this.bounds.expand(bounds);
 
         return bounds;
     }
@@ -1061,6 +1095,7 @@ export class PenroseScreen {
                     }
             }
         }
+        this.bounds.expand(bounds);
         return bounds;
     }
     drawDualRhombusPattern({ type, angle, isHeads, loc, gen, ...options }) {
@@ -1180,6 +1215,8 @@ export class PenroseScreen {
                     }
             }
         }
+        this.bounds.expand(bounds);
+
         return bounds;
     }
 }

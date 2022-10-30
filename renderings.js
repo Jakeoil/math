@@ -69,7 +69,9 @@ export function makeCanvas(canvasId) {
         bounds.pad(0.1);
         bounds.round();
         resizeAndRender(scene, bounds, canvas, 10);
-
+        console.log(
+            `bounds: ${bounds.maxPoint}, 'scene.bounds: ${scene.bounds.maxPoint}`
+        );
         return bounds;
     }
 
@@ -227,6 +229,7 @@ export function drawFirstInflation(id) {
         }
 
         // The second time through we render.
+        console.log(`bounds: ${bounds}, 'scene.bounds: ${scene.bounds}`);
 
         resizeAndRender(scene, bounds, canvas, 10);
     };
@@ -253,7 +256,6 @@ export function drawDualDemo(id) {
     let loc = p(x, y);
     let gen = 1;
     let rhomb = true;
-    //bounds.expand(scene.penta({ type, angle, loc, gen }));
 
     bounds.expand(
         scene.penta({
