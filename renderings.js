@@ -25,12 +25,10 @@ export function makeCanvas(canvasId) {
     }
 
     const scene = new PenroseScreen(shapeMode.shapeMode);
-    const penta = scene.penta.bind(scene);
-
-    // Set up the parameters
-    let gen = 0;
     let loc = p(0, 0);
-    let [type, angle] =
+
+    const gen = 0;
+    const [type, angle] =
         canvasId == "p5"
             ? [penrose.Pe5, ang(0, true)]
             : canvasId == "p3"
@@ -45,64 +43,23 @@ export function makeCanvas(canvasId) {
             ? [penrose.St1, ang(1, false)]
             : [];
 
-    const layer = "dual"; // for second call
-
-    function measure() {
-        penta({
-            type,
-            angle,
-            loc,
-            gen,
-        });
-        penta({
-            type,
-            angle,
-            loc,
-            layer,
-            gen,
-        });
+    function drawScene() {
+        scene.pentaRhomb(type, angle, loc, gen);
         scene.bounds.pad(0.1);
         scene.bounds.round(0.1);
-        resizeAndRender(scene, new Bounds(), canvas, 10);
+        resizeAndRender(scene, canvas, 10);
     }
 
     // todo suppress bounds.renderList
     scene.setToMeasure();
-    measure();
+    drawScene();
 
     // Adjust the location and relist
     loc = loc.tr(scene.bounds.minPoint.neg);
     scene.setToRender();
-    measure();
+    drawScene();
 }
 
-/**
- * Called at end of draw cycle.  Redraws under the following conditions
- *   The size of the canvas is greater than the bounds
- *   (future) add a max bounds.
- *   Fix: canvas apparently stores an integer. Is it a floor round or ceiling.
- * @param {*} bounds
- * @param {*} canvas
- * @param {*} drawFunction
- */
-/*
-function redraw(bounds, canvas, drawFunction, scale) {
-    if (bounds.isEmpty) {
-        console.log(`isEmpty`);
-        return;
-    }
-    const computedWidth = bounds.maxPoint.x * scale + scale;
-    const computedHeight = bounds.maxPoint.y * scale + scale;
-    if (
-        canvas.width != Math.floor(computedWidth) ||
-        canvas.height != Math.floor(computedHeight)
-    ) {
-        canvas.width = computedWidth;
-        canvas.height = computedHeight;
-        setTimeout(drawFunction());
-    }
-}
-*/
 /**
  * The first expansion draws penta(1) and star(1) variants
  * Sets the globals g and scale
@@ -130,21 +87,22 @@ export function drawFirstInflation(id) {
         let angle = ang(0, UP);
         let loc = p(x, y);
         const gen = 1;
-        const layer = "dual";
+        const layer = "rhomb";
 
-        scene.pentaDual(type, angle, loc, gen);
+        scene.pentaRhomb(type, angle, loc, gen);
+
         type = penrose.Pe5;
         angle = ang(0, DOWN);
         loc = p(25, y);
 
-        scene.pentaDual(type, angle, loc, gen);
+        scene.pentaRhomb(type, angle, loc, gen);
         y += 18;
 
         type = penrose.Pe3;
         for (let i = 0; i < 5; i++) {
             angle = ang(i, UP);
             loc = p(x + i * 20, y);
-            scene.pentaDual(type, angle, loc, gen);
+            scene.pentaRhomb(type, angle, loc, gen);
         }
 
         y += 20;
@@ -218,7 +176,7 @@ export function drawFirstInflation(id) {
             star({ type, angle, loc, gen, layer });
         }
 
-        resizeAndRender(scene, new Bounds(), canvas, 10);
+        resizeAndRender(scene, canvas, 10);
     };
 
     drawScreen();
@@ -227,9 +185,8 @@ export function drawFirstInflation(id) {
 export function drawDualDemo(id) {
     const { shapeMode, controls } = globals;
 
-    const bounds = new Bounds();
-    const bounds2 = new Bounds();
     const scene = new PenroseScreen(shapeMode.shapeMode);
+    const scene2 = new PenroseScreen(shapeMode.shapeMode);
 
     let x = 8;
     let y = 9;
@@ -241,27 +198,22 @@ export function drawDualDemo(id) {
     let gen = 1;
     let rhomb = true;
 
-    bounds.expand(
-        scene.penta({
-            type: penrose.Pe5,
-            angle: ang(0, false),
-            loc: p(25, 25),
-            gen: 3,
-            layer: "penta",
-        })
-    );
-    bounds2.expand(
-        scene.penta({
-            type: penrose.St5,
-            angle: ang(0, false),
-            loc: p(25 * 1.618, 25 * 1.618),
-            gen: 3,
-            layer: "rhomb",
-            PentaStyle: { fill: "none", stroke: "solid" },
-        })
-    );
-    //console.log(bounds);
-    //console.log(id);
+    scene.penta({
+        type: penrose.Pe5,
+        angle: ang(0, false),
+        loc: p(25, 25),
+        gen: 3,
+        layer: "penta",
+    });
+    scene2.penta({
+        type: penrose.St5,
+        angle: ang(0, false),
+        loc: p(25 * 1.618, 25 * 1.618),
+        gen: 3,
+        layer: "rhomb",
+        PentaStyle: { fill: "none", stroke: "solid" },
+    });
+
     const page = document.querySelector(`#${id}`);
     if (page.style.display == "none") return;
     const canvas = document.querySelector(`#${id} > canvas`);
@@ -274,8 +226,8 @@ export function drawDualDemo(id) {
     g.lineWidth = 1;
 
     let scale = 10;
-    new CanvasRenderer(g, scale).render(bounds.renderList);
-    new CanvasRenderer(g, scale * 0.618).render(bounds2.renderList);
+    new CanvasRenderer(g, scale).render(scene.bounds.renderList);
+    new CanvasRenderer(g, scale * 0.618).render(scene2.bounds.renderList);
 }
 
 /**
@@ -381,13 +333,13 @@ export function drawSecondInflation(id) {
             scene.pentaRhomb(type, angle, loc, gen);
         }
 
-        resizeAndRender(scene, new Bounds(), canvas, 5);
+        resizeAndRender(scene, canvas, 5);
     }
 }
 
-function resizeAndRender(scene, bounds, canvas, scale) {
-    bounds = scene.bounds;
+function resizeAndRender(scene, canvas, scale) {
     if (!scene.measure) {
+        let bounds = scene.bounds;
         if (bounds.isEmpty) {
             console.log(`isEmpty`);
             return;
