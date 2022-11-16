@@ -74,29 +74,8 @@ function testLerp() {
 //testLerp();
 
 /**
- * This is a wrapper around penroseScreen
- * It provides a bound alias of some screen commands
- */
-export function iface(mode) {
-    let screen = new PenroseScreen(mode);
-    const grid = screen.grid.bind(screen);
-    const figure = screen.figure.bind(screen);
-    const outline = screen.outline.bind(screen);
-    const penta = screen.penta.bind(screen);
-    const star = screen.star.bind(screen);
-    const deca = screen.deca.bind(screen);
-    return {
-        grid,
-        figure,
-        outline,
-        penta,
-        star,
-        deca,
-    };
-}
-
-/**
- * This routine depends on an initialized shapeColors instance.
+ * This routine returns the fill color of a penrose type
+ * Uses globals.shapecolors if defined,
  * Instance must be star or penta, deca returns null
  * Returns color based on type
  *
@@ -125,7 +104,11 @@ function pColor(type) {
 }
 
 /**
- * Represents a rendering screen
+ * Represents a 2D scene.
+ * mode: real or quadrille. Uses different tables to derive point values.
+ * measure: If set, do not add to the renderlist.
+ * bounds: Defines the scaled rectangle.
+ * bounds.renderList
  *
  * @param (Real|Quadrille|Mosaic|Typographic) - Rendering style of figures.
  *
@@ -198,6 +181,14 @@ export class PenroseScreen {
     setToRender() {
         this.measure = false;
     }
+
+    // get measure() {
+    //     return this.measure;
+    // }
+
+    // set measure(value) {
+    //     this.measure = value;
+    // }
 
     /**
      * These add to the render list

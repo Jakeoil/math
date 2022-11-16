@@ -1,13 +1,13 @@
 import { p, ang } from "./point.js";
-import { Bounds } from "./bounds.js";
 import { interpolateWheel, successorPoint } from "./wheels.js";
 import { penrose } from "./penrose.js";
 //import { MODE_REAL } from "./controls/shape-mode.js"; // Now _really_
 import { quadrille } from "./shape-modes.js";
-import { iface } from "./penrose-screen.js";
+import { PenroseScreen } from "./penrose-screen.js";
 import { measureTaskGlobals, globals } from "./controls.js";
 import { initControls, logRefresh } from "./controls.js";
 import { CanvasRenderer } from "./renderers.js";
+import { resizeAndRender } from "./renderings.js";
 
 window.addEventListener("load", measureTasks, false);
 
@@ -23,70 +23,49 @@ export function measureTasks(source) {
 
 function drawQuadrille() {
     const canvas = document.querySelector("#quadrille");
-    canvas.width = 0;
-    canvas.height = 0;
-    const { shapeMode, overlays } = { ...globals, ...measureTaskGlobals };
-    const g = canvas.getContext("2d");
-    g.strokeStyle = penrose.OUTLINE;
-    g.lineWidth = 1;
-    const scale = 3.7;
-    const { deca } = iface(measureTaskGlobals.shapeMode.MODE_REAL);
+    const scene = new PenroseScreen(measureTaskGlobals.shapeMode.MODE_REAL);
 
     let loc = p(0, 0);
-    let fifths = 0;
-    let isDown = false;
-    let gen = 2;
-    // Now some decagons
-    let bounds = new Bounds();
-    bounds.expand(deca({ angle: ang(fifths, isDown), loc, gen }));
-    if (bounds.isEmpty) {
-        bounds.addPoint(loc, p(0, 0));
+    function drawScreen() {
+        let fifths = 0;
+        let isDown = false;
+        let gen = 2;
+        // Now some decagons
+        scene.deca({ angle: ang(fifths, isDown), loc, gen });
+        resizeAndRender(scene, canvas, 3.7);
     }
-    loc = loc.tr(p(bounds.minPoint.x, bounds.minPoint.y).neg);
-    canvas.width = (bounds.maxPoint.x - bounds.minPoint.x) * scale;
-    canvas.height = (bounds.maxPoint.y - bounds.minPoint.y) * scale;
 
-    bounds = new Bounds();
-    bounds.expand(deca({ angle: ang(fifths, isDown), loc, gen }));
-
-    new CanvasRenderer(g, scale).render(bounds.renderList);
-    bounds = new Bounds();
+    scene.setToMeasure();
+    drawScreen();
+    loc = loc.tr(scene.bounds.minPoint.neg);
+    scene.setToRender();
+    drawScreen();
     const img = canvas.toDataURL("img.png");
 }
 
 function drawImage() {
     const canvas = document.createElement("canvas");
-    canvas.width = 0;
-    canvas.height = 0;
 
-    const g = canvas.getContext("2d");
-    g.strokeStyle = penrose.OUTLINE;
-    g.lineWidth = 1;
-    const scale = 5;
     // Stupid way to get the globals.
     const { shapeMode } = measureTaskGlobals;
-    const { deca } = iface(shapeMode.MODE_REAL);
+    const scene = new PenroseScreen(shapeMode.MODE_REAL);
 
     // Now some decagons
 
-    let fifths = 0;
-    let isDown = false;
-    let angle = ang(fifths, isDown);
     let loc = p(0, 0);
-    let gen = 1;
-    let bounds = new Bounds();
-    bounds.expand(deca({ angle, loc, gen }));
-    bounds.pad(1);
-    loc = loc.tr(p(bounds.minPoint.x, bounds.minPoint.y).neg);
-    canvas.width = (bounds.maxPoint.x - bounds.minPoint.x) * scale;
-    canvas.height = (bounds.maxPoint.y - bounds.minPoint.y) * scale;
+    const angle = ang(0, false);
+    const gen = 1;
+    scene.setToMeasure();
+    scene.deca({ angle, loc, gen });
+    scene.bounds.pad(1);
+    const scale = 5;
+    resizeAndRender(scene, canvas, scale);
+    loc = loc.tr(scene.bounds.minPoint.neg);
+    scene.setToRender();
+    scene.deca({ angle, loc, gen });
+    scene.bounds.pad(1);
+    resizeAndRender(scene, canvas, scale);
 
-    bounds = new Bounds();
-    bounds.expand(deca({ angle, loc, gen }));
-    bounds.pad(1);
-    new CanvasRenderer(g, scale).render(bounds.renderList);
-
-    bounds = new Bounds();
     const img = canvas.toDataURL("img.png");
     const ele = document.querySelector("#image");
     ele.src = img;

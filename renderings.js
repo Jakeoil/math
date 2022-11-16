@@ -4,8 +4,33 @@ import { penrose } from "./penrose.js";
 import { quadrille, mosaic } from "./shape-modes.js";
 
 import { globals } from "./controls.js";
-import { iface, PenroseScreen, USE_FUNCTION_LIST } from "./penrose-screen.js";
+import { PenroseScreen, USE_FUNCTION_LIST } from "./penrose-screen.js";
 import { CanvasRenderer } from "./renderers.js";
+
+export function resizeAndRender(scene, canvas, scale) {
+    if (!scene.measure) {
+        let bounds = scene.bounds;
+        if (bounds.isEmpty) {
+            console.log(`isEmpty`);
+            return;
+        }
+        let g = canvas.getContext("2d");
+        g.fillStyle = "white";
+        g.fillRect(0, 0, canvas.width, canvas.height);
+
+        // I believe canvas width and height can be put in directly
+        const computedWidth = bounds.maxPoint.x * scale + scale;
+        const computedHeight = bounds.maxPoint.y * scale + scale;
+        if (
+            canvas.width != Math.floor(computedWidth) ||
+            canvas.height != Math.floor(computedHeight)
+        ) {
+            canvas.width = computedWidth;
+            canvas.height = computedHeight;
+        }
+        new CanvasRenderer(g, scale).render(bounds.renderList);
+    }
+}
 
 /******************************************************************************
  * Screen Drawing Routines
@@ -337,30 +362,6 @@ export function drawSecondInflation(id) {
     }
 }
 
-function resizeAndRender(scene, canvas, scale) {
-    if (!scene.measure) {
-        let bounds = scene.bounds;
-        if (bounds.isEmpty) {
-            console.log(`isEmpty`);
-            return;
-        }
-        let g = canvas.getContext("2d");
-        g.fillStyle = "white";
-        g.fillRect(0, 0, canvas.width, canvas.height);
-
-        // I believe canvas width and height can be put in directly
-        const computedWidth = bounds.maxPoint.x * scale + scale;
-        const computedHeight = bounds.maxPoint.y * scale + scale;
-        if (
-            canvas.width != Math.floor(computedWidth) ||
-            canvas.height != Math.floor(computedHeight)
-        ) {
-            canvas.width = computedWidth;
-            canvas.height = computedHeight;
-        }
-        new CanvasRenderer(g, scale).render(bounds.renderList);
-    }
-}
 /***
  * A lot of cool stuff for computing sizes here
  */
@@ -384,7 +385,6 @@ export function drawGridWork(id) {
      * Draws a few decagons too.
      */
     function drawBig() {
-        const bounds = new Bounds();
         let y = 5;
         const mosaicShapes = [
             mosaic.penta,
