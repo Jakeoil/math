@@ -1,0 +1,95 @@
+Dependancies for penrose/index.html
+
+math.js
+
+	renderings.js
+		point.js
+		bounds.js
+			point.js
+		penrose.js
+			shape-modes.js
+				point.js
+				wheels.js
+					point.js
+			
+		shape-modes.js
+			point.js
+			wheels.js
+				point.js
+		controls.js (globals)
+			controls/shape-colors.js
+				../penrose.js
+				../controls.js(cookie)
+			controls/overlays.js
+				../controls.js(cookie)
+			controls/rhomb-style.js
+				../controls.js(cookie)
+			controls/shape-mode.js
+			controls/controls.js
+				../controls.js
+				../penrose.js (fix?)
+				../point.js(norm?) Mod 5? aw
+			controls/penta-style.js
+				../controls.js(cookie)
+		
+		penrose-screen.js
+			point.js
+			bounds.js
+			penrose.js
+			controls.js
+			shape-modes.js
+		renderers.js
+			point.js
+			bounds.js
+			controls.js
+			penrose.js
+			penrose.screen (a utils lerp)
+			
+		
+A file can contain a class. I would like to use the convention of capitalizing those files.
+However, in many cases I do not wish to use new, but utilize a factory method.  Case in 
+point (ha ha), point and ang.
+
+The globals should be in a config file. not controls.
+
+controls.js is a very overloaded module.
+
+js should be called vend. We won't use vend, but node modules and parcel.
+In other words, it will be obsolete.
+
+blog.html should be moved to:
+blog/src/index.html
+
+coylean.html will be converted to a separate app and should be moved to 
+coylean/src/index.html
+coylean/src/coylean.js
+
+deca and deca2 png files are assets.
+
+math.css is core css and used by all the indexes.
+
+move to
+measurements.html
+measurements.js
+	point.js
+	controls.js
+	wheels.js
+	shape-modes.js
+	penroseScreen.js
+	renderings.js
+	
+quadrille3 is research
+rhombohedra html and js are research
+
+scrolling not implemented yet.
+
+There is much conflict between the two apps here
+controls.js Details.
+	logRefresh(app, source)
+	
+		
+
+
+
+		
+
