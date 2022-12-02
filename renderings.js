@@ -545,7 +545,7 @@ export function drawGridWork(id) {
         console.log(
             `resize and render: ${scene.bounds.renderList.length} , ${scene.bounds}`
         );
-        resizeAndRender(scene, new Bounds(), canvas, 10);
+        resizeAndRender(scene, canvas, 10);
     }
 }
 
@@ -640,7 +640,7 @@ export function drawGeneric123(id) {
                 break;
         }
         const built = performance.now();
-        resizeAndRender(scene, bounds, canvas, 10);
+        resizeAndRender(scene, canvas, 10);
 
         console.log(`shapes built: ${built - begin} ms`);
         //renderer.render(bounds.renderList);
@@ -678,13 +678,13 @@ export function drawGeneric3(id) {
         let decagon = true;
         const begin = performance.now();
         const bounds = new Bounds();
-        deca({ angle, loc: p(x, y).tr(base), gen: 6 });
+        deca({ angle, loc: p(x, y).tr(base), gen: 5 });
 
-        deca({ angle, loc: p(x, y).tr(base), gen: 6, layer: "rhomb" });
+        deca({ angle, loc: p(x, y).tr(base), gen: 5, layer: "rhomb" });
 
         const built = performance.now();
         console.log(`shapes built: ${built - begin} ms`);
-        resizeAndRender(scene, bounds, canvas, 4);
+        resizeAndRender(scene, canvas, 4);
         const rendered = performance.now();
         console.log(
             `shapes rendered: ${
