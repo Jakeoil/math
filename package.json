@@ -1,47 +1,13 @@
 {
-    "devDependencies": {
-        "htmlhint": "^1.1.4",
-        "prettier": "2.7.1"
-    },
-    "scripts": {
-        "format": "prettier --write \"./**/*.{js,jsx}\""
-    },
     "name": "math",
-    "description": "To do list",
-    "version": "1.0.0",
-    "main": "blog.html",
-    "dependencies": {
-        "ansi-styles": "^4.3.0",
-        "async": "^3.2.3",
-        "balanced-match": "^1.0.2",
-        "brace-expansion": "^1.1.11",
-        "chalk": "^4.1.2",
-        "color-convert": "^2.0.1",
-        "color-name": "^1.1.4",
-        "commander": "^9.3.0",
-        "concat-map": "^0.0.1",
-        "dat.gui": "^0.7.9",
-        "fs.realpath": "^1.0.0",
-        "glob": "^7.2.3",
-        "has-flag": "^4.0.0",
-        "inflight": "^1.0.6",
-        "inherits": "^2.0.4",
-        "is-extglob": "^2.1.1",
-        "is-glob": "^4.0.3",
-        "lodash": "^4.17.21",
-        "minimatch": "^3.1.2",
-        "node-fetch": "^2.6.7",
-        "once": "^1.4.0",
-        "path-is-absolute": "^1.0.1",
-        "strip-json-comments": "^3.1.0",
-        "supports-color": "^7.2.0",
-        "three": "^0.144.0",
-        "tr46": "^0.0.3",
-        "upper-case": "^2.0.2",
-        "webidl-conversions": "^3.0.1",
-        "whatwg-url": "^5.0.0",
-        "wrappy": "^1.0.2",
-        "xml": "^1.0.1"
+    "source": ".math/penrose.html",
+    "version": "1.1.0",
+    "description": "math and coylean",
+    "browserslist": "> 0.5%, last 2 versions, not dead",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "parcel",
+        "build": "parcel build"
     },
     "repository": {
         "type": "git",
@@ -53,5 +19,7 @@
         "url": "https://github.com/Jakeoil/math/issues"
     },
     "homepage": "https://github.com/Jakeoil/math#readme",
-    "type": "module"
+    "devDependencies": {
+        "parcel": "^2.8.0"
+    }
 }
