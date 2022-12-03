@@ -1,6 +1,6 @@
 {
     "name": "math",
-    "source": ".math/penrose.html",
+    "source": "./index.html",
     "version": "1.1.0",
     "description": "math and coylean",
     "browserslist": "> 0.5%, last 2 versions, not dead",
