@@ -22,9 +22,10 @@
         </header>
 
         <p>
-            I found the mosaic pattern while working with graph paper. I found you could produce a
-            very convincing version of this tiling with the segments: [4,0],[3,2] and [1,4]. The
-            gave a sufficient approximation of 4 * [cos n, sin n] where n = 0, 36 and 72
+            I found the mosaic pattern while working with graph paper. I found
+            you could produce a very convincing version of this tiling with the
+            segments: [4,0],[3,2] and [1,4]. The gave a sufficient approximation
+            of 4 * [cos n, sin n] where n = 0, 36 and 72
         </p>
         <span>The tiles of the type one set are pentagons (p5:</span>
         <canvas id="p5" class="flowtile"> </canvas>
@@ -47,11 +48,21 @@
                 -->
                 <button class="pageButton" data-id="rwork">Measurements</button>
                 <button class="pageButton" data-id="dual">Dual Test</button>
-                <button class="pageButton" data-id="inf1">Inflation 1 shapes</button>
-                <button class="pageButton" data-id="inf2">Inflation 2 shapes</button>
-                <button class="pageButton" data-id="gwork">Grid work area</button>
-                <button class="pageButton" data-id="g012">Shape expansions</button>
-                <button class="pageButton" data-id="g3">Decagon expansion</button>
+                <button class="pageButton" data-id="inf1">
+                    Inflation 1 shapes
+                </button>
+                <button class="pageButton" data-id="inf2">
+                    Inflation 2 shapes
+                </button>
+                <button class="pageButton" data-id="gwork">
+                    Grid work area
+                </button>
+                <button class="pageButton" data-id="g012">
+                    Shape expansions
+                </button>
+                <button class="pageButton" data-id="g3">
+                    Decagon expansion
+                </button>
             </p>
         </nav>
         <div id="meat">
@@ -152,19 +163,44 @@
                     />
                     <label for="p5-color">Pe5:</label>
                     <br />
-                    <input type="color" id="pe3-color" value="#e46c0a" class="shape-color" />
+                    <input
+                        type="color"
+                        id="pe3-color"
+                        value="#e46c0a"
+                        class="shape-color"
+                    />
                     <label for="p3-color">Pe3:</label>
                     <br />
-                    <input type="color" id="pe1-color" value="#ffff00" class="shape-color" />
+                    <input
+                        type="color"
+                        id="pe1-color"
+                        value="#ffff00"
+                        class="shape-color"
+                    />
                     <label for="p1-color">Pe1:</label>
                     <br />
-                    <input type="color" id="star-color" value="#0000ff" class="shape-color" />
+                    <input
+                        type="color"
+                        id="star-color"
+                        value="#0000ff"
+                        class="shape-color"
+                    />
                     <label for="star-color">Star:</label>
                     <br />
-                    <input type="color" id="boat-color" value="#0000ff" class="shape-color" />
+                    <input
+                        type="color"
+                        id="boat-color"
+                        value="#0000ff"
+                        class="shape-color"
+                    />
                     <label for="boat-color">Boat:</label>
                     <br />
-                    <input type="color" id="diamond-color" value="#0000ff" class="shape-color" />
+                    <input
+                        type="color"
+                        id="diamond-color"
+                        value="#0000ff"
+                        class="shape-color"
+                    />
                     <label for="diamond-color">Diamond:</label>
                     <br />
                 </fieldset>
@@ -191,7 +227,9 @@
                     <canvas width="3600" height="5000"> expansion </canvas>
                 </div>
                 <div id="rwork" class="page">
-                    <iframe src="measurements.html" width="100%">Measurements frame invalid</iframe>
+                    <iframe src="measurements.html" width="100%"
+                        >Measurements frame invalid</iframe
+                    >
                     <script>
                         // Selecting the iframe element
                         const iframe = document.querySelector("#rwork iframe");
@@ -203,7 +241,10 @@
                             //     ` iframe loaded, scrollHeight: ${iframe.contentWindow.document.body.scrollHeight}`
                             // );
                             iframe.style.height =
-                                iframe.contentWindow.document.body.scrollHeight + 50 + "px";
+                                iframe.contentWindow.document.body
+                                    .scrollHeight +
+                                50 +
+                                "px";
                         };
                     </script>
                 </div>
