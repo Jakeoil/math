@@ -1,16 +1,22 @@
-//import { penrose } from "../penrose.js";
 import { cookie } from "../controls.js";
 /**
- * These are a bunch of flags that penroseScreen routines use to paint the
- * tiles.
- * P1 based
- * Pentagons and stars
- * Tree
+ * Overlays for the figures
+ * Penta Layer
+ *   #penta-ovl     pentaSelected: boolean
+ *   #mosaic-penta  mosaicSelected: boolean
+ *   #tree-pena     treeSelected: boolean
  *
- * P3 based
- * Rhombs
- * Ammann bars
- * large and small
+ * Rhomb Layer
+ *   #rhomb-ovl     rhombSelected: boolean
+ *   #ammon         ammannSelected: boolean
+ *   #small-rhomb   smallRhomb: boolean
+ *
+ * Dual Layer
+ *   #dual          dualRhombSelected: boolean
+ *
+ * Controls globals.overlays
+ * Only effects the active layer
+ *
  */
 export class Overlays {
     constructor(app) {
@@ -20,6 +26,7 @@ export class Overlays {
         this.eleTree = document.querySelector("#tree-penta");
         this.eleRhomb = document.querySelector("#rhomb-ovl");
         this.eleAmmann = document.querySelector("#ammann");
+        this.eleDualRhomb = document.querySelector("#dual");
         // This controls the size of both Rhomb and Ammann
         this.eleRhombSizeField = document.querySelector("#rhomb-size");
         this.radioButtons = document.querySelectorAll("input[name='rhomb']");
@@ -27,27 +34,58 @@ export class Overlays {
         this.eleSmallRhomb = document.querySelector("#small-rhomb");
 
         if (this.elePenta) {
-            this.elePenta.addEventListener("click", this.pentaClicked.bind(this), false);
+            this.elePenta.addEventListener(
+                "click",
+                this.pentaClicked.bind(this),
+                false
+            );
         }
         if (this.eleMosaic) {
-            this.eleMosaic.addEventListener("click", this.mosaicClicked.bind(this), false);
+            this.eleMosaic.addEventListener(
+                "click",
+                this.mosaicClicked.bind(this),
+                false
+            );
         }
         if (this.eleTree) {
-            this.eleTree.addEventListener("click", this.treeClicked.bind(this), false);
+            this.eleTree.addEventListener(
+                "click",
+                this.treeClicked.bind(this),
+                false
+            );
         }
 
         if (this.eleRhomb) {
-            this.eleRhomb.addEventListener("click", this.rhombClicked.bind(this), false);
+            this.eleRhomb.addEventListener(
+                "click",
+                this.rhombClicked.bind(this),
+                false
+            );
         }
 
         if (this.eleAmmann) {
-            this.eleAmmann.addEventListener("click", this.ammannClicked.bind(this), false);
+            this.eleAmmann.addEventListener(
+                "click",
+                this.ammannClicked.bind(this),
+                false
+            );
         }
 
         for (let button of this.radioButtons) {
-            button.addEventListener("click", this.rhombSizeClicked.bind(this), false);
+            button.addEventListener(
+                "click",
+                this.rhombSizeClicked.bind(this),
+                false
+            );
         }
 
+        if (this.eleDualRhomb) {
+            this.eleDualRhomb.addEventListener(
+                "click",
+                this.dualRhombClicked.bind(this),
+                false
+            );
+        }
         this.reset();
         this.refresh();
     }
@@ -58,7 +96,7 @@ export class Overlays {
         this.rhombSelected = false;
         this.ammannSelected = false;
         this.smallRhomb = false;
-        this.genRhomb = 1;
+        this.dualRhombSelected = false;
 
         const cookieJson = cookie.get(Overlays.name, this.toString());
         this.fromString(cookieJson);
@@ -82,7 +120,15 @@ export class Overlays {
             this.eleAmmann.checked = this.ammannSelected;
         }
 
-        if (this.eleRhombSizeField && this.eleSmallRhomb && this.eleLargeRhomb) {
+        if (this.eleDualRhomb) {
+            this.eleDualRhomb.checked = this.dualRhombSelected;
+        }
+
+        if (
+            this.eleRhombSizeField &&
+            this.eleSmallRhomb &&
+            this.eleLargeRhomb
+        ) {
             if (this.rhombSelected || this.ammannSelected) {
                 this.eleRhombSizeField.style.display = "block";
                 if (this.smallRhomb) {
@@ -105,7 +151,7 @@ export class Overlays {
             rhombSelected: this.rhombSelected,
             ammannSelected: this.ammannSelected,
             smallRhomb: this.smallRhomb,
-            genRhomb: this.genRhomb,
+            dualRhombSelected: this.dualRhombSelected,
         });
     }
 
@@ -117,10 +163,11 @@ export class Overlays {
             rhombSelected: this.rhombSelected,
             ammannSelected: this.ammannSelected,
             smallRhomb: this.smallRhomb,
-            genRhomb: this.genRhomb,
+            dualRhombSelected: this.dualRhombSelected,
         } = JSON.parse(jsonString));
     }
-    pentaClicked() {
+    pentaClicked(event) {
+        console.log(`penta clicked: ${event}`);
         this.pentaSelected = !this.pentaSelected;
         this.refresh();
         this.app(Overlays.name);
@@ -140,6 +187,11 @@ export class Overlays {
         this.refresh();
         this.app(Overlays.name);
     }
+    dualRhombClicked() {
+        this.dualRhombSelected = !this.dualRhombSelected;
+        this.refresh();
+        this.app(Overlays.name);
+    }
     ammannClicked() {
         this.ammannSelected = !this.ammannSelected;
         this.refresh();
@@ -149,7 +201,6 @@ export class Overlays {
         for (let button of this.radioButtons) {
             if (button.checked) {
                 this.smallRhomb = button.id == "small-rhomb";
-                this.genRhomb = button.id == "small-rhomb" ? 0 : 1;
             }
         }
         this.refresh();

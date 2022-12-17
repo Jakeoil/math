@@ -21,7 +21,7 @@ cp bounds.js /Volumes/jakeoil.net/public_html/math
 cp rhombohedra.html /Volumes/jakeoil.net/public_html/math
 cp rhombohedra.js /Volumes/jakeoil.net/public_html/math
 cp scrolling.js /Volumes/jakeoil.net/public_html/math
-echo . . .
+echo 20 copied
 #mkdir /Volumes/jakeoil.net/public_html/math/controls
 cp controls/shape-colors.js /Volumes/jakeoil.net/public_html/math/controls
 cp controls/overlays.js /Volumes/jakeoil.net/public_html/math/controls
@@ -33,5 +33,17 @@ cp controls/shape-mode.js /Volumes/jakeoil.net/public_html/math/controls
 cp controls/penta-style.js /Volumes/jakeoil.net/public_html/math/controls
 
 cp measurements.js /Volumes/jakeoil.net/public_html/math
-
+echo controls copied
+cp README.md /Volumes/jakeoil.net/public_html/math
+cp renderers.js /Volumes/jakeoil.net/public_html/math
+cp renderings.js /Volumes/jakeoil.net/public_html/math
+echo vendor files.
+#mkdir /Volumes/jakeoil.net/public_html/math/js
+#mkdir /Volumes/jakeoil.net/public_html/math/js/controls
+#mkdir /Volumes/jakeoil.net/public_html/math/js/libs
+cp js/dat.gui.module.js /Volumes/jakeoil.net/public_html/math/js
+cp js/dat.gui.module.js.map /Volumes/jakeoil.net/public_html/math/js
+cp js/three.module.js /Volumes/jakeoil.net/public_html/math/js
+cp js/controls/OrbitControls.js /Volumes/jakeoil.net/public_html/math/js/controls
+cp js/libs/stats.module.js /Volumes/jakeoil.net/public_html/math/js/libs
 echo complete

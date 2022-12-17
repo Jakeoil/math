@@ -45,36 +45,13 @@ import { p } from "./point.js";
  */
 class Wheel {
     constructor(p0, p1, p2) {
-        this.list = [
-            p0.copy,
-            p1.copy,
-            p2.copy,
-            p2.vr,
-            p1.vr,
-            p0.vr,
-            p1.neg,
-            p2.neg,
-            p2.hr,
-            p1.hr,
-        ];
+        this.list = [p0.copy, p1.copy, p2.copy, p2.vr, p1.vr, p0.vr, p1.neg, p2.neg, p2.hr, p1.hr];
     }
     get up() {
-        return [
-            this.list[0],
-            this.list[2],
-            this.list[4],
-            this.list[6],
-            this.list[8],
-        ];
+        return [this.list[0], this.list[2], this.list[4], this.list[6], this.list[8]];
     }
     get down() {
-        return [
-            this.list[5],
-            this.list[7],
-            this.list[9],
-            this.list[1],
-            this.list[3],
-        ];
+        return [this.list[5], this.list[7], this.list[9], this.list[1], this.list[3]];
     }
     get w() {
         return this.list;
@@ -82,38 +59,27 @@ class Wheel {
     get string() {
         return stringify(this.w.map((it) => [it.x, it.y]));
     }
-    // get stringCoord(){ not needed?
+    // get inv() {
+    //     return new Wheel(this.list[5], this.list[6], this.list[7]);
+    // }
 }
 export class Wheels {
     constructor(pSeed, sSeed, tSeed, dSeed) {
-        [this.p, this.s, this.t, this.d] = makeWheels(
-            pSeed,
-            sSeed,
-            tSeed,
-            dSeed
-        );
+        [this.p, this.s, this.t, this.d] = makeWheels(pSeed, sSeed, tSeed, dSeed);
     }
 }
 
 function makeWheels(pSeed, sSeed, tSeed, dSeed) {
     function pWheelNext(exp) {
         const p = pWheels[exp].w;
-        return new Wheel(
-            p[1].tr(p[0]).tr(p[9]),
-            p[2].tr(p[1]).tr(p[0]),
-            p[3].tr(p[2]).tr(p[1])
-        );
+        return new Wheel(p[1].tr(p[0]).tr(p[9]), p[2].tr(p[1]).tr(p[0]), p[3].tr(p[2]).tr(p[1]));
     }
 
     // S is the offset
     function sWheelNext(exp) {
         const p = pWheels[exp].w;
         const s = sWheels[exp].w;
-        return new Wheel(
-            p[1].tr(p[0]).tr(s[9]),
-            p[2].tr(p[1]).tr(s[0]),
-            p[3].tr(p[2]).tr(s[1])
-        );
+        return new Wheel(p[1].tr(p[0]).tr(s[9]), p[2].tr(p[1]).tr(s[0]), p[3].tr(p[2]).tr(s[1]));
     }
 
     function tWheelNext(exp) {

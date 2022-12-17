@@ -4,11 +4,13 @@ import { p } from "./point.js";
  * This measures and adjusts the bounding rectangle.
  * Only the element drawing function (figure) creates a new bounds and returns
  * either a Bounds with the max min or null max min if nothing got drawn.
+ * Maintains a renderList of function
  */
 export class Bounds {
     constructor() {
         this.maxPoint = null;
         this.minPoint = null;
+        this.renderList = [];
     }
 
     /**
@@ -33,6 +35,15 @@ export class Bounds {
             this.maxPoint.y = logicalPoint.y;
         }
     }
+    addVectors(offset, shape) {
+        for (const point of shape) {
+            this.addPoint(offset, point);
+        }
+    }
+    addSquares(offset, shape) {
+        this.addVectors(offset, shape);
+        this.pad(0, 1, 1, 0);
+    }
 
     get isEmpty() {
         return !this.maxPoint || !this.minPoint;
@@ -46,8 +57,7 @@ export class Bounds {
     expand(bounds) {
         if (!bounds) {
             // Figure returned null?
-            console.log("expand: Figure returned null?");
-            console.log(bounds.toString);
+            console.log("expand: input is undefined?");
             return;
         }
 
@@ -60,6 +70,9 @@ export class Bounds {
             // This is the first expansion of this.
             this.minPoint = bounds.minPoint;
             this.maxPoint = bounds.maxPoint;
+            //console.log(bounds.renderList);
+            //this.renderList.push(...bounds.renderList);
+            this.renderList = this.renderList.concat(bounds.renderList);
             return;
         }
 
@@ -75,8 +88,23 @@ export class Bounds {
         if (bounds.maxPoint.y > this.maxPoint.y) {
             this.maxPoint.y = bounds.maxPoint.y;
         }
+
+        //console.log(this.renderList.length, bounds.renderList.length);
+        //this.renderList.push(...bounds.renderList); // This breaks down somewhere over a million
+        this.renderList = this.renderList.concat(bounds.renderList);
     }
 
+    /**
+     * bounds is mutated.
+     * @returns
+     */
+    round() {
+        if (this.isEmpty) return;
+        this.minPoint.x = Math.round(this.minPoint.x * 1000) / 1000;
+        this.minPoint.y = Math.round(this.minPoint.y * 1000) / 1000;
+        this.maxPoint.x = Math.round(this.maxPoint.x * 1000) / 1000;
+        this.maxPoint.y = Math.round(this.maxPoint.y * 1000) / 1000;
+    }
     /**
      * Framing adjust the bounds. Positive values increases the bounds and
      * negative values decreases. The values are scaled.
@@ -90,13 +118,13 @@ export class Bounds {
             this.minPoint = p(0, 0);
             this.maxPoint = p(0, 0);
         }
-        if (top) {
+        if (top || top == 0) {
             this.minPoint.y -= top;
-            if (right) {
+            if (right || right == 0) {
                 this.maxPoint.x += right;
-                if (bottom) {
+                if (bottom || bottom == 0) {
                     this.maxPoint.y += bottom;
-                    if (left) {
+                    if (left || left == 0) {
                         this.minPoint.x -= left;
                     } else {
                         this.minPoint.x -= right;
@@ -144,6 +172,24 @@ export class Bounds {
     toString() {
         return `min: ${this.minPoint}, max: ${this.maxPoint}`;
     }
+
+    //testBounds();
+    dumpNodes(nodeList) {
+        console.log(`dump nodes ${JSON.stringify(nodeList)}`);
+        if (nodeList instanceof Array) {
+            console.log(`found array size: ${nodeList.length}`);
+            if (!nodeList.isEmpty) {
+                for (const node of nodeList) {
+                    console.log(`recursive call on node: ${node.nodeList}`);
+                    this.dumpNodes(node);
+                }
+            } else {
+                console.log(`empty node`);
+            }
+        } else {
+            console.log(`node: ${nodeList}`);
+        }
+    }
 }
 
 function testBounds() {
@@ -168,4 +214,3 @@ function testBounds() {
     console.log(`${bounds.pad(-10)}`);
     console.log(`${bounds.pad(-10)}`);
 }
-//testBounds();

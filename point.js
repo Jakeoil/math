@@ -76,3 +76,58 @@ export function toP(loc) {
 export function p(x, y) {
     return new Point(x, y);
 }
+
+/**
+ * Class wrapping fifths and isDown
+ * Move to utilities
+ *
+ */
+export class Angle {
+    slicee = [0, 1, 2, 3, 4, 0, 1, 2, 3];
+
+    constructor(fifths, isDown) {
+        this.fifths = fifths % 5;
+        this.isDown = isDown;
+    }
+    // The clockwise operation.
+    //   add a fifth
+    get cw() {
+        return new Angle(fifths == 4 ? 0 : this.fifths + 1, this.isDown);
+    }
+    // The counter-clockwise operation
+    get ccw() {
+        return new Angle(fifths ? this.fifths - 1 : 4, this.isDown);
+    }
+    // Add n fifths
+    rot(n) {
+        return new Angle(norm(this.fifths + n), this.isDown);
+    }
+    // Reverse the direction.
+    get inv() {
+        return new Angle(this.fifths, !this.isDown);
+    }
+    // Convert to tenths. Vectors (pstd) are stored in tenths
+    get tenths() {
+        return (this.fifths * 2 + (this.isDown ? 5 : 0)) % 10;
+    }
+    toString() {
+        return JSON.stringify({ fifths: this.fifths, isDown: this.isDown });
+    }
+}
+
+function angleTest() {
+    console.log(`angle test`);
+    let an = new Angle(0, true);
+    let te = an.tenths;
+    console.log(`an: ${an}, te: ${te}`);
+    an = new Angle(1, true);
+    te = an.tenths;
+    console.log(`an: ${an}, te: ${te}`);
+    an = new Angle(1, false);
+    te = an.tenths;
+    console.log(`an: ${an}, te: ${te}`);
+}
+//angleTest();
+export function ang(fifths, isDown) {
+    return new Angle(fifths, isDown);
+}

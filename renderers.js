@@ -1,9 +1,12 @@
 import { Bounds } from "./bounds.js";
 import { globals } from "./controls.js";
+import { measureTaskGlobals } from "./controls.js";
 import { penrose } from "./penrose.js";
 import { p } from "./point.js";
 
 import * as THREE from "./js/three.module.js";
+import { USE_FUNCTION_LIST } from "./penrose-screen.js";
+import { lerp } from "./penrose-screen.js";
 
 export const isThree = (g) => g instanceof THREE.Scene;
 export class CanvasRenderer {
@@ -72,13 +75,20 @@ export class CanvasRenderer {
         }
 
         const bounds = new Bounds();
+
         for (const point of shape) {
             if (start) {
                 g.beginPath();
-                g.moveTo((point.x + offset.x) * scale, (point.y + offset.y) * scale);
+                g.moveTo(
+                    (point.x + offset.x) * scale,
+                    (point.y + offset.y) * scale
+                );
                 start = false;
             } else {
-                g.lineTo((point.x + offset.x) * scale, (point.y + offset.y) * scale);
+                g.lineTo(
+                    (point.x + offset.x) * scale,
+                    (point.y + offset.y) * scale
+                );
             }
 
             bounds.addPoint(offset, point);
@@ -109,6 +119,7 @@ export class CanvasRenderer {
         const bounds = new Bounds();
         const { g, scale } = this;
         g.save();
+        g.strokeStyle = penrose.OUTLINE;
         for (let y = -size; y < size; y++) {
             for (let x = -size; x < size; x++) {
                 g.strokeRect(
@@ -163,17 +174,22 @@ export class CanvasRenderer {
 
         const point0 = shape[0].tr(offset).mult(scale);
         const point1 = shape[2].tr(offset).mult(scale);
-        const canvasGradient = g.createLinearGradient(point0.x, point0.y, point1.x, point1.y);
+        const canvasGradient = g.createLinearGradient(
+            point0.x,
+            point0.y,
+            point1.x,
+            point1.y
+        );
         if (isHeads) {
             canvasGradient.addColorStop(0, "#fff");
             canvasGradient.addColorStop(2 / 3, fill);
             // color stop 1 has to be 1/3 of the way to "#000"
-            const endColor = mix(fill, "#000", 1 / 3);
+            const endColor = lerp(fill, "#000", 1 / 3);
             canvasGradient.addColorStop(1, endColor);
         } else {
             canvasGradient.addColorStop(0, "#000");
             canvasGradient.addColorStop(2 / 3, fill);
-            const endColor = mix(fill, "#fff", 1 / 3);
+            const endColor = lerp(fill, "#fff", 1 / 3);
             canvasGradient.addColorStop(1, endColor);
         }
         return canvasGradient;
@@ -181,27 +197,36 @@ export class CanvasRenderer {
 
     rhombus(fill, offset, shape, strokeStyle, isHeads) {
         const { g, scale } = this;
-        const { rhombStyle } = globals;
+        const { rhombStyle } = { ...globals, ...measureTaskGlobals };
         g.save();
         let gradient = rhombStyle.fill == rhombStyle.GRADIENT;
-        let start = true;
         const bounds = new Bounds();
         g.strokeStyle = strokeStyle ? strokeStyle : "black";
-        if (gradient) {
-            g.fillStyle = this.getGradient(fill, offset, shape, isHeads);
-        } else if (rhombStyle.fill == rhombStyle.TRANSPARENT) {
-            g.fillStyle = fill + "40"; //
-        } else {
-            g.fillStyle = fill;
+        switch (rhombStyle.fill) {
+            case rhombStyle.GRADIENT:
+                g.fillStyle = this.getGradient(fill, offset, shape, isHeads);
+                break;
+            case rhombStyle.TRANSPARENT:
+                g.fillStyle = fill + "40"; //
+                break;
+            default:
+                g.fillStyle = fill;
         }
         g.lineWidth = scale < 5 ? 1 : 2;
+        let start = true;
         for (const point of shape) {
             if (start) {
                 g.beginPath();
-                g.moveTo((point.x + offset.x) * scale, (point.y + offset.y) * scale);
+                g.moveTo(
+                    (point.x + offset.x) * scale,
+                    (point.y + offset.y) * scale
+                );
                 start = false;
             } else {
-                g.lineTo((point.x + offset.x) * scale, (point.y + offset.y) * scale);
+                g.lineTo(
+                    (point.x + offset.x) * scale,
+                    (point.y + offset.y) * scale
+                );
             }
 
             bounds.addPoint(offset, point);
@@ -217,6 +242,43 @@ export class CanvasRenderer {
         g.restore();
 
         return bounds;
+    }
+
+    render(renderList) {
+        if (USE_FUNCTION_LIST) {
+            for (const item of renderList) {
+                item(this);
+            }
+        } else {
+            this.render2(renderList);
+        }
+    }
+    render2(renderList) {
+        for (const item of renderList) {
+            switch (item.command) {
+                case "outline":
+                    this.outline(item.fill, item.loc, item.shape);
+                    break;
+                case "figure":
+                    this.figure(item.fill, item.loc, item.shape);
+                    break;
+                case "grid":
+                    this.grid(item.offset, item.size);
+                    break;
+                case "line":
+                    this.line(item.loc, item.end, item.strokeStyle);
+                    break;
+                case "rhombus":
+                    this.rhombus(
+                        item.fill,
+                        item.offset,
+                        item.shape,
+                        item.strokeStyle,
+                        item.isHeads
+                    );
+                    break;
+            }
+        }
     }
 }
 
