@@ -87,6 +87,50 @@ There is much conflict between the two apps here
 controls.js Details.
 	logRefresh(app, source)
 	
+	globals 
+		This should partner with penrose or measurements. Infernal dependencies made me
+		klugily make a separate global for the other app.
+		It could also be renamed to config.
+	
+	initControls
+		This has the same sickness as globals. we should be able to use the same shit for both.
+		
+	Cookie
+		This could move to a separate file.
+		
+		
+The structure of files in the config directory.
+	ConfigClass {
+		CONSTANT1 = "constant-value"
+		
+		// Why do we need the app here? This is probably the problem.
+		constructor(app) {
+			this.app = app
+			this.eleAttr1 = document.querySelector("#id-1")
+			this.eleAttrN = document.querySelector("#id-n")
+			this.reset() 
+			this.refresh()
+			
+			// Add list
+			// I think I can get rid of the bind by simply making the target use event parameter
+			if (this.eleAttr1) {
+				this.eleAttr1.addEventListener(
+				  "change",
+				  this.onFillChanged.bind(this)),
+				  false);
+				
+			}
+			
+		}
+		
+		// Move fields into object
+		fromString(json) 
+		// convert object into string.
+		toString() 
+		// load object with cookie value or default.
+		reset() 
+	}
+	
 		
 
 
