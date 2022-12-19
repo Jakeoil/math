@@ -316,6 +316,7 @@ export class PenroseScreen {
             return;
         }
 
+        // Layer is "penta"
         if (this.mode == penrose.mosaic.key) {
             let shapes = this.mShape(type);
             if (shapes) {
@@ -666,6 +667,7 @@ export class PenroseScreen {
             layer: "rhomb",
         });
     }
+
     pentaDual(type, angle, loc, gen) {
         this.penta({ type, angle, loc, gen });
         this.penta({

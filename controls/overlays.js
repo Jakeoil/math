@@ -187,11 +187,6 @@ export class Overlays {
         this.refresh();
         this.app(Overlays.name);
     }
-    dualRhombClicked() {
-        this.dualRhombSelected = !this.dualRhombSelected;
-        this.refresh();
-        this.app(Overlays.name);
-    }
     ammannClicked() {
         this.ammannSelected = !this.ammannSelected;
         this.refresh();
@@ -203,6 +198,11 @@ export class Overlays {
                 this.smallRhomb = button.id == "small-rhomb";
             }
         }
+        this.refresh();
+        this.app(Overlays.name);
+    }
+    dualRhombClicked() {
+        this.dualRhombSelected = !this.dualRhombSelected;
         this.refresh();
         this.app(Overlays.name);
     }

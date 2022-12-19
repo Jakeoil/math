@@ -7,16 +7,30 @@ import { globals } from "./controls.js";
 import { PenroseScreen, USE_FUNCTION_LIST } from "./penrose-screen.js";
 import { CanvasRenderer } from "./renderers.js";
 
+/**
+ * Renders the scene to the selected canvas.
+ *
+ * @param {PenroseScreen} scene
+ * @param scene.measure{boolean}
+ * @param scene.bounds {Bounds}
+ * @param scene.bounds.maxPoint{Point}
+ * @param scene.bounds.renderList{function[]} A list of functions.
+ *
+ * @param canvas{Canvas} Dom element
+ *
+ * Note, resize and render may work differently for ThreeJs
+ */
+
 export function resizeAndRender(scene, canvas, scale) {
     if (!scene.measure) {
+        let g = canvas.getContext("2d");
+        g.fillStyle = "white";
+        g.fillRect(0, 0, canvas.width, canvas.height);
         let bounds = scene.bounds;
         if (bounds.isEmpty) {
             console.log(`isEmpty`);
             return;
         }
-        let g = canvas.getContext("2d");
-        g.fillStyle = "white";
-        g.fillRect(0, 0, canvas.width, canvas.height);
 
         // I believe canvas width and height can be put in directly
         const computedWidth = bounds.maxPoint.x * scale + scale;
@@ -112,7 +126,6 @@ export function drawFirstInflation(id) {
         let angle = ang(0, UP);
         let loc = p(x, y);
         const gen = 1;
-        const layer = "rhomb";
 
         scene.pentaRhomb(type, angle, loc, gen);
 
@@ -122,7 +135,6 @@ export function drawFirstInflation(id) {
 
         scene.pentaRhomb(type, angle, loc, gen);
         y += 18;
-
         type = penrose.Pe3;
         for (let i = 0; i < 5; i++) {
             angle = ang(i, UP);
@@ -135,36 +147,31 @@ export function drawFirstInflation(id) {
         for (let i = 0; i < 5; i++) {
             angle = ang(i, DOWN);
             loc = p(x + i * 20, y);
-            penta({ type, angle, loc, gen });
-            penta({ type, angle, loc, gen, layer });
+            scene.pentaRhomb(type, angle, loc, gen);
         }
         y += 20;
         type = penrose.Pe1;
         for (let i = 0; i < 5; i++) {
             angle = ang(i, UP);
             loc = p(x + i * 20, y);
-            penta({ type, angle, loc, gen });
-            penta({ type, angle, loc, gen, layer });
+            scene.pentaRhomb(type, angle, loc, gen);
         }
         y += 20;
         for (let i = 0; i < 5; i++) {
             angle = ang(i, DOWN);
             loc = p(x + i * 20, y);
-            penta({ type, angle, loc, gen });
-            penta({ type, angle, loc, gen, layer });
+            scene.pentaRhomb(type, angle, loc, gen);
         }
         y += 25;
         type = penrose.St5;
         angle = ang(0, UP);
         loc = p(15, y);
 
-        star({ type, angle, loc, gen });
-        star({ type, angle, loc, gen, layer });
+        scene.pentaRhomb(type, angle, loc, gen);
 
         angle = ang(0, DOWN);
         loc = p(45, y);
-        star({ type, angle, loc, gen });
-        star({ type, angle, loc, gen, layer });
+        scene.pentaRhomb(type, angle, loc, gen);
 
         x = 10;
         y += 30;
@@ -173,15 +180,13 @@ export function drawFirstInflation(id) {
         for (let i = 0; i < 5; i++) {
             angle = ang(i, UP);
             loc = p(x + i * 20, y);
-            star({ type, angle, loc, gen });
-            star({ type, angle, loc, gen, layer });
+            scene.pentaRhomb(type, angle, loc, gen);
         }
         y += 25;
         for (let i = 0; i < 5; i++) {
             angle = ang(i, DOWN);
             loc = p(x + i * 20, y);
-            star({ type, angle, loc, gen });
-            star({ type, angle, loc, gen, layer });
+            scene.pentaRhomb(type, angle, loc, gen);
         }
 
         x = 15;
@@ -190,15 +195,13 @@ export function drawFirstInflation(id) {
         for (let i = 0; i < 5; i++) {
             angle = ang(i, UP);
             loc = p(x + i * 25, y);
-            star({ type, angle, loc, gen });
-            star({ type, angle, loc, gen, layer });
+            scene.pentaRhomb(type, angle, loc, gen);
         }
         y += 25;
         for (let i = 0; i < 5; i++) {
             angle = ang(i, DOWN);
             loc = p(x + i * 25, y);
-            star({ type, angle, loc, gen });
-            star({ type, angle, loc, gen, layer });
+            scene.pentaRhomb(type, angle, loc, gen);
         }
 
         resizeAndRender(scene, canvas, 10);
