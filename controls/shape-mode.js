@@ -38,22 +38,27 @@ export class ShapeMode {
      */
     refresh() {
         if (this.eleMode) this.eleMode.innerHTML = this.shapeMode;
+        cookie.set(ShapeMode.name, this.toString());
     }
 
     reset() {
-        this.shapeMode = cookie.getShapeMode(this.MODE_REAL);
+        this.shapeMode = this.MODE_REAL;
+        const cookieJson = cookie.get(ShapeMode.name, this.toString());
+        this.fromString(cookieJson);
     }
     toString() {
         return JSON.stringify({
             shapeMode: this.shapeMode,
         });
     }
+    fromString(jsonString) {
+        ({ shapeMode: this.shapeMode } = JSON.parse(jsonString));
+    }
     clickMode() {
         let new_idx =
             (this.MODE_LIST.indexOf(this.shapeMode) + 1) %
             this.MODE_LIST.length;
         this.shapeMode = this.MODE_LIST[new_idx];
-        cookie.setShapeMode(this.shapeMode);
         this.refresh();
         this.app(ShapeMode.name);
     }

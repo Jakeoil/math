@@ -123,16 +123,6 @@ class Cookie {
     delete(type) {
         deleteCookie(type);
     }
-    getShapeMode(sm) {
-        const cookie = getCookie("shape-mode");
-        if (cookie) {
-            return cookie;
-        }
-        return sm;
-    }
-    setShapeMode(sm) {
-        setCookie("shape-mode", sm, { "max-age": 3600 });
-    }
 }
 // The cookie interface !!! We already found this to be dangerous.
 export const cookie = new Cookie();
