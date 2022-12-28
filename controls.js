@@ -1,10 +1,10 @@
-import { ShapeColors } from "./controls/shape-colors.js";
-import { Overlays } from "./controls/overlays.js";
-import { PageNavigation } from "./controls/page-navigation.js";
-import { RhombStyle } from "./controls/rhomb-style.js";
-import { ShapeMode } from "./controls/shape-mode.js";
+import { ShapeColors } from "./controls/ShapeColors.js";
+import { Overlays } from "./controls/Overlays.js";
+import { PageNavigation } from "./controls/PageNavigation.js";
+import { RhombStyle } from "./controls/RhombStyle.js";
+import { ShapeMode } from "./controls/ShapeMode.js";
 import { Figure } from "./controls/Figure.js";
-import { PentaStyle } from "./controls/penta-style.js";
+import { PentaStyle } from "./controls/PentaStyle.js";
 
 /**
  * Controls are
