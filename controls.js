@@ -3,7 +3,7 @@ import { Overlays } from "./controls/overlays.js";
 import { PageNavigation } from "./controls/page-navigation.js";
 import { RhombStyle } from "./controls/rhomb-style.js";
 import { ShapeMode } from "./controls/shape-mode.js";
-import { Controls } from "./controls/controls.js";
+import { Figure } from "./controls/controls.js";
 import { PentaStyle } from "./controls/penta-style.js";
 
 /**
@@ -39,9 +39,9 @@ export function logRefresh(app, source) {
                 `Refresh ${app.name} from ${PageNavigation.name}: ${globals.pageNavigation}`
             );
             break;
-        case Controls.name:
+        case Figure.name:
             console.log(
-                `Refresh ${app.name} from ${Controls.name}: ${globals.controls}`
+                `Refresh ${app.name} from ${Figure.name}: ${globals.controls}`
             );
             break;
         case ShapeMode.name:
@@ -72,8 +72,7 @@ export function initControls(app) {
     if (app.name == "penroseApp") {
         if (!globals.shapeColors) globals.shapeColors = new ShapeColors(app);
 
-        if (!globals.controls)
-            globals.controls = new Controls(app, 0, 0, false);
+        if (!globals.controls) globals.controls = new Figure(app, 0, 0, false);
 
         if (!globals.shapeMode) globals.shapeMode = new ShapeMode(app);
 

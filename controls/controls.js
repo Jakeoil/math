@@ -7,7 +7,7 @@ import { norm } from "../point.js";
  * Cannot say whether it was a good idea to cluster them
  * Added cookie handling
  */
-export class Controls {
+export class Figure {
     constructor(app, fifths, typeIndex, isDown) {
         this.app = app;
         this.eleFifths = document.querySelector("#fifths");
@@ -42,7 +42,7 @@ export class Controls {
         this.fifths = fifths;
         this.typeIndex = typeIndex;
         this.isDown = isDown;
-        this.fromString(cookie.get(Controls.name, this.toString()));
+        this.fromString(cookie.get(Figure.name, this.toString()));
     }
     toString() {
         return JSON.stringify({
@@ -90,7 +90,7 @@ export class Controls {
         if (this.eleFifths) this.eleFifths.innerHTML = `fifths: ${this.fifths}`;
         if (this.eleType) this.eleType.innerHTML = this.typeName;
         if (this.eleIsDown) this.eleIsDown.innerHTML = this.direction;
-        cookie.set(Controls.name, this.toString());
+        cookie.set(Figure.name, this.toString());
     }
 
     /**
@@ -101,19 +101,19 @@ export class Controls {
         console.log(`click fifths`);
         this.bumpFifths();
         this.refresh();
-        this.app(Controls.name);
+        this.app(Figure.name);
     }
 
     clickType() {
         console.log(`click type`);
         this.bumpType();
         this.refresh();
-        this.app(Controls.name);
+        this.app(Figure.name);
     }
 
     clickIsDown() {
         this.toggleDirection();
         this.refresh();
-        this.app(Controls.name);
+        this.app(Figure.name);
     }
 }
