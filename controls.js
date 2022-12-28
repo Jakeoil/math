@@ -3,7 +3,7 @@ import { Overlays } from "./controls/overlays.js";
 import { PageNavigation } from "./controls/page-navigation.js";
 import { RhombStyle } from "./controls/rhomb-style.js";
 import { ShapeMode } from "./controls/shape-mode.js";
-import { Figure } from "./controls/controls.js";
+import { Figure } from "./controls/Figure.js";
 import { PentaStyle } from "./controls/penta-style.js";
 
 /**
