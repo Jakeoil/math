@@ -1,8 +1,7 @@
-import * as THREE from "./js/three.module.js";
-import { OrbitControls } from "./js/controls/OrbitControls.js";
-import Stats from "./js/libs/stats.module.js";
-//import { GUI } from "./js/dat.gui.module.js";
-import { GUI } from "./node_modules/three/examples/jsm/libs/lil-gui.module.min.js";
+import * as THREE from "three";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import Stats from "three/addons/libs/stats.module.js";
+import { GUI } from "three/addons/libs/lil-gui.module.min.js";
 
 window.addEventListener("load", threeTest, false);
 
@@ -79,6 +78,7 @@ function threeTest() {
 
     animate();
 }
+
 function addControls(camera, renderer) {
     controls = new OrbitControls(camera, renderer.domElement);
 }

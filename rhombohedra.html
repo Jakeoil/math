@@ -6,7 +6,6 @@
         <link rel="shortcut icon" href="deca2.png" />
         <title>Rhombohedra</title>
         <link rel="stylesheet" href="math.css" />
-        <script type="module" src="rhombohedra.js"></script>
         <style>
             #solar-system {
                 width: 100%;
@@ -14,6 +13,20 @@
                 display: block;
             }
         </style>
+        <script
+            async
+            src="https://unpkg.com/es-module-shims@1.3.6/dist/es-module-shims.js"
+        ></script>
+
+        <script type="importmap">
+            {
+                "imports": {
+                    "three": "https://unpkg.com/three@0.146.0/build/three.module.js",
+                    "three/addons/": "https://unpkg.com/three@0.146.0/examples/jsm/"
+                }
+            }
+        </script>
+        <script type="module" src="rhombohedra.js"></script>
     </head>
     <body>
         <h1>Golden Rhombohedra and P3 3D Tiling</h1>

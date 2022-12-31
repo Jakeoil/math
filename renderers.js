@@ -3,8 +3,7 @@ import { globals } from "./controls.js";
 import { measureTaskGlobals } from "./controls.js";
 import { penrose } from "./penrose.js";
 import { p } from "./point.js";
-
-import * as THREE from "./js/three.module.js";
+import * as THREE from "three";
 import { USE_FUNCTION_LIST } from "./penrose-screen.js";
 import { lerp } from "./penrose-screen.js";
 
