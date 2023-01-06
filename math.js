@@ -7,6 +7,7 @@ import {
     drawGeneric123,
     drawGeneric3,
     drawDualDemo,
+    draw3dResearch,
 } from "./renderings.js";
 
 import { initControls, logRefresh } from "./controls.js";
@@ -50,5 +51,6 @@ export function penroseApp(source) {
     drawGeneric123("g012");
     drawGeneric3("g3");
     drawDualDemo("dual");
+    draw3dResearch("threejs");
 }
 window.addEventListener("load", penroseApp, false);

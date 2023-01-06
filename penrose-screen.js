@@ -3,7 +3,7 @@ import { Bounds } from "./bounds.js";
 import { penrose } from "./penrose.js";
 import { globals, measureTaskGlobals } from "./controls.js";
 import { mosaic, quadrille, real } from "./shape-modes.js";
-import { CanvasRenderer, isThree, threeRenderer } from "./renderers.js";
+import { CanvasRenderer, isThree, ThreeJsRenderer } from "./renderers.js";
 
 const SQRT5 = Math.sqrt(5); // 2.236
 const PHI = (SQRT5 + 1) / 2; // 1.618

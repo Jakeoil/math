@@ -5,7 +5,11 @@ import { quadrille, mosaic } from "./shape-modes.js";
 
 import { globals } from "./controls.js";
 import { PenroseScreen, USE_FUNCTION_LIST } from "./penrose-screen.js";
-import { CanvasRenderer } from "./renderers.js";
+import {
+    CanvasRenderer,
+    ThreeJsContext,
+    ThreeJsRenderer,
+} from "./renderers.js";
 
 /**
  * Renders the scene to the selected canvas.
@@ -46,6 +50,23 @@ export function resizeAndRender(scene, canvas, scale) {
     }
 }
 
+export function resizeAndRender3d(canvas, scene, scale) {
+    if (scene.measure) {
+        return;
+    }
+    console.log(`canvas: ${canvas.width},  ${canvas.height}`);
+    let g = new ThreeJsContext(canvas);
+    g.fillStyle = "transparent";
+    g.fillRect(0, 0, canvas.width, canvas.height);
+    let bounds = scene.bounds;
+    if (bounds.isEmpty) {
+        console.log(`isEmpty`);
+        return;
+    }
+    const renderer = new ThreeJsRenderer(g, scale);
+    renderer.render(bounds.renderList);
+    renderer.finish();
+}
 /******************************************************************************
  * Screen Drawing Routines
  *****************************************************************************/
@@ -258,6 +279,37 @@ export function drawDualDemo(id) {
     new CanvasRenderer(g, scale * 0.618).render(scene2.bounds.renderList);
 }
 
+/**
+ *
+ * @param {*} id
+ * @returns
+ */
+export function draw3dResearch(id) {
+    console.log("draw3dResearch");
+    const page = document.querySelector(`#${id}`);
+    if (page.style.display == "none") return;
+    const canvas = document.querySelector(`#${id} > canvas`);
+    if (!canvas) {
+        console.log("canvasId is null!");
+        return;
+    }
+    const { shapeMode } = globals;
+    const scene = new PenroseScreen(shapeMode.shapeMode);
+    scene.setToRender();
+    drawScreen();
+    /**
+     *
+     */
+    function drawScreen() {
+        //var x = 25;
+        //var y = 50;
+        scene.line(p(-10, 5), p(-5, 10), "red");
+
+        const g = new ThreeJsContext(canvas);
+        g.fillStyle = "transparent";
+        resizeAndRender3d(canvas, scene, 10);
+    }
+}
 /**
  * The second draw test is the expansion of the first draw test.
  * It draws the second expansion of each of the tiles.

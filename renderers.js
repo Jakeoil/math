@@ -6,6 +6,7 @@ import { p } from "./point.js";
 import * as THREE from "three";
 import { USE_FUNCTION_LIST } from "./penrose-screen.js";
 import { lerp } from "./penrose-screen.js";
+import { Color } from "three";
 
 export const isThree = (g) => g instanceof THREE.Scene;
 export class CanvasRenderer {
@@ -281,32 +282,74 @@ export class CanvasRenderer {
     }
 }
 
+export class ThreeJsContext {
+    _fillStyle = "white";
+    _fillRect = [0, 0, 0, 0];
+    constructor(canvas) {
+        this.renderer = new THREE.WebGLRenderer({ canvas });
+        console.log(`renderer: ${this.renderer}`);
+        const fov = 40;
+        const aspect = 2; // the canvas default
+        const near = 0.1;
+        const far = 1000;
+        this.camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
+        this.camera.position.set(0, 50, 0);
+        this.camera.up.set(0, 0, 1); // Set this much further
+        this.camera.lookAt(0, 0, 0); // Point at center of canvas.
+        this.scene = new THREE.Scene();
+    }
+    fillRect(x, y, w, h) {
+        this.x = x;
+        this.y = y;
+        this.w = w;
+        this.h = h;
+    }
+}
 /**
  * Test code for threejs proposal
  */
-export class threeRenderer {
+export class ThreeJsRenderer {
     constructor(g, scale) {
         this.g = g;
         this.scale = scale;
+    }
+    finish() {
+        this.g.renderer.render(this.g.scene, this.g.camera);
+    }
+
+    render(renderList) {
+        for (const item of renderList) {
+            console.log(`item: ${item}`);
+            item(this);
+        }
     }
 
     figure(fill, offset, shape) {}
     outline(fill, offset, shape) {}
     grid(offset, size) {}
+    /**
+     *
+     * @param {*} loc
+     * @param {*} end
+     * @param {*} strokeStyle
+     */
     line(loc, end, strokeStyle) {
         const material = new THREE.LineBasicMaterial({
             color: strokeStyle,
         });
 
+        console.log(`line(loc: ${loc.toLoc}, end:n${end.toLoc},)`);
         const points = [];
         const z = 0;
-        points.push(new THREE.Vector3(...loc.toLoc(), z));
-        points.push(new THREE.Vector3(...end.toLoc(), z));
+        console.log(...loc.toLoc, z);
+        points.push(new THREE.Vector3(...[...loc.toLoc, z]));
+        points.push(new THREE.Vector3(...[...end.toLoc, z]));
 
         const geometry = new THREE.BufferGeometry().setFromPoints(points);
 
         const line = new THREE.Line(geometry, material);
-        scene.add(line);
+        this.g.scene.add(line);
     }
+
     rhombus(fill, offset, shape, strokeStyle, isHeads) {}
 }
