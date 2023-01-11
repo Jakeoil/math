@@ -1,12 +1,12 @@
 import { p, ang } from "./point.js";
 import { interpolateWheel, successorPoint } from "./wheels.js";
-import { penrose } from "./penrose.js";
+//import { penrose } from "./penrose.js";
 //import { MODE_REAL } from "./controls/shape-mode.js"; // Now _really_
 import { quadrille } from "./shape-modes.js";
 import { PenroseScreen } from "./penrose-screen.js";
 import { measureTaskGlobals, globals } from "./controls.js";
 import { initControls, logRefresh } from "./controls.js";
-import { CanvasRenderer } from "./renderers.js";
+//import { CanvasRenderer } from "./renderers.js";
 import { resizeAndRender } from "./renderings.js";
 
 window.addEventListener("load", measureTasks, false);

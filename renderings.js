@@ -12,7 +12,7 @@ import {
 } from "./renderers.js";
 
 /**
- * Renders the scene to the selected canvas.
+ * Renders the scene to the selected 2d canvas.
  *
  * @param {PenroseScreen} scene
  * @param scene.measure{boolean}
@@ -26,43 +26,49 @@ import {
  */
 
 export function resizeAndRender(scene, canvas, scale) {
-    if (!scene.measure) {
-        let g = canvas.getContext("2d");
-        g.fillStyle = "white";
-        g.fillRect(0, 0, canvas.width, canvas.height);
-        let bounds = scene.bounds;
-        if (bounds.isEmpty) {
-            console.log(`isEmpty`);
-            return;
-        }
-
-        // I believe canvas width and height can be put in directly
-        const computedWidth = bounds.maxPoint.x * scale + scale;
-        const computedHeight = bounds.maxPoint.y * scale + scale;
-        if (
-            canvas.width != Math.floor(computedWidth) ||
-            canvas.height != Math.floor(computedHeight)
-        ) {
-            canvas.width = computedWidth;
-            canvas.height = computedHeight;
-        }
-        new CanvasRenderer(g, scale).render(bounds.renderList);
-    }
-}
-
-export function resizeAndRender3d(canvas, scene, scale) {
     if (scene.measure) {
         return;
     }
-    console.log(`canvas: ${canvas.width},  ${canvas.height}`);
-    let g = new ThreeJsContext(canvas);
-    g.fillStyle = "transparent";
-    g.fillRect(0, 0, canvas.width, canvas.height);
+
+    let g = canvas.getContext("2d");
+
     let bounds = scene.bounds;
     if (bounds.isEmpty) {
         console.log(`isEmpty`);
         return;
     }
+
+    // I believe canvas width and height can be put in directly
+    const computedWidth = bounds.maxPoint.x * scale + scale;
+    const computedHeight = bounds.maxPoint.y * scale + scale;
+    if (
+        canvas.width != Math.floor(computedWidth) ||
+        canvas.height != Math.floor(computedHeight)
+    ) {
+        canvas.width = computedWidth;
+        canvas.height = computedHeight;
+    }
+
+    g.fillStyle = "white";
+    g.fillRect(0, 0, canvas.width, canvas.height);
+
+    new CanvasRenderer(g, scale).render(bounds.renderList);
+}
+
+export function resizeAndRender3d(scene, canvas, scale) {
+    if (scene.measure) {
+        return;
+    }
+    console.log(`canvas: ${canvas.width},  ${canvas.height}`);
+    let g = new ThreeJsContext(canvas);
+    let bounds = scene.bounds;
+    if (bounds.isEmpty) {
+        console.log(`isEmpty`);
+        return;
+    }
+    g.fillStyle = "transparent";
+    g.fillRect(0, 0, canvas.width, canvas.height);
+
     const renderer = new ThreeJsRenderer(g, scale);
     renderer.render(bounds.renderList);
     renderer.finish();
@@ -134,11 +140,9 @@ export function drawFirstInflation(id) {
     }
     const { shapeMode } = globals;
     const scene = new PenroseScreen(shapeMode.shapeMode);
-    const penta = scene.penta.bind(scene);
-    const star = scene.star.bind(scene);
 
     const drawScreen = function () {
-        let x = 8;
+        let x = 11;
         let y = 9;
         const UP = false;
         const DOWN = true;
@@ -307,7 +311,7 @@ export function draw3dResearch(id) {
 
         const g = new ThreeJsContext(canvas);
         g.fillStyle = "transparent";
-        resizeAndRender3d(canvas, scene, 10);
+        resizeAndRender3d(scene, canvas, 10);
     }
 }
 /**

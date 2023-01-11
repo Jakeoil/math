@@ -6,7 +6,7 @@ import { p } from "./point.js";
 import * as THREE from "three";
 import { USE_FUNCTION_LIST } from "./penrose-screen.js";
 import { lerp } from "./penrose-screen.js";
-import { Color } from "three";
+import { Color, ShapeGeometry } from "three";
 
 export const isThree = (g) => g instanceof THREE.Scene;
 export class CanvasRenderer {
@@ -62,7 +62,6 @@ export class CanvasRenderer {
         const { g, scale } = this;
         g.save();
 
-        let start = true;
         if (!pentaStyle || pentaStyle.stroke == pentaStyle.SOLID) {
             g.strokeStyle = "#000000";
             g.lineWidth = 1;
@@ -75,7 +74,7 @@ export class CanvasRenderer {
         }
 
         const bounds = new Bounds();
-
+        let start = true;
         for (const point of shape) {
             if (start) {
                 g.beginPath();
@@ -90,10 +89,10 @@ export class CanvasRenderer {
                     (point.y + offset.y) * scale
                 );
             }
-
             bounds.addPoint(offset, point);
         }
         g.closePath();
+
         if (!pentaStyle || pentaStyle.stroke != pentaStyle.NONE) {
             g.stroke();
         }
@@ -102,11 +101,7 @@ export class CanvasRenderer {
         if (!pentaStyle || pentaStyle.fill != pentaStyle.NONE) {
             g.fill();
         }
-        //g.strokeStyle = currentStrokeStyle;
-        //g.lineWidth = currentLineWidth;
-        //g.fillStyle = currentfillStyle;
         g.restore();
-
         return bounds;
     }
 
@@ -282,20 +277,25 @@ export class CanvasRenderer {
     }
 }
 
+/**
+ * This takes a canvas as input.
+ * The canvas has a width and a height
+ */
 export class ThreeJsContext {
     _fillStyle = "white";
-    _fillRect = [0, 0, 0, 0];
+    _fov = 45;
     constructor(canvas) {
         this.renderer = new THREE.WebGLRenderer({ canvas });
+        this._fillRect = [0, 0, canvas.width, canvas.height];
         console.log(`renderer: ${this.renderer}`);
-        const fov = 40;
-        const aspect = 2; // the canvas default
+        const fov = 45;
+        const aspect = canvas.width / canvas.height; // the canvas default
         const near = 0.1;
         const far = 1000;
         this.camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-        this.camera.position.set(0, 50, 0);
-        this.camera.up.set(0, 0, 1); // Set this much further
-        this.camera.lookAt(0, 0, 0); // Point at center of canvas.
+        //this.camera.position.set(0, 50, 0);
+        //this.camera.up.set(0, 0, 1); // Set this much further
+        //this.camera.lookAt(0, 0, 0); // Point at center of canvas.
         this.scene = new THREE.Scene();
     }
     fillRect(x, y, w, h) {
@@ -303,6 +303,9 @@ export class ThreeJsContext {
         this.y = y;
         this.w = w;
         this.h = h;
+    }
+    add(mesh) {
+        this.scene.add(mesh);
     }
 }
 /**
@@ -325,7 +328,46 @@ export class ThreeJsRenderer {
     }
 
     figure(fill, offset, shape) {}
-    outline(fill, offset, shape) {}
+    outline(fill, offset, shape) {
+        const { pentaStyle } = globals;
+        const { g, scale } = this;
+        const figure = THREE.Shape();
+        const bounds = new Bounds();
+        let start = true;
+        for (const point of shape) {
+            if (start) {
+                figure.moveTo(
+                    (point.x + offset.x) * scale,
+                    (point.y + offset.y) * scale
+                );
+                start = false;
+            } else {
+                figure.lineTo(
+                    (point.x + offset.x) * scale,
+                    (point.y + offset.y) * scale
+                );
+            }
+            bounds.addPoint(offset, point);
+        }
+        const geometry = new ShapeGeometry(figure);
+        if (!pentaStyle || pentaStyle.stroke != pentaStyle.NONE) {
+            console.log(`Show stroke`);
+        }
+
+        // fill by default
+        if (!pentaStyle || pentaStyle.fill != pentaStyle.NONE) {
+            console.log(`Show fill`);
+        }
+        const mesh = new THREE.Mesh(
+            geometry,
+            new THREE.MeshNormalMaterial({
+                color: fill,
+                side: THREE.DoubleSide,
+            })
+        );
+        g.add(mesh);
+        return bounds;
+    }
     grid(offset, size) {}
     /**
      *
