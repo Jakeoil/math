@@ -201,19 +201,16 @@ export class PenroseScreen {
     outline(fill, loc, shape) {
         const bounds = new Bounds();
         bounds.addVectors(loc, shape);
+        this.bounds.expand(bounds);
+        //console.log(`bounds: ${bounds}, ${this.bounds}`);
+        console.log(`measure: ${this.measure}`);
         if (this.measure) {
-            this.bounds.expand(bounds);
             return;
-        }
-
-        if (USE_FUNCTION_LIST) {
+        } else {
             const f = (r) => r.outline(fill, loc, shape);
             bounds.renderList.push(f);
-        } else {
-            const command = "outline";
-            bounds.renderList.push({ command, fill, loc, shape });
+            console.log(`Add function ${f}`);
         }
-        //this.renderer.render(bounds.renderList);
         this.bounds.expand(bounds);
     }
 

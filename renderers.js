@@ -310,14 +310,26 @@ export class ThreeJsContext {
 }
 /**
  * Test code for threejs proposal
+ *
+ * g contains.
  */
 export class ThreeJsRenderer {
     constructor(g, scale) {
         this.g = g;
         this.scale = scale;
     }
-    finish() {
-        this.g.renderer.render(this.g.scene, this.g.camera);
+    finish(canvas, bounds) {
+        // Compute the target from bounds.
+        const FOV = 60;
+        const aspect = canvas.width / canvas.height;
+        const camera = new THREE.PerspectiveCamera(FOV, aspect, 1, 1000);
+        console.log(this.g.scene);
+        camera.position.set(
+            bounds.center.x,
+            bounds.center.y,
+            bounds.diagonal * 4
+        );
+        this.g.renderer.render(this.g.scene, camera);
     }
 
     render(renderList) {
@@ -331,8 +343,8 @@ export class ThreeJsRenderer {
     outline(fill, offset, shape) {
         const { pentaStyle } = globals;
         const { g, scale } = this;
-        const figure = THREE.Shape();
-        const bounds = new Bounds();
+        const figure = new THREE.Shape();
+        //const bounds = new Bounds();
         let start = true;
         for (const point of shape) {
             if (start) {
@@ -347,7 +359,7 @@ export class ThreeJsRenderer {
                     (point.y + offset.y) * scale
                 );
             }
-            bounds.addPoint(offset, point);
+            //bounds.addPoint(offset, point);
         }
         const geometry = new ShapeGeometry(figure);
         if (!pentaStyle || pentaStyle.stroke != pentaStyle.NONE) {
@@ -360,13 +372,13 @@ export class ThreeJsRenderer {
         }
         const mesh = new THREE.Mesh(
             geometry,
-            new THREE.MeshNormalMaterial({
+            new THREE.MeshBasicMaterial({
                 color: fill,
                 side: THREE.DoubleSide,
             })
         );
         g.add(mesh);
-        return bounds;
+        //return bounds;
     }
     grid(offset, size) {}
     /**

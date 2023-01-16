@@ -169,6 +169,12 @@ export class Bounds {
         return this.isEmpty ? 0 : this.maxPoint.y + 1 - this.minPoint.y;
     }
 
+    get center() {
+        return p(this.x + this.width / 2, this.y + this.height / 2);
+    }
+    get diagonal() {
+        return Math.sqrt(this.width * this.width + this.height * this.height);
+    }
     toString() {
         return `min: ${this.minPoint}, max: ${this.maxPoint}`;
     }

@@ -71,7 +71,7 @@ export function resizeAndRender3d(scene, canvas, scale) {
 
     const renderer = new ThreeJsRenderer(g, scale);
     renderer.render(bounds.renderList);
-    renderer.finish();
+    renderer.finish(canvas, bounds);
 }
 /******************************************************************************
  * Screen Drawing Routines
@@ -308,6 +308,12 @@ export function draw3dResearch(id) {
         //var x = 25;
         //var y = 50;
         scene.line(p(-10, 5), p(-5, 10), "red");
+
+        let loc = p(0, 0);
+        const gen = 3;
+        const type = penrose.Pe1;
+        const angle = ang(1, true);
+        scene.pentaRhomb(type, angle, loc, gen);
 
         const g = new ThreeJsContext(canvas);
         g.fillStyle = "transparent";
