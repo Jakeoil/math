@@ -343,43 +343,58 @@ export class ThreeJsRenderer {
     outline(fill, offset, shape) {
         const { pentaStyle } = globals;
         const { g, scale } = this;
-        const figure = new THREE.Shape();
-        //const bounds = new Bounds();
-        let start = true;
-        for (const point of shape) {
-            if (start) {
-                figure.moveTo(
-                    (point.x + offset.x) * scale,
-                    (point.y + offset.y) * scale
-                );
-                start = false;
-            } else {
-                figure.lineTo(
-                    (point.x + offset.x) * scale,
-                    (point.y + offset.y) * scale
-                );
-            }
-            //bounds.addPoint(offset, point);
-        }
-        const geometry = new ShapeGeometry(figure);
-        if (!pentaStyle || pentaStyle.stroke != pentaStyle.NONE) {
-            console.log(`Show stroke`);
-        }
 
         // fill by default
         if (!pentaStyle || pentaStyle.fill != pentaStyle.NONE) {
+            const figure = new THREE.Shape();
+            //const bounds = new Bounds();
+            let start = true;
+            for (const point of shape) {
+                if (start) {
+                    figure.moveTo(
+                        (point.x + offset.x) * scale,
+                        (point.y + offset.y) * scale
+                    );
+                    start = false;
+                } else {
+                    figure.lineTo(
+                        (point.x + offset.x) * scale,
+                        (point.y + offset.y) * scale
+                    );
+                }
+            }
+            const geometry = new ShapeGeometry(figure);
+            const mesh = new THREE.Mesh(
+                geometry,
+                new THREE.MeshBasicMaterial({
+                    color: fill,
+                    side: THREE.DoubleSide,
+                })
+            );
+            g.add(mesh);
             console.log(`Show fill`);
         }
-        const mesh = new THREE.Mesh(
-            geometry,
-            new THREE.MeshBasicMaterial({
-                color: fill,
-                side: THREE.DoubleSide,
-            })
-        );
-        g.add(mesh);
-        //return bounds;
+        if (!pentaStyle || pentaStyle.stroke != pentaStyle.NONE) {
+            console.log(`Show stroke`);
+            const material = new THREE.LineBasicMaterial({
+                color: "#000000",
+            });
+            const points = [];
+            for (const point of shape) {
+                points.push(
+                    new THREE.Vector3(
+                        (point.x + offset.x) * scale,
+                        (point.y + offset.y) * scale,
+                        0
+                    )
+                );
+            }
+            const geometry = new THREE.BufferGeometry().setFromPoints(points);
+            const line = new THREE.LineLoop(geometry, material);
+            g.add(line);
+        }
     }
+
     grid(offset, size) {}
     /**
      *
