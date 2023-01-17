@@ -29,7 +29,7 @@ export class CanvasRenderer {
         g.fillStyle = fill; //e.g penrose.ORANGE;
         g.strokeStyle = penrose.OUTLINE;
 
-        const bounds = new Bounds();
+        //const bounds = new Bounds();
         for (const point of shape) {
             g.fillRect(
                 offset.x * scale + point.x * scale,
@@ -45,12 +45,8 @@ export class CanvasRenderer {
                     scale
                 );
             }
-            bounds.addPoint(offset, point);
-            bounds.addPoint(offset, point.tr(p(1, 1)));
         }
         g.restore();
-
-        return bounds;
     }
 
     /***
@@ -73,7 +69,6 @@ export class CanvasRenderer {
             g.fillStyle = fill + "80";
         }
 
-        const bounds = new Bounds();
         let start = true;
         for (const point of shape) {
             if (start) {
@@ -89,7 +84,6 @@ export class CanvasRenderer {
                     (point.y + offset.y) * scale
                 );
             }
-            bounds.addPoint(offset, point);
         }
         g.closePath();
 
@@ -102,7 +96,6 @@ export class CanvasRenderer {
             g.fill();
         }
         g.restore();
-        return bounds;
     }
 
     /**
@@ -111,7 +104,6 @@ export class CanvasRenderer {
      * @param {*} size
      */
     grid(offset, size) {
-        const bounds = new Bounds();
         const { g, scale } = this;
         g.save();
         g.strokeStyle = penrose.OUTLINE;
@@ -137,17 +129,11 @@ export class CanvasRenderer {
         g.lineTo((offset.x + size) * scale, offset.y * scale);
         g.stroke();
 
-        bounds.addPoint(offset, p(-size, -size));
-        bounds.addPoint(offset, p(size, size));
-
         g.restore();
-        return bounds;
     }
 
     line(loc, end, strokeStyle) {
         const { g, scale } = this;
-
-        const bounds = new Bounds();
         const currentWidth = g.lineWidth;
         const currentStrokeStyle = g.strokeStyle;
         g.strokeStyle = strokeStyle ? strokeStyle : "black";
@@ -155,13 +141,10 @@ export class CanvasRenderer {
         g.beginPath();
         g.moveTo(loc.x * scale, loc.y * scale);
         g.lineTo(end.x * scale, end.y * scale);
-        bounds.addPoint(loc, loc);
-        bounds.addPoint(loc, end);
         g.stroke();
 
         g.lineWidth = currentWidth;
         g.strokeStyle = currentStrokeStyle;
-        return bounds;
     }
 
     getGradient(fill, offset, shape, isHeads) {
@@ -195,7 +178,6 @@ export class CanvasRenderer {
         const { rhombStyle } = { ...globals, ...measureTaskGlobals };
         g.save();
         let gradient = rhombStyle.fill == rhombStyle.GRADIENT;
-        const bounds = new Bounds();
         g.strokeStyle = strokeStyle ? strokeStyle : "black";
         switch (rhombStyle.fill) {
             case rhombStyle.GRADIENT:
@@ -223,8 +205,6 @@ export class CanvasRenderer {
                     (point.y + offset.y) * scale
                 );
             }
-
-            bounds.addPoint(offset, point);
         }
 
         g.closePath();
@@ -235,8 +215,6 @@ export class CanvasRenderer {
             g.stroke();
         }
         g.restore();
-
-        return bounds;
     }
 
     render(renderList) {
