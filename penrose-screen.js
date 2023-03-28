@@ -202,14 +202,11 @@ export class PenroseScreen {
         const bounds = new Bounds();
         bounds.addVectors(loc, shape);
         this.bounds.expand(bounds);
-        //console.log(`bounds: ${bounds}, ${this.bounds}`);
-        console.log(`measure: ${this.measure}`);
         if (this.measure) {
             return;
         } else {
             const f = (r) => r.outline(fill, loc, shape);
             bounds.renderList.push(f);
-            console.log(`Add function ${f}`);
         }
         this.bounds.expand(bounds);
     }

@@ -59,7 +59,6 @@ export function resizeAndRender3d(scene, canvas, scale) {
     if (scene.measure) {
         return;
     }
-    console.log(`canvas: ${canvas.width},  ${canvas.height}`);
     let g = new ThreeJsContext(canvas);
     let bounds = scene.bounds;
     if (bounds.isEmpty) {
@@ -289,7 +288,6 @@ export function drawDualDemo(id) {
  * @returns
  */
 export function draw3dResearch(id) {
-    console.log("draw3dResearch");
     const page = document.querySelector(`#${id}`);
     if (page.style.display == "none") return;
     const canvas = document.querySelector(`#${id} > canvas`);

@@ -258,6 +258,8 @@ export class CanvasRenderer {
 /**
  * This takes a canvas as input.
  * The canvas has a width and a height
+ * This is basically the 3js scene.
+ * It creates the renderer. Should it.
  */
 export class ThreeJsContext {
     _fillStyle = "white";
@@ -265,7 +267,6 @@ export class ThreeJsContext {
     constructor(canvas) {
         this.renderer = new THREE.WebGLRenderer({ canvas });
         this._fillRect = [0, 0, canvas.width, canvas.height];
-        console.log(`renderer: ${this.renderer}`);
         const fov = 45;
         const aspect = canvas.width / canvas.height; // the canvas default
         const near = 0.1;
@@ -296,12 +297,18 @@ export class ThreeJsRenderer {
         this.g = g;
         this.scale = scale;
     }
+    /**
+     * This is where the 3js scene stored in g gets drawn on the screen.
+     * The commands and size of the scene are stored in bounds.
+     * The camera is build here. It should be placed based on the scale.
+     * @param {*} canvas
+     * @param {*} bounds
+     */
     finish(canvas, bounds) {
         // Compute the target from bounds.
         const FOV = 60;
         const aspect = canvas.width / canvas.height;
         const camera = new THREE.PerspectiveCamera(FOV, aspect, 1, 1000);
-        console.log(this.g.scene);
         camera.position.set(
             bounds.center.x,
             bounds.center.y,
@@ -312,12 +319,14 @@ export class ThreeJsRenderer {
 
     render(renderList) {
         for (const item of renderList) {
-            console.log(`item: ${item}`);
             item(this);
         }
     }
 
-    figure(fill, offset, shape) {}
+    figure(fill, offset, shape) {
+        const { g, scale } = this;
+        g.fillStyle = fill;
+    }
     outline(fill, offset, shape) {
         const { pentaStyle } = globals;
         const { g, scale } = this;
@@ -350,10 +359,8 @@ export class ThreeJsRenderer {
                 })
             );
             g.add(mesh);
-            console.log(`Show fill`);
         }
         if (!pentaStyle || pentaStyle.stroke != pentaStyle.NONE) {
-            console.log(`Show stroke`);
             const material = new THREE.LineBasicMaterial({
                 color: "#000000",
             });
@@ -385,10 +392,8 @@ export class ThreeJsRenderer {
             color: strokeStyle,
         });
 
-        console.log(`line(loc: ${loc.toLoc}, end:n${end.toLoc},)`);
         const points = [];
         const z = 0;
-        console.log(...loc.toLoc, z);
         points.push(new THREE.Vector3(...[...loc.toLoc, z]));
         points.push(new THREE.Vector3(...[...end.toLoc, z]));
 
