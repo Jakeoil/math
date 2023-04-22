@@ -410,7 +410,6 @@ export class PenroseScreen {
         }
         let { overlays } = globals;
         //({ overlays } = options); // some version of apply
-
         if (gen == 0) {
             if (layer == "penta") {
                 this.drawPentaPattern({

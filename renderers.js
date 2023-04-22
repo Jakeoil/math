@@ -87,13 +87,12 @@ export class CanvasRenderer {
         }
         g.closePath();
 
-        if (!pentaStyle || pentaStyle.stroke != pentaStyle.NONE) {
-            g.stroke();
-        }
-
         // fill by default
         if (!pentaStyle || pentaStyle.fill != pentaStyle.NONE) {
             g.fill();
+        }
+        if (!pentaStyle || pentaStyle.stroke != pentaStyle.NONE) {
+            g.stroke();
         }
         g.restore();
     }
